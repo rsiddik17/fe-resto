@@ -1,0 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import "tailwindcss";
+
+:root {
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0 0 0);
+  --primary: oklch(0.3874 0.1724 322.68);
+  --secondary: oklch(0.9499 0.0011 17.18);
+  --gray: oklch(0 0 0 / 50%);
+  --orange: oklch(0.7586 0.1768 60.64);
+  --lime: oklch(0.7648 0.1926 129.54);
+  --green: oklch(0.8112 0.2687 142.67);
+  --blue: oklch(0.6582 0.169 248.81);
+  --light-purple: oklch(0.6265 0.2452 305.66);
+  --dark-orange: oklch(0.6652 0.1968 37.66);
+  --dark-yellow: oklch(0.8898 0.1872 107.34);
+  --border: oklch(0.85 0 0);
+  --ring: oklch(0.3874 0.1724 322.68);
+  --radius-xs: 0.625rem;
+  --radius-sm: 0.75rem;
+  --radius-md: 1.25rem;
+  --radius-lg: 1.5rem;
+  --shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);  
+}
+
+@theme {
+  --color-background: var(--background); /* white */
+  --color-foreground: var(--foreground); /* black */
+
+  --color-primary: var(--primary); /* purple */
+  --color-secondary: var(--secondary); /* light gray */
+
+  /* colors palette */
+  --color-gray: var(--gray);
+  --color-orange: var(--orange);
+  --color-lime: var(--lime);
+  --color-green: var(--green);
+  --color-blue: var(--blue);
+  --color-light-purple: var(--light-purple);
+  --color-dark-orange: var(--dark-orange);
+  --color-dark-yellow: var(--dark-yellow);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+
+  /* font */
+  --font-poppins: "Poppins", sans-serif;
+
+  /* radius */
+  --radius-xs: var(--radius-xs); /* 10px */
+  --radius-sm: var(--radius-sm); /* 12px */
+  --radius-md: var(--radius-md); /* 20px */
+  --radius-lg: var(--radius-lg); /* 24px */
+
+  /* shadow */
+  --shadow-base: var(--shadow-base);
+}
+
+@layer base {
+   * {
+    @apply border-border outline-ring/50;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-poppins;
+  }
+}
