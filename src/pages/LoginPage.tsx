@@ -1,10 +1,13 @@
+import FormLogin from "../components/FormLogin/FormLogin";
+import AuthLayouts from "../layouts/AuthLayouts/AuthLayouts";
+
 const LoginPage = () => {
   return (
-    <div className="w-full h-screen flex justify-center items-center">
-        <div className="p-4 shadow-base">
-            base
-        </div>
-    </div>
+    <>
+      <AuthLayouts title="Selamat Datang" description="Masuk untuk mengakses akun anda">
+        <FormLogin/>
+      </AuthLayouts>
+    </>
   );
 };
 
