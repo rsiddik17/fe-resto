@@ -11,6 +11,7 @@ import { ArrowLeft } from "lucide-react";
 import Label from "../ui/Label";
 import { cn } from "../../utils/utils";
 import Loading from "../Loading/Loading";
+import Button from "../ui/Button";
 
 const OTP_LENGTH = 6;
 const OTP_EXPIRY_SECONDS = 105; // 01:45
@@ -58,40 +59,48 @@ const FormOtp = () => {
     return () => window.clearInterval(id);
   }, []);
 
-  const verifyOtp = useCallback(async (code: string) => {
-    setIsVerifying(true);
-    setOtpError(false);
-    try {
-      console.log("[FormOtp] verifyOtp called with:", code, "email:", email);
-
-      await new Promise((r) => setTimeout(r, 800));
-      const isValid = code === "123456";
-      if (!isValid) {
-        console.log("[FormOtp] invalid otp:", code);
-        setOtpError(true);
-        return;
-
+  const verifyOtp = useCallback(
+    async (code: string) => {
+      setIsVerifying(true);
+      setOtpError(false);
+      try {
+        console.log("[FormOtp] verifyOtp called with:", code, "email:", email);
+        await new Promise((r) => setTimeout(r, 800));
+        const isValid = code === "123456";
+        if (!isValid) {
+          console.log("[FormOtp] invalid otp:", code);
+          setOtpError(true);
+          return;
+        }
+        console.log("[FormOtp] valid otp, navigating...");
+        navigate(`/reset-password?email=${encodeURIComponent(email)}`, {
+          replace: true,
+        });
+      } finally {
+        setIsVerifying(false);
       }
-      console.log("[FormOtp] valid otp, navigating...");
-      navigate(
-        `/reset-password?email=${encodeURIComponent(email)}`,
-        { replace: true },
-      );
-    } finally {
-      setIsVerifying(false);
-    }
-  }, [email, navigate]);
+    },
+    [email, navigate],
+  );
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   const code = digits.join("");
+  //   if (code.length !== OTP_LENGTH) {
+  //     lastSubmittedRef.current = null;
+  //     return;
+  //   }
+  //   if (lastSubmittedRef.current === code) return;
+  //   lastSubmittedRef.current = code;
+  //   void verifyOtp(code);
+  // }, [digits, verifyOtp]);
+
+  const handleVerifyClick = () => {
     const code = digits.join("");
-    if (code.length !== OTP_LENGTH) {
-      lastSubmittedRef.current = null;
-      return;
-    }
-    if (lastSubmittedRef.current === code) return;
-    lastSubmittedRef.current = code;
+    if (code.length !== OTP_LENGTH) return;
+    if (digits.some((d) => !d)) return;
     void verifyOtp(code);
-  }, [digits, verifyOtp]);
+  };
+
 
   const focusInput = (index: number) => {
     const el = inputsRef.current[index];
@@ -113,10 +122,7 @@ const FormOtp = () => {
     }
   };
 
-  const handleKeyDown = (
-    index: number,
-    e: KeyboardEvent<HTMLInputElement>,
-  ) => {
+  const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Backspace" && !digits[index] && index > 0) {
       focusInput(index - 1);
     }
@@ -124,7 +130,10 @@ const FormOtp = () => {
 
   const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, OTP_LENGTH);
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, OTP_LENGTH);
     if (!pasted) return;
     if (otpError) setOtpError(false);
     const next = Array.from({ length: OTP_LENGTH }, (_, i) => pasted[i] ?? "");
@@ -151,7 +160,8 @@ const FormOtp = () => {
       <div className="space-y-3">
         <div>
           <Label htmlFor="otp-0" className="px-5">
-            Kode OTP</Label>
+            Kode OTP
+          </Label>
           <div
             className="mt-2 px-5 flex justify-start gap-2 sm:gap-4"
             role="group"
@@ -214,6 +224,17 @@ const FormOtp = () => {
             </button>
           )}
         </p>
+
+        <div className="px-5 pt-2">
+          <Button
+            className="w-full"
+            type="button"
+            onClick={handleVerifyClick}
+            disabled={isVerifying || digits.some((d) => !d)}
+          >
+            Verifikasi
+          </Button>
+        </div>
 
         <div className="border-t border-black/10 pt-4">
           <Link

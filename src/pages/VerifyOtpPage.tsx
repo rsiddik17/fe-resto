@@ -7,7 +7,7 @@ const VerifyOtpPage = () => {
   const email = searchParams.get("email") ?? "";
 
   const description = (
-    <p className="">
+    <p>
       Kami telah mengirimkan kode OTP Ke:{" "}
       <span className="font-bold text-gray">{email || "—"}</span>
     </p>

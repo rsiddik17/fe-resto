@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import FormInput from "../FormInput/FormInput";
 import Button from "../ui/Button";
@@ -16,6 +16,8 @@ const forgorPasswordSchema = z.object({
 type ForgotPasswordValues = z.infer<typeof forgorPasswordSchema>;
 
 const FormForgotPassword = () => {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -29,6 +31,8 @@ const FormForgotPassword = () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       console.log("Kirim OTP ke email:", data.email);
+      navigate(`/verifikasi-otp?email=${encodeURIComponent(data.email)}`);
+
     } catch (error) {
       setError("root", {
         message: `${error}`,
