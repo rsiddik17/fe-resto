@@ -42,10 +42,12 @@ const FormResetPassword = () => {
       await new Promise((resolve) => setTimeout(resolve, 1200));
       console.log("Reset password untuk:", email, "data:", data);
       navigate("/");
-    } catch (error: any) {
-      setError("root", {
-        message: `${error.message ?? error}`,
-      });
+    } catch (error) {
+      if (error instanceof Error) {
+        setError("root", {
+          message: error.message,
+        });
+      }
     }
   };
 
@@ -66,7 +68,6 @@ const FormResetPassword = () => {
           <p className="text-xs text-black/60">
             Minimal 8 karakter, kombinasi huruf dan angka
           </p>
-         
         </div>
 
         <div className="space-y-1">

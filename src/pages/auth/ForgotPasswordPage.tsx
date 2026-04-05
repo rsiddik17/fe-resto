@@ -1,5 +1,6 @@
-import FormForgotPassword from "../components/FormForgotPassword/FormForgotPassword";
-import AuthLayouts from "../layouts/AuthLayouts/AuthLayouts";
+import FormForgotPassword from "../../components/FormForgotPassword/FormForgotPassword";
+import AuthLayouts from "../../layouts/AuthLayouts/AuthLayouts";
+
 
 const ForgotPasswordPage = () => {
     return (

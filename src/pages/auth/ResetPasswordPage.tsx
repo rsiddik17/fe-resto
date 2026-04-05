@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router";
-import AuthLayouts from "../layouts/AuthLayouts/AuthLayouts";
-import FormResetPassword from "../components/FormResetPassword/FormResetPassword";
+import AuthLayouts from "../../layouts/AuthLayouts/AuthLayouts";
+import FormResetPassword from "../../components/FormResetPassword/FormResetPassword";
+
 
 const ResetPasswordPage = () => {
   const [searchParams] = useSearchParams();

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import FormInput from "../FormInput/FormInput";
 import Button from "../ui/Button";
@@ -7,43 +7,63 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Loading from "../Loading/Loading";
 
-const forgorPasswordSchema = z.object({
+const registerEmailSchema = z.object({
   email: z
     .email("Email tidak valid. Pastikan format email benar.")
     .min(1, "Email wajib diisi!"),
 });
 
-type ForgotPasswordValues = z.infer<typeof forgorPasswordSchema>;
+type RegisterEmailValues = z.infer<typeof registerEmailSchema>;
 
-const FormForgotPassword = () => {
+const FormRegisterEmail = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Tangkap data dari form register pertama
+  const registerData = location.state?.registerData;
 
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<ForgotPasswordValues>({
-    resolver: zodResolver(forgorPasswordSchema),
+  } = useForm<RegisterEmailValues>({
+    resolver: zodResolver(registerEmailSchema),
   });
 
-  const handleForgotPassword = async (data: ForgotPasswordValues) => {
+  const handleRegisterEmail = async (data: RegisterEmailValues) => {
+    // Validasi jaga-jaga jika user langsung tembak URL tanpa lewat form pertama
+    if (!registerData) {
+      setError("root", { message: "Data registrasi tidak lengkap, silakan daftar ulang." });
+      setTimeout(() => navigate("/register"), 2000);
+      return;
+    }
+
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log("Kirim OTP ke email:", data.email);
-      navigate(`/verifikasi-otp?email=${encodeURIComponent(data.email)}&type=forgot-password`);
+      
+      const finalPayload = {
+        ...registerData,
+        email: data.email
+      };
+
+      console.log("Kirim ke DB:", finalPayload);
+      
+      navigate(`/verifikasi-otp?email=${encodeURIComponent(data.email)}&type=register`);
 
     } catch (error) {
+      if (error instanceof Error) {
       setError("root", {
-        message: `${error}`,
+        message: error.message,
       });
+    }
     }
   };
 
   return (
     <div className="mt-12">
       <Loading show={isSubmitting} />
-      <form onSubmit={handleSubmit(handleForgotPassword)}>
+      <form onSubmit={handleSubmit(handleRegisterEmail)}>
         <FormInput
           children="Alamat Email"
           type="email"
@@ -71,14 +91,14 @@ const FormForgotPassword = () => {
           Kirim Kode OTP
         </Button>
         <Link
-          to="/"
+          to="/register"
           className="flex justify-center items-center gap-2 text-center my-6 text-black/50 underline"
         >
-          <ArrowLeft size={20} /> kembali ke halaman login
+          <ArrowLeft size={20} /> Kembali Ke Halaman Daftar
         </Link>
       </form>
     </div>
   );
 };
 
-export default FormForgotPassword;
+export default FormRegisterEmail;

@@ -34,7 +34,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
               onClick={() => setShowPassword(prev => !prev)}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-gray/80 hover:text-gray transition"
             >
-              {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           )}
         </div>
