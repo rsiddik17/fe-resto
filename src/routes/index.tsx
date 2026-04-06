@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router";
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
-import RegisterEmailPage from "../pages/auth/RegisterEmailPage";
 import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
 import VerifyOtpPage from "../pages/auth/VerifyOtpPage";
 import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
@@ -24,7 +23,6 @@ const router = createBrowserRouter([
     children: [
       { path: "/", Component: LoginPage },
       { path: "/register", Component: RegisterPage },
-      { path: "/register-email", Component: RegisterEmailPage },
       { path: "/lupa-password", Component: ForgotPasswordPage },
       { path: "/reset-password", Component: ResetPasswordPage },
       { path: "/verifikasi-otp", Component: VerifyOtpPage },

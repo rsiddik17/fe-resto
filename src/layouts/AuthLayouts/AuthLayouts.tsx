@@ -38,7 +38,7 @@ const AuthLayouts = ({
             {type === "login" && (
               <>
                 Belum Punya Akun?{" "}
-                <Link to="/register" className="font-bold text-primary">
+                <Link to="/register" state={{ loginPage: true }} className="font-bold text-primary">
                   Daftar
                 </Link>
               </>

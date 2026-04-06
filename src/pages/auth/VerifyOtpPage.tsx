@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router";
+import { Navigate, useNavigate, useSearchParams } from "react-router";
 import AuthLayouts from "../../layouts/AuthLayouts/AuthLayouts";
 import FormOtp from "../../components/FormOtp/FormOtp";
 
@@ -7,6 +7,10 @@ const VerifyOtpPage = () => {
   const navigate = useNavigate();
   const email = searchParams.get("email") ?? "";
   const type = searchParams.get("type") ?? "forgot-password";
+
+  if (!email) {
+    return <Navigate to="/" replace />;
+  }
 
   const description = (
     <p className="text-start mx-5">

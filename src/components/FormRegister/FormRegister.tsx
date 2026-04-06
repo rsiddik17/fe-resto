@@ -9,10 +9,7 @@ import { useNavigate } from "react-router";
 const registerSchema = z
   .object({
     nama: z.string().min(3, "Nama lengkap minimal 3 karakter!"),
-    noHp: z
-      .string()
-      .min(10, "Nomor HP tidak valid!")
-      .regex(/^[0-9]+$/, "Nomor HP hanya boleh berisi angka!"),
+    email: z.email("Format email tidak valid!").min(1, "Email wajib diisi!"),
     password: z.string().min(8, "Kata sandi minimal 8 karakter!"),
     confirmPassword: z.string().min(1, "Konfirmasi kata sandi wajib diisi!"),
   })
@@ -41,9 +38,7 @@ const FormRegister = () => {
 
       console.log("Data registrasi siap dikirim:", data);
 
-      navigate("/register-email", {
-        state: { registerData: data },
-      });
+      navigate(`/verifikasi-otp?email=${encodeURIComponent(data.email)}&type=register`);
     } catch (error) {
       if (error instanceof Error) {
         setError("root", {
@@ -52,6 +47,7 @@ const FormRegister = () => {
       }
     }
   };
+
 
   return (
     <>
@@ -76,16 +72,16 @@ const FormRegister = () => {
 
         <div className="space-y-1">
           <FormInput
-            children="No Hp"
-            type="tel"
-            id="noHp"
-            placeholder="No Hp"
-            {...register("noHp")}
-            error={!!errors.noHp}
+            children="Email"
+            type="email"
+            id="email"
+            placeholder="Email"
+            {...register("email")}
+            error={!!errors.email}
           />
-          {errors.noHp && (
+          {errors.email && (
             <span className="text-red-500 text-sm text-start block">
-              {errors.noHp?.message}
+              {errors.email?.message}
             </span>
           )}
         </div>
@@ -131,7 +127,7 @@ const FormRegister = () => {
         )}
 
         <Button className="w-full mt-4 mb-2" type="submit">
-          Lanjutkan
+          Daftar
         </Button>
       </form>
     </>

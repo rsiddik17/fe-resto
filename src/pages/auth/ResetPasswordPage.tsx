@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router";
+import { Navigate, useSearchParams } from "react-router";
 import AuthLayouts from "../../layouts/AuthLayouts/AuthLayouts";
 import FormResetPassword from "../../components/FormResetPassword/FormResetPassword";
 
@@ -6,6 +6,10 @@ import FormResetPassword from "../../components/FormResetPassword/FormResetPassw
 const ResetPasswordPage = () => {
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email") ?? "";
+
+  if (!email) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <AuthLayouts

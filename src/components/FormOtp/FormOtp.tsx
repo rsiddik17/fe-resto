@@ -44,7 +44,7 @@ const FormOtp = ({ onSuccess }: FormOtpProps) => {
             Kode OTP
           </Label>
           <div
-            className="mt-2 px-5 flex justify-start gap-2 sm:gap-4"
+            className="mt-2 px-5 flex justify-center gap-2 sm:gap-4"
             role="group"
             aria-label="Kode OTP 6 digit"
           >
