@@ -1,14 +1,14 @@
 import { forwardRef } from "react";
 import { cn } from "../../utils/utils";
 
-const baseStyle = "inline-block font-bold text-lg text-white rounded-xs cursor-pointer transition";
+const baseStyle = "inline-block font-bold text-lg text-white rounded-xs shadow-sm cursor-pointer transition";
 
 const variants = {
   primary: "bg-primary hover:bg-primary-hover",
 };
 
 const sizes = {
-  sm: "px-4 py-2",
+  sm: "px-4 py-2.5",
   md: "px-6 py-3",
   lg: "px-8 py-4",
 };
@@ -22,7 +22,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       variant = "primary",
-      size = "md",
+      size = "sm",
       type = "button",
       className,
       children,

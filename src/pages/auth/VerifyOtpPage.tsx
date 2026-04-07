@@ -13,7 +13,7 @@ const VerifyOtpPage = () => {
   }
 
   const description = (
-    <p className="text-start mx-5">
+    <p className="text-start mx-5 mt-2">
       Kami telah mengirimkan kode OTP Ke:{" "}
       <span className="font-bold text-gray">{email || "—"}</span>
     </p>

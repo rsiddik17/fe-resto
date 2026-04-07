@@ -54,7 +54,7 @@ const FormResetPassword = () => {
   return (
     <>
       <Loading show={isSubmitting} />
-      <form onSubmit={handleSubmit(handleResetPassword)} className="space-y-2">
+      <form onSubmit={handleSubmit(handleResetPassword)} className="space-y-2.5">
         <div className="space-y-1">
           <FormInput
             children="Kata Sandi Baru"

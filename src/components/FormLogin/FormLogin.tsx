@@ -122,7 +122,7 @@ const FormLogin = () => {
         </div>
         <Link
           to="/lupa-password"
-          className="block text-right my-5 text-black/50 underline"
+          className="block text-sm text-right my-3.5 text-black/50 underline"
         >
           lupa kata sandi
         </Link>
@@ -133,7 +133,7 @@ const FormLogin = () => {
           </span>
         )}
 
-        <Button className="w-full mb-2" type="submit">
+        <Button className="w-full" type="submit">
           Masuk
         </Button>
       </form>

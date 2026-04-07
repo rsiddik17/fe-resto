@@ -41,7 +41,7 @@ const FormForgotPassword = () => {
   };
 
   return (
-    <div className="mt-12">
+    <div className="mt-10">
       <Loading show={isSubmitting} />
       <form onSubmit={handleSubmit(handleForgotPassword)}>
         <FormInput
