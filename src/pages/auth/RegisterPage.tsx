@@ -17,7 +17,7 @@ const RegisterPage = () => {
         title="Selamat Datang"
         description="Lengkapi data untuk membuat akun anda"
         type="register"
-        cardClassName="md:max-w-2xl"
+        cardClassName="md:max-w-xl"
       >
         <FormRegister />
       </AuthLayouts>

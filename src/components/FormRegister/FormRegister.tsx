@@ -86,7 +86,7 @@ const FormRegister = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-1">
             <FormInput
               children="Kata Sandi"
@@ -126,7 +126,7 @@ const FormRegister = () => {
           </span>
         )}
 
-        <Button className="w-full mt-4 mb-2" type="submit">
+        <Button className="w-full mt-4" type="submit">
           Daftar
         </Button>
       </form>

@@ -65,7 +65,7 @@ const FormOtp = ({ onSuccess }: FormOtpProps) => {
                 onPaste={index === 0 ? handlePaste : undefined}
                 disabled={otpExpirySeconds <= 0}
                 className={cn(
-                  "h-12 w-11 sm:w-12 rounded-xs border bg-white text-center text-lg font-semibold tabular-nums",
+                  "h-10 w-9 sm:w-10 rounded-xs border bg-white text-center text-lg font-semibold tabular-nums",
                   "outline-none transition focus:ring-2 focus:ring-primary",
                   otpError
                     ? "border-red-500 focus:ring-red-500"
@@ -76,11 +76,6 @@ const FormOtp = ({ onSuccess }: FormOtpProps) => {
           </div>
         </div>
 
-        {otpError && (
-          <p className="text-start px-5 text-sm text-red-500">
-            Kode OTP yang anda masukan salah. Silakan coba lagi.
-          </p>
-        )}
 
         <p className="text-start px-5 text-sm text-black">
           Kode akan kadaluwarsa dalam:{" "}
@@ -88,6 +83,12 @@ const FormOtp = ({ onSuccess }: FormOtpProps) => {
             {formatMmSs(otpExpirySeconds)}
           </span>
         </p>
+
+        {otpError && (
+          <p className="text-start px-5 text-xs text-red-500">
+            Kode OTP yang anda masukan salah. Silakan coba lagi.
+          </p>
+        )}
 
         <p className="text-start px-5 text-sm text-black">
           Belum menerima kode?{" "}
@@ -106,7 +107,7 @@ const FormOtp = ({ onSuccess }: FormOtpProps) => {
           )}
         </p>
 
-        <div className="px-5 pt-2">
+        <div className="pt-2">
           <Button
             className="w-full"
             type="button"
