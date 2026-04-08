@@ -8,9 +8,20 @@ import { useNavigate } from "react-router";
 
 const registerSchema = z
   .object({
-    nama: z.string().min(3, "Nama lengkap minimal 3 karakter!"),
+    fullname: z.string().min(3, "Nama lengkap minimal 3 karakter!"),
     email: z.email("Format email tidak valid!").min(1, "Email wajib diisi!"),
-    password: z.string().min(8, "Kata sandi minimal 8 karakter!"),
+    phone_number: z
+      .string()
+      .min(10, "Nomor telepon minimal 10 angka!")
+      .max(15, "Nomor telepon terlalu panjang!")
+      .regex(/^[0-9]+$/, "Nomor telepon hanya boleh berisi angka!"),
+    password: z
+      .string()
+      .min(8, "Kata sandi minimal 8 karakter!")
+      .regex(
+        /^(?=.*[a-zA-Z])(?=.*[0-9])/,
+        "Kata sandi harus mengandung kombinasi huruf dan angka!",
+      ),
     confirmPassword: z.string().min(1, "Konfirmasi kata sandi wajib diisi!"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -38,7 +49,9 @@ const FormRegister = () => {
 
       console.log("Data registrasi siap dikirim:", data);
 
-      navigate(`/verifikasi-otp?email=${encodeURIComponent(data.email)}&type=register`);
+      navigate(
+        `/verifikasi-otp?email=${encodeURIComponent(data.email)}&type=register`,
+      );
     } catch (error) {
       if (error instanceof Error) {
         setError("root", {
@@ -47,7 +60,6 @@ const FormRegister = () => {
       }
     }
   };
-
 
   return (
     <>
@@ -60,33 +72,51 @@ const FormRegister = () => {
             id="nama"
             placeholder="Nama Lengkap"
             autoFocus
-            {...register("nama")}
-            error={!!errors.nama}
+            {...register("fullname")}
+            error={!!errors.fullname}
           />
-          {errors.nama && (
+          {errors.fullname && (
             <span className="text-red-500 text-sm text-start block">
-              {errors.nama?.message}
+              {errors.fullname?.message}
             </span>
           )}
         </div>
 
-        <div className="space-y-1">
-          <FormInput
-            children="Email"
-            type="email"
-            id="email"
-            placeholder="Email"
-            {...register("email")}
-            error={!!errors.email}
-          />
-          {errors.email && (
-            <span className="text-red-500 text-sm text-start block">
-              {errors.email?.message}
-            </span>
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
+          <div className="space-y-1">
+            <FormInput
+              children="Email"
+              type="email"
+              id="email"
+              placeholder="Email"
+              {...register("email")}
+              error={!!errors.email}
+            />
+            {errors.email && (
+              <span className="text-red-500 text-sm text-start block">
+                {errors.email?.message}
+              </span>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <FormInput
+              children="No Telepon"
+              type="tel"
+              id="phone_number"
+              placeholder="No Telepon"
+              {...register("phone_number")}
+              error={!!errors.phone_number}
+            />
+            {errors.phone_number && (
+              <span className="text-red-500 text-sm text-start block">
+                {errors.phone_number?.message}
+              </span>
+            )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
           <div className="space-y-1">
             <FormInput
               children="Kata Sandi"
