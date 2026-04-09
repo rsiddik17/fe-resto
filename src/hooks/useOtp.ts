@@ -9,8 +9,8 @@ import {
 import { useNavigate } from "react-router";
 
 const OTP_LENGTH = 6;
-const OTP_EXPIRY_SECONDS = 105; // 01:45
-const RESEND_COOLDOWN_SECONDS = 54;
+const OTP_EXPIRY_SECONDS = 119; // 01:45
+const RESEND_COOLDOWN_SECONDS = 59;
 
 export const useOtp = (email: string, onSuccess: () => void) => {
   const navigate = useNavigate();
