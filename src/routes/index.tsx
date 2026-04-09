@@ -13,6 +13,9 @@ import KitchenDashboardPage from "../pages/kitchen/KitchenDashboardPage";
 import KioskHomePage from "../pages/kiosk/KioskHomePage";
 import CustomerHomePage from "../pages/customer/CustomerHomePage";
 import PublicRoute from "../components/PublicRoute/PublicRoute";
+import GuestInputPage from "../pages/kiosk/GuestInputPage";
+import TableInfoPage from "../pages/kiosk/TableInfoPage";
+import NotFoundPage from "../pages/errors/NotFoundPage";
 
 
 
@@ -52,11 +55,22 @@ const router = createBrowserRouter([
   },
   {
     element: <ProtectedRoute allowedRoles={["KIOSK_SYSTEM"]} />, 
-    children: [{ path: "/kiosk/home", Component: KioskHomePage }],
+    children: [
+      { path: "/kiosk/home", Component: KioskHomePage },
+      { path: "/kiosk/input-tamu", Component: GuestInputPage },
+      { path: "/kiosk/info-meja", Component: TableInfoPage },
+    ],
   },
   {
     element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />, 
     children: [{ path: "/customer/home", Component: CustomerHomePage }],
+  },
+
+
+  // 🚨 RUTE 404 HARUS DI PALING BAWAH (Catch-All Route)
+  { 
+    path: "*", 
+    Component: NotFoundPage 
   },
 ]);
 

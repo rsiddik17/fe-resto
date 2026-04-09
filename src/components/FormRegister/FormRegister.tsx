@@ -8,13 +8,13 @@ import { useNavigate } from "react-router";
 
 const registerSchema = z
   .object({
-    fullname: z.string().min(3, "Nama lengkap minimal 3 karakter!"),
+    fullname: z.string().min(3, "Nama lengkap wajib di isi!"),
     email: z.email("Format email tidak valid!").min(1, "Email wajib diisi!"),
     phone_number: z
       .string()
-      .min(10, "Nomor telepon minimal 10 angka!")
+      .min(11, "Nomor telepon minimal 11 angka!")
       .max(15, "Nomor telepon terlalu panjang!")
-      .regex(/^[0-9]+$/, "Nomor telepon hanya boleh berisi angka!"),
+      .regex(/^[0-9]+$/, "Nomor telepon harus terdiri dari angka!"),
     password: z
       .string()
       .min(8, "Kata sandi minimal 8 karakter!")
@@ -25,7 +25,7 @@ const registerSchema = z
     confirmPassword: z.string().min(1, "Konfirmasi kata sandi wajib diisi!"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Konfirmasi kata sandi tidak sama.",
+    message: "kata sandi tidak cocok. Silakan periksa kembali.",
     path: ["confirmPassword"],
   });
 

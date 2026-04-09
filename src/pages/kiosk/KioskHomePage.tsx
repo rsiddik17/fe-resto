@@ -1,25 +1,10 @@
-import { useNavigate } from "react-router";
-import { useAuthStore } from "../../store/useAuthStore";
-import Button from "../../components/ui/Button";
+import { Link } from "react-router";
 
 const KioskHomePage = () => {
-  const navigate = useNavigate();
-  const logout = useAuthStore((state) => state.logout);
-
-  const handleLogout = () => {
-    logout();
-
-    navigate("/");
-  };
 
   return (
-    <div>
-      <h1>Halaman Kiosk</h1>
-
-      <Button className="ml-2" onClick={handleLogout}>
-        Keluar
-      </Button>
-    </div>
+    <Link to="/kiosk/input-tamu" replace className="block w-full h-screen bg-[url(/images/banner-kiosk.webp)] bg-no-repeat bg-cover bg-center cursor-pointer" aria-label="Sentuh Layar Untuk Memesan">
+    </Link>
   );
 };
 
