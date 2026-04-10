@@ -30,7 +30,7 @@ const CartBottomBar = ({ totalItems, onViewCart }: CartBottomBarProps) => {
         </div>
 
         {/* Tombol Lihat Keranjang */}
-        <Button onClick={onViewCart} className="px-6 py-3 rounded-xl font-bold">
+        <Button onClick={onViewCart} className="px-8 py-3 rounded-xl font-bold">
           Lihat Keranjang
         </Button>
 

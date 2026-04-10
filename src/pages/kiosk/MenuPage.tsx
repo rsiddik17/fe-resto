@@ -6,6 +6,8 @@ import HeroSection from "../../components/HeroSection/HeroSection";
 import CategoryTabs from "../../components/CategoryTabs/CategoryTabs";
 import MenuItemModal from "../../components/MenuItemModal/MenuItemModal";
 import { useCartStore } from "../../store/useCartStore";
+import SuccessModal from "../../components/SuccessModal/SuccessModal";
+import { useNavigate } from "react-router";
 
 // --- MOCK DATA (Nanti diganti dengan data dari API) ---
 const mockMenu: MenuItem[] = [
@@ -17,9 +19,12 @@ const mockMenu: MenuItem[] = [
 ];
 
 const MenuPage = () => {
+  const navigate = useNavigate();
+
   const [activeCategory, setActiveCategory] = useState<"semua" | "makanan" | "minuman">("semua");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+  const [successItemName, setSuccessItemName] = useState<string | null>(null);
 
   // AMBIL ACTIONS & STATE DARI ZUSTAND
   const addToCart = useCartStore((state) => state.addToCart);
@@ -39,11 +44,16 @@ const MenuPage = () => {
     if (qty > 0) {
       // Masukkan ke Global Store
       addToCart(item, qty, notes);
-      console.log(`Berhasil masuk Zustand: ${item.name} (${qty} porsi). Catatan: ${notes || "-"}`);
+      setSuccessItemName(item.name);
     }
     
     // Tutup modal
     setSelectedItem(null);
+  };
+
+  const handleGoToCart = () => {
+    // Aksi ketika tombol "Lihat Keranjang" di modal sukses atau bottom bar ditekan
+    navigate("/kiosk/cart"); // Sesuaikan dengan route keranjang kamu
   };
 
   return (
@@ -112,6 +122,15 @@ const MenuPage = () => {
           item={selectedItem} 
           onClose={() => setSelectedItem(null)} 
           onAdd={handleConfirmAddToCart} 
+        />
+      )}
+
+
+      {successItemName && (
+        <SuccessModal 
+          itemName={successItemName}
+          onClose={() => setSuccessItemName(null)} 
+          onViewCart={handleGoToCart}              
         />
       )}
       
