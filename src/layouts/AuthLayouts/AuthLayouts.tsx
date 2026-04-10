@@ -17,7 +17,12 @@ const AuthLayouts = ({
   type, cardClassName
 }: AuthLayoutsProps) => {
   return (
-    <div className="w-full min-h-screen flex justify-center items-center bg-[url(/images/bg-login.webp)] bg-no-repeat bg-cover bg-center">
+    <div className="relative w-full min-h-screen flex justify-center items-center overflow-hidden">
+      <img 
+        src="/images/bg-login.webp" 
+        alt="" 
+        className="absolute inset-0 w-full h-full object-cover z-0"
+      />
       <div className="relative w-full flex justify-center items-center p-4">
         <div className="absolute -top-12">
           <img
