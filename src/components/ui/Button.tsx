@@ -1,16 +1,18 @@
 import { forwardRef } from "react";
 import { cn } from "../../utils/utils";
 
-const baseStyle = "inline-block font-bold text-lg text-white rounded-xs shadow-sm cursor-pointer transition";
+const baseStyle = "inline-block font-bold text-lg rounded-xs shadow-sm cursor-pointer transition";
 
 const variants = {
-  primary: "bg-primary hover:bg-primary-hover",
+  primary: "bg-primary hover:bg-primary-hover text-white",
+  outline: "border border-primary text-primary hover:bg-primary/10 bg-transparent shadow-none",
 };
 
 const sizes = {
   sm: "px-4 py-2.5",
   md: "px-6 py-3",
   lg: "px-8 py-4",
+  icon: "w-7 h-7 flex items-center justify-center p-0 rounded-sm",
 };
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

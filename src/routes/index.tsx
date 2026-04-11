@@ -30,6 +30,8 @@ import KioskHomePage from "../pages/kiosk/KioskHomePage";
 import GuestInputPage from "../pages/kiosk/GuestInputPage";
 import TableInfoPage from "../pages/kiosk/TableInfoPage";
 import MenuPage from "../pages/kiosk/MenuPage";
+import CartPage from "../pages/kiosk/CartPage";
+import CheckoutPage from "../pages/kiosk/CheckoutPage";
 
 const router = createBrowserRouter([
 
@@ -72,6 +74,8 @@ const router = createBrowserRouter([
       { path: "/kiosk/input-tamu", Component: GuestInputPage },
       { path: "/kiosk/info-meja", Component: TableInfoPage },
       { path: "/kiosk/menu", Component: MenuPage },
+      { path: "kiosk/keranjang", Component: CartPage},
+      { path: "kiosk/checkout", Component: CheckoutPage}
     ],
   },
   {
