@@ -53,7 +53,7 @@ const MenuPage = () => {
 
   const handleGoToCart = () => {
     // Aksi ketika tombol "Lihat Keranjang" di modal sukses atau bottom bar ditekan
-    navigate("/kiosk/cart"); // Sesuaikan dengan route keranjang kamu
+    navigate("/kiosk/keranjang"); // Sesuaikan dengan route keranjang kamu
   };
 
   return (
@@ -115,7 +115,7 @@ const MenuPage = () => {
       </main>
 
       {/* BOTTOM CART BAR */}
-      <CartBottomBar totalItems={totalItems} onViewCart={() => console.log("Ke Halaman Keranjang")} />
+      <CartBottomBar totalItems={totalItems} onViewCart={handleGoToCart} />
 
       {selectedItem && (
         <MenuItemModal 

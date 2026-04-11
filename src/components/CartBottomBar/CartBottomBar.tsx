@@ -19,13 +19,15 @@ const CartBottomBar = ({ totalItems, onViewCart }: CartBottomBarProps) => {
               <ShoppingCart className="text-white" size={24} />
             </div>
             {/* Badge Angka */}
-            <div className="absolute -top-1 -right-1 bg-white text-primary border border-primary w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">
+            <div className="absolute -top-1 -right-1 bg-white w-6 h-6 rounded-full flex items-center justify-center">
+              <div className="bg-primary text-white border border-primary w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">
               {totalItems}
+            </div>
             </div>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Keranjangmu</p>
-            <p className="font-bold text-black">{totalItems} Terpilih</p>
+            <p className="text-sm text-gray">Keranjangmu</p>
+            <p className="font-bold">{totalItems} Terpilih</p>
           </div>
         </div>
 
