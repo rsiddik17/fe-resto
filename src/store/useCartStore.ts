@@ -16,6 +16,7 @@ interface CartStore {
   removeItem: (cartId: string) => void;
   getTotalPrice: () => number;
   updateNote: (cartId: string, newNote: string) => void;
+  clearCart: () => void;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -82,6 +83,8 @@ export const useCartStore = create<CartStore>()(
           ),
         }));
       },
+
+      clearCart: () => set({ items: [] }),
     }),
     {
       name: "its-resto-cart", // 3. NAMA KUNCI DI LOCAL STORAGE

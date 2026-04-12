@@ -59,8 +59,10 @@ const CheckoutPage = () => {
     console.log("MENGIRIM DATA KE BACKEND:", payload);
     
     // Simulasi sukses bayar, pindah ke halaman Sukses
-    alert("Berhasil! Silakan cek console untuk melihat Payload API-nya.");
-    // navigate("/kiosk/success"); 
+    // alert("Berhasil! Silakan cek console untuk melihat Payload API-nya.");
+    navigate("/kiosk/pembayaran", {
+      state: { discountAmount }
+    }); 
   };
 
   // Jangan render apa-apa selama useEffect sedang memproses redirect (kalau kosong)
@@ -82,7 +84,7 @@ const CheckoutPage = () => {
           </button>
           
           <div className="ml-1 mt-1">
-            <p className="text-gray-500 text-sm mb-2">Nomor meja</p>
+            <p className="text-gray text-sm mb-2">Nomor meja</p>
             <p className="font-extrabold text-primary text-base">Meja 02</p>
           </div>
         </div>
