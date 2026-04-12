@@ -4,6 +4,8 @@ interface OrderSummaryProps {
   subTotal: number;
   taxRate?: number; // Persentase PPN (default: 10)
   discountAmount?: number; // Nominal diskon
+  adminFee?: number; 
+  hideAlertInfo?: boolean;
 }
 
 const rupiahFormatter = new Intl.NumberFormat("id-ID", {
@@ -12,11 +14,11 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
   minimumFractionDigits: 0,
 });
 
-const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0 }: OrderSummaryProps) => {
+const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0, adminFee = 0, hideAlertInfo = false }: OrderSummaryProps) => {
   
   // Kalkulasi Angka (Ditempatkan di sini agar komponen luar tidak pusing menghitung PPN)
   const taxAmount = subTotal * (taxRate / 100);
-  const grandTotal = subTotal + taxAmount - discountAmount;
+  const grandTotal = subTotal + taxAmount - discountAmount + adminFee;
 
   return (
     <div className="flex flex-col w-full gap-4 py-4">
@@ -46,6 +48,13 @@ const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0 }: OrderSumma
           </div>
         )}
 
+        {adminFee > 0 && (
+          <div className="flex justify-between items-center">
+            <span className="text-lg">Biaya Admin</span>
+            <span className="font-bold text-lg">Rp{adminFee}</span>
+          </div>
+        )}
+
       </div>
 
       {/* --- TOTAL AKHIR --- */}
@@ -57,11 +66,13 @@ const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0 }: OrderSumma
       </div>
 
       {/* --- ALERT INFO --- */}
-      <AlertInfo 
-        className="mt-2"
-        title="Informasi Pembayaran"
-        description="Setelah konfirmasi pesanan, biaya admin akan ditambahkan pada nominal QRIS."
-      />
+      {!hideAlertInfo && (
+        <AlertInfo 
+          className="mt-2"
+          title="Informasi Pembayaran"
+          description="Setelah konfirmasi pesanan, biaya admin akan ditambahkan pada nominal QRIS."
+        />
+      )}
 
     </div>
   );

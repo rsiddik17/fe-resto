@@ -62,7 +62,7 @@ const DiscountSection = ({ onApplyDiscount }: DiscountSectionProps) => {
           />
           <Button 
             onClick={handleSearchPromo} 
-            // variant={`${"outline"} ? "outline" : "primary`}
+            variant={inputCode.trim() ? "primary" : "outline"}
             className="px-8 w-full max-w-1/5 py-3 rounded-sm font-bold"
           >
             Cari
@@ -79,11 +79,11 @@ const DiscountSection = ({ onApplyDiscount }: DiscountSectionProps) => {
                 <div className="bg-primary rounded-full p-1 shrink-0">
                   <Percent size={12} strokeWidth={4} className="text-white" />
                 </div>
-                <h4 className="font-bold text-sm text-black">
+                <h4 className="font-bold text-sm">
                   {searchedPromo.description}
                 </h4>
               </div>
-              <p className="text-xs text-gray-500 ml-6">
+              <p className="text-xs text-gray ml-6">
                 Kode Diskon: <span className="font-bold text-primary">{searchedPromo.code}</span>
               </p>
             </div>

@@ -32,6 +32,8 @@ import TableInfoPage from "../pages/kiosk/TableInfoPage";
 import MenuPage from "../pages/kiosk/MenuPage";
 import CartPage from "../pages/kiosk/CartPage";
 import CheckoutPage from "../pages/kiosk/CheckoutPage";
+import PaymentPage from "../pages/kiosk/PaymentPage";
+import OrderSuccessPage from "../pages/kiosk/OrderSuccessPage";
 
 const router = createBrowserRouter([
 
@@ -75,7 +77,9 @@ const router = createBrowserRouter([
       { path: "/kiosk/info-meja", Component: TableInfoPage },
       { path: "/kiosk/menu", Component: MenuPage },
       { path: "kiosk/keranjang", Component: CartPage},
-      { path: "kiosk/checkout", Component: CheckoutPage}
+      { path: "kiosk/checkout", Component: CheckoutPage},
+      { path: "kiosk/pembayaran", Component: PaymentPage},
+      { path: "kiosk/pesanan-berhasil", Component: OrderSuccessPage}
     ],
   },
   {
