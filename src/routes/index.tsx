@@ -31,6 +31,11 @@ import GuestInputPage from "../pages/kiosk/GuestInputPage";
 import TableInfoPage from "../pages/kiosk/TableInfoPage";
 import MenuPage from "../pages/kiosk/MenuPage";
 
+import MenuCardOnline from "../pages/customer/MenuPageOnline"
+import CartPageOnline from "../pages/customer/CartPageOnline";
+import CheckoutPage from "../pages/customer/CheckOutPage";
+import PaymentQRIS from "../components/PaymentQRIS/PaymentQRIS";
+
 const router = createBrowserRouter([
 
   {
@@ -76,7 +81,16 @@ const router = createBrowserRouter([
   },
   {
     element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />, 
-    children: [{ path: "/customer/home", Component: CustomerHomePage }],
+    children: [
+      { path: "/customer/home", Component: CustomerHomePage },
+      { path: "/customer/menu", Component: MenuCardOnline },
+      { path: "/customer/cart", Component: CartPageOnline },
+      { path: "/customer/checkout", Component: CheckoutPage },
+      { path: "/customer/payment", Component: PaymentQRIS},
+
+      
+      
+    ],
   },
 
 

@@ -6,12 +6,19 @@ export interface CartItem extends MenuItem {
   cartId: string; // ID unik untuk membedakan pesanan dengan catatan berbeda
   qty: number;
   notes: string;
+  checked?: boolean;
+  
 }
 
 interface CartStore {
   items: CartItem[];
   addToCart: (item: MenuItem, qty: number, notes: string) => void;
   getTotalItems: () => number;
+  updateQty: (cartId: string, qty: number) => void;
+  updateNotes: (cartId: string, newNotes: string) => void;
+  removeItem: (cartId: string) => void;
+  toggleChecked: (cartId: string) => void;
+  toggleAllChecked: (status: boolean) => void;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -24,7 +31,7 @@ export const useCartStore = create<CartStore>()(
 
         set((state) => {
           const existingItemIndex = state.items.findIndex(
-            (i) => i.id === item.id && i.notes === notes
+            (i) => i.id === item.id && i.notes === notes,
           );
 
           if (existingItemIndex > -1) {
@@ -45,9 +52,39 @@ export const useCartStore = create<CartStore>()(
       getTotalItems: () => {
         return get().items.reduce((total, item) => total + item.qty, 0);
       },
+
+      updateQty: (cartId, qty) => {
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.cartId === cartId ? { ...item, qty: Math.max(1, qty) } : item,
+          ),
+        }));
+      },
+      updateNotes: (cartId, newNotes) => {
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.cartId === cartId ? { ...item, notes: newNotes } : item,
+          ),
+        }));
+      },
+      removeItem: (cartId) => {
+        set((state) => ({
+          items: state.items.filter((item) => item.cartId !== cartId),
+        }));
+      },
+      toggleChecked: (cartId) =>
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.cartId === cartId ? { ...item, checked: !item.checked } : item,
+          ),
+        })),
+      toggleAllChecked: (status) =>
+        set((state) => ({
+          items: state.items.map((item) => ({ ...item, checked: status })),
+        })),
     }),
     {
       name: "its-resto-cart", // 3. NAMA KUNCI DI LOCAL STORAGE
-    }
-  )
+    },
+  ),
 );
