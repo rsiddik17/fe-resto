@@ -29,6 +29,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [successItemName, setSuccessItemName] = useState<string | null>(null);
+  
   const addToCart = useCartStore((state) => state.addToCart);
   const cart = useCartStore((state) => state.items || []);
   const recommendationMenu = useMemo(() => {

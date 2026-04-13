@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { ArrowLeft, Plus, Minus, FileText } from "lucide-react";
 import { useCartStore } from "../../store/useCartStore";
 import Header from "../../components/Header/Header";
-import EditNoteModal from "../../components/EditNoteModal/EditNoteModal";
+import EditNoteModal from "../../components/EditNoteModalOnline/EditNoteModalOnline";
 
 interface CartItem {
   cartId: string;

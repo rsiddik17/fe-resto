@@ -5,7 +5,7 @@ import Header from "../../components/Header/Header";
 import Button from "../../components/ui/Button";
 import AddressModal from "../../components/AddressModal/AddressModal"; // Tambahkan import ini
 import { ArrowLeft, MapPin, FileText, Info, Wallet, Bike } from "lucide-react";
-import DiscountSection from "../../components/DiscountSection/DiscountSection";
+import DiscountSection from "../../components/DiscountSectionOnline/DiscountSectionOnine";
 
 interface Address {
   id: string;
