@@ -19,7 +19,7 @@ interface MenuCardProps {
 
 const MenuCard = ({ children }: MenuCardProps) => {
   return (
-    <div className="bg-white rounded-2xl p-3 shadow-sm border border-secondary/10 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-2xl p-2.5 shadow-sm border border-secondary/10 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow">
       {children}
     </div>
   );
@@ -33,7 +33,7 @@ interface HeaderProps {
 
 const Header = ({ image, name }: HeaderProps) => {
   return (
-    <div className="w-full h-48 rounded-xs bg-gray/25 relative shrink-0">
+    <div className="w-full h-56.25 rounded-sm bg-gray/25 relative shrink-0">
       <img src={image} alt={name} loading="lazy" className="w-full h-full object-cover" />
     </div>
   );
@@ -57,7 +57,7 @@ const Body = ({ name, price, description }: BodyProps) => {
   const formattedPrice = rupiahFormatter.format(price);
   return (
     // flex-1 agar body mengambil sisa ruang kosong (membantu footer selalu di bawah)
-    <div className="pt-4 pb-0 flex flex-col flex-1">
+    <div className="pt-2 pb-0 flex flex-col flex-1">
       <h3 className="font-bold text-lg text-black mb-2 line-clamp-1">{name}</h3>
       <p className="text-primary font-bold text-base mb-1">{formattedPrice}</p>
       <p className="text-gray-500 text-xs line-clamp-2 leading-relaxed mb-3 flex-1">

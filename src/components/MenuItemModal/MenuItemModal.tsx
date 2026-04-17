@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { ArrowLeft, Minus, Plus, NotebookPen, ShoppingCart } from "lucide-react";
+import { ArrowLeft, Minus, Plus } from "lucide-react";
 import { type MenuItem } from "../MenuCard/MenuCard";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import { cn } from "../../utils/utils";
+import AddToCartIcon from "../Icon/AddToCartIcon";
+import AddNotesIcon from "../Icon/AddNotesIcon";
 
 interface MenuItemModalProps {
   item: MenuItem;
@@ -39,11 +41,11 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
 
   return (
     <div
-      className="fixed inset-0 z-100 flex items-center justify-center backdrop-blur-[2px] p-4"
+      className="fixed inset-0 z-100 flex items-center justify-center bg-black/1 backdrop-blur-[3px] p-4"
       onClick={onClose} // Menutup modal jika klik area luar
     >
       <div
-        className="bg-white w-full p-5.5 max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col animate-in zoom-in-95 duration-200"
+        className="bg-white w-full p-5.5 max-w-md rounded-2xl overflow-hidden shadow-sm flex flex-col animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup jika isinya diklik
       >
         {/* --- HEADER: GAMBAR & TOMBOL KEMBALI --- */}
@@ -103,7 +105,7 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
 
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <NotebookPen className="text-gray/50" size={18} />
+              <AddNotesIcon className="text-gray/50" />
             </div>
             <Input
               type="text"
@@ -122,7 +124,7 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
               qty === 0 && "opacity-50 cursor-not-allowed",
             )}
           >
-            <ShoppingCart size={20} /> + Tambah ke Keranjang
+            <AddToCartIcon /> + Tambah ke Keranjang
           </Button>
         </div>
       </div>

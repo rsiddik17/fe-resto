@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { ChevronRight } from "lucide-react";
 import Button from "../ui/Button";
+import TableIcon from "../Icon/TableIcon";
 
 interface TableInfoCardProps {
   tableNumber: string;
@@ -23,55 +24,46 @@ const TableInfoCard = ({ tableNumber }: TableInfoCardProps) => {
   };
 
   return (
-    <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col">
+    <div className="w-full max-w-xl bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col">
       
       {/* --- BAGIAN ATAS: UNGU MUDA --- */}
-      <div className="bg-primary/15 w-full pt-10 pb-6 flex flex-col items-center justify-center">
+      <div className="bg-primary/15 w-full pt-12 pb-6 flex flex-col items-center justify-center">
         {/* Lingkaran Ikon */}
-        <div className="w-36 h-36 bg-primary/30 rounded-full flex items-center justify-center mb-8">
+        <div className="w-40 h-40 bg-primary/30 rounded-full flex items-center justify-center mb-6">
           {/* Custom SVG Icon Meja */}
-          <svg 
-            width="70" height="70" viewBox="0 0 24 24" 
-            fill="none" stroke="#5A189A" strokeWidth="2.5" 
-            strokeLinecap="round" strokeLinejoin="round"
-          >
-            <path d="M3 10h18" />
-            <path d="M12 10v7" />
-            <path d="M9 21l3-4 3 4" />
-            <ellipse cx="12" cy="10" rx="9" ry="3" fill="#5A189A" />
-          </svg>
+          <TableIcon className="text-primary" />
         </div>
         <p className="text-primary font-bold text-lg">Penentuan Meja Otomatis</p>
       </div>
 
       {/* --- BAGIAN BAWAH: PUTIH --- */}
-      <div className="w-full px-8 py-8 flex flex-col items-center">
+      <div className="w-full px-8 pt-4 pb-8 flex flex-col items-center">
         
         {/* Badge Informasi */}
-        <div className="bg-primary/20 text-primary px-4 py-1.5 rounded-full flex items-center gap-2 mb-4">
+        <div className="bg-primary/20 text-primary px-7 py-1.5 rounded-full flex items-center gap-2 mb-2">
           <div className="w-2 h-2 bg-primary rounded-full"></div>
           <span className="text-sm font-bold">Informasi Meja</span>
         </div>
 
         {/* Nomor Meja */}
-        <h2 className="text-4xl font-extrabold text-primary mb-3">
+        <h2 className="text-4xl font-bold text-primary mb-4">
           {tableNumber}
         </h2>
         
         {/* Teks Sub-judul */}
-        <h3 className="text-xl font-bold text-black mb-3">
+        <h3 className="text-2xl font-bold text-black mb-3">
           Anda berada di Meja {rawNumber}
         </h3>
 
         {/* Teks Instruksi */}
-        <p className="text-center text-gray/75 text-base mb-6 px-4 leading-relaxed">
+        <p className="text-center text-gray/75 text-lg mb-7 px-4 leading-relaxed">
           Lanjutkan untuk melihat menu dan mulai <br /> memesan
         </p>
 
         {/* Tombol Lihat Menu */}
         <Button 
           onClick={handleLanjut} 
-          className="w-full py-4 text-lg flex items-center justify-center cursor-pointer"
+          className="w-full max-w-115 py-4 text-lg flex items-center justify-center cursor-pointer"
         >
           Lihat Menu <ChevronRight size={32} />
         </Button>
@@ -79,7 +71,7 @@ const TableInfoCard = ({ tableNumber }: TableInfoCardProps) => {
         {/* Tombol Batal */}
         <Button 
           onClick={handleBatal}
-          className="mt-5 bg-transparent shadow-none hover:bg-transparent font-medium text-gray/75 underline hover:text-gray/90 transition-colors p-0 h-auto"
+          className="mt-2 bg-transparent shadow-none hover:bg-transparent font-medium text-gray/75 underline hover:text-gray/90 transition-colors p-0 h-auto"
         >
           Batal
         </Button>

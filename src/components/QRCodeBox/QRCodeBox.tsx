@@ -33,22 +33,22 @@ const QRCodeBox = ({ finalPayment, onExpire }: QRCodeBoxProps) => {
 
   return (
     <div className="bg-white rounded-md p-6 flex flex-col items-center shadow-sm text-center">
-      <p className="text-gray text-xl mb-2">Total Pembayaran</p>
-      <h2 className="text-3xl font-bold text-primary mb-6">
+      <p className="text-gray text-2xl mb-2.5">Total Pembayaran</p>
+      <h2 className="text-4xl font-bold text-primary mb-7">
         Rp{finalPayment.toLocaleString("id-ID")}
       </h2>
 
-      <p className="text-xl mb-3">Scan QRIS untuk melakukan pembayaran</p>
-      <p className="text-xl mb-6">
+      <p className="text-2xl mb-6">Scan QRIS untuk melakukan pembayaran</p>
+      <p className="text-2xl mb-6">
         Selesaikan pembayaran dalam <span className="font-bold">{minutes}:{seconds}</span>
       </p>
 
       {/* RENDER QR CODE DI SINI */}
       <div className="inline-block mb-6">
-        <QRCodeSVG value={qrisData} size={400} level="H" />
+        <QRCodeSVG value={qrisData} size={425} level="L" />
       </div>
 
-      <p className="text-gray text-lg">
+      <p className="text-gray text-2xl">
         Scan dengan e-wallet atau mobile banking anda
       </p>
     </div>

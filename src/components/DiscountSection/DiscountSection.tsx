@@ -46,10 +46,10 @@ const DiscountSection = ({ onApplyDiscount }: DiscountSectionProps) => {
 
   return (
     <div className="w-full">
-      <h3 className="text-xl font-bold mb-2">Diskon</h3>
+      <h3 className="text-3xl font-bold mb-2">Diskon</h3>
       
       {/* Container Utama Diskon */}
-      <div className="border border-primary rounded-md p-4 md:p-5 h-60 flex flex-col gap-4 bg-white">
+      <div className="border border-primary rounded-md p-4 md:p-5 h-70 flex flex-col gap-4 bg-white">
         
         {/* Baris Input & Tombol Cari */}
         <div className="flex gap-4">
@@ -58,12 +58,12 @@ const DiscountSection = ({ onApplyDiscount }: DiscountSectionProps) => {
             placeholder="Masukkan kode diskon"
             value={inputCode}
             onChange={(e) => setInputCode(e.target.value)}
-            className="max-w-lg flex-1 border-2 focus:border-white"
+            className="max-w-lg flex-1 py-3 text-xl border-2 focus:border-white"
           />
           <Button 
             onClick={handleSearchPromo} 
             variant={inputCode.trim() ? "primary" : "outline"}
-            className="px-8 w-full max-w-1/5 py-3 rounded-sm font-bold"
+            className="px-8 w-full max-w-1/5 py-3 text-xl rounded-sm font-bold"
           >
             Cari
           </Button>
@@ -71,7 +71,7 @@ const DiscountSection = ({ onApplyDiscount }: DiscountSectionProps) => {
 
         {/* Baris Hasil Pencarian Promo (Muncul kalau ada hasil) */}
         {searchedPromo && (
-          <div className="w-full max-w-lg border-2 border-secondary rounded-xs p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+          <div className="w-full max-w-lg border-2 border-secondary rounded-xs p-5 flex flex-col gap-4 mt-2">
             
             {/* Info Promo Kiri */}
             <div className="flex flex-col gap-1.5">
@@ -79,11 +79,11 @@ const DiscountSection = ({ onApplyDiscount }: DiscountSectionProps) => {
                 <div className="bg-primary rounded-full p-1 shrink-0">
                   <Percent size={12} strokeWidth={4} className="text-white" />
                 </div>
-                <h4 className="font-bold text-sm">
+                <h4 className="font-bold text-xl">
                   {searchedPromo.description}
                 </h4>
               </div>
-              <p className="text-xs text-gray ml-6">
+              <p className="text-xl ml-6">
                 Kode Diskon: <span className="font-bold text-primary">{searchedPromo.code}</span>
               </p>
             </div>
@@ -93,7 +93,7 @@ const DiscountSection = ({ onApplyDiscount }: DiscountSectionProps) => {
               onClick={handleApplyPromo}
               disabled={isApplied}
               variant={isApplied ? "outline" : "primary"}
-              className="px-8 py-2.5 rounded-xs font-medium text-sm sm:w-auto w-full disabled:border-primary disabled:text-primary"
+              className="self-end px-8 py-2.5 rounded-xs font-medium text-xl sm:w-auto max-w-37.5 disabled:border-primary disabled:text-primary"
             >
               {isApplied ? "Dipakai" : "Pakai"}
             </Button>

@@ -37,19 +37,19 @@ const CartPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-secondary/25 pb-28 relative flex flex-col">
+    <div className="min-h-screen bg-secondary/25 pb-14 relative flex flex-col">
       <Header />
 
-      <main className="flex-1 w-full max-w-3xl mx-auto px-4 pt-6">
+      <main className="flex-1 w-full max-w-3xl mx-auto px-0 pt-6">
         {/* --- JUDUL & TOMBOL KEMBALI --- */}
         <div className="mb-6">
           <button
             onClick={handleBackToMenu}
-            className="flex items-center gap-2 text-2xl font-bold text-black hover:opacity-70 transition-opacity mb-1"
+            className="flex items-center gap-2 text-[28px] font-bold text-black hover:opacity-70 transition-opacity mb-1"
           >
             <ArrowLeft size={24} strokeWidth={3} /> Keranjang
           </button>
-          {items.length > 0 && <p className="text-gray ml-1">Meja-02</p>}
+          {items.length > 0 && <p className="text-gray text-2xl ml-1">Meja-02</p>}
           {/* Nanti ini bisa dinamis dari state */}
         </div>
 
@@ -83,14 +83,14 @@ const CartPage = () => {
               alt="Keranjang Kosong"
               className="w-64 md:w-100 mb-8 opacity-90"
             />
-            <p className="text-gray-500 text-xl mb-8 text-center">
+            <p className="text-gray text-2xl mb-8 text-center">
               Keranjangmu masih kosong, yuk pilih menu!
             </p>
             <Button
               onClick={handleBackToMenu}
-              className="px-8 w-full max-w-sm py-2 rounded-full flex justify-center items-center gap-2"
+              className="px-8 w-full max-w-sm py-2.5 rounded-full flex justify-center items-center gap-2"
             >
-              <Plus size={18} /> <span className="font-light">Tambah Menu</span>
+              <Plus size={18} /> <span className="font-bold text-xl">Tambah Menu</span>
             </Button>
           </div>
         )}
@@ -98,8 +98,7 @@ const CartPage = () => {
 
       {/* --- STICKY BOTTOM BAR --- */}
       {items.length > 0 && (
-        <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 px-6 md:px-12 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-          <div className="max-w-3xl mx-auto">
+          <div className="w-full max-w-xl mx-auto">
             <Button
               onClick={handleProceedToPayment}
               className="w-full py-4 rounded-full font-bold text-lg"
@@ -107,7 +106,6 @@ const CartPage = () => {
               Lanjut ke Pembayaran
             </Button>
           </div>
-        </div>
       )}
 
       {/* RENDER MODAL EDIT CATATAN */}

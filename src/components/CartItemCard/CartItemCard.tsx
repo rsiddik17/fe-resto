@@ -1,6 +1,7 @@
 import { Minus, Plus, FileText } from "lucide-react";
 import { type CartItem } from "../../store/useCartStore";
 import Button from "../ui/Button";
+import NotesIcon from "../Icon/NotesIcon";
 
 interface CartItemCardProps {
   item: CartItem;
@@ -17,10 +18,10 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
 
 const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote }: CartItemCardProps) => {
   return (
-    <div className="bg-white rounded-sm shadow-sm border border-gray-100 p-4 flex gap-4">
+    <div className="bg-white rounded-sm shadow-sm border-2 border-gray/25 p-5 flex gap-4">
       
       {/* Gambar Kiri */}
-      <div className="w-22 h-22 bg-gray-200 rounded-sm shrink-0 overflow-hidden">
+      <div className="w-25 h-25 bg-gray-200 rounded-sm shrink-0 overflow-hidden">
         <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
       </div>
 
@@ -29,23 +30,23 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote }: CartItemCard
         
         {/* Baris Atas: Nama & Harga */}
         <div className="flex justify-between items-start">
-          <h3 className="font-bold text-2xl leading-tight line-clamp-1">{item.name}</h3>
-          <span className="font-bold text-primary text-xl whitespace-nowrap">
+          <h3 className="font-bold text-2xl leading-tight line-clamp-1 translate-y-2">{item.name}</h3>
+          <span className="font-bold text-primary text-2xl whitespace-nowrap">
             {rupiahFormatter.format(item.price * item.qty)}
           </span>
         </div>
 
         {/* Baris Bawah: Catatan & Kontrol Qty */}
-        <div className="flex justify-between items-end gap-2 mt-3">
+        <div className="flex justify-between items-end gap-2 mt-5">
           
           {/* Teks Catatan */}
          <div className="flex-1">
             <Button 
               onClick={() => onEditNote(item.cartId, item.notes)}
-              className="flex items-center gap-1.5 bg-secondary/80 text-gray px-4 py-2.5 rounded-xs font-normal w-75 cursor-pointer text-left"
+              className="flex items-center gap-1.5 bg-gray/15 text-gray px-4 py-2.5 rounded-xs font-normal w-75 cursor-pointer text-left"
             >
-              <FileText size={14} className="shrink-0" />
-              <span className="text-xs truncate">
+              <NotesIcon className="shrink-0" />
+              <span className="text-lg truncate">
                 {item.notes ? item.notes : "Tidak ada catatan"}
               </span>
             </Button>
@@ -56,6 +57,7 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote }: CartItemCard
               onClick={() => onDecrease(item.cartId)}
               variant="outline"
               size="icon"
+              className="w-9 h-9"
             >
               <Minus size={14} strokeWidth={2.5} />
             </Button>
@@ -64,6 +66,7 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote }: CartItemCard
               onClick={() => onIncrease(item.cartId)}
               variant="outline"
               size="icon"
+              className="w-9 h-9"
             >
               <Plus size={14} strokeWidth={2.5} />
             </Button>

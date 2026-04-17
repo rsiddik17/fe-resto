@@ -1,6 +1,8 @@
-import { LayoutGrid, UtensilsCrossed, Martini } from "lucide-react";
 import { cn } from "../../utils/utils";
 import Button from "../ui/Button";
+import AllMenuIcon from "../Icon/AllMenuIcon";
+import FoodIcon from "../Icon/FoodIcon";
+import DrinkIcon from "../Icon/DrinkIcon";
 
 type CategoryType = "semua" | "makanan" | "minuman";
 
@@ -13,8 +15,8 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsProps) =
   
   // Fungsi helper untuk style
   const getBtnStyle = (category: CategoryType) => 
-    cn("flex flex-col items-center p-2 justify-center w-26 h-18 rounded-md transition-colors shrink-0", 
-        activeCategory === category ? "bg-[#A779C2] text-white" : "bg-gray-200 text-gray-500 hover:bg-gray-300");
+    cn("flex flex-col items-center p-2 justify-center w-25 h-17 rounded-md transition-colors shrink-0", 
+        activeCategory === category ? "bg-primary/50 text-primary" : "bg-gray/25 text-white hover:bg-gray-400");
 
   return (
     <div className="flex items-center gap-3 mb-3 overflow-x-auto pb-2 scrollbar-hide">
@@ -22,15 +24,15 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsProps) =
         onClick={() => onCategoryChange("semua")}
         className={getBtnStyle("semua")}
       >
-        <LayoutGrid size={32} />
-        <span className="text-sm font-semibold mt-1">Semua</span>
+        <AllMenuIcon className="w-7.25 h-7.25 shrink-0" />
+        <span className="text-lg font-semibold">Semua</span>
       </Button>
       
       <Button
         onClick={() => onCategoryChange("makanan")}
         className={getBtnStyle("makanan")}
       >
-        <UtensilsCrossed size={32} />
+        <FoodIcon className="w-7.25 h-7.25 shrink-0" />
         <span className="text-sm font-semibold mt-1">Makanan</span>
       </Button>
       
@@ -38,7 +40,7 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsProps) =
         onClick={() => onCategoryChange("minuman")}
         className={getBtnStyle("minuman")}
       >
-        <Martini size={32} />
+        <DrinkIcon className="w-7.25 h-7.25 shrink-0" />
         <span className="text-sm font-semibold mt-1">Minuman</span>
       </Button>
     </div>

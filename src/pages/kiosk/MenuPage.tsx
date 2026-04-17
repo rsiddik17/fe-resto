@@ -62,7 +62,7 @@ const MenuPage = () => {
       {/* HEADER LOGO */}
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 md:px-10 pt-6">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-6">
         
         {/* HERO SECTION & PENCARIAN */}
         <HeroSection 
