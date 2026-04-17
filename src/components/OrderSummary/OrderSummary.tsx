@@ -28,21 +28,21 @@ const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0, adminFee = 0
         
         {/* Subtotal */}
         <div className="flex justify-between items-center">
-          <span className="text-xl">Total Pesanan</span>
-          <span className="font-medium text-xl">{rupiahFormatter.format(subTotal)}</span>
+          <span className="text-3xl">Total Pesanan</span>
+          <span className="text-3xl">{rupiahFormatter.format(subTotal)}</span>
         </div>
 
         {/* PPN */}
         <div className="flex justify-between items-center">
-          <span className="text-xl">PPN {taxRate}%</span>
-          <span className="font-medium text-xl">{rupiahFormatter.format(taxAmount)}</span>
+          <span className="text-3xl">PPN {taxRate}%</span>
+          <span className="text-3xl">{rupiahFormatter.format(taxAmount)}</span>
         </div>
 
         {/* Diskon (Hanya muncul jika ada diskon) */}
         {discountAmount > 0 && (
           <div className="flex justify-between items-center">
-            <span className="text-xl">Diskon</span>
-            <span className="font-medium text-xl"> {/* Beri warna beda agar mencolok */}
+            <span className="text-3xl">Diskon</span>
+            <span className="text-3xl"> {/* Beri warna beda agar mencolok */}
               -{rupiahFormatter.format(discountAmount)}
             </span>
           </div>
@@ -50,8 +50,8 @@ const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0, adminFee = 0
 
         {adminFee > 0 && (
           <div className="flex justify-between items-center">
-            <span className="text-lg">Biaya Admin</span>
-            <span className="font-bold text-lg">Rp{adminFee}</span>
+            <span className="text-3xl">Biaya Admin</span>
+            <span className="text-3xl">Rp{adminFee}</span>
           </div>
         )}
 
@@ -59,8 +59,8 @@ const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0, adminFee = 0
 
       {/* --- TOTAL AKHIR --- */}
       <div className="flex justify-between items-center mt-1">
-        <span className="font-bold text-xl">Total Pembayaran</span>
-        <span className="font-bold text-xl">
+        <span className="font-bold text-3xl">Total Pembayaran</span>
+        <span className="font-bold text-3xl">
           {rupiahFormatter.format(grandTotal)}
         </span>
       </div>
@@ -70,7 +70,7 @@ const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0, adminFee = 0
         <AlertInfo 
           className="mt-2"
           title="Informasi Pembayaran"
-          description="Setelah konfirmasi pesanan, biaya admin akan ditambahkan pada nominal QRIS."
+          description="Setelah konfirmasi pesanan, biaya admin akan ditambahkan."
         />
       )}
 

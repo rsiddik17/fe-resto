@@ -11,10 +11,10 @@ interface HeaderProps {
 
 const Header = ({ navLinks }: HeaderProps) => {
   return (
-    <header className="bg-white py-3 px-6 md:px-12 flex items-center justify-between border-b border-gray/50">
+    <header className="bg-white h-27.5 py-3 px-2 md:px-4 flex items-center justify-between border-b border-gray/50">
       <div className="flex items-center">
-        <img src="/images/logo.webp" alt="Logo" width="54" height="60" className="h-12" />
-        <span className="ml-3 text-primary font-bold text-2xl">IT'S Resto</span>
+        <img src="/images/logo.webp" alt="Logo" className="w-23.75 h-23.75" />
+        <span className="ml-3 text-primary font-bold text-4xl">IT'S Resto</span>
       </div>
 
       {/* Navigasi (Hanya muncul jika navLinks dikirim) */}

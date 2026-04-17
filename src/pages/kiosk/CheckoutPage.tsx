@@ -72,20 +72,20 @@ const CheckoutPage = () => {
     <div className="min-h-screen bg-white pb-16 relative flex flex-col">
       <Header />
 
-      <main className="flex-1 w-full max-w-3xl mx-auto px-4 pt-6">
+      <main className="flex-1 w-full max-w-3xl mx-auto px-0 pt-6">
         
         {/* --- HEADER CHECKOUT --- */}
         <div className="border-b border-gray-100 pb-4">
           <button 
             onClick={handleBack}
-            className="flex items-center gap-2 text-2xl font-bold mb-1"
+            className="flex items-center gap-2 text-3xl font-bold mb-1"
           >
             <ArrowLeft size={24} strokeWidth={3} /> Ringkasan Pesanan
           </button>
           
-          <div className="ml-1 mt-1">
-            <p className="text-gray text-sm mb-2">Nomor meja</p>
-            <p className="font-extrabold text-primary text-base">Meja 02</p>
+          <div className="mt-1">
+            <p className="text-gray text-xl mb-2">Nomor meja</p>
+            <p className="font-extrabold text-primary text-2xl">Meja 02</p>
           </div>
         </div>
 
@@ -105,7 +105,7 @@ const CheckoutPage = () => {
         />
 
         {/* --- KODE PROMO / DISKON --- */}
-        <div className="mt-4 mb-4">
+        <div className="mt-8 mb-4">
           <DiscountSection onApplyDiscount={handleApplyDiscount} />
         </div>
 

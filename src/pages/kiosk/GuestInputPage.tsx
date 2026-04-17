@@ -4,11 +4,11 @@ const GuestInputPage = () => {
   return (
     <div className="w-full h-screen flex flex-col bg-linear-to-b from-primary/0 to-primary/15 relative overflow-hidden">
       {/* Logo di atas */}
-      <div className="absolute top-12 w-full flex justify-center z-10">
+      <div className="absolute top-10 w-full flex justify-center z-10">
         <img
           src="/images/logo.webp"
           alt="Logo IT'S RESTO"
-          className="w-70 object-cover"
+          className="w-72 object-cover"
         />
       </div>
       <FormGuestInput />
