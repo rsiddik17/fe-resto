@@ -1,4 +1,4 @@
-import { Clock, CheckCircle2 } from "lucide-react";
+import { Clock } from "lucide-react";
 import { type PaymentStatus } from "../../hooks/useOrderPayment";
 import SuccessIcon from "../Icon/SuccessIcon";
 
