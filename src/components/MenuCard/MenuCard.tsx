@@ -1,5 +1,6 @@
 import type React from "react";
 import Button from "../ui/Button";
+import { cn } from "../../utils/utils";
 
 // --- INTERFACES ---
 export interface MenuItem {
@@ -19,7 +20,7 @@ interface MenuCardProps {
 
 const MenuCard = ({ children }: MenuCardProps) => {
   return (
-    <div className="bg-white rounded-2xl p-2.5 shadow-sm border border-secondary/10 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-2xl p-2.5 shadow-sm border border-secondary/10 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow relative">
       {children}
     </div>
   );
@@ -29,12 +30,24 @@ const MenuCard = ({ children }: MenuCardProps) => {
 interface HeaderProps {
   image: string;
   name: string;
+  isOutOfStock?: boolean;
 }
 
-const Header = ({ image, name }: HeaderProps) => {
+const Header = ({ image, name, isOutOfStock = false }: HeaderProps) => {
   return (
-    <div className="w-full h-56.25 rounded-sm bg-gray/25 relative shrink-0">
-      <img src={image} alt={name} loading="lazy" className="w-full h-full object-cover" />
+    <div className="w-full h-56.25 rounded-sm bg-gray/25 relative shrink-0 overflow-hidden">
+      <img src={image} alt={name} loading="lazy" className={cn(
+          "w-full h-full object-cover transition-opacity",
+          isOutOfStock ? "opacity-50 grayscale-30" : "opacity-100"
+        )} />
+
+        {isOutOfStock && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-28 h-28 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xlx` shadow-lg">
+            Habis
+          </div>
+        </div>
+      )}
     </div>
   );
 };
