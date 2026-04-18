@@ -6,6 +6,7 @@ interface OrderSummaryProps {
   discountAmount?: number; // Nominal diskon
   adminFee?: number; 
   hideAlertInfo?: boolean;
+  discountActionNode?: React.ReactNode;
 }
 
 const rupiahFormatter = new Intl.NumberFormat("id-ID", {
@@ -14,7 +15,7 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
   minimumFractionDigits: 0,
 });
 
-const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0, adminFee = 0, hideAlertInfo = false }: OrderSummaryProps) => {
+const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0, adminFee = 0, hideAlertInfo = false, discountActionNode }: OrderSummaryProps) => {
   
   // Kalkulasi Angka (Ditempatkan di sini agar komponen luar tidak pusing menghitung PPN)
   const taxAmount = subTotal * (taxRate / 100);
@@ -56,6 +57,12 @@ const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0, adminFee = 0
         )}
 
       </div>
+
+      {discountActionNode && (
+        <div className="mt-2 mb-2">
+          {discountActionNode}
+        </div>
+      )}
 
       {/* --- TOTAL AKHIR --- */}
       <div className="flex justify-between items-center mt-1">

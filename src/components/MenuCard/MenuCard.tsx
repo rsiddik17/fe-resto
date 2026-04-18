@@ -90,7 +90,7 @@ const Footer = ({ onAdd }: FooterProps) => {
     <div className="px-2.5 py-0 mt-auto">
       <Button
         onClick={onAdd}
-        className="w-full py-2 rounded-full text-sm font-semibold"
+        className="w-full py-2 rounded-full text-sm font-normal"
       >
         Tambah
       </Button>
