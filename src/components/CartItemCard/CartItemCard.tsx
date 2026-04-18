@@ -1,4 +1,4 @@
-import { Minus, Plus, FileText } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { type CartItem } from "../../store/useCartStore";
 import Button from "../ui/Button";
 import NotesIcon from "../Icon/NotesIcon";
@@ -8,6 +8,7 @@ interface CartItemCardProps {
   onIncrease: (cartId: string) => void;
   onDecrease: (cartId: string) => void;
   onEditNote: (cartId: string, currentNote: string) => void;
+  onDeletePrompt: (cartId: string) => void;
 }
 
 const rupiahFormatter = new Intl.NumberFormat("id-ID", {
@@ -16,7 +17,7 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
   minimumFractionDigits: 0,
 });
 
-const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote }: CartItemCardProps) => {
+const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDeletePrompt }: CartItemCardProps) => {
   return (
     <div className="bg-white rounded-sm shadow-sm border-2 border-gray/25 p-5 flex gap-4">
       
@@ -54,7 +55,13 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote }: CartItemCard
           {/* Kontrol + / - */}
           <div className="flex items-center gap-3 bg-secondary rounded-sm shrink-0">
             <Button 
-              onClick={() => onDecrease(item.cartId)}
+              onClick={() => {
+                if (item.qty === 1) {
+                  onDeletePrompt(item.cartId); // Munculkan modal
+                } else {
+                  onDecrease(item.cartId); // Kurangi biasa
+                }
+              }}
               variant="outline"
               size="icon"
               className="w-9 h-9"

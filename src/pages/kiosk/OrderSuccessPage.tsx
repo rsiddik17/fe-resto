@@ -101,11 +101,10 @@ const OrderSuccessPage = () => {
       </main>
 
       {/* --- STICKY BOTTOM BAR --- */}
-        <div className="w-full max-w-xl mx-auto">
+        <div className="w-full max-w-xl mx-auto mt-1">
           <Button 
             onClick={handleSelesai} 
-            disabled={status === "PENDING"} 
-            className="w-full py-4 rounded-full font-bold text-xl disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-4 rounded-full font-bold text-xl"
           >
             Selesai
           </Button>

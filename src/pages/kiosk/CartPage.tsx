@@ -6,13 +6,16 @@ import CartItemCard from "../../components/CartItemCard/CartItemCard";
 import { useCartStore } from "../../store/useCartStore";
 import EditNoteModal from "../../components/EditNoteModal/EditNoteModal";
 import { useState } from "react";
+import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfirmModal";
 
 const CartPage = () => {
   const navigate = useNavigate();
 
   // Ambil state dan actions dari Zustand
-  const { items, updateQty, getTotalItems, updateNote } = useCartStore();
+  const { items, updateQty, getTotalItems, updateNote, removeItem } = useCartStore();
   const totalItems = getTotalItems();
+
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   const [editingNote, setEditingNote] = useState<{
     cartId: string;
@@ -35,6 +38,15 @@ const CartPage = () => {
       setEditingNote(null); // Tutup modal
     }
   };
+
+
+  const handleConfirmDelete = () => {
+    if (itemToDelete) {
+      removeItem(itemToDelete); // Hapus item dari Zustand Store
+      setItemToDelete(null); // Tutup modal
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-secondary/25 pb-14 relative flex flex-col">
@@ -72,6 +84,7 @@ const CartPage = () => {
                   onEditNote={(cartId, notes) =>
                     setEditingNote({ cartId, notes })
                   }
+                  onDeletePrompt={(cartId) => setItemToDelete(cartId)}
                 />
               ))}
             </div>
@@ -114,6 +127,13 @@ const CartPage = () => {
           initialNote={editingNote.notes}
           onClose={() => setEditingNote(null)}
           onSave={handleSaveNote}
+        />
+      )}
+
+      {itemToDelete && (
+        <DeleteConfirmModal 
+          onClose={() => setItemToDelete(null)}
+          onConfirm={handleConfirmDelete}
         />
       )}
     </div>

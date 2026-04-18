@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import Header from "../../components/Header/Header";
 import Button from "../../components/ui/Button";
 import OrderItemCard from "../../components/OrderItemCard/OrderItemCard";
 import OrderSummary from "../../components/OrderSummary/OrderSummary";
-import DiscountSection from "../../components/DiscountSection/DiscountSection";
 import { useCartStore } from "../../store/useCartStore";
+import DiscountModal from "../../components/DiscountModal/DiscountModal";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -17,6 +17,7 @@ const CheckoutPage = () => {
 
   // STATE HALAMAN CHECKOUT
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Proteksi: Jika keranjang kosong, paksa kembali ke Menu
   useEffect(() => {
@@ -27,10 +28,6 @@ const CheckoutPage = () => {
 
   const handleBack = () => {
     navigate("/kiosk/keranjang"); // Kembali ke halaman keranjang untuk edit
-  };
-
-  const handleApplyDiscount = (amount: number) => {
-    setDiscountAmount(amount);
   };
 
   const handleConfirmOrder = () => {
@@ -102,12 +99,28 @@ const CheckoutPage = () => {
           subTotal={subTotal} 
           taxRate={10} 
           discountAmount={discountAmount} 
+          discountActionNode={
+            discountAmount === 0 ? (
+              // TOMBOL TAMBAH DISKON
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                variant="outline"
+                className="w-full py-3 rounded-md font-bold border-2 border-primary text-primary flex items-center justify-center gap-2 hover:bg-primary/5"
+              >
+                <Plus size={20} strokeWidth={3} /> Tambah Diskon
+              </Button>
+            ) : (
+              // TOMBOL BATALKAN DISKON
+              <Button
+                onClick={() => setDiscountAmount(0)}
+                variant="outline"
+                className="w-full py-3 rounded-lg font-bold text-lg border-2 border-gray-200 text-gray-400 hover:bg-gray-50"
+              >
+                Batalkan Diskon
+              </Button>
+            )
+          }
         />
-
-        {/* --- KODE PROMO / DISKON --- */}
-        <div className="mt-8 mb-4">
-          <DiscountSection onApplyDiscount={handleApplyDiscount} />
-        </div>
 
       </main>
 
@@ -120,6 +133,16 @@ const CheckoutPage = () => {
             Konfirmasi Pesanan
           </Button>
       </div>
+
+
+      {/* RENDER MODAL DISKON */}
+      {isModalOpen && (
+        <DiscountModal 
+          onClose={() => setIsModalOpen(false)}
+          onApply={(amount) => setDiscountAmount(amount)}
+          subTotal={subTotal}
+        />
+      )}
 
     </div>
   );
