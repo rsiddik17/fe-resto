@@ -9,7 +9,7 @@ interface EditNoteModalProps {
   onSave: (note: string) => void;
 }
 
-const EditNoteModal = ({ item, onClose, onSave }: EditNoteModalProps) => {
+const EditNoteModalOnline = ({ item, onClose, onSave }: EditNoteModalProps) => {
   const [note, setNote] = useState(item.notes || "");
 
   return (
@@ -67,4 +67,4 @@ const EditNoteModal = ({ item, onClose, onSave }: EditNoteModalProps) => {
   );
 };
 
-export default EditNoteModal;
+export default EditNoteModalOnline;

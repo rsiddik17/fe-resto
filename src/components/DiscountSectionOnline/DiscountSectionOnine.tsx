@@ -1,89 +1,111 @@
 import { useState } from "react";
 import { Percent } from "lucide-react";
 
+interface PromoCode {
+  code: string;
+  description: string;
+  discountAmount: number;
+}
+
 interface DiscountSectionProps {
   onApplyDiscount: (amount: number) => void;
 }
 
-const DiscountSection = ({ onApplyDiscount }: DiscountSectionProps) => {
-  const [couponInput, setCouponInput] = useState("");
-  const [showCoupon, setShowCoupon] = useState(false);
+const DiscountSectionOnline = ({ onApplyDiscount }: DiscountSectionProps) => {
+  const [inputCode, setInputCode] = useState("");
+  const [searchedPromo, setSearchedPromo] = useState<PromoCode | null>(null);
   const [isApplied, setIsApplied] = useState(false);
 
-  const handleSearch = () => {
-    if (couponInput.toUpperCase() === "DSKIT5") {
-      setShowCoupon(true);
+  const handleSearchPromo = () => {
+    if (!inputCode.trim()) return;
+
+    // Simulasi data promo
+    const mockPromoFound: PromoCode = {
+      code: inputCode.toUpperCase(),
+      description: "Diskon 5rb min belanja 10.000",
+      discountAmount: 5000,
+    };
+    
+    setSearchedPromo(mockPromoFound);
+    setIsApplied(false);
+    onApplyDiscount(0);
+  };
+
+  const handleApplyPromo = () => {
+    if (searchedPromo) {
+      setIsApplied(true);
+      onApplyDiscount(searchedPromo.discountAmount);
     }
   };
 
-  const handleApply = () => {
-    setIsApplied(true);
-    onApplyDiscount(5000);
-  };
-
   return (
-    <div className="space-y-4 pt-2">
-      <h2 className="font-bold text-xl text-black">Diskon</h2>
+    <div className="w-full max-w-7xl mx-auto px-1 space-y-4">
+      {/* Font size sedikit mengecil di mobile agar proporsional */}
+      <h3 className="text-[20px] md:text-[22px] font-bold text-black ml-1">Diskon</h3>
       
-      {/* Box Utama dengan Border Ungu Tipis */}
-      <div className="bg-white rounded-2xl border border-primary/30 p-8 flex flex-col gap-6">
+      <div className="border border-primary rounded-[12px] p-4 md:p-6 bg-white min-h-auto md:min-h-55 flex flex-col transition-all">
         
-        {/* Baris Input dan Tombol Cari */}
-        <div className="flex gap-4">
+        {/* Row: Input & Cari - Menggunakan flex-col di mobile agar tidak sempit */}
+        <div className="flex flex-row gap-2 md:gap-4 mb-6">
           <input
             type="text"
             placeholder="Masukkan kode diskon"
-            value={couponInput}
-            onChange={(e) => setCouponInput(e.target.value)}
-            className="flex-1 bg-white border border-primary/40 rounded-xs px-5 py-3 outline-none focus:ring-1 focus:ring-primary/20 text-sm text-black"
+            value={inputCode}
+            onChange={(e) => setInputCode(e.target.value)}
+            className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-primary"
           />
+          
           <button 
-            onClick={handleSearch}
-            className="bg-white border border-primary text-primary px-10 py-3 rounded-xs font-bold text-sm hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+            onClick={handleSearchPromo}
+            // Tombol full width di mobile agar mudah di-tap jari
+            className={`w-full sm:w-auto px-4 sm:px-12 py-3 rounded-2xl text-[16px] transition-all active:scale-95 shadow-sm border ${
+              searchedPromo 
+                ? "bg-primary text-white border-primary" 
+                : "bg-white text-primary border-primary"
+            }`}
           >
             Cari
           </button>
         </div>
 
-        {/* Bagian Kartu Diskon */}
-        <div className="min-h-20">
-          {showCoupon ? (
-            <div className="bg-white border border-gray-100 rounded-xs p-6 flex flex-col gap-4 shadow-sm relative overflow-hidden ring-1 ring-gray-50">
-              
-              <div className="flex items-center gap-3">
-                {/* Ikon Persen Lingkaran Ungu */}
-                <div className="bg-primary p-1.5 rounded-full text-white flex items-center justify-center">
-                  <Percent size={14} strokeWidth={3} />
-                </div>
-                <p className="font-bold text-black text-[15px]">Diskon 5rb min belanja 10.000</p>
+        {/* Kotak Promo */}
+        {searchedPromo && (
+          <div className="w-full border border-gray-200 rounded-[20px] p-4 md:p-6 flex flex-col bg-white relative animate-in fade-in slide-in-from-top-2">
+            
+            {/* Bagian Atas: Ikon dan Teks */}
+            <div className="flex items-start gap-3 md:gap-4">
+              <div className="bg-primary rounded-full p-2 md:p-2.5 shrink-0 mt-0.5">
+                <Percent size={14} md:size={16} strokeWidth={4} className="text-white" />
               </div>
-
-              <div className="flex justify-between items-center pl-10">
-                <p className="text-xs text-gray-400">
-                  Kode Diskon: <span className="font-bold text-primary">DSKIT5</span>
+              <div className="space-y-1 md:space-y-2">
+                <h4 className="font-bold text-[16px] md:text-[18px] text-black leading-tight">
+                  {searchedPromo.description}
+                </h4>
+                <p className="text-[14px] md:text-[15px] text-black font-medium">
+                  Kode Diskon: <span className="text-primary font-bold">{searchedPromo.code}</span>
                 </p>
-                
-                <button
-                  onClick={handleApply}
-                  disabled={isApplied}
-                  className={`px-10 py-2 rounded-xs  text-sm transition-all border ${
-                    isApplied 
-                      ? "bg-gray-50 border-gray-200 text-gray-300 cursor-not-allowed" 
-                      : "bg-white border-primary text-primary hover:bg-primary/5"
-                  }`}
-                >
-                  {isApplied ? "Dipakai" : "Pakai"}
-                </button>
               </div>
             </div>
-          ) : (
-            /* Ruang kosong agar layout tidak melompat saat kartu muncul */
-            <div className="h-24"></div>
-          )}
-        </div>
+            
+            {/* Bagian Bawah: Tombol Pakai */}
+            <div className="w-full flex justify-end mt-4 md:mt-2">
+              <button
+                onClick={handleApplyPromo}
+                disabled={isApplied}
+                className={`w-full sm:w-auto sm:min-w-30 py-3 rounded-2xl border-2 text-[15px] md:text-[16px] transition-all active:scale-95 ${
+                  isApplied 
+                  ? "border-gray-300 text-gray-400 bg-gray-50 cursor-not-allowed" 
+                  : "border-primary text-primary hover:bg-primary/5"
+                }`}
+              >
+                {isApplied ? "Dipakai" : "Pakai"}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default DiscountSection;
+export default DiscountSectionOnline;

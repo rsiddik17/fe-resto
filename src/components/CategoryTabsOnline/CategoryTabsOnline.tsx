@@ -4,12 +4,12 @@ import Button from "../ui/Button";
 
 type CategoryType = "semua" | "makanan" | "minuman";
 
-interface CategoryTabsProps {
+interface CategoryTabsOnlineProps {
   activeCategory: CategoryType;
   onCategoryChange: (category: CategoryType) => void;
 }
 
-const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsProps) => {
+const CategoryOnlineTabs = ({ activeCategory, onCategoryChange }: CategoryTabsOnlineProps) => {
   
   // Fungsi helper untuk style
   const getBtnStyle = (category: CategoryType) => 
@@ -45,4 +45,4 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsProps) =
   );
 };
 
-export default CategoryTabs;
+export default CategoryOnlineTabs;

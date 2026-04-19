@@ -33,8 +33,12 @@ import MenuPage from "../pages/kiosk/MenuPage";
 
 import MenuCardOnline from "../pages/customer/MenuPageOnline"
 import CartPageOnline from "../pages/customer/CartPageOnline";
-import CheckoutPage from "../pages/customer/CheckOutPage";
-import PaymentQRIS from "../components/PaymentQRIS/PaymentQRIS";
+import CheckoutPageOnline from "../pages/customer/CheckOutPageOnline";
+import PaymentPageOnline from "../pages/customer/PaymentPageOnline";
+import PaymentSuccessOnline from "../pages/customer/PaymentSuccesOnline";
+import OrderTrackingPage from "../pages/customer/OrderTrackingPage";
+import OrderTrackingOnline from "../pages/customer/OrderTrackingOnline";
+import ProfilePage from "../pages/customer/ProfilPage";
 
 const router = createBrowserRouter([
 
@@ -84,11 +88,13 @@ const router = createBrowserRouter([
     children: [
       { path: "/customer/home", Component: CustomerHomePage },
       { path: "/customer/menu", Component: MenuCardOnline },
-      { path: "/customer/cart", Component: CartPageOnline },
-      { path: "/customer/checkout", Component: CheckoutPage },
-      { path: "/customer/payment", Component: PaymentQRIS},
-
-      
+      { path: "/customer/keranjang", Component: CartPageOnline },
+      { path: "/customer/checkout", Component: CheckoutPageOnline },
+      { path: "/customer/pembayaran", Component: PaymentPageOnline },
+      { path: "/customer/pembayaran-berhasil", Component: PaymentSuccessOnline },
+      {path: "/customer/pesanan", Component: OrderTrackingPage},
+      {path: "/customer/pantau-pesanan", Component: OrderTrackingOnline},
+      {path: "/customer/profil", Component: ProfilePage}
       
     ],
   },

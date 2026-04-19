@@ -2,19 +2,19 @@ import { Check } from "lucide-react";
 import Button from "../ui/Button";
 // import { useNavigate } from "react-router";
 
-interface SuccessModalProps {
+interface SuccessModalOnlineProps {
   itemName: string;
   onViewCart: () => void;
   onClose: () => void;
   mode?: "kiosk" | "online";
 }
 
-const SuccessModal = ({ 
+const SuccessModalOnline = ({ 
   itemName, 
   onViewCart, 
   onClose, 
   mode = "kiosk" 
-}: SuccessModalProps) => {
+}: SuccessModalOnlineProps) => {
   
   // 1. Definisikan gaya berdasarkan mode
   const isKiosk = mode === "kiosk";
@@ -73,4 +73,4 @@ const SuccessModal = ({
   );
 };
 
-export default SuccessModal;
+export default SuccessModalOnline;

@@ -1,13 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { type MenuItem } from "../components/MenuCard/MenuCard";
+import { type MenuItem } from "../components/MenuCardOnline/MenuCardOnline";
 
 export interface CartItem extends MenuItem {
   cartId: string; // ID unik untuk membedakan pesanan dengan catatan berbeda
   qty: number;
   notes: string;
   checked?: boolean;
-  
 }
 
 interface CartStore {
@@ -19,6 +18,9 @@ interface CartStore {
   removeItem: (cartId: string) => void;
   toggleChecked: (cartId: string) => void;
   toggleAllChecked: (status: boolean) => void;
+    clearCart: () => void;
+    removeCheckedItems: () => void;
+    
 }
 
 export const useCartStore = create<CartStore>()(
@@ -50,7 +52,8 @@ export const useCartStore = create<CartStore>()(
       },
 
       getTotalItems: () => {
-        return get().items.reduce((total, item) => total + item.qty, 0);
+        return get().items.length
+        // return get().items.reduce((total, item) => total + item.qty, 0);
       },
 
       updateQty: (cartId, qty) => {
@@ -82,7 +85,15 @@ export const useCartStore = create<CartStore>()(
         set((state) => ({
           items: state.items.map((item) => ({ ...item, checked: status })),
         })),
+        clearCart: () => set({ items: [] }),
+        removeCheckedItems: () => {
+        set((state) => ({
+          // Kita hanya menyimpan item yang checked-nya false (belum dibayar)
+          items: state.items.filter((item) => !item.checked),
+        }));
+      },
     }),
+    
     {
       name: "its-resto-cart", // 3. NAMA KUNCI DI LOCAL STORAGE
     },

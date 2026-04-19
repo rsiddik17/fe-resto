@@ -1,17 +1,10 @@
 import { useState } from "react";
-import {
-  ArrowLeft,
-  Minus,
-  Plus,
-  FileText,
-  ShoppingCart,
-} from "lucide-react";
-import { type MenuItem } from "../MenuCard/MenuCard";
+import { ArrowLeft, Minus, Plus, FileText, ShoppingCart } from "lucide-react";
+import { type MenuItem } from "../MenuCardOnline/MenuCardOnline";
 import Button from "../ui/Button";
 import { cn } from "../../utils/utils";
 
-
-interface MenuItemModalProps {
+interface MenuItemModalOnlineProps {
   item: MenuItem;
   onClose: () => void;
   onAdd: (item: MenuItem, qty: number, notes: string) => void;
@@ -24,12 +17,12 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
   minimumFractionDigits: 0,
 });
 
-const MenuItemModal = ({
+const MenuItemModalOnline = ({
   item,
   onClose,
   onAdd,
   mode = "kiosk",
-}: MenuItemModalProps) => {
+}: MenuItemModalOnlineProps) => {
   const [qty, setQty] = useState(1);
   const [notes, setNotes] = useState("");
 
@@ -58,13 +51,19 @@ const MenuItemModal = ({
       <div
         className={cn(
           "bg-white w-md overflow-hidden shadow-2xl flex flex-col animate-in zoom-in-95 duration-200",
-          isOnline ? "max-w-85 rounded-xs p-5" : "max-w-md rounded-2xl p-5.5"
+          isOnline ? "max-w-85 rounded-xs p-5" : "max-w-md rounded-2xl p-5.5",
         )}
         onClick={(e) => e.stopPropagation()}
       >
         {/* --- HEADER: GAMBAR --- */}
-        <div className={cn("relative w-full bg-gray-100 shrink-0", 
-          isOnline ? " h-70 aspect-4/3 rounded-sm overflow-hidden mb-1" : "h-95 rounded-sm")}>
+        <div
+          className={cn(
+            "relative w-full bg-gray-100 shrink-0",
+            isOnline
+              ? " h-70 aspect-4/3 rounded-sm overflow-hidden mb-1"
+              : "h-95 rounded-sm",
+          )}
+        >
           <img
             src={item.image}
             alt={item.name}
@@ -79,22 +78,51 @@ const MenuItemModal = ({
         </div>
 
         {/* --- BODY --- */}
-        <div className={cn("flex flex-col", isOnline ? "pt-2 gap-2" : "pt-6 gap-4")}>
+        <div
+          className={cn(
+            "flex flex-col",
+            isOnline ? "pt-2 gap-2" : "pt-6 gap-4",
+          )}
+        >
           <div className="flex flex-col items-start border-b border-gray-100 pb-2">
             <div className="w-full flex justify-between items-baseline">
-              <h2 className={cn("font-bold text-black leading-tight", isOnline ? "text-lg" : "text-2xl")}>{item.name}</h2>
-              <span className={cn("text-primary font-bold", isOnline ? "text-sm" : "text-xl")}>
+              <h2
+                className={cn(
+                  "font-bold text-black leading-tight",
+                  isOnline ? "text-lg" : "text-2xl",
+                )}
+              >
+                {item.name}
+              </h2>
+              <span
+                className={cn(
+                  "text-primary font-bold",
+                  isOnline ? "text-sm" : "text-xl",
+                )}
+              >
                 {rupiahFormatter.format(item.price)}
               </span>
             </div>
-            <p className={cn("text-gray-400 mt-0.5 leading-tight", isOnline ? "text-[10px]" : "text-sm")}>
+            <p
+              className={cn(
+                "text-gray-400 mt-0.5 leading-tight",
+                isOnline ? "text-[10px]" : "text-sm",
+              )}
+            >
               {item.description}
             </p>
           </div>
 
           <div className="flex justify-between items-center h-8">
-            <span className={cn("font-bold text-black", isOnline ? "text-xs" : "text-lg")}>Jumlah</span>
-            <div className="flex items-center gap-3">
+            <span
+              className={cn(
+                "font-bold text-black",
+                isOnline ? "text-xs" : "text-lg",
+              )}
+            >
+              Jumlah
+            </span>
+            <div className="flex items-center gap-4 bg-[#F3F4F6] p-1.5 rounded-full border border-gray-100">
               <button
                 onClick={handleDec}
                 disabled={qty <= 0}
@@ -114,8 +142,19 @@ const MenuItemModal = ({
           </div>
 
           <div className="flex justify-between items-center h-6">
-            <span className={cn("text-black", isOnline ? "text-xs" : "text-lg")}>Stok</span>
-            <span className={cn("font-bold text-black", isOnline ? "text-xs" : "text-lg")}>{stock}</span>
+            <span
+              className={cn("text-black", isOnline ? "text-xs" : "text-lg")}
+            >
+              Stok
+            </span>
+            <span
+              className={cn(
+                "font-bold text-primary",
+                isOnline ? "text-xs" : "text-lg",
+              )}
+            >
+              {stock}
+            </span>
           </div>
 
           <div className="relative mt-1">
@@ -129,7 +168,7 @@ const MenuItemModal = ({
               onChange={(e) => setNotes(e.target.value)}
               className={cn(
                 "w-full pl-9 pr-4 py-2 bg-gray-100 border-none outline-none rounded-[8px] placeholder:text-gray-400",
-                isOnline ? "text-[11px]" : "text-sm"
+                isOnline ? "text-[11px]" : "text-sm",
               )}
             />
           </div>
@@ -138,7 +177,7 @@ const MenuItemModal = ({
             onClick={handleAddToCart}
             disabled={qty === 0}
             className={cn(
-              "w-full mt-2 py-2.5 rounded-lg flex items-center justify-center gap-2 font-bold text-xs",
+              "w-full mt-2 py-2.5 rounded-lg flex items-center justify-center gap-2 text-xs",
               qty === 0 && "opacity-50 cursor-not-allowed",
             )}
           >
@@ -150,4 +189,4 @@ const MenuItemModal = ({
   );
 };
 
-export default MenuItemModal;
+export default MenuItemModalOnline;

@@ -19,11 +19,11 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
 });
 
 // --- 1. COMPONENT UTAMA (WRAPPER) ---
-interface MenuCardProps {
+interface MenuCardOnlineProps {
   children: React.ReactNode;
 }
 
-const MenuCard = ({ children }: MenuCardProps) => {
+const MenuCardOnline = ({ children }: MenuCardOnlineProps) => {
   return (
     <div className="bg-white rounded-xs px-3 py-4 shadow-sm border border-secondary/10 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow group">
       {children}
@@ -38,7 +38,7 @@ interface HeaderProps {
   stock?: number;
 }
 
-const Header = ({ image, name, stock }: HeaderProps) => {
+const HeaderOnline = ({ image, name, stock }: HeaderProps) => {
   // Logika stok: Jika stock undefined dianggap ada (untuk kiosk), jika 0 baru muncul Habis
   const isOutOfStock = stock === 0;
 
@@ -105,8 +105,8 @@ const Footer = ({ onAdd, disabled }: FooterProps) => {
   );
 };
 
-MenuCard.Header = Header;
-MenuCard.Body = Body;
-MenuCard.Footer = Footer;
+MenuCardOnline.Header = HeaderOnline;
+MenuCardOnline.Body = Body;
+MenuCardOnline.Footer = Footer;
 
-export default MenuCard;
+export default MenuCardOnline;
