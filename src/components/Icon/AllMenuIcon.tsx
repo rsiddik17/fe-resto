@@ -1,4 +1,4 @@
-import React, { type SVGProps } from 'react';
+import { type SVGProps } from 'react';
 
 export default function AllMenuIcon(props: SVGProps<SVGSVGElement>) {
   return (

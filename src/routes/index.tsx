@@ -1,11 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createBrowserRouter } from "react-router";
-import { lazy } from "react";
+// import { lazy } from "react";
 
 // IMPORT NORMAL (Hanya untuk Komponen Struktural)
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import PublicRoute from "../components/PublicRoute/PublicRoute";
-import SuspenseWrapper from "../components/SuspenseWrapper/SuspenseWrapper";
+// import SuspenseWrapper from "../components/SuspenseWrapper/SuspenseWrapper";
 
 // Auth Pages
 import LoginPage from "../pages/auth/LoginPage";

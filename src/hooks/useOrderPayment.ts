@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 export type PaymentStatus = "PAYING" | "PENDING" | "CONFIRMED";
 
 export const useOrderPayment = (subTotal: number, taxAmount: number, discountAmount: number) => {
-  const [status, setStatus] = useState<PaymentStatus>("PAYING");
+  const [status] = useState<PaymentStatus>("PAYING");
   const [orderId, setOrderId] = useState("");
   const [adminFee, setAdminFee] = useState(0);
 

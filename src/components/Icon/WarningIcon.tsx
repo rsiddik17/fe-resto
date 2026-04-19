@@ -1,4 +1,4 @@
-import React, { type SVGProps } from 'react';
+import { type SVGProps } from 'react';
 
 export default function WarningIcon(props: SVGProps<SVGSVGElement>) {
   return (
