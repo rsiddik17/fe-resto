@@ -95,6 +95,6 @@ const router = createBrowserRouter([
     path: "*", 
     Component: NotFoundPage
   },
-]);
+], {basename: "/its-resto"});
 
 export default router;
