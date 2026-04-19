@@ -12,8 +12,8 @@ const CartPage = () => {
   const navigate = useNavigate();
 
   // Ambil state dan actions dari Zustand
-  const { items, updateQty, getTotalItems, updateNote, removeItem } = useCartStore();
-  const totalItems = getTotalItems();
+  const { items, updateQty, updateNote, removeItem } = useCartStore();
+  // const totalItems = getTotalItems();
 
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 

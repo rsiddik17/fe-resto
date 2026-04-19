@@ -8,7 +8,7 @@ const TableInfoPage = () => {
   const guests = searchParams.get("guests"); // Menangkap jumlah tamu dari halaman sebelumnya
 
   // State untuk menyimpan nomor meja (Nantinya ini dari API Backend)
-  const [tableNumber, setTableNumber] = useState<string>("M-02");
+  const [tableNumber] = useState<string>("M-02");
 
   // Simulasi fetch data dari Backend penentuan meja otomatis
   useEffect(() => {
