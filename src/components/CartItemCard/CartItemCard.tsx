@@ -52,6 +52,7 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDeletePrompt
               </span>
             </Button>
           </div>
+
           {/* Kontrol + / - */}
           <div className="flex items-center gap-3 bg-secondary rounded-sm shrink-0">
             <Button 
@@ -68,7 +69,9 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDeletePrompt
             >
               <Minus size={14} strokeWidth={2.5} />
             </Button>
+
             <span className="font-bold w-4 text-center">{item.qty}</span>
+            
             <Button 
               onClick={() => onIncrease(item.cartId)}
               variant="outline"
@@ -80,7 +83,6 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDeletePrompt
           </div>
 
         </div>
-
 
       </div>
 

@@ -1,4 +1,3 @@
-import { ShoppingCart } from "lucide-react";
 import Button from "../ui/Button";
 import CartIcon from "../Icon/CartIcon";
 

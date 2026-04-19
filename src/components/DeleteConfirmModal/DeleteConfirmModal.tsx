@@ -39,6 +39,7 @@ const DeleteConfirmModal = ({ onClose, onConfirm }: DeleteConfirmModalProps) => 
           >
             Batal
           </Button>
+          
           <Button 
             onClick={onConfirm}
             className="flex-1 max-w-41.75 font-semibold text-lg bg-[#FC1111] text-white"

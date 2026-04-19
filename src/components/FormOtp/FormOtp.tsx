@@ -21,9 +21,12 @@ const FormOtp = ({ onSuccess }: FormOtpProps) => {
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email") ?? "";
 
+  const type = searchParams.get("type") ?? "";
+
   const {
     digits,
     otpError,
+    resendError,
     otpExpirySeconds,
     resendSeconds,
     isVerifying,
@@ -33,16 +36,18 @@ const FormOtp = ({ onSuccess }: FormOtpProps) => {
     handlePaste,
     handleResend,
     handleVerifyClick, 
-  } = useOtp(email, onSuccess);
+  } = useOtp(email, type, onSuccess);
 
   return (
     <div>
       <Loading show={isVerifying} />
       <div className="space-y-3">
+        
         <div>
           <Label htmlFor="otp-0" className="px-5">
             Kode OTP
           </Label>
+
           <div
             className="mt-2 px-5 flex justify-center gap-2 sm:gap-4"
             role="group"
@@ -106,6 +111,12 @@ const FormOtp = ({ onSuccess }: FormOtpProps) => {
             </button>
           )}
         </p>
+
+        {resendError && (
+            <p className="text-start px-5 text-xs text-red-500">
+              {resendError}
+            </p>
+          )}
 
         <div className="pt-2">
           <Button

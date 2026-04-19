@@ -39,6 +39,7 @@ const FormGuestInput = () => {
   return (
     <div
       className="w-full flex flex-col items-center h-full relative overflow-hidden">
+        
       {/* --- BAGIAN ATAS: CARD INPUT --- */}
       <div className="flex-1 mt-47 w-full flex flex-col justify-center items-center px-4 z-10 relative">
         <div className="w-full max-w-xl min-h-197 bg-white py-8 px-12 rounded shadow-sm">
@@ -57,6 +58,7 @@ const FormGuestInput = () => {
                 )}
               />
             </div>
+
             {/* Input ini dibuat readOnly karena dikontrol dari tombol bawah */}
             <Input
               type="text"

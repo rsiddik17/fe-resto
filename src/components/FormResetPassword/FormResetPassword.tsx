@@ -5,12 +5,18 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import Loading from "../Loading/Loading";
 import { useNavigate, useSearchParams } from "react-router";
+import { isAxiosError } from "axios";
+import { authAPI } from "../../api/auth.api";
 
 const resetPasswordSchema = z
   .object({
     password: z
       .string()
-      .min(8, "Minimal 8 karakter, kombinasi huruf dan angka"),
+      .min(8, "Minimal 8 karakter, kombinasi huruf dan angka")
+      .regex(
+        /^(?=.*[a-zA-Z])(?=.*[0-9])/,
+        "Kata sandi harus mengandung kombinasi huruf dan angka!",
+      ),
     confirmPassword: z.string().min(1, "Konfirmasi kata sandi wajib diisi!"),
   })
   .refine((val) => val.password === val.confirmPassword, {
@@ -23,7 +29,7 @@ type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 const FormResetPassword = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const email = searchParams.get("email") ?? "";
+  const resetToken = searchParams.get("token") ?? "";
   const {
     register,
     handleSubmit,
@@ -38,23 +44,45 @@ const FormResetPassword = () => {
   });
 
   const handleResetPassword = async (data: ResetPasswordValues) => {
+    if (!resetToken) {
+      setError("root", {
+        message: "Token tidak ditemukan! Silakan ulangi proses Lupa Kata Sandi dari awal.",
+      });
+      return;
+    }
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      console.log("Reset password untuk:", email, "data:", data);
-      navigate("/");
+      const payload = {
+        newPassword: data.password,    // Password baru dari form
+        confirmPassword: data.confirmPassword, // Konfirmasi dari form
+      };
+
+      await authAPI.resetPassword(payload, resetToken);
+
+      navigate("/"); 
+
     } catch (error) {
-      if (error instanceof Error) {
-        setError("root", {
-          message: error.message,
-        });
+      let errorMessage = "Gagal menyimpan kata sandi baru.";
+      
+      if (isAxiosError(error) && error.response) {
+        errorMessage = error.response.data.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
       }
+      
+      setError("root", {
+        message: errorMessage,
+      });
     }
   };
 
   return (
     <>
       <Loading show={isSubmitting} />
-      <form onSubmit={handleSubmit(handleResetPassword)} className="space-y-2.5">
+      <form
+        onSubmit={handleSubmit(handleResetPassword)}
+        className="space-y-2.5"
+      >
         <div className="space-y-1">
           <FormInput
             children="Kata Sandi Baru"

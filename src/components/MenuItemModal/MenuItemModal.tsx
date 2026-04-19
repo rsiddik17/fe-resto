@@ -20,10 +20,12 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
 });
 
 const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
-  const [qty, setQty] = useState(1);
+  const stock = item.stock || 0;
+  const isOutOfStock = stock <= 0;
+
+  const [qty, setQty] = useState(isOutOfStock ? 0 : 1);
   const [notes, setNotes] = useState("");
 
-  const stock = item.stock || 0;
 
   const handleInc = () => {
     if (qty < stock) setQty((prev) => prev + 1);
@@ -53,8 +55,20 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
           <img
             src={item.image}
             alt={item.name}
-            className="w-full h-full object-cover"
+           className={cn(
+              "w-full h-full object-cover transition-opacity",
+              isOutOfStock ? "opacity-50 grayscale-30" : "opacity-100"
+            )}
           />
+
+            {isOutOfStock && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-32 h-32 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl shadow-sm">
+                Habis
+              </div>
+            </div>
+          )}
+
           <button
             onClick={onClose}
             className="absolute top-2 left-2 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full flex items-center gap-1.5 text-sm font-semibold text-black shadow-sm hover:bg-white transition-colors"

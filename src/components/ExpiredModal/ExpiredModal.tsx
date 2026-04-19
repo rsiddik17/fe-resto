@@ -8,7 +8,6 @@ interface ExpiredModalProps {
 
 const ExpiredModal = ({ onClose }: ExpiredModalProps) => {
   
-  // UX TAMBAHAN: Auto-close setelah 5 detik jika user sudah pergi dari mesin Kiosk
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
@@ -22,7 +21,6 @@ const ExpiredModal = ({ onClose }: ExpiredModalProps) => {
         className="bg-white w-full max-w-sm rounded-3xl p-8 shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200"
       >
         
-        {/* Ikon Merah Peringatan */}
         <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
           <AlertCircle size={40} className="text-red-500" strokeWidth={2.5} />
         </div>

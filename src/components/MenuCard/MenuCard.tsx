@@ -43,7 +43,7 @@ const Header = ({ image, name, isOutOfStock = false }: HeaderProps) => {
 
         {isOutOfStock && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-28 h-28 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xlx` shadow-lg">
+          <div className="w-28 h-28 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl shadow-sm">
             Habis
           </div>
         </div>
