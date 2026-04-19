@@ -1,8 +1,9 @@
 import TableInfoCard from "../../components/TableInfoCard/TableInfoCard";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 
 const TableInfoPage = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const guests = searchParams.get("guests"); // Menangkap jumlah tamu dari halaman sebelumnya
 
@@ -30,7 +31,7 @@ const TableInfoPage = () => {
       </div>
       <div className="flex-1 w-full flex items-center justify-center mt-24">
         {/* Kirim nomor meja ke komponen Card */}
-        <TableInfoCard tableNumber={tableNumber} />
+        <TableInfoCard tableNumber={tableNumber} onLanjut={() =>  navigate(`/kiosk/menu`)} onBatal={() => navigate(`/kiosk/home`)} isKioskMode={true} />
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Loading from "../Loading/Loading";
+import { isAxiosError } from "axios";
+import { authAPI } from "../../api/auth.api";
 
 const forgorPasswordSchema = z.object({
   email: z
@@ -29,13 +31,22 @@ const FormForgotPassword = () => {
 
   const handleForgotPassword = async (data: ForgotPasswordValues) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log("Kirim OTP ke email:", data.email);
-      navigate(`/verifikasi-otp?email=${encodeURIComponent(data.email)}&type=forgot-password`);
+      await authAPI.forgotPassword({ email: data.email });
 
+      navigate(
+        `/verifikasi-otp?email=${encodeURIComponent(data.email)}&type=forgot-password`,
+      );
     } catch (error) {
+      let errorMessage = "Gagal memproses permintaan. Silakan coba lagi.";
+
+      if (isAxiosError(error) && error.response) {
+        errorMessage = error.response.data.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
       setError("root", {
-        message: `${error}`,
+        message: errorMessage,
       });
     }
   };

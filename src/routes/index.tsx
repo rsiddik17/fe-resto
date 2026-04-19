@@ -34,6 +34,7 @@ import CartPage from "../pages/kiosk/CartPage";
 import CheckoutPage from "../pages/kiosk/CheckoutPage";
 import PaymentPage from "../pages/kiosk/PaymentPage";
 import OrderSuccessPage from "../pages/kiosk/OrderSuccessPage";
+import ScanTablePage from "../pages/qr/ScanTablePage";
 
 const router = createBrowserRouter([
 
@@ -45,6 +46,7 @@ const router = createBrowserRouter([
       { path: "/lupa-password", Component: ForgotPasswordPage },
       { path: "/reset-password", Component: ResetPasswordPage },
       { path: "/verifikasi-otp", Component: VerifyOtpPage },
+      { path: "/scanqr/:tableId", Component: ScanTablePage },
     ],
   },
 

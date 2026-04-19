@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import Loading from "../Loading/Loading";
 import { Link, useNavigate } from "react-router";
 import { useAuthStore, type UserRole } from "../../store/useAuthStore";
+import { isAxiosError } from "axios";
+import { authAPI } from "../../api/auth.api";
 
 const loginSchema = z.object({
   email: z.email("Format email tidak valid!").min(1, "Email wajib diisi!"),
@@ -29,30 +31,17 @@ const FormLogin = () => {
 
   const handleLogin = async (data: LoginFormValues) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const responseData = await authAPI.login({
+        email: data.email,
+        password: data.password,
+      });
 
-      let simulatedRole: UserRole = "CUSTOMER"; // Default role
+      const token = responseData.data.token;
+      const role = responseData.data.user.role as UserRole;
 
-      if (data.email.includes("admin")) {
-        simulatedRole = "ADMIN";
-      } else if (data.email.includes("kasir")) {
-        simulatedRole = "CASHIER";
-      } else if (data.email.includes("pelayan")) {
-        simulatedRole = "WAITER";
-      } else if (data.email.includes("dapur")) {
-        simulatedRole = "KITCHEN";
-      } else if (data.email.includes("kiosk")) {
-        simulatedRole = "KIOSK_SYSTEM";
-      }
+      setAuth(token, role);
 
-      const fakeApiResponse = {
-        token: "fake-jwt-token-12345",
-        role: simulatedRole,
-      };
-
-      setAuth(fakeApiResponse.token, fakeApiResponse.role);
-
-      switch (fakeApiResponse.role) {
+      switch (role) {
         case "ADMIN":
           navigate("/admin/dashboard");
           break;
@@ -76,11 +65,17 @@ const FormLogin = () => {
       }
       
     } catch (error) {
-      if (error instanceof Error) {
-        setError("root", {
-          message: error.message,
-        });
+      let errorMessage = "Terjadi kesalahan saat login.";
+      
+      if (isAxiosError(error) && error.response) {
+        errorMessage = error.response.data.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
       }
+
+      setError("root", {
+        message: errorMessage,
+      });
     }
   };
 
@@ -120,6 +115,7 @@ const FormLogin = () => {
             </span>
           )}
         </div>
+        
         <Link
           to="/lupa-password"
           className="block text-sm text-right my-3.5 text-black/50 underline"

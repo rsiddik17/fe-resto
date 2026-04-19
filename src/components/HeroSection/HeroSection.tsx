@@ -29,7 +29,6 @@ const HeroSection = ({
       <div className="absolute inset-0 bg-black/15"></div>
 
       <div className="relative ml-2 z-10 w-full max-w-lg">
-        {/* Menggunakan dangerouslySetInnerHTML agar tag <br/> di title bisa dirender jika ada */}
         <h1
           className="text-4xl md:text-5xl font-bold text-white mb-2 leading-18 tracking-wide"
           dangerouslySetInnerHTML={{ __html: title }}
@@ -40,6 +39,7 @@ const HeroSection = ({
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Search className="text-gray-500" size={20} />
           </div>
+
           <Input
             type="text"
             placeholder={searchPlaceholder}
@@ -48,6 +48,7 @@ const HeroSection = ({
             className="w-105 pl-11 pr-4 py-2.5 rounded-xs border-none focus:ring-2 focus:ring-primary placeholder:text-gray-500 shadow-sm text-black"
           />
         </div>
+        
       </div>
     </div>
   );

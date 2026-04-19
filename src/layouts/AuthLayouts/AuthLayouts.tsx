@@ -23,6 +23,7 @@ const AuthLayouts = ({
         alt="" 
         className="absolute inset-0 w-full h-full object-cover z-0"
       />
+
       <div className="relative w-full flex justify-center items-center p-4">
         <div className="absolute -top-12">
           <img
@@ -31,6 +32,7 @@ const AuthLayouts = ({
             className="w-full max-w-65 object-cover mx-auto"
           />
         </div>
+
         <div className={cn("w-full max-w-sm md:max-w-md bg-light-gray/75 px-7 pt-4 pb-3 rounded-lg shadow-sm mt-32", cardClassName)}>
           <h1 className="text-primary text-center text-[1.75rem] font-bold mt-2">
             {title}
@@ -59,6 +61,7 @@ const AuthLayouts = ({
             )}
           </p>
         </div>
+        
       </div>
     </div>
   );

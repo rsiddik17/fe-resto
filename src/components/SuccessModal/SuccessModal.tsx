@@ -9,7 +9,6 @@ interface SuccessModalProps {
 
 const SuccessModal = ({ itemName, onViewCart, onClose }: SuccessModalProps) => {
   return (
-    // Overlay gelap dengan z-index lebih tinggi dari CartBottomBar
     <div
       className="fixed inset-0 z-110 flex items-center justify-center bg-black/1 backdrop-blur-[3px] p-4 animate-in fade-in duration-200"
       onClick={onClose} // Tutup jika area luar diklik

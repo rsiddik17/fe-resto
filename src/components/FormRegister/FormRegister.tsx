@@ -5,6 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Loading from "../Loading/Loading";
 import { useNavigate } from "react-router";
+import { isAxiosError } from "axios";
+import { authAPI } from "../../api/auth.api";
 
 const registerSchema = z
   .object({
@@ -22,9 +24,9 @@ const registerSchema = z
         /^(?=.*[a-zA-Z])(?=.*[0-9])/,
         "Kata sandi harus mengandung kombinasi huruf dan angka!",
       ),
-    confirmPassword: z.string().min(1, "Konfirmasi kata sandi wajib diisi!"),
+    confirm_password: z.string().min(1, "Konfirmasi kata sandi wajib diisi!"),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.confirm_password, {
     message: "kata sandi tidak cocok. Silakan periksa kembali.",
     path: ["confirmPassword"],
   });
@@ -45,19 +47,29 @@ const FormRegister = () => {
 
   const handleRegister = async (data: RegisterFormValues) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      console.log("Data registrasi siap dikirim:", data);
+     await authAPI.register({
+        fullname: data.fullname,
+        email: data.email,
+        phone_number: data.phone_number,
+        password: data.password,
+        confirm_password: data.confirm_password, 
+      });
 
       navigate(
         `/verifikasi-otp?email=${encodeURIComponent(data.email)}&type=register`,
       );
     } catch (error) {
-      if (error instanceof Error) {
-        setError("root", {
-          message: error.message,
-        });
+      let errorMessage = "Gagal melakukan registrasi.";
+      
+      if (isAxiosError(error) && error.response) {
+        errorMessage = error.response.data.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
       }
+
+      setError("root", {
+        message: errorMessage,
+      });
     }
   };
 
@@ -139,12 +151,12 @@ const FormRegister = () => {
               type="password"
               id="confirmPassword"
               placeholder="Konfirmasi Kata Sandi"
-              {...register("confirmPassword")}
-              error={!!errors.confirmPassword}
+              {...register("confirm_password")}
+              error={!!errors.confirm_password}
             />
-            {errors.confirmPassword && (
+            {errors.confirm_password && (
               <span className="text-red-500 text-sm text-start block">
-                {errors.confirmPassword?.message}
+                {errors.confirm_password?.message}
               </span>
             )}
           </div>

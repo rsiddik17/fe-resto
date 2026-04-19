@@ -39,6 +39,7 @@ const EditNoteModal = ({ initialNote, onClose, onSave }: EditNoteModalProps) => 
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <NotesIcon className="text-gray-400" />
           </div>
+
           <Input
             type="text"
             placeholder="Tidak ada catatan"
@@ -57,6 +58,7 @@ const EditNoteModal = ({ initialNote, onClose, onSave }: EditNoteModalProps) => 
           >
             Batal
           </Button>
+          
           <Button 
             onClick={() => onSave(note)}
             className="w-30 py-1.5 font-medium"

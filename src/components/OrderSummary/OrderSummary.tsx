@@ -43,7 +43,7 @@ const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0, adminFee = 0
         {discountAmount > 0 && (
           <div className="flex justify-between items-center">
             <span className="text-3xl">Diskon</span>
-            <span className="text-3xl"> {/* Beri warna beda agar mencolok */}
+            <span className="text-3xl">
               -{rupiahFormatter.format(discountAmount)}
             </span>
           </div>
