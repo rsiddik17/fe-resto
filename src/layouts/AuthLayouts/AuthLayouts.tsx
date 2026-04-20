@@ -19,7 +19,7 @@ const AuthLayouts = ({
   return (
     <div className="relative w-full min-h-screen flex justify-center items-center overflow-hidden">
       <img 
-        src="/images/bg-login.webp" 
+        src={`${import.meta.env.BASE_URL}images/bg-login.webp`} 
         alt="" 
         className="absolute inset-0 w-full h-full object-cover z-0"
       />
@@ -27,7 +27,7 @@ const AuthLayouts = ({
       <div className="relative w-full flex justify-center items-center p-4">
         <div className="absolute -top-12">
           <img
-            src="/images/logo.webp"
+            src={`${import.meta.env.BASE_URL}images/logo.webp`}
             alt="Logo IT'S RESTO"
             className="w-full max-w-65 object-cover mx-auto"
           />
