@@ -28,7 +28,7 @@ const registerSchema = z
   })
   .refine((data) => data.password === data.confirm_password, {
     message: "kata sandi tidak cocok. Silakan periksa kembali.",
-    path: ["confirmPassword"],
+    path: ["confirm_password"],
   });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
