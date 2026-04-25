@@ -3,7 +3,7 @@ import TableInfoCard from "../../components/TableInfoCard/TableInfoCard";
 
 // import { useCartStore } from "../../store/useCartStore"; // Nanti buka ini untuk simpan meja
 
-const ScanTablePage = () => {
+const MobileTableInfoPage = () => {
   const navigate = useNavigate();
 
   // 1. Tangkap parameter dari URL (contoh: /scan/03)
@@ -18,7 +18,7 @@ const ScanTablePage = () => {
       {/* Logo di atas */}
       <div className="w-full flex justify-center z-10 pt-8 md:pt-14 pb-2">
         <img
-          src="/images/logo.webp"
+          src={`${import.meta.env.BASE_URL}images/logo.webp`} 
           alt="Logo IT'S RESTO"
           className="w-48 object-cover"
         />
@@ -27,7 +27,7 @@ const ScanTablePage = () => {
         <div className="w-full max-w-[90%]">
         <TableInfoCard
           tableNumber={formattedTableId}
-          onLanjut={() => navigate("/scanqr/home")}
+          onLanjut={() => navigate("/qr/menu")}
           onBatal={() => navigate("/")}
         />
         </div>
@@ -36,4 +36,4 @@ const ScanTablePage = () => {
   );
 };
 
-export default ScanTablePage;
+export default MobileTableInfoPage;

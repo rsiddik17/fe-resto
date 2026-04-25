@@ -19,7 +19,7 @@ const EditNoteModal = ({ initialNote, onClose, onSave }: EditNoteModalProps) => 
       onClick={onClose}
     >
       <div 
-        className="bg-white w-full max-w-162.5 h-67.5 rounded-sm p-6 shadow-sm animate-in zoom-in-95 duration-200 relative"
+        className="bg-white w-full max-w-[90%] md:max-w-162.5 h-auto md:h-67.5 rounded-sm p-6 shadow-sm animate-in zoom-in-95 duration-200 relative"
         onClick={(e) => e.stopPropagation()}
       >
         
@@ -31,7 +31,7 @@ const EditNoteModal = ({ initialNote, onClose, onSave }: EditNoteModalProps) => 
           <X size={24}  strokeWidth={4}/>
         </Button>
 
-        <h2 className="text-3xl font-extrabold mb-8">
+        <h2 className="text-xl md:text-3xl font-bold mb-6 md:mb-8">
           Edit Catatan
         </h2>
 

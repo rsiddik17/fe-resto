@@ -34,7 +34,13 @@ import CartPage from "../pages/kiosk/CartPage";
 import CheckoutPage from "../pages/kiosk/CheckoutPage";
 import PaymentPage from "../pages/kiosk/PaymentPage";
 import OrderSuccessPage from "../pages/kiosk/OrderSuccessPage";
-import ScanTablePage from "../pages/qr/ScanTablePage";
+import MobileTableInfoPage from "../pages/qr/MobileTableInfoPage";
+import MobileMenuPage from "../pages/qr/MobileMenuPage";
+import MobileCartPage from "../pages/qr/MobileCartPage";
+import MobileCheckoutPage from "../pages/qr/MobileCheckoutPage";
+import MobilePaymentPage from "../pages/qr/MobilePaymentPage";
+import MobileOrderSuccessPage from "../pages/qr/MobileOrderSuccessPage";
+import ProfilePage from "../pages/kiosk/ProfilePage";
 
 const router = createBrowserRouter([
 
@@ -46,7 +52,22 @@ const router = createBrowserRouter([
       { path: "/lupa-password", Component: ForgotPasswordPage },
       { path: "/reset-password", Component: ResetPasswordPage },
       { path: "/verifikasi-otp", Component: VerifyOtpPage },
-      { path: "/scanqr/:tableId", Component: ScanTablePage },
+      { path: "/qr/:tableId", Component: MobileTableInfoPage },
+      { path: "/qr/menu", Component: MobileMenuPage },
+      { path: "/qr/cart", Component: MobileCartPage },
+      { path: "/qr/checkout", Component: MobileCheckoutPage },
+      { path: "/qr/payment", Component: MobilePaymentPage },
+      { path: "/qr/order-success", Component: MobileOrderSuccessPage },
+
+      { path: "/kiosk/home", Component: KioskHomePage },
+      { path: "/kiosk/guest-input", Component: GuestInputPage },
+      { path: "/kiosk/info-table", Component: TableInfoPage },
+      { path: "/kiosk/menu", Component: MenuPage },
+      { path: "kiosk/cart", Component: CartPage},
+      { path: "kiosk/checkout", Component: CheckoutPage},
+      { path: "kiosk/payment", Component: PaymentPage},
+      { path: "kiosk/order-success", Component: OrderSuccessPage},
+      { path: "/kiosk/profile", Component: ProfilePage },
     ],
   },
 
@@ -75,13 +96,13 @@ const router = createBrowserRouter([
     element: <ProtectedRoute allowedRoles={["KIOSK_SYSTEM"]} />, 
     children: [
       { path: "/kiosk/home", Component: KioskHomePage },
-      { path: "/kiosk/input-tamu", Component: GuestInputPage },
-      { path: "/kiosk/info-meja", Component: TableInfoPage },
+      { path: "/kiosk/guest-input", Component: GuestInputPage },
+      { path: "/kiosk/info-table", Component: TableInfoPage },
       { path: "/kiosk/menu", Component: MenuPage },
-      { path: "kiosk/keranjang", Component: CartPage},
+      { path: "kiosk/cart", Component: CartPage},
       { path: "kiosk/checkout", Component: CheckoutPage},
-      { path: "kiosk/pembayaran", Component: PaymentPage},
-      { path: "kiosk/pesanan-berhasil", Component: OrderSuccessPage}
+      { path: "kiosk/payment", Component: PaymentPage},
+      { path: "kiosk/order-success", Component: OrderSuccessPage}
     ],
   },
   {

@@ -11,7 +11,7 @@ const FormGuestInput = () => {
   // Fungsi saat tombol enter (biru) dipencet
   const handleSubmit = () => {
     if (guestCount && parseInt(guestCount) > 0) {
-      navigate(`/kiosk/info-meja?guests=${guestCount}`);
+      navigate(`/kiosk/info-table?guests=${guestCount}`);
     }
   };
 

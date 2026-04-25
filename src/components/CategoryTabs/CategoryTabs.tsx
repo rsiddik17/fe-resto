@@ -15,7 +15,7 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsProps) =
   
   // Fungsi helper untuk style
   const getBtnStyle = (category: CategoryType) => 
-    cn("flex flex-col items-center p-2 justify-center w-25 h-17 rounded-md transition-colors shrink-0", 
+    cn("flex flex-col items-center p-2 justify-center w-21 h-17 md:w-25 md:h-17 rounded-md transition-colors shrink-0", 
         activeCategory === category ? "bg-primary/50 text-primary" : "bg-gray/25 text-white hover:bg-gray-400");
 
   return (
@@ -25,7 +25,7 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsProps) =
         className={getBtnStyle("semua")}
       >
         <AllMenuIcon className="w-7.25 h-7.25 shrink-0" />
-        <span className="text-lg font-semibold">Semua</span>
+        <span className="text-sm md:text-lg font-semibold">Semua</span>
       </Button>
       
       <Button
@@ -33,7 +33,7 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsProps) =
         className={getBtnStyle("makanan")}
       >
         <FoodIcon className="w-7.25 h-7.25 shrink-0" />
-        <span className="text-sm font-semibold mt-1">Makanan</span>
+        <span className="text-sm md:text-lg font-semibold">Makanan</span>
       </Button>
       
       <Button
@@ -41,7 +41,7 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsProps) =
         className={getBtnStyle("minuman")}
       >
         <DrinkIcon className="w-7.25 h-7.25 shrink-0" />
-        <span className="text-sm font-semibold mt-1">Minuman</span>
+        <span className="text-sm md:text-lg font-semibold">Minuman</span>
       </Button>
     </div>
   );

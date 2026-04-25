@@ -75,23 +75,23 @@ const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
       onClick={onClose}
     >
       <div
-        className="bg-white w-full max-w-137.5 rounded-sm p-6 shadow-sm flex flex-col animate-in zoom-in-95 duration-200 max-h-[90vh]"
+        className="bg-white w-full max-w-[95%] md:max-w-137.5 rounded-sm p-4 md:p-6 shadow-sm flex flex-col animate-in zoom-in-95 duration-200 max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
 
         {/* HEADER MODAL */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Tambah Diskon</h2>
+        <div className="flex justify-between items-center mb-4 md:mb-6">
+          <h2 className="text-lg md:text-2xl font-bold">Tambah Diskon</h2>
           <button
             onClick={onClose}
-            className="p-2 bg-gray/25 rounded-full hover:bg-gray-200 transition-colors"
+            className="p-1.5 md:p-2 bg-gray/25 rounded-full hover:bg-gray-200 transition-colors"
           >
             <X size={20} className="text-gray" strokeWidth={4} />
           </button>
         </div>
 
         {/* LIST PROMO (Bisa di-scroll kalau banyak) */}
-        <div className="flex flex-col gap-3 overflow-y-auto pr-2 pb-4">
+        <div className="flex flex-col gap-2.5 md:gap-3 overflow-y-auto pr-1 md:pr-2 pb-2 md:pb-4">
           {MOCK_PROMOS.map((promo) => {
             const isSelected = selectedPromoId === promo.id;
             const isEligible = subTotal >= promo.minSpend; // Cek syarat minimum belanja
@@ -104,8 +104,8 @@ const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
                 )}
               >
                 {/* Info Kiri */}
-                <div className="flex flex-col gap-2">
-                  <h4 className="font-bold text-xl text-black">
+                <div className="flex flex-col gap-1 md:gap-2">
+                  <h4 className="font-bold text-sm md:text-xl text-black">
                     {promo.title}{" "}
                     <span className="font-normal">
                       Diskon{" "}
@@ -114,10 +114,10 @@ const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
                   </h4>
 
                   <div className="flex items-center gap-2">
-                    <span className="bg-[#EAE0F0] text-primary text-sm font-bold px-5 py-1 rounded-full">
+                    <span className="bg-[#EAE0F0] text-primary text-sm font-bold px-3 md:px-5 py-0.5 md:py-1 rounded-full">
                       {promo.code}
                     </span>
-                    <span className="text-gray text-xl">
+                    <span className="text-gray text-sm md:text-xl">
                       Min {rupiahFormatter.format(promo.minSpend)}
                     </span>
                   </div>
@@ -130,7 +130,7 @@ const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
                   disabled={!isEligible}
                   variant={isSelected ? "primary" : "outline"}
                   className={cn(
-                    "px-6 py-2 rounded-md text-sm transition-colors",
+                    "px-4 md:px-6 py-1.5 md:py-2 rounded-md text-xs md:text-sm transition-colors",
                     !isEligible &&
                       "border-gray-300 text-gray-400 cursor-not-allowed", // Tidak memenuhi syarat (abu-abu)
                     isEligible &&
@@ -149,7 +149,7 @@ const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
         <div className="pt-1 border-t border-gray-100 mt-2">
           <Button
             onClick={handleApplyFinal}
-            className="w-full py-3 rounded-md font-bold text-xl disabled:opacity-50"
+            className="w-full py-2.5 md:py-3 rounded-md font-bold text-sm md:text-xl disabled:opacity-50"
           >
             Gunakan Diskon
           </Button>

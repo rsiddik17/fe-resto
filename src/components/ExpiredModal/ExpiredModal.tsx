@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { AlertCircle } from "lucide-react";
 import Button from "../ui/Button";
+import InfoCircleIcon from "../Icon/InfoCircleIcon";
 
 interface ExpiredModalProps {
   onClose: () => void;
@@ -16,28 +16,28 @@ const ExpiredModal = ({ onClose }: ExpiredModalProps) => {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/1 backdrop-blur-[3px] p-4 animate-in fade-in duration-200">
       <div 
-        className="bg-white w-full max-w-sm rounded-3xl p-8 shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200"
+        className="bg-white w-full max-w-[98%] md:max-w-sm rounded-2xl md:rounded-3xl  p-6 md:p-8 shadow-sm flex flex-col items-center text-center animate-in zoom-in-95 duration-200"
       >
         
-        <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
-          <AlertCircle size={40} className="text-red-500" strokeWidth={2.5} />
+        <div className="w-18 h-18 md:w-20 md:h-20 rounded-full flex items-center justify-center mb-6 md:mb-6">
+          <InfoCircleIcon className="text-red-500 w-28 h-28" />
         </div>
 
         <h2 className="text-2xl font-extrabold mb-2">
           Waktu Habis!
         </h2>
         
-        <p className="text-gray mb-8 leading-relaxed">
+        <p className="text-xl mb-8 md:mb-8 leading-relaxed">
           Waktu pembayaran Anda telah berakhir. Pesanan ini telah dibatalkan otomatis oleh sistem.
         </p>
 
         <Button 
           onClick={onClose}
-          className="w-full py-3.5 rounded-xl font-bold text-lg"
+          className="w-full py-3 md:py-3.5 rounded-md md:rounded-xl font-bold text-xl"
         >
-          Kembali ke Home
+          Kembali ke Menu
         </Button>
 
       </div>

@@ -8,15 +8,15 @@ const StatusBanner = ({ status }: { status: PaymentStatus }) => {
   const isPending = status === "PENDING";
   
   return (
-    <div className={`p-6 rounded-md border-2 flex flex-col items-center text-center gap-2 transition-colors duration-500 ${
+    <div className={`p-4 md:p-6 rounded-md border-2 flex flex-col items-center text-center gap-1.5 md:gap-2 transition-colors duration-500 ${
       isPending ? "bg-[#F3F9DD] border-[#8AC926] text-[#5C7024]" : "bg-[#E6F8EB] border-[#A8E4BA] text-[#1E7D37]"
     }`}>
-      {isPending ? <Clock size={65} /> : <SuccessIcon className="w-16.25 h-16.25" />}
+      {isPending ? <Clock className="w-8 h-8 md:w-16.25 md:h-16.25" /> : <SuccessIcon className="w-8 h-8 md:w-16.25 md:h-16.25" />}
       
-      <h3 className="fontbold text-2xl mt-2">
+      <h3 className="font-bold text-lg md:text-2xl mt-1 md:mt-2">
         {isPending ? "Pesanan Pending" : "Pesanan Dikonfirmasi"}
       </h3>
-      <p className="text-xl">
+      <p className="text-sm md:text-xl">
         {isPending 
           ? "Pesanan Anda sedang menunggu konfirmasi dari kasir." 
           : "Silakan tunggu di meja anda. Pesanan akan segera diantarkan."}
