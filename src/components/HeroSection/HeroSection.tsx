@@ -45,7 +45,7 @@ const HeroSection = ({
             placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-105 pl-11 pr-4 py-2.5 rounded-xs border-none focus:ring-2 focus:ring-primary placeholder:text-gray-500 shadow-sm text-black"
+            className="w-105 pl-11 pr-4 py-2.5 rounded-xs border focus:ring-2 focus:ring-primary placeholder:text-gray-500 shadow-sm text-black"
           />
         </div>
         

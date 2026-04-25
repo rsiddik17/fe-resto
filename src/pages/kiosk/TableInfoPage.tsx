@@ -24,7 +24,7 @@ const TableInfoPage = () => {
       {/* Logo di atas */}
       <div className="absolute top-10 w-full flex justify-center z-10">
         <img
-          src="/images/logo.webp"
+          src={`${import.meta.env.BASE_URL}images/logo.webp`} 
           alt="Logo IT'S RESTO"
           className="w-72 object-cover"
         />

@@ -8,10 +8,12 @@ import { Link, useNavigate } from "react-router";
 import { useAuthStore, type UserRole } from "../../store/useAuthStore";
 import { isAxiosError } from "axios";
 import { authAPI } from "../../api/auth.api";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const loginSchema = z.object({
   email: z.email("Format email tidak valid!").min(1, "Email wajib diisi!"),
   password: z.string().min(8, "Kata sandi minimal 8 karakter!"),
+  captchaToken: z.string().min(1, "Verifikasi gagal, silakan centang CAPTCHA!"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -24,9 +26,15 @@ const FormLogin = () => {
     register,
     handleSubmit,
     setError,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      captchaToken: "", 
+    },
   });
 
   const handleLogin = async (data: LoginFormValues) => {
@@ -34,6 +42,7 @@ const FormLogin = () => {
       const responseData = await authAPI.login({
         email: data.email,
         password: data.password,
+        captchaToken: data.captchaToken,
       });
 
       const token = responseData.data.token;
@@ -122,6 +131,22 @@ const FormLogin = () => {
         >
           lupa kata sandi
         </Link>
+
+        <div className="flex flex-col items-center w-full mb-4">
+          <ReCAPTCHA
+            // Ingat: Nanti ganti sitekey ini dengan key asli dari Google (biasanya disimpan di file .env)
+            sitekey={import.meta.env.VITE_RECAPTCHA_SITEKEY}
+            onChange={(token) => {
+              // Jika dicentang, simpan tokennya ke dalam state form
+              setValue("captchaToken", token || "", { shouldValidate: true });
+            }}
+          />
+          {errors.captchaToken && (
+            <span className="text-red-500 text-sm mt-1 text-center">
+              {errors.captchaToken.message}
+            </span>
+          )}
+        </div>
 
         {errors.root && (
           <span className="text-red-500 text-sm text-center block -translate-y-2">

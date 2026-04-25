@@ -1,16 +1,18 @@
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router";
+
 import Header from "../../components/Header/Header";
 import Button from "../../components/ui/Button";
 import OrderItemCard from "../../components/OrderItemCard/OrderItemCard";
-import { useCartStore } from "../../store/useCartStore";
-import { useOrderPayment } from "../../hooks/useOrderPayment";
+import OrderSummary from "../../components/OrderSummary/OrderSummary";
 import QRCodeBox from "../../components/QRCodeBox/QRCodeBox";
 import ExpiredModal from "../../components/ExpiredModal/ExpiredModal";
-import { useState } from "react";
-import OrderSummary from "../../components/OrderSummary/OrderSummary";
 import SuccessIcon from "../../components/Icon/SuccessIcon";
 
-const PaymentPage = () => {
+import { useCartStore } from "../../store/useCartStore";
+import { useOrderPayment } from "../../hooks/useOrderPayment";
+
+const MobilePaymentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { items, getTotalPrice, clearCart } = useCartStore();
@@ -19,10 +21,11 @@ const PaymentPage = () => {
   const subTotal = getTotalPrice();
   const taxRate = 10;
   const taxAmount = subTotal * (taxRate / 100);
+
   const checkoutData = location.state;
   const discountAmount = checkoutData?.discountAmount || 0;
 
-  // Memanggil Custom Hook kita
+  // Custom Hook
   const { orderId, adminFee, finalPayment } = useOrderPayment(
     subTotal,
     taxAmount,
@@ -30,8 +33,8 @@ const PaymentPage = () => {
   );
 
   const handleSudahBayar = () => {
-    // KITA PINDAH KE SUCCESS PAGE SAMBIL MEMBAWA DATA
-    navigate("/kiosk/pesanan-berhasil", {
+    // Pindah ke Success Page versi Mobile
+    navigate("/qr/order-success", {
       state: {
         orderId,
         adminFee,
@@ -49,49 +52,52 @@ const PaymentPage = () => {
 
   const handleCloseExpiredModal = () => {
     clearCart();
-    navigate("/kiosk/menu");
+    navigate("/qr/menu"); // Sesuai desain, kembali ke Menu
   };
 
-  // Helper formatter
+  if (items.length === 0 && !isExpired) return null;
 
   return (
-    <div className="min-h-screen bg-white pb-16 relative flex flex-col">
+    // pb-24 agar tidak tertutup tombol sticky
+    <div className="min-h-screen bg-white pb-12 relative flex flex-col">
       <Header />
 
-      <main className="flex-1 w-full max-w-3xl mx-auto pt-10 flex flex-col items-center">
-        {/* --- HEADER STATUS (Icon Ceklis & Judul) --- */}
-        <div className="w-18 h-18 bg-primary rounded-full flex items-center justify-center mb-6 shadow-md">
-          <SuccessIcon className="text-primary w-40 h-40" />
+      <main className="flex-1 w-full max-w-md mx-auto px-6 pt-8 flex flex-col items-center">
+        {/* --- HEADER STATUS --- */}
+        <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mb-3">
+          <SuccessIcon className="text-primary w-18 h-18" />
         </div>
-        <h1 className="text-3xl font-bold mb-1">Pesanan Berhasil Dibuat!</h1>
-        <p className="text-gray mb-6 text-2xl">
+        <h1 className="text-md font-bold mb-1">Pesanan Berhasil Dibuat!</h1>
+        <p className="text-gray-500 mb-6 text-xs">
           Silakan lakukan pembayaran via QRIS
         </p>
 
-        {/* --- BLOK INFORMASI UTAMA --- */}
-        <div className="w-full bg-primary/12 rounded-md p-4 md:p-6 mb-8 flex flex-col gap-6 border border-[#E3D1EE]">
+        {/* --- BLOK INFORMASI UTAMA (Background Ungu Muda) --- */}
+        <div className="w-full bg-primary/12 rounded-md p-5 mb-8 flex flex-col gap-4">
           {/* Info Meja & ID */}
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between text-xl">
-              <span className="text-gray">Nomor meja</span>
-              <span className="font-bold text-primary">Meja 02</span>
+          <div className="flex flex-col gap-1.5 border-b border-[#E3D1EE] pb-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">Nomor meja</span>
+              <span className="font-bold text-primary">Meja-03</span>
             </div>
-            <div className="flex justify-between text-xl">
-              <span className="text-gray">ID Pesanan</span>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">ID Pesanan</span>
               <span className="font-bold text-primary">#{orderId}</span>
             </div>
           </div>
 
-          {/* DYNAMIC RENDER: QR Code ATAU Status Banner */}
+          {/* DYNAMIC RENDER: QR Code */}
           <QRCodeBox
             finalPayment={finalPayment}
             onExpire={handlePaymentExpired}
           />
         </div>
 
-        {/* --- STRUK / RINGKASAN PESANAN BAWAH --- */}
+        {/* --- STRUK / RINGKASAN PESANAN --- */}
         <div className="w-full text-left">
-          <h3 className="font-bold text-2xl mb-2">Ringkasan Pesanan</h3>
+          <h3 className="font-bold text-sm mb-3">
+            Ringkasan Pesanan
+          </h3>
 
           <div className="flex flex-col">
             {items.map((item) => (
@@ -99,29 +105,29 @@ const PaymentPage = () => {
             ))}
           </div>
 
-          {/* Kalkulasi Akhir */}
           <OrderSummary
             subTotal={subTotal}
             discountAmount={discountAmount}
             adminFee={adminFee}
-            hideAlertInfo={true} // Sembunyikan alert ungu karena user sudah di halaman QRIS
+            hideAlertInfo={true} // Disembunyikan karena sudah di tahap akhir
           />
         </div>
       </main>
 
       {/* --- STICKY BOTTOM BAR --- */}
-      <div className="w-full max-w-xl mx-auto mt-10">
-        <Button
-          onClick={handleSudahBayar}
-          className="w-full py-4 rounded-full font-bold text-xl"
-        >
-          Sudah Bayar
-        </Button>
+        <div className="w-full max-w-sm mx-auto mt-20">
+          <Button
+            onClick={handleSudahBayar}
+            className="w-full py-2 rounded-xl font-bold text-base"
+          >
+            Sudah Bayar
+          </Button>
       </div>
 
+      {/* MODAL KADALUARSA */}
       {isExpired && <ExpiredModal onClose={handleCloseExpiredModal} />}
     </div>
   );
 };
 
-export default PaymentPage;
+export default MobilePaymentPage;

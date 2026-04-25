@@ -15,21 +15,21 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
 
 const OrderItemCard = ({ item, isReceiptMode = false }: OrderItemCardProps) => {
   return (
-    <div className="py-2 mb-1 border-b border-gray/75 flex justify-between items-end gap-4">
+    <div className="py-1.5 md:py-2 mb-1 border-b border-gray/75 flex justify-between items-end gap-3 md:gap-4">
       {/* SISI KIRI: Nama & Catatan */}
-      <div className="flex-1 flex flex-col gap-1.5">
+      <div className="flex-1 flex flex-col gap-1 md:gap-1.5">
         <h3
           className={cn(
-            "text-3xl leading-tight",
+            "text-base md:text-3xl leading-tight",
             isReceiptMode ? "text-black" : "font-bold text-black",
           )}
         >
           {item.name} <span>x{item.qty}</span>
         </h3>
 
-        <div className="flex items-center gap-2 text-gray">
+        <div className="flex items-center gap-1.5 md:gap-2 text-gray">
           <NotesIcon className="shrink-0" />
-          <span className="text-xl line-clamp-1">
+          <span className="text-xs md:text-xl line-clamp-1">
             {item.notes ? item.notes : "Tidak ada"}
           </span>
         </div>
@@ -38,7 +38,7 @@ const OrderItemCard = ({ item, isReceiptMode = false }: OrderItemCardProps) => {
       {/* SISI KANAN: Total Harga per Item */}
       <span
         className={cn(
-          "text-2xl shrink-0",
+          "text-sm md:text-2xl shrink-0",
           isReceiptMode ? "text-black" : "font-bold text-primary",
         )}
       >
