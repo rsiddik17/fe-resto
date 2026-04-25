@@ -58,16 +58,6 @@ const router = createBrowserRouter([
       { path: "/qr/checkout", Component: MobileCheckoutPage },
       { path: "/qr/payment", Component: MobilePaymentPage },
       { path: "/qr/order-success", Component: MobileOrderSuccessPage },
-
-      { path: "/kiosk/home", Component: KioskHomePage },
-      { path: "/kiosk/guest-input", Component: GuestInputPage },
-      { path: "/kiosk/info-table", Component: TableInfoPage },
-      { path: "/kiosk/menu", Component: MenuPage },
-      { path: "kiosk/cart", Component: CartPage},
-      { path: "kiosk/checkout", Component: CheckoutPage},
-      { path: "kiosk/payment", Component: PaymentPage},
-      { path: "kiosk/order-success", Component: OrderSuccessPage},
-      { path: "/kiosk/profile", Component: ProfilePage },
     ],
   },
 
@@ -99,10 +89,11 @@ const router = createBrowserRouter([
       { path: "/kiosk/guest-input", Component: GuestInputPage },
       { path: "/kiosk/info-table", Component: TableInfoPage },
       { path: "/kiosk/menu", Component: MenuPage },
-      { path: "kiosk/cart", Component: CartPage},
-      { path: "kiosk/checkout", Component: CheckoutPage},
-      { path: "kiosk/payment", Component: PaymentPage},
-      { path: "kiosk/order-success", Component: OrderSuccessPage}
+      { path: "/kiosk/cart", Component: CartPage},
+      { path: "/kiosk/checkout", Component: CheckoutPage},
+      { path: "/kiosk/payment", Component: PaymentPage},
+      { path: "/kiosk/order-success", Component: OrderSuccessPage},
+      { path: "/kiosk/profile", Component: ProfilePage },
     ],
   },
   {
