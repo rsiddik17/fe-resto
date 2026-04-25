@@ -126,11 +126,11 @@ const MobileMenuPage = () => {
         <div className=" max-w-md mx-auto px-4 pt-4">
           <div className="relative mb-5">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+              <Search className="h-6 w-6 text-gray-400" />
             </div>
             <Input
               type="text"
-              className="w-full pl-11 pr-4 py-3 rounded-xs border focus:ring-2 focus:ring-primary placeholder:text-gray-500 shadow-md text-black"
+              className="w-full pl-12 pr-4 py-3 text-xl rounded-xs border focus:ring-2 focus:ring-primary placeholder:text-gray-500 shadow-md text-black"
               placeholder="Cari menu"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
