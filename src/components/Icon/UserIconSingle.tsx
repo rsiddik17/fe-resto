@@ -2,7 +2,7 @@ import { type SVGProps } from 'react';
 
 export default function UserIconSingle(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" {...props}>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24 " viewBox="0 0 24 24" {...props}>
       {/* Kepala: Mengikuti warna className */}
       <circle cx="12" cy="8" r="4.5" fill="currentColor" />
       

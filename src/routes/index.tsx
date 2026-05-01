@@ -41,72 +41,87 @@ import MobileCheckoutPage from "../pages/qr/MobileCheckoutPage";
 import MobilePaymentPage from "../pages/qr/MobilePaymentPage";
 import MobileOrderSuccessPage from "../pages/qr/MobileOrderSuccessPage";
 import ProfilePage from "../pages/kiosk/ProfilePage";
+import WaiterLayout from "../layouts/WaiterLayout/WaiterLayout";
+import WaiterProfilePage from "../pages/waiter/WaiterProfilePage";
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      element: <PublicRoute />,
+      children: [
+        { path: "/", Component: LoginPage },
+        { path: "/register", Component: RegisterPage },
+        { path: "/lupa-password", Component: ForgotPasswordPage },
+        { path: "/reset-password", Component: ResetPasswordPage },
+        { path: "/verifikasi-otp", Component: VerifyOtpPage },
+        { path: "/qr/:tableId", Component: MobileTableInfoPage },
+        { path: "/qr/menu", Component: MobileMenuPage },
+        { path: "/qr/cart", Component: MobileCartPage },
+        { path: "/qr/checkout", Component: MobileCheckoutPage },
+        { path: "/qr/payment", Component: MobilePaymentPage },
+        { path: "/qr/order-success", Component: MobileOrderSuccessPage },
+      ],
+    },
 
-  {
-    element: <PublicRoute />,
-    children: [
-      { path: "/", Component: LoginPage },
-      { path: "/register", Component: RegisterPage },
-      { path: "/lupa-password", Component: ForgotPasswordPage },
-      { path: "/reset-password", Component: ResetPasswordPage },
-      { path: "/verifikasi-otp", Component: VerifyOtpPage },
-      { path: "/qr/:tableId", Component: MobileTableInfoPage },
-      { path: "/qr/menu", Component: MobileMenuPage },
-      { path: "/qr/cart", Component: MobileCartPage },
-      { path: "/qr/checkout", Component: MobileCheckoutPage },
-      { path: "/qr/payment", Component: MobilePaymentPage },
-      { path: "/qr/order-success", Component: MobileOrderSuccessPage },
-    ],
-  },
+    { path: "/unauthorized", Component: UnauthorizedPage },
 
-  
-  { path: "/unauthorized", Component: UnauthorizedPage },
+    // --- PROTECTED ROUTES ---
+    {
+      element: <ProtectedRoute allowedRoles={["ADMIN"]} />,
+      children: [{ path: "/admin/dashboard", Component: AdminDashboardPage }],
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["CASHIER"]} />,
+      children: [{ path: "/kasir/dashboard", Component: CashierDashboardPage }],
+    },
+    {
+      element: <PublicRoute />,
+      children: [
+        {
+          element: <WaiterLayout />,
+          children: [
+            {
+              path: "/waiter/dashboard",
+              Component: WaiterDashboardPage,
+            },
+          ],
+        },
+        {
+          path: "/waiter/profile",
+          Component: WaiterProfilePage,
+        },
+      ],
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["KITCHEN"]} />,
+      children: [{ path: "/kitchen/queue", Component: KitchenDashboardPage }],
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["KIOSK_SYSTEM"]} />,
+      children: [
+        { path: "/kiosk/home", Component: KioskHomePage },
+        { path: "/kiosk/guest-input", Component: GuestInputPage },
+        { path: "/kiosk/info-table", Component: TableInfoPage },
+        { path: "/kiosk/menu", Component: MenuPage },
+        { path: "/kiosk/cart", Component: CartPage },
+        { path: "/kiosk/checkout", Component: CheckoutPage },
+        { path: "/kiosk/payment", Component: PaymentPage },
+        { path: "/kiosk/order-success", Component: OrderSuccessPage },
+        { path: "/kiosk/profile", Component: ProfilePage },
+      ],
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />,
+      children: [{ path: "/customer/home", Component: CustomerHomePage }],
+    },
 
-
-  // --- PROTECTED ROUTES ---
-  {
-    element: <ProtectedRoute allowedRoles={["ADMIN"]} />,
-    children: [{ path: "/admin/dashboard", Component: AdminDashboardPage }],
-  },
-  {
-    element: <ProtectedRoute allowedRoles={["CASHIER"]} />,
-    children: [{ path: "/kasir/dashboard", Component: CashierDashboardPage }],
-  },
-  {
-    element: <ProtectedRoute allowedRoles={["WAITER"]} />,
-    children: [{ path: "/pelayan/order", Component: WaiterDashboardPage }],
-  },
-  {
-    element: <ProtectedRoute allowedRoles={["KITCHEN"]} />,
-    children: [{ path: "/kitchen/queue", Component: KitchenDashboardPage }],
-  },
-  {
-    element: <ProtectedRoute allowedRoles={["KIOSK_SYSTEM"]} />, 
-    children: [
-      { path: "/kiosk/home", Component: KioskHomePage },
-      { path: "/kiosk/guest-input", Component: GuestInputPage },
-      { path: "/kiosk/info-table", Component: TableInfoPage },
-      { path: "/kiosk/menu", Component: MenuPage },
-      { path: "/kiosk/cart", Component: CartPage},
-      { path: "/kiosk/checkout", Component: CheckoutPage},
-      { path: "/kiosk/payment", Component: PaymentPage},
-      { path: "/kiosk/order-success", Component: OrderSuccessPage},
-      { path: "/kiosk/profile", Component: ProfilePage },
-    ],
-  },
-  {
-    element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />, 
-    children: [{ path: "/customer/home", Component: CustomerHomePage }],
-  },
-
-
-  // 🚨 RUTE 404 HARUS DI PALING BAWAH (Catch-All Route)
-  { 
-    path: "*", 
-    Component: NotFoundPage
-  },
-], {basename: "/its-resto"});
+    // 🚨 RUTE 404 HARUS DI PALING BAWAH (Catch-All Route)
+    {
+      path: "*",
+      Component: NotFoundPage,
+    },
+  ],
+  { basename: "/its-resto" },
+);
 
 export default router;

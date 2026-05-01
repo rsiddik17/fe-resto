@@ -13,7 +13,7 @@ const DeleteConfirmModal = ({ onClose, onConfirm }: DeleteConfirmModalProps) => 
       onClick={onClose}
     >
       <div 
-        className="bg-white w-full max-w-[90%] md:max-w-131.5 h-93 md:h-91 rounded-2xl pt-8 pb-6 px-2 md:pt-9 md:pb-8 md:px-8 shadow-sm flex flex-col items-center text-center animate-in zoom-in-95 duration-200"
+        className="bg-white w-full max-w-[90%] md:max-w-131.5 min-h-93 md:h-91 rounded-2xl pt-8 pb-6 px-2 md:pt-9 md:pb-8 md:px-8 shadow-sm flex flex-col items-center text-center animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         
@@ -35,14 +35,14 @@ const DeleteConfirmModal = ({ onClose, onConfirm }: DeleteConfirmModalProps) => 
           <Button 
             onClick={onClose}
             // Kita override warnanya jadi abu-abu karena di Button.tsx belum ada variant abu-abu
-            className="flex-1 max-w-36 md:max-w-41.75 font-normal text-lg bg-[#D9D9D9] text-black"
+            className="flex-1 max-w-36 md:max-w-41.75 font-normal text-lg bg-[#D9D9D9] hover:bg-[#D9D9D9] text-black"
           >
             Batal
           </Button>
           
           <Button 
             onClick={onConfirm}
-            className="flex-1 max-w-36 md:max-w-41.75 py-3 md:py-2.5 font-semibold text-lg bg-[#FC1111] text-white"
+            className="flex-1 max-w-36 md:max-w-41.75 py-3 md:py-2.5 font-semibold text-lg bg-[#FC1111] hover:bg-[#FC1111] text-white"
           >
             Ya, Hapus
           </Button>

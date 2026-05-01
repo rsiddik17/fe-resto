@@ -75,7 +75,7 @@ const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0, adminFee = 0
       {/* --- ALERT INFO --- */}
       {!hideAlertInfo && (
         <AlertInfo 
-          className="mt-71 md:mt-2"
+          className="mt-80 md:mt-2"
           title="Informasi Pembayaran"
           description="Setelah konfirmasi pesanan, biaya admin akan ditambahkan."
         />

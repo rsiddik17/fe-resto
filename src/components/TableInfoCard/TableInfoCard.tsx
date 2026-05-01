@@ -60,7 +60,7 @@ const TableInfoCard = ({
         {/* Tombol Lihat Menu */}
         <Button
           onClick={onLanjut}
-          className="w-full max-w-68 md:max-w-115 py-1.5 md:py-4 text-base md:text-lg flex items-center justify-center cursor-pointer"
+          className="w-full max-w-68 md:max-w-115 py-1.5 md:py-4 text-base text-center md:text-lg flex items-center justify-center cursor-pointer"
         >
           Lihat Menu <ChevronRight size={32} />
         </Button>
