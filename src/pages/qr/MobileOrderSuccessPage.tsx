@@ -42,7 +42,7 @@ const MobileOrderSuccessPage = () => {
 
   return (
     // pb-24 agar tombol sticky tidak menutupi ringkasan harga
-    <div className="min-h-screen bg-white pb-12 relative flex flex-col">
+    <div className="min-h-screen bg-white pb-4 relative flex flex-col">
       <Header />
 
       <main className="flex-1 w-full max-w-md mx-auto px-5 pt-10 flex flex-col items-center">
@@ -96,7 +96,7 @@ const MobileOrderSuccessPage = () => {
       </main>
 
       {/* --- STICKY BOTTOM BAR --- */}
-        <div className="w-full max-w-sm mx-auto">
+        <div className="w-full max-w-sm mx-auto px-3 mt-4">
           <Button 
             onClick={handleSelesai} 
             className="w-full py-2 rounded-xl font-bold text-base"

@@ -64,7 +64,7 @@ const MobileCheckoutPage = () => {
 
   return (
     // pb-28 agar konten paling bawah tidak tertutup oleh tombol sticky
-    <div className="min-h-screen bg-white pb-12  relative flex flex-col">
+    <div className="min-h-screen bg-white pb-4  relative flex flex-col">
       <Header />
 
       <main className="flex-1 w-full max-w-md mx-auto px-5 pt-4">
@@ -120,7 +120,7 @@ const MobileCheckoutPage = () => {
       </main>
 
       {/* --- STICKY BOTTOM BAR (TOMBOL KONFIRMASI) --- */}
-        <div className="w-full max-w-sm mx-auto">
+        <div className="w-full max-w-sm mx-auto px-3">
           <Button
             onClick={handleConfirmOrder}
             className="w-full py-1.5 rounded-xl font-bold text-base"

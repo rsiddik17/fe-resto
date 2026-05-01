@@ -59,7 +59,7 @@ const MobilePaymentPage = () => {
 
   return (
     // pb-24 agar tidak tertutup tombol sticky
-    <div className="min-h-screen bg-white pb-12 relative flex flex-col">
+    <div className="min-h-screen bg-white pb-4 relative flex flex-col">
       <Header />
 
       <main className="flex-1 w-full max-w-md mx-auto px-6 pt-8 flex flex-col items-center">
@@ -115,7 +115,7 @@ const MobilePaymentPage = () => {
       </main>
 
       {/* --- STICKY BOTTOM BAR --- */}
-        <div className="w-full max-w-sm mx-auto mt-20">
+        <div className="w-full max-w-sm mx-auto mt-20 px-3">
           <Button
             onClick={handleSudahBayar}
             className="w-full py-2 rounded-xl font-bold text-base"

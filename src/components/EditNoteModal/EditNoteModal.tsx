@@ -45,7 +45,7 @@ const EditNoteModal = ({ initialNote, onClose, onSave }: EditNoteModalProps) => 
             placeholder="Tidak ada catatan"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            className="w-full pl-10 pr-4 py-4 bg-gray/15 border-transparent focus:bg-white focus:border-primary font-medium rounded-sm placeholder:text-gray"
+            className="w-full pl-10 pr-4 py-3 md:py-4 bg-gray/15 border-transparent focus:bg-white focus:border-primary font-medium rounded-sm placeholder:text-gray"
             autoFocus
           />
         </div>
