@@ -1,6 +1,6 @@
 import { Navigate, useNavigate, useSearchParams } from "react-router";
 import AuthLayouts from "../../layouts/AuthLayouts/AuthLayouts";
-import FormOtp from "../../components/FormOtp/FormOtp";
+import FormOtp from "../../components/Form/FormOtp";
 
 const VerifyOtpPage = () => {
   const [searchParams] = useSearchParams();

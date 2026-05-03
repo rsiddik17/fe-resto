@@ -57,9 +57,9 @@ const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
       >
         <div className="bg-white rounded-full flex items-center justify-center shrink-0 w-13 h-13 shadow-sm">
           <img
-            src={`${import.meta.env.BASE_URL}images/logo.webp`}
+            src={`${import.meta.env.BASE_URL}images/new-logo.webp`}
             alt="Logo"
-            className="w-10 h-10 object-contain"
+            className="w-14 h-14 object-cover"
           />
         </div>
 

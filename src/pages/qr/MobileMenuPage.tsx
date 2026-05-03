@@ -4,11 +4,11 @@ import { Search } from "lucide-react"; // Import icon search bawaan lucide
 
 // Komponen Reusable yang sudah kita buat
 import Header from "../../components/Header/Header";
-import CategoryTabs from "../../components/CategoryTabs/CategoryTabs";
-import MenuCard, { type MenuItem } from "../../components/MenuCard/MenuCard";
+import CategoryTabs from "../../components/CategoryFilterTabs/CategoryFilterTabs";
+import MenuCard, { type MenuItem } from "../../components/Card/MenuCard";
 import CartBottomBar from "../../components/CartBottomBar/CartBottomBar";
-import MenuItemModal from "../../components/MenuItemModal/MenuItemModal";
-import SuccessModal from "../../components/SuccessModal/SuccessModal";
+import MenuItemModal from "../../components/Modal/MenuItemModal";
+import SuccessModal from "../../components/Modal/SuccessModal";
 
 // Global State
 import { useCartStore } from "../../store/useCartStore";
@@ -130,7 +130,7 @@ const MobileMenuPage = () => {
             </div>
             <Input
               type="text"
-              className="w-full pl-12 pr-4 py-3 text-xl rounded-xs border focus:ring-2 focus:ring-primary placeholder:text-gray-500 shadow-md text-black"
+              className="w-full pl-12 pr-4 py-2.5 text-lg rounded-xs border focus:ring-2 focus:ring-primary placeholder:text-gray-500 shadow-md text-black"
               placeholder="Cari menu"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

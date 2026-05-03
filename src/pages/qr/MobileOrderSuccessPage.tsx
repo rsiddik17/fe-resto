@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router";
 
 import Header from "../../components/Header/Header";
 import Button from "../../components/ui/Button";
-import OrderItemCard from "../../components/OrderItemCard/OrderItemCard";
+import OrderItemCard from "../../components/Card/OrderItemCard";
 import StatusBanner from "../../components/StatusBanner/StatusBanner";
 import OrderSummary from "../../components/OrderSummary/OrderSummary";
 import SuccessIcon from "../../components/Icon/SuccessIcon";
@@ -99,7 +99,7 @@ const MobileOrderSuccessPage = () => {
         <div className="w-full max-w-sm mx-auto px-3 mt-4">
           <Button 
             onClick={handleSelesai} 
-            className="w-full py-2 rounded-xl font-bold text-base"
+            className="w-full py-1.5 rounded-xl font-semibold text-base"
           >
             Selesai
           </Button>

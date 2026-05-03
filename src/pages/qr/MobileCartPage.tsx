@@ -4,9 +4,9 @@ import { ArrowLeft, Plus } from "lucide-react";
 
 import Header from "../../components/Header/Header";
 import Button from "../../components/ui/Button";
-import CartItemCard from "../../components/CartItemCard/CartItemCard";
-import EditNoteModal from "../../components/EditNoteModal/EditNoteModal";
-import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfirmModal";
+import CartItemCard from "../../components/Card/CartItemCard";
+import EditNoteModal from "../../components/Modal/EditNoteModal";
+import DeleteConfirmModal from "../../components/Modal/DeleteConfirmModal";
 import { useCartStore } from "../../store/useCartStore";
 
 const MobileCartPage = () => {
@@ -88,12 +88,12 @@ const MobileCartPage = () => {
               alt="Keranjang Kosong"
               className="w-80 mb-16"
             />
-            <p className="text-gray-500 text-center text-base mb-57">
+            <p className="text-gray-500 text-center text-[15px] mb-57">
               Keranjangmu masih kosong, yuk pilih menu!
             </p>
             <Button
               onClick={handleBackToMenu}
-              className="w-full max-w-sm py-1 rounded-xl flex justify-center items-center gap-2 font-bold"
+              className="w-full max-w-sm py-1 rounded-xl flex justify-center items-center gap-2 font-semibold"
             >
               <Plus size={18} /> Tambah Menu
             </Button>
@@ -106,7 +106,7 @@ const MobileCartPage = () => {
           <div className="w-full max-w-sm mx-auto px-3">
             <Button
               onClick={handleProceedToPayment}
-              className="w-full max-w-sm py-1.5 rounded-xl font-bold text-base"
+              className="w-full max-w-sm py-1.5 rounded-xl font-semibold text-base"
             >
               Lanjut ke Pembayaran
             </Button>

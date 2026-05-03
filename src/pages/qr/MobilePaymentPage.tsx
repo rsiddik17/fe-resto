@@ -3,10 +3,10 @@ import { useNavigate, useLocation } from "react-router";
 
 import Header from "../../components/Header/Header";
 import Button from "../../components/ui/Button";
-import OrderItemCard from "../../components/OrderItemCard/OrderItemCard";
+import OrderItemCard from "../../components/Card/OrderItemCard";
 import OrderSummary from "../../components/OrderSummary/OrderSummary";
 import QRCodeBox from "../../components/QRCodeBox/QRCodeBox";
-import ExpiredModal from "../../components/ExpiredModal/ExpiredModal";
+import ExpiredModal from "../../components/Modal/ExpiredModal";
 import SuccessIcon from "../../components/Icon/SuccessIcon";
 
 import { useCartStore } from "../../store/useCartStore";
@@ -65,22 +65,22 @@ const MobilePaymentPage = () => {
       <main className="flex-1 w-full max-w-md mx-auto px-6 pt-8 flex flex-col items-center">
         {/* --- HEADER STATUS --- */}
         <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mb-3">
-          <SuccessIcon className="text-primary w-18 h-18" />
+          <SuccessIcon className="text-primary w-17 h-17" />
         </div>
-        <h1 className="text-md font-bold mb-1">Pesanan Berhasil Dibuat!</h1>
-        <p className="text-gray-500 mb-6 text-xs">
+        <h1 className="text-sm font-bold mb-1">Pesanan Berhasil Dibuat!</h1>
+        <p className="text-gray-500 mb-6 text-[11px]">
           Silakan lakukan pembayaran via QRIS
         </p>
 
         {/* --- BLOK INFORMASI UTAMA (Background Ungu Muda) --- */}
-        <div className="w-full bg-primary/12 rounded-md p-5 mb-8 flex flex-col gap-4">
+        <div className="mx-2.5 bg-primary/12 rounded-md p-5 mb-8 flex flex-col gap-4">
           {/* Info Meja & ID */}
           <div className="flex flex-col gap-1.5 border-b border-[#E3D1EE] pb-2">
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-[13px]">
               <span className="text-gray-500">Nomor meja</span>
               <span className="font-bold text-primary">Meja-03</span>
             </div>
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-[13px]">
               <span className="text-gray-500">ID Pesanan</span>
               <span className="font-bold text-primary">#{orderId}</span>
             </div>
@@ -118,7 +118,7 @@ const MobilePaymentPage = () => {
         <div className="w-full max-w-sm mx-auto mt-20 px-3">
           <Button
             onClick={handleSudahBayar}
-            className="w-full py-2 rounded-xl font-bold text-base"
+            className="w-full py-1.5 rounded-xl font-semibold text-base"
           >
             Sudah Bayar
           </Button>

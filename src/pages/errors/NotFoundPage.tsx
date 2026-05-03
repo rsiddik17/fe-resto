@@ -47,7 +47,7 @@ const NotFoundPage = () => {
         404 Tidak Ditemukan
       </p>
       
-      <h1 className="text-3xl md:text-4xl font-extrabold text-black mb-6 text-center">
+      <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center">
         Ups! Halaman Tidak Ditemukan
       </h1>
       
@@ -57,7 +57,7 @@ const NotFoundPage = () => {
       
       <Button 
         onClick={handleGoHome} 
-        className="px-8 py-4"
+        className="px-6 py-3"
       >
         Kembali ke Beranda
       </Button>

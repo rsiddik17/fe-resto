@@ -4,9 +4,9 @@ import { ArrowLeft, Plus } from "lucide-react";
 
 import Header from "../../components/Header/Header";
 import Button from "../../components/ui/Button";
-import OrderItemCard from "../../components/OrderItemCard/OrderItemCard";
+import OrderItemCard from "../../components/Card/OrderItemCard";
 import OrderSummary from "../../components/OrderSummary/OrderSummary";
-import DiscountModal from "../../components/DiscountModal/DiscountModal";
+import DiscountModal from "../../components/Modal/DiscountModal";
 import { useCartStore } from "../../store/useCartStore";
 
 const MobileCheckoutPage = () => {
@@ -72,7 +72,7 @@ const MobileCheckoutPage = () => {
         <div className="border-b border-gray-200 pb-2 mb-4">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 text-xl font-bold mb-2"
+            className="flex items-center gap-2 text-lg font-bold mb-2"
           >
             <ArrowLeft size={24} strokeWidth={2.5} /> Ringkasan Pesanan
           </button>
@@ -101,7 +101,7 @@ const MobileCheckoutPage = () => {
               <Button
                 onClick={() => setIsModalOpen(true)}
                 variant="outline"
-                className="w-full py-2.5 rounded-lg text-sm font-bold border-2 border-primary text-primary flex items-center justify-center gap-2 hover:bg-primary/5 mt-2"
+                className="w-full py-2 rounded-md text-sm font-bold border-2 border-primary text-primary flex items-center justify-center gap-2 hover:bg-primary/5 mt-2"
               >
                 <Plus size={18} strokeWidth={3} /> Tambah Diskon
               </Button>
@@ -120,10 +120,10 @@ const MobileCheckoutPage = () => {
       </main>
 
       {/* --- STICKY BOTTOM BAR (TOMBOL KONFIRMASI) --- */}
-        <div className="w-full max-w-sm mx-auto px-3">
+        <div className="w-full max-w-102 mx-auto px-3 mt-4">
           <Button
             onClick={handleConfirmOrder}
-            className="w-full py-1.5 rounded-xl font-bold text-base"
+            className="w-full py-1.5 rounded-xl font-semibold text-base"
           >
             Konfirmasi Pesanan
           </Button>

@@ -1,0 +1,302 @@
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router";
+import { Search } from "lucide-react";
+import DashboardHeader from "../../components/Header/DashboardHeader";
+import Button from "../../components/ui/Button";
+import { useCartStore } from "../../store/useCartStore";
+import type { MenuItem } from "../../components/Card/MenuCard";
+import MenuCard from "../../components/Card/MenuCard";
+import CategoryFilterTabs from "../../components/CategoryFilterTabs/CategoryFilterTabs";
+import WaiterCartItemCard from "../../components/Card/WaiterCartItemCard";
+import EditNoteModal from "../../components/Modal/EditNoteModal";
+import DiscountModal from "../../components/Modal/DiscountModal";
+import WaiterOrderSummary from "../../components/OrderSummary/WaiterOrderSummary";
+import Input from "../../components/ui/Input";
+import DeleteConfirmModal from "../../components/Modal/DeleteConfirmModal";
+
+// Mock Data Menu
+const MOCK_MENU: MenuItem[] = [
+  {
+    id: "1",
+    name: "Nasi Goreng Kambing",
+    price: 40000,
+    description: "Nasi goreng dengan daging kambing empuk",
+    image: "/images/nasgor.jpg",
+    category: "makanan",
+  },
+  {
+    id: "2",
+    name: "Sate Ayam",
+    price: 40000,
+    description: "Sate ayam dengan bumbu kacang khas",
+    image: "/images/sate.jpg",
+    category: "makanan",
+  },
+  {
+    id: "3",
+    name: "Matcha Latte",
+    price: 30000,
+    description: "Matcha lembut dengan rasa teh",
+    image: "/images/matcha.jpg",
+    category: "minuman",
+  },
+  {
+    id: "4",
+    name: "Lemon Tea",
+    price: 20000,
+    description: "Lemon tea segar dengan rasa asam manis",
+    image: "/images/lemontea.jpg",
+    category: "minuman",
+  },
+  {
+    id: "5",
+    name: "Es Teler",
+    price: 25000,
+    description: "Minuman segar dengan campuran buah",
+    image: "/images/esteler.jpg",
+    category: "minuman",
+  },
+  {
+    id: "6",
+    name: "Gado-gado",
+    price: 30000,
+    description: "Sayuran segar dengan bumbu kacang",
+    image: "/images/gado.jpg",
+    category: "makanan",
+    stock: 0,
+  },
+];
+
+const WaiterSelectMenuPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Tangkap nomor meja dari halaman Pilih Meja, fallback "Meja 10"
+  const tableNumber = location.state?.tableNumber
+    ? `Meja ${location.state.tableNumber}`
+    : "Meja 10";
+
+  // Zustand Store
+  const { items, getTotalPrice, addToCart, updateQty, removeItem, updateNote } =
+    useCartStore();
+  const subTotal = getTotalPrice();
+
+  // State Halaman
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState<
+    "semua" | "makanan" | "minuman"
+  >("semua");
+
+  // State Modals
+  const [isDiscountOpen, setIsDiscountOpen] = useState(false);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [isNoteOpen, setIsNoteOpen] = useState(false);
+  const [selectedCartItemId, setSelectedCartItemId] = useState<string | null>(
+    null,
+  );
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
+  // Filter Menu: Berdasarkan kategori DAN hasil pencarian (search)
+  const filteredMenu = MOCK_MENU.filter((item) => {
+    const matchCategory =
+      activeCategory === "semua" ? true : item.category === activeCategory;
+    const matchSearch = item.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    return matchCategory && matchSearch;
+  });
+
+  const handleConfirmOrder = () => {
+    if (items.length === 0) return; // Proteksi ganda
+    console.log("Kirim Pesanan:", {
+      tableNumber,
+      items,
+      subTotal,
+      discountAmount,
+    });
+    alert("Pesanan Dikonfirmasi!");
+  };
+
+  const handleConfirmDelete = () => {
+    if (itemToDelete) {
+      removeItem(itemToDelete);
+      setItemToDelete(null);
+    }
+  };
+
+  return (
+    <>
+      {/* 1. HEADER (Sesuai Wrapper Permintaan) */}
+      <div className="pt-8 pl-7 pr-2.5">
+        <DashboardHeader
+          title="Pilih Menu"
+          showBack={true}
+          onBack={() => navigate(-1)}
+          userName="Mila"
+          roleName="Pelayan"
+        />
+      </div>
+
+      {/* 2. MAIN CONTENT (Sesuai Wrapper Permintaan) */}
+      <div className="pt-0 pb-4 px-7 min-h-0">
+        {/* Layout 2 Kolom Kiri/Kanan dengan proporsi fixed 52% dan 48% */}
+        <div className="flex gap-4 md:gap-5 h-full min-h-0 w-full">
+          {/* --- KOLOM KIRI: MENU (52%) --- */}
+          <div className="w-[55%] bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5 flex flex-col min-h-0">
+            {/* Search */}
+            <div className="relative mb-4 shrink-0 shadow">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="text-gray-400 w-4 h-4" />
+              </div>
+              <Input
+                type="text"
+                placeholder="Cari menu pesanan"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 py-2 text-sm border-gray-200"
+              />
+            </div>
+
+            {/* Category Tabs */}
+            <div className="shrink-0 mb-1">
+              <CategoryFilterTabs
+                activeCategory={activeCategory}
+                onCategoryChange={setActiveCategory}
+              />
+            </div>
+
+            {/* Menu Grid (Discroll, 2 Kolom) */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 pr-1 pb-2">
+              {filteredMenu.length > 0 ? (
+                <div className="grid grid-cols-2 gap-3">
+                  {filteredMenu.map((item) => (
+                    <MenuCard key={item.id}>
+                      <MenuCard.Header
+                        image={item.image}
+                        name={item.name}
+                        isOutOfStock={item.stock === 0}
+                      />
+                      <MenuCard.Body
+                        name={item.name}
+                        price={item.price}
+                        description={item.description}
+                      />
+                      {item.stock === 0 ? (
+                        <div className="px-1.5 md:px-2 py-0 mt-auto">
+                          <Button
+                            disabled
+                            className="w-full py-1 md:py-1.5 rounded-full text-sm font-normal shadow-none cursor-not-allowed border-none"
+                          >
+                            Habis
+                          </Button>
+                        </div>
+                      ) : (
+                        <MenuCard.Footer onAdd={() => addToCart(item, 1, "")} />
+                      )}
+                    </MenuCard>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center text-gray-400 text-sm mt-10">
+                  Menu tidak ditemukan
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* --- KOLOM KANAN: CART (48%) --- */}
+          <div className="w-[45%] bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5 flex flex-col h-full min-h-0">
+            {/* Header Cart */}
+            <div className="flex justify-between items-center shrink-0 border-b border-gray-100 pb-3">
+              <h2 className="font-bold text-[17px] text-black">Pesanan</h2>
+              <span className="font-bold text-primary text-[14px] px-3 py-1 rounded-md">
+                {tableNumber}
+              </span>
+            </div>
+
+            {/* List Cart Items (Bisa discroll, Kosong = Bersih tidak ada elemen) */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+              <div className="flex flex-col gap-2.5">
+                {items.map((item) => (
+                  <WaiterCartItemCard
+                    key={item.cartId}
+                    item={item}
+                    onIncrease={(id) => updateQty(id, 1)}
+                    onDecrease={(id) => updateQty(id, -1)}
+                    onDeletePrompt={(id) => setItemToDelete(id)}
+                    onEditNote={(cartId) => {
+                      setSelectedCartItemId(cartId);
+                      setIsNoteOpen(true);
+                    }}
+                  />
+                ))}
+
+                {items.length > 0 && (
+                  <div className="mt-6 pt-2 pb-2">
+                    <WaiterOrderSummary
+                      items={items}
+                      subTotal={subTotal}
+                      discountAmount={discountAmount}
+                      onAddDiscount={() => setIsDiscountOpen(true)}
+                      onRemoveDiscount={() => setDiscountAmount(0)}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="shrink-0 pt-4 border-t border-gray-100 mt-2">
+              <Button
+                onClick={handleConfirmOrder}
+                disabled={items.length === 0}
+                className="w-full py-2 text-[14px] font-bold rounded-lg shadow-sm disabled:bg-gray/50 disabled:cursor-not-allowed transition-all"
+              >
+                Konfirmasi Pesanan
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* --- MODALS --- */}
+      {isDiscountOpen && (
+        <DiscountModal
+          onClose={() => setIsDiscountOpen(false)}
+          onApply={(amount) => {
+            setDiscountAmount(amount);
+            setIsDiscountOpen(false);
+          }}
+          subTotal={subTotal}
+        />
+      )}
+
+      {isNoteOpen && (
+        <EditNoteModal
+          initialNote={
+            items.find((i) => i.cartId === selectedCartItemId)?.notes || ""
+          }
+          onClose={() => {
+            setIsNoteOpen(false);
+            setSelectedCartItemId(null);
+          }}
+          onSave={(newNote) => {
+            if (updateNote && selectedCartItemId)
+              updateNote(selectedCartItemId, newNote);
+            setIsNoteOpen(false);
+            setSelectedCartItemId(null);
+          }}
+        />
+      )}
+
+      {/* RENDER MODAL HAPUS ITEM (BARU) */}
+      {itemToDelete && (
+        <DeleteConfirmModal
+          onClose={() => setItemToDelete(null)}
+          onConfirm={handleConfirmDelete}
+        />
+      )}
+    </>
+  );
+};
+
+export default WaiterSelectMenuPage;

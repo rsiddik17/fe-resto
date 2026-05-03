@@ -1,13 +1,13 @@
 import { ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import Button from "../../components/ui/Button";
-import StatCard from "../../components/StatCard/StatCard";
+import StatCard from "../../components/Card/StatCard";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import {
   ProcessingOrderCard,
   ReadyOrderCard,
-} from "../../components/OrderCards/OrderCards";
-import TableStatusBoard from "../../components/TableStatus/TableStatusBoard";
+} from "../../components/Card/OrderCards";
+import TableStatusBoard from "../../components/Table/TableStatusBoard";
 import TableManagementIcon from "../../components/Icon/TableManagementIcon";
 import InfoCircleIcon from "../../components/Icon/InfoCircleIcon";
 import ProcessingIcon from "../../components/Icon/ProcessingIcon";
@@ -19,7 +19,7 @@ const WaiterDashboardPage = () => {
 
   return (
     <>
-      <div className="pt-6 pl-6 pr-3">
+      <div className="pt-8 pl-7 pr-2.5">
         {/* 1. HEADER */}
         <DashboardHeader
           title="Dashboard Pelayan"
@@ -29,7 +29,7 @@ const WaiterDashboardPage = () => {
         />
       </div>
 
-      <div className="pt-0 pb-6 px-6">
+      <div className="pt-0 pb-6 px-7">
 
         {/* 2. KARTU STATISTIK (Grid 3 Kolom) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
