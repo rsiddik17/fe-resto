@@ -14,7 +14,7 @@ const MobileTableInfoPage = () => {
   const formattedTableId = `M-${rawNumber.padStart(2, "0")}`;
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-linear-to-b from-primary/0 to-primary/15 relative overflow-hidden px-4">
+    <div className="w-full min-h-screen flex flex-col bg-linear-to-b from-primary/0 to-primary/15 relative overflow-hidden pb-4 px-4">
       {/* Logo di atas */}
       <div className="w-full flex justify-center z-10 pt-8 md:pt-14 pb-2">
         <img

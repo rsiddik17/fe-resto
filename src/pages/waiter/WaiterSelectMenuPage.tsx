@@ -4,7 +4,6 @@ import { Search } from "lucide-react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import Button from "../../components/ui/Button";
 import { useCartStore } from "../../store/useCartStore";
-import type { MenuItem } from "../../components/Card/MenuCard";
 import MenuCard from "../../components/Card/MenuCard";
 import CategoryFilterTabs from "../../components/CategoryFilterTabs/CategoryFilterTabs";
 import WaiterCartItemCard from "../../components/Card/WaiterCartItemCard";
@@ -13,59 +12,8 @@ import DiscountModal from "../../components/Modal/DiscountModal";
 import WaiterOrderSummary from "../../components/OrderSummary/WaiterOrderSummary";
 import Input from "../../components/ui/Input";
 import DeleteConfirmModal from "../../components/Modal/DeleteConfirmModal";
-
-// Mock Data Menu
-const MOCK_MENU: MenuItem[] = [
-  {
-    id: "1",
-    name: "Nasi Goreng Kambing",
-    price: 40000,
-    description: "Nasi goreng dengan daging kambing empuk",
-    image: "/images/nasgor.jpg",
-    category: "makanan",
-  },
-  {
-    id: "2",
-    name: "Sate Ayam",
-    price: 40000,
-    description: "Sate ayam dengan bumbu kacang khas",
-    image: "/images/sate.jpg",
-    category: "makanan",
-  },
-  {
-    id: "3",
-    name: "Matcha Latte",
-    price: 30000,
-    description: "Matcha lembut dengan rasa teh",
-    image: "/images/matcha.jpg",
-    category: "minuman",
-  },
-  {
-    id: "4",
-    name: "Lemon Tea",
-    price: 20000,
-    description: "Lemon tea segar dengan rasa asam manis",
-    image: "/images/lemontea.jpg",
-    category: "minuman",
-  },
-  {
-    id: "5",
-    name: "Es Teler",
-    price: 25000,
-    description: "Minuman segar dengan campuran buah",
-    image: "/images/esteler.jpg",
-    category: "minuman",
-  },
-  {
-    id: "6",
-    name: "Gado-gado",
-    price: 30000,
-    description: "Sayuran segar dengan bumbu kacang",
-    image: "/images/gado.jpg",
-    category: "makanan",
-    stock: 0,
-  },
-];
+import { useMenus } from "../../hooks/useMenus";
+import WarningIcon from "../../components/Icon/WarningIcon";
 
 const WaiterSelectMenuPage = () => {
   const navigate = useNavigate();
@@ -75,6 +23,8 @@ const WaiterSelectMenuPage = () => {
   const tableNumber = location.state?.tableNumber
     ? `Meja ${location.state.tableNumber}`
     : "Meja 10";
+
+  const { data: menus = [], isLoading, isError, refetch } = useMenus();
 
   // Zustand Store
   const { items, getTotalPrice, addToCart, updateQty, removeItem, updateNote } =
@@ -97,7 +47,7 @@ const WaiterSelectMenuPage = () => {
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   // Filter Menu: Berdasarkan kategori DAN hasil pencarian (search)
-  const filteredMenu = MOCK_MENU.filter((item) => {
+  const filteredMenu = menus.filter((item) => {
     const matchCategory =
       activeCategory === "semua" ? true : item.category === activeCategory;
     const matchSearch = item.name
@@ -167,39 +117,68 @@ const WaiterSelectMenuPage = () => {
 
             {/* Menu Grid (Discroll, 2 Kolom) */}
             <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 pr-1 pb-2">
-              {filteredMenu.length > 0 ? (
-                <div className="grid grid-cols-2 gap-3">
-                  {filteredMenu.map((item) => (
-                    <MenuCard key={item.id}>
-                      <MenuCard.Header
-                        image={item.image}
-                        name={item.name}
-                        isOutOfStock={item.stock === 0}
-                      />
-                      <MenuCard.Body
-                        name={item.name}
-                        price={item.price}
-                        description={item.description}
-                      />
-                      {item.stock === 0 ? (
-                        <div className="px-1.5 md:px-2 py-0 mt-auto">
-                          <Button
-                            disabled
-                            className="w-full py-1 md:py-1.5 rounded-full text-sm font-normal shadow-none cursor-not-allowed border-none"
-                          >
-                            Habis
-                          </Button>
-                        </div>
-                      ) : (
-                        <MenuCard.Footer onAdd={() => addToCart(item, 1, "")} />
-                      )}
-                    </MenuCard>
-                  ))}
+              {isLoading ? (
+                <div className="flex justify-center items-center h-48">
+                  <span className="text-primary font-bold animate-pulse text-lg">
+                    Memuat menu...
+                  </span>
+                </div>
+              ) : isError ? (
+                <div className="flex flex-col justify-center items-center h-48 gap-4 px-4 text-center mt-4">
+                  <div className="w-14 h-14 bg-red-100 text-red-500 rounded-full flex items-center justify-center">
+                    <span className="text-2xl">
+                      <WarningIcon />
+                    </span>
+                  </div>
+                  <p className="text-gray-600 font-medium">
+                    Gagal memuat menu. Silakan Coba lagi nanti.
+                  </p>
+                  <Button
+                    onClick={() => refetch()}
+                    className="px-6 py-2 rounded-sm font-bold shadow-sm"
+                  >
+                    Coba Lagi
+                  </Button>
                 </div>
               ) : (
-                <div className="text-center text-gray-400 text-sm mt-10">
-                  Menu tidak ditemukan
-                </div>
+                <>
+                  {filteredMenu.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-3">
+                      {filteredMenu.map((item) => (
+                        <MenuCard key={item.id}>
+                          <MenuCard.Header
+                            image={item.image}
+                            name={item.name}
+                            isOutOfStock={item.stock === 0}
+                          />
+                          <MenuCard.Body
+                            name={item.name}
+                            price={item.price}
+                            description={item.description}
+                          />
+                          {item.stock === 0 ? (
+                            <div className="px-1.5 md:px-2 py-0 mt-auto">
+                              <Button
+                                disabled
+                                className="w-full py-1 md:py-1.5 rounded-full text-sm font-normal shadow-none cursor-not-allowed border-none"
+                              >
+                                Habis
+                              </Button>
+                            </div>
+                          ) : (
+                            <MenuCard.Footer
+                              onAdd={() => addToCart(item, 1, "")}
+                            />
+                          )}
+                        </MenuCard>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center text-gray-400 text-sm mt-10">
+                      Menu tidak ditemukan
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
