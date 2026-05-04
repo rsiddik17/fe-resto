@@ -17,7 +17,7 @@ const WaiterLayout = () => {
 
   const waiterMenus: SidebarItem[] = [
     { name: "Dashboard", icon: DashboardIcon, path: "/waiter/dashboard" },
-    { name: "Buat Pesanan", icon: CreateOrderIcon, path: "/waiter/buat-pesanan" },
+    { name: "Buat Pesanan", icon: CreateOrderIcon, path: "/waiter/create-order" },
     { name: "Daftar Pesanan", icon: OrderListIcon, path: "/waiter/daftar-pesanan" },
     { name: "Manajemen Meja", icon: TableManagementIcon, path: "/waiter/manajemen-meja" },
   ];

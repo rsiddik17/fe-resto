@@ -1,14 +1,17 @@
 import UserIconSingle from "../Icon/UserIconSingle";
 import { useState } from "react";
-import NotificationModal, { type NotificationItem } from "../NotificationModal/NotificationModal";
+import NotificationModal, { type NotificationItem } from "../Modal/NotificationModal";
 import NotificationIcon from "../Icon/NotificationIcon";
 import { useNavigate } from "react-router";
+import { ArrowLeft } from "lucide-react";
 
 interface DashboardHeaderProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   userName: string;
   roleName: string; // Misal: "Pelayan" atau "Kasir"
+  showBack?: boolean;
+  onBack?: () => void;
 }
 
 const initialNotifications: NotificationItem[] = [
@@ -55,6 +58,8 @@ const DashboardHeader = ({
   subtitle,
   userName,
   roleName,
+  showBack = false,
+  onBack,
 }: DashboardHeaderProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [notifications, setNotifications] =
@@ -73,13 +78,28 @@ const DashboardHeader = ({
     );
   };
 
+  const handleBackClick = () => {
+    if (onBack) onBack();
+    else navigate(-1); // Default kembali ke halaman sebelumnya
+  };
+
   return (
     <>
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
         {/* Kiri: Judul & Subjudul */}
-        <div>
-          <h1 className="text-2xl font-bold mb-1">{title}</h1>
-          <p className="text-black/50 text-sm md:text-base">{subtitle}</p>
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            {showBack && (
+              <button onClick={handleBackClick} className="hover:text-primary transition-colors cursor-pointer group mt-0.5">
+                <ArrowLeft size={24} strokeWidth={2} className="group-hover:-translate-x-0.5 -translate-y-1 transition-transform" />
+              </button>
+            )}
+            <h1 className="text-2xl font-bold mb-1">{title}</h1>
+          </div>
+          
+          {subtitle && (
+            <p className="text-black/50 text-sm md:text-base">{subtitle}</p>
+          )}
         </div>
 
         {/* Kanan: Notifikasi & Profil */}

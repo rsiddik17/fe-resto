@@ -1,0 +1,127 @@
+import { useNavigate, useLocation } from "react-router";
+import Header from "../../components/Header/Header";
+import Button from "../../components/ui/Button";
+import OrderItemCard from "../../components/Card/OrderItemCard";
+import { useCartStore } from "../../store/useCartStore";
+import { useOrderPayment } from "../../hooks/useOrderPayment";
+import QRCodeBox from "../../components/QRCodeBox/QRCodeBox";
+import ExpiredModal from "../../components/Modal/ExpiredModal";
+import { useState } from "react";
+import OrderSummary from "../../components/OrderSummary/OrderSummary";
+import SuccessIcon from "../../components/Icon/SuccessIcon";
+
+const KioskPaymentPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { items, getTotalPrice, clearCart } = useCartStore();
+  const [isExpired, setIsExpired] = useState(false);
+
+  const subTotal = getTotalPrice();
+  const taxRate = 10;
+  const taxAmount = subTotal * (taxRate / 100);
+  const checkoutData = location.state;
+  const discountAmount = checkoutData?.discountAmount || 0;
+
+  // Memanggil Custom Hook kita
+  const { orderId, adminFee, finalPayment } = useOrderPayment(
+    subTotal,
+    taxAmount,
+    discountAmount,
+  );
+
+  const handleSudahBayar = () => {
+    // KITA PINDAH KE SUCCESS PAGE SAMBIL MEMBAWA DATA
+    navigate("/kiosk/order-success", {
+      state: {
+        orderId,
+        adminFee,
+        subTotal,
+        taxAmount,
+        discountAmount,
+        finalPayment,
+      },
+    });
+  };
+
+  const handlePaymentExpired = () => {
+    setIsExpired(true);
+  };
+
+  const handleCloseExpiredModal = () => {
+    clearCart();
+    navigate("/kiosk/menu");
+  };
+
+  // Helper formatter
+
+  return (
+    <div className="min-h-screen bg-white pb-8 relative flex flex-col">
+      <Header showProfile />
+
+      <main className="flex-1 w-full max-w-3xl mx-auto px-2 pt-10 flex flex-col items-center">
+        {/* --- HEADER STATUS (Icon Ceklis & Judul) --- */}
+        <div className="w-18 h-18 bg-primary rounded-full flex items-center justify-center mb-6 shadow-md">
+          <SuccessIcon className="text-primary w-40 h-40" />
+        </div>
+        <h1 className="text-[28px] font-bold mb-1">Pesanan Berhasil Dibuat!</h1>
+        <p className="text-gray mb-6 text-2xl">
+          Silakan lakukan pembayaran via QRIS
+        </p>
+
+        {/* --- BLOK INFORMASI UTAMA --- */}
+        <div className="w-full bg-primary/12 rounded-md p-4 md:p-6 mb-8 flex flex-col gap-6 border border-[#E3D1EE]">
+          {/* Info Meja & ID */}
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between text-xl">
+              <span className="text-gray">Nomor meja</span>
+              <span className="font-bold text-primary">Meja 02</span>
+            </div>
+            <div className="flex justify-between text-xl">
+              <span className="text-gray">ID Pesanan</span>
+              <span className="font-bold text-primary">#{orderId}</span>
+            </div>
+          </div>
+
+          {/* DYNAMIC RENDER: QR Code ATAU Status Banner */}
+          <QRCodeBox
+            finalPayment={finalPayment}
+            onExpire={handlePaymentExpired}
+          />
+        </div>
+
+        {/* --- STRUK / RINGKASAN PESANAN BAWAH --- */}
+        <div className="w-full text-left">
+          <h3 className="font-bold text-2xl mb-2">Ringkasan Pesanan</h3>
+
+          <div className="flex flex-col">
+            {items.map((item) => (
+              <OrderItemCard key={item.cartId} item={item} isReceiptMode />
+            ))}
+          </div>
+
+          {/* Kalkulasi Akhir */}
+          <OrderSummary
+            subTotal={subTotal}
+            discountAmount={discountAmount}
+            adminFee={adminFee}
+            hideAlertInfo={true} // Sembunyikan alert ungu karena user sudah di halaman QRIS
+          />
+        </div>
+      </main>
+
+      {/* --- STICKY BOTTOM BAR --- */}
+      <div className="w-full max-w-150 mx-auto mt-10">
+        <Button
+          onClick={handleSudahBayar}
+          className="w-full py-3 rounded-full font-bold text-xl"
+        >
+          Sudah Bayar
+        </Button>
+      </div>
+
+      {isExpired && <ExpiredModal onClose={handleCloseExpiredModal} />}
+    </div>
+  );
+};
+
+export default KioskPaymentPage;

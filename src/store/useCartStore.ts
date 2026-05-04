@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { type MenuItem } from "../components/MenuCard/MenuCard";
+import { type MenuItem } from "../components/Card/MenuCard";
+import { v4 as uuidv4 } from "uuid";
 
 export interface CartItem extends MenuItem {
   cartId: string; // ID unik untuk membedakan pesanan dengan catatan berbeda
@@ -40,7 +41,7 @@ export const useCartStore = create<CartStore>()(
             return {
               items: [
                 ...state.items,
-                { ...item, cartId: crypto.randomUUID(), qty, notes },
+                { ...item, cartId: uuidv4(), qty, notes },
               ],
             };
           }

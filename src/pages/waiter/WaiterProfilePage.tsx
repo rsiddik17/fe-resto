@@ -1,7 +1,7 @@
 import ProfileHeader from "../../components/Header/ProfileHeader";
 import ProfileAvatar from "../../components/Profile/ProfileAvatar";
 import ProfileDetailsCard from "../../components/Profile/ProfileDetailsCard";
-import AccountStatusBar from "../../components/Profile/AccountStatusBar";
+import AccountStatusBar from "../../components/Profile/ProfileStatusBar";
 import { useAuthStore } from "../../store/useAuthStore";
 
 const WaiterProfilePage = () => {

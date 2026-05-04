@@ -1,6 +1,6 @@
 import { Navigate, useSearchParams } from "react-router";
 import AuthLayouts from "../../layouts/AuthLayouts/AuthLayouts";
-import FormResetPassword from "../../components/FormResetPassword/FormResetPassword";
+import FormResetPassword from "../../components/Form/FormResetPassword";
 
 
 const ResetPasswordPage = () => {

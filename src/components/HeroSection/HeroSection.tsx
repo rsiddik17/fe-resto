@@ -19,7 +19,7 @@ const HeroSection = ({
   searchPlaceholder = "Cari menu",
 }: HeroSectionProps) => {
   return (
-    <div className="w-full h-67.5 bg-cover bg-center rounded-md p-6 md:px-10 md:pb-3 mb-6 relative overflow-hidden">
+    <div className="w-full h-65 bg-cover bg-center rounded-md p-6 md:px-10 md:pb-3 mb-5 relative overflow-hidden">
       <img
         src={imageBg}
         alt="Hero Background"
@@ -30,7 +30,7 @@ const HeroSection = ({
 
       <div className="relative ml-2 z-10 w-full max-w-lg">
         <h1
-          className="text-4xl md:text-5xl font-bold text-white mb-2 leading-18 tracking-wide"
+          className="text-4xl md:text-5xl font-bold text-white mb-2 leading-16 tracking-wide"
           dangerouslySetInnerHTML={{ __html: title }}
         />
         <p className="text-white/95 text-sm md:text-[22px] mb-2.5">{subtitle}</p>

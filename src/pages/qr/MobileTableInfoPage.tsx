@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router";
-import TableInfoCard from "../../components/TableInfoCard/TableInfoCard";
+import TableInfoCard from "../../components/Card/TableInfoCard";
 
 // import { useCartStore } from "../../store/useCartStore"; // Nanti buka ini untuk simpan meja
 
@@ -14,16 +14,16 @@ const MobileTableInfoPage = () => {
   const formattedTableId = `M-${rawNumber.padStart(2, "0")}`;
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-linear-to-b from-primary/0 to-primary/15 relative overflow-hidden px-4">
+    <div className="w-full min-h-screen flex flex-col bg-linear-to-b from-primary/0 to-primary/15 relative overflow-hidden pb-4 px-4">
       {/* Logo di atas */}
       <div className="w-full flex justify-center z-10 pt-8 md:pt-14 pb-2">
         <img
-          src={`${import.meta.env.BASE_URL}images/logo.webp`} 
+          src={`${import.meta.env.BASE_URL}images/new-logo.webp`} 
           alt="Logo IT'S RESTO"
-          className="w-48 object-cover"
+          className="w-45 object-cover"
         />
       </div>
-      <div className="flex-1 w-full flex items-start justify-center pb-10">
+      <div className="flex-1 w-full flex items-start justify-center">
         <div className="w-full max-w-[90%]">
         <TableInfoCard
           tableNumber={formattedTableId}

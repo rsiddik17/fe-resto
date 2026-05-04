@@ -3,8 +3,8 @@ import { createBrowserRouter } from "react-router";
 // import { lazy } from "react";
 
 // IMPORT NORMAL (Hanya untuk Komponen Struktural)
-import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
-import PublicRoute from "../components/PublicRoute/PublicRoute";
+import ProtectedRoute from "./ProtectedRoute";
+import PublicRoute from "./PublicRoute";
 // import SuspenseWrapper from "../components/SuspenseWrapper/SuspenseWrapper";
 
 // Auth Pages
@@ -27,22 +27,29 @@ import CustomerHomePage from "../pages/customer/CustomerHomePage";
 
 // Kiosk Pages
 import KioskHomePage from "../pages/kiosk/KioskHomePage";
-import GuestInputPage from "../pages/kiosk/GuestInputPage";
-import TableInfoPage from "../pages/kiosk/TableInfoPage";
-import MenuPage from "../pages/kiosk/MenuPage";
-import CartPage from "../pages/kiosk/CartPage";
-import CheckoutPage from "../pages/kiosk/CheckoutPage";
-import PaymentPage from "../pages/kiosk/PaymentPage";
-import OrderSuccessPage from "../pages/kiosk/OrderSuccessPage";
+import KioskGuestInputPage from "../pages/kiosk/KioskGuestInputPage";
+import KioskTableInfoPage from "../pages/kiosk/KioskTableInfoPage";
+import KioskMenuPage from "../pages/kiosk/KioskMenuPage";
+import KioskCartPage from "../pages/kiosk/KioskCartPage";
+import KioskCheckoutPage from "../pages/kiosk/KioskCheckoutPage";
+import KioskPaymentPage from "../pages/kiosk/KioskPaymentPage";
+import KioskOrderSuccessPage from "../pages/kiosk/KioskOrderSuccessPage";
+import KioskProfilePage from "../pages/kiosk/KioskProfilePage";
+
+// QR Pages
 import MobileTableInfoPage from "../pages/qr/MobileTableInfoPage";
 import MobileMenuPage from "../pages/qr/MobileMenuPage";
 import MobileCartPage from "../pages/qr/MobileCartPage";
 import MobileCheckoutPage from "../pages/qr/MobileCheckoutPage";
 import MobilePaymentPage from "../pages/qr/MobilePaymentPage";
 import MobileOrderSuccessPage from "../pages/qr/MobileOrderSuccessPage";
-import ProfilePage from "../pages/kiosk/ProfilePage";
+
+// Waiter Pages
 import WaiterLayout from "../layouts/WaiterLayout/WaiterLayout";
 import WaiterProfilePage from "../pages/waiter/WaiterProfilePage";
+import WaiterCreateOrderPage from "../pages/waiter/WaiterCreateOrderPage";
+import WaiterSelectTablePage from "../pages/waiter/WaiterSelectTablePage";
+import WaiterSelectMenuPage from "../pages/waiter/WaiterSelectMenuPage";
 
 const router = createBrowserRouter(
   [
@@ -51,9 +58,9 @@ const router = createBrowserRouter(
       children: [
         { path: "/", Component: LoginPage },
         { path: "/register", Component: RegisterPage },
-        { path: "/lupa-password", Component: ForgotPasswordPage },
+        { path: "/forgot-password", Component: ForgotPasswordPage },
         { path: "/reset-password", Component: ResetPasswordPage },
-        { path: "/verifikasi-otp", Component: VerifyOtpPage },
+        { path: "/verification-otp", Component: VerifyOtpPage },
         { path: "/qr/:tableId", Component: MobileTableInfoPage },
         { path: "/qr/menu", Component: MobileMenuPage },
         { path: "/qr/cart", Component: MobileCartPage },
@@ -84,6 +91,18 @@ const router = createBrowserRouter(
               path: "/waiter/dashboard",
               Component: WaiterDashboardPage,
             },
+            {
+              path: "/waiter/create-order",
+              Component: WaiterCreateOrderPage,
+            },
+            {
+              path: "/waiter/create-order/select-table",
+              Component: WaiterSelectTablePage,
+            },
+            {
+              path: "/waiter/create-order/select-menu",
+              Component: WaiterSelectMenuPage,
+            },
           ],
         },
         {
@@ -100,14 +119,14 @@ const router = createBrowserRouter(
       element: <ProtectedRoute allowedRoles={["KIOSK_SYSTEM"]} />,
       children: [
         { path: "/kiosk/home", Component: KioskHomePage },
-        { path: "/kiosk/guest-input", Component: GuestInputPage },
-        { path: "/kiosk/info-table", Component: TableInfoPage },
-        { path: "/kiosk/menu", Component: MenuPage },
-        { path: "/kiosk/cart", Component: CartPage },
-        { path: "/kiosk/checkout", Component: CheckoutPage },
-        { path: "/kiosk/payment", Component: PaymentPage },
-        { path: "/kiosk/order-success", Component: OrderSuccessPage },
-        { path: "/kiosk/profile", Component: ProfilePage },
+        { path: "/kiosk/guest-input", Component: KioskGuestInputPage },
+        { path: "/kiosk/info-table", Component: KioskTableInfoPage },
+        { path: "/kiosk/menu", Component: KioskMenuPage },
+        { path: "/kiosk/cart", Component: KioskCartPage },
+        { path: "/kiosk/checkout", Component: KioskCheckoutPage },
+        { path: "/kiosk/payment", Component: KioskPaymentPage },
+        { path: "/kiosk/order-success", Component: KioskOrderSuccessPage },
+        { path: "/kiosk/profile", Component: KioskProfilePage },
       ],
     },
     {

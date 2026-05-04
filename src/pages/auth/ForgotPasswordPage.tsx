@@ -1,4 +1,4 @@
-import FormForgotPassword from "../../components/FormForgotPassword/FormForgotPassword";
+import FormForgotPassword from "../../components/Form/FormForgotPassword";
 import AuthLayouts from "../../layouts/AuthLayouts/AuthLayouts";
 
 
