@@ -13,7 +13,7 @@ const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
   const isSelesai = order.status === "Selesai";
 
   return (
-    <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/10 backdrop-blur-sm px-4 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/10 px-4 backdrop-blur-[1px]">
       <div className="bg-white w-full max-w-md rounded-xs overflow-hidden shadow-2xl relative flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
         {/* Header Modal */}
         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-white shrink-0">
@@ -127,7 +127,7 @@ const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
                 onClose();
               }
             }}
-            className="w-full py-4 bg-primary text-white font-bold rounded-xs text-[16px] shadow-lg shadow-purple-200 active:scale-[0.98] transition-all"
+            className="w-full py-4 bg-primary text-white font-bold rounded-2xl text-[16px] shadow-lg shadow-purple-200 active:scale-[0.98] transition-all"
           >
             {isSelesai ? "Beli Lagi" : "Pantau Status"}
           </button>

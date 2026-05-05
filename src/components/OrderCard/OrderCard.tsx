@@ -9,7 +9,7 @@ const OrderCard = ({ order, activeTab }: any) => {
 
   return (
     <>
-      <div className="bg-white border border-gray-100 rounded-xs p-4 sm:p-6 shadow-sm mb-4 transition-all hover:shadow-md">
+      <div className="bg-white border border-gray-100 rounded-xs p-4 sm:p-6 shadow-sm mb-4 transition-all hover:shadow-md ">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           
           <div className="flex items-center gap-3 sm:gap-6 min-w-0">
@@ -51,10 +51,10 @@ const OrderCard = ({ order, activeTab }: any) => {
               <button
                 onClick={() => {
                   if (activeTab === "Aktif") {
-                    // Ke halaman tracking
+                    // Selama di tab Aktif (Dimasak/Diantar), user bisa pantau status[cite: 5]
                     navigate("/customer/pantau-pesanan", { state: { order } });
                   } else {
-                    // Logika "Beli Lagi" -> Balik ke menu
+                    // Jika di tab Selesai, tombol berfungsi untuk order ulang[cite: 5]
                     navigate("/customer/menu");
                   }
                 }}

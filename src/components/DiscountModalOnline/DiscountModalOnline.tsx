@@ -3,7 +3,6 @@ import { X } from "lucide-react";
 import Button from "../ui/Button"; 
 import { cn } from "../../utils/utils";
 
-// Mock data sesuai desain IT'S RESTO
 const MOCK_PROMOS = [
   { id: "1", title: "Diskon Pelajar", code: "PJR35", amount: 7000, minSpend: 35000 },
   { id: "2", title: "Diskon Akhir Pekan", code: "PKN160", amount: 15000, minSpend: 160000 },
@@ -24,7 +23,7 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
   minimumFractionDigits: 0,
 });
 
-const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
+const DiscountModalOnline = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
   const [selectedPromoId, setSelectedPromoId] = useState<string | null>(null);
 
   const handleApplyFinal = () => {
@@ -39,19 +38,16 @@ const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
 
   return (
     <div 
-      className="fixed inset-0 z-999 flex items-center justify-center bg-black/10 backdrop-blur-xs p-4 animate-in fade-in duration-300"
+      className="fixed inset-0 z-999 flex items-center justify-center bg-black/10 backdrop-blur-[1px] p-4 animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div 
-        className="bg-white w-full max-w-120 rounded-xs p-8 shadow-2xl flex flex-col animate-in zoom-in-95 duration-300 max-h-[85vh] relative"
+        className="bg-white w-full max-w-sm rounded-xs p-6 shadow-2xl flex flex-col animate-in zoom-in-95 duration-300 max-h-[85vh] relative"
         onClick={(e) => e.stopPropagation()}
       >
-        
         {/* HEADER MODAL */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-[28px] font-bold text-black ">
-            Tambah Diskon
-          </h2>
+          <h2 className="text-[24px] font-bold text-black">Tambah Diskon</h2>
           <button 
             onClick={onClose} 
             className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-all active:scale-90"
@@ -60,8 +56,8 @@ const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
           </button>
         </div>
 
-        {/* LIST PROMO (Scrollable Area) */}
-        <div className="flex flex-col gap-4 overflow-y-auto pr-2 mb-6 custom-scrollbar">
+        {/* LIST PROMO */}
+        <div className="flex flex-col gap-3 overflow-y-auto pr-1 mb-6 custom-scrollbar">
           {MOCK_PROMOS.map((promo) => {
             const isSelected = selectedPromoId === promo.id;
             const isEligible = subTotal >= promo.minSpend;
@@ -69,18 +65,16 @@ const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
             return (
               <div 
                 key={promo.id}
-                onClick={() => isEligible && setSelectedPromoId(promo.id)}
                 className={cn(
-                  "border-2 rounded-xs p-5 flex justify-between items-center cursor-pointer transition-all duration-200",
+                  "border-2 rounded-xs p-5 flex justify-between items-center transition-all duration-200",
                   isSelected 
                     ? "border-primary bg-primary/5 shadow-sm" 
-                    : "border-gray-100 bg-white hover:border-gray-200",
+                    : "border-gray-100 bg-white hover:border-gray-50",
                   !isEligible && "opacity-60 grayscale-[0.5] cursor-not-allowed"
                 )}
               >
-                {/* Info Diskon */}
-                <div className="flex flex-col gap-1.5">
-                  <h4 className="font-bold text-[18px] text-black">
+                <div className="flex flex-col gap-1.5 text-left">
+                  <h4 className="font-bold text-[16px] text-black">
                     {promo.title} <span className="text-primary ml-1">-{rupiahFormatter.format(promo.amount).replace("Rp", "Rp ")}</span>
                   </h4>
                   <div className="flex items-center gap-2">
@@ -93,45 +87,43 @@ const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
                   </div>
                 </div>
 
-                {/* Indikator Pilihan (Bulatan) */}
-                <div className={cn(
-                  "w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all",
-                  isSelected ? "border-primary bg-primary shadow-md" : "border-gray-200"
-                )}>
-                  {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
-                </div>
+                {/* TOMBOL PAKAI (Pengganti Bulatan) */}
+                <button
+                  disabled={!isEligible}
+                  onClick={() => setSelectedPromoId(promo.id)}
+                  className={cn(
+                    "px-4 py-1.5 border rounded-md text-[13px] font-bold transition-all active:scale-95",
+                    !isEligible && "border-gray-200 text-gray-300 cursor-not-allowed",
+                    isEligible && !isSelected && "border-primary text-primary hover:bg-primary/5",
+                    isSelected && "bg-primary text-white border-primary"
+                  )}
+                >
+                  {isSelected ? "Terpakai" : "Pakai"}
+                </button>
               </div>
             );
           })}
         </div>
 
-        {/* TOMBOL KONFIRMASI */}
+        {/* TOMBOL KONFIRMASI UTAMA */}
         <div className="pt-2">
           <Button 
             onClick={handleApplyFinal}
             disabled={!selectedPromoId}
-            className="w-full py-4 rounded-xs font-bold text-[18px] bg-primary text-white shadow-xl shadow-primary/30 transition-all active:scale-[0.97] disabled:bg-gray-300 disabled:shadow-none"
+            className="w-full py-2.5 rounded-2xl font-bold text-[18px] bg-primary text-white shadow-xl shadow-primary/30 transition-all active:scale-[0.97] disabled:bg-gray-300 disabled:shadow-none"
           >
             Gunakan Diskon
           </Button>
         </div>
       </div>
 
-      {/* CSS internal untuk scrollbar halus */}
       <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 5px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #E5E7EB;
-          border-radius: 10px;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
       `}</style>
     </div>
   );
 };
 
-export default DiscountModal;
+export default DiscountModalOnline;

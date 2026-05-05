@@ -1,6 +1,8 @@
-import { LayoutGrid, UtensilsCrossed, Martini } from "lucide-react";
 import { cn } from "../../utils/utils";
 import Button from "../ui/Button";
+import FoodIcon from "../Icon/Food";
+import DrinkIcon from "../Icon/Drink";
+import AllMenuIcon from "../Icon/AllFoodDrink";
 
 type CategoryType = "semua" | "makanan" | "minuman";
 
@@ -22,7 +24,7 @@ const CategoryOnlineTabs = ({ activeCategory, onCategoryChange }: CategoryTabsOn
         onClick={() => onCategoryChange("semua")}
         className={getBtnStyle("semua")}
       >
-        <LayoutGrid size={32} />
+        <AllMenuIcon size={32} />
         <span className="text-sm font-semibold mt-1">Semua</span>
       </Button>
       
@@ -30,7 +32,7 @@ const CategoryOnlineTabs = ({ activeCategory, onCategoryChange }: CategoryTabsOn
         onClick={() => onCategoryChange("makanan")}
         className={getBtnStyle("makanan")}
       >
-        <UtensilsCrossed size={32} />
+        <FoodIcon size={32} />
         <span className="text-sm font-semibold mt-1">Makanan</span>
       </Button>
       
@@ -38,7 +40,7 @@ const CategoryOnlineTabs = ({ activeCategory, onCategoryChange }: CategoryTabsOn
         onClick={() => onCategoryChange("minuman")}
         className={getBtnStyle("minuman")}
       >
-        <Martini size={32} />
+        <DrinkIcon size={32} />
         <span className="text-sm font-semibold mt-1">Minuman</span>
       </Button>
     </div>

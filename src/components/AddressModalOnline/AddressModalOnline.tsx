@@ -67,7 +67,7 @@ const AddressModalOnline = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/10 px-4 backdrop-blur-[1px]">
+    <div className="fixed inset-0 z-200 flex items-center justify-center bg-black/10 px-4 backdrop-blur-[1px]">
       <div className="bg-white w-full max-w-md rounded-xs overflow-hidden shadow-2xl relative">
         <button
           onClick={onClose}
@@ -111,13 +111,16 @@ const AddressModalOnline = ({
                     </div>
 
                     {/* KOLOM KANAN: Radio Button sejajar baris pertama teks */}
+                    {/* KOLOM KANAN: Ganti bagian ini agar sama dengan Modal Diskon */}
                     <div
-                      className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center bg-white mt-1 ${
-                        selectedId === addr.id ? "border-primary" : "border-gray-300"
+                      className={`shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all ${
+                        selectedId === addr.id
+                          ? "border-primary bg-primary shadow-md"
+                          : "border-gray-200 bg-white"
                       }`}
                     >
                       {selectedId === addr.id && (
-                        <div className="w-3 h-3 bg-primary rounded-full"></div>
+                        <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
                       )}
                     </div>
                   </div>

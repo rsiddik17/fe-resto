@@ -29,7 +29,7 @@ const SuccessModalOnline = ({
 
   return (
     <div 
-      className="fixed inset-0 z-110 flex items-center justify-center backdrop-blur-[2px] p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-110 flex items-center justify-center bg-black/10 backdrop-blur-[2px] p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div 

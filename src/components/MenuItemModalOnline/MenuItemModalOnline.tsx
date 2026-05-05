@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { ArrowLeft, Minus, Plus, FileText, ShoppingCart } from "lucide-react";
+import { ArrowLeft, Minus, Plus} from "lucide-react";
 import { type MenuItem } from "../MenuCardOnline/MenuCardOnline";
 import Button from "../ui/Button";
 import { cn } from "../../utils/utils";
+import AddNotesIcon from "../Icon/AddNotesModal/AddNotesModal";
+import AddToCartIcon from "../Icon/AddCart";
 
 interface MenuItemModalOnlineProps {
   item: MenuItem;
@@ -159,7 +161,7 @@ const MenuItemModalOnline = ({
 
           <div className="relative mt-1">
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-400">
-              <FileText size={12} />
+              <AddNotesIcon size={12} />
             </div>
             <input
               type="text"
@@ -181,7 +183,7 @@ const MenuItemModalOnline = ({
               qty === 0 && "opacity-50 cursor-not-allowed",
             )}
           >
-            <ShoppingCart size={14} /> + Tambah ke Keranjang
+            <AddToCartIcon size={14} /> + Tambah ke Keranjang
           </Button>
         </div>
       </div>

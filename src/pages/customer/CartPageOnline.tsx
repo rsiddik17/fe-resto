@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { ArrowLeft, Plus, Minus, FileText} from "lucide-react";
+import { ArrowLeft, Plus, Minus } from "lucide-react";
 import { useCartStore } from "../../store/useCartStore";
 import Header from "../../components/HeaderOnline/HeaderOnline";
 import EditNoteModal from "../../components/EditNoteModalOnline/EditNoteModalOnline";
-import DeleteCartModal from "../../components/DeleteCartModal/DeleteCartModal";
+import DeleteConfirmationModal from "../../components/DeleteConfirmationModal/DeleteConfirmationModal";
 import EmptyCartView from "../../components/EmptyTrack/EmptyTrack";
+import NotesIcon from "../../components/Icon/Notes";
 
 interface CartItem {
   cartId: string;
@@ -43,14 +44,12 @@ const CartPageOnline = () => {
   return (
     <div className="min-h-screen bg-[#F3F4F6] flex flex-col pb-32">
       <Header mode="online" />
-
-      <div className="bg-white p-5 flex rounded-2xl items-center gap-3 border-b border-gray-100 shadow-sm mb-3">
+      <div className="bg-white p-5 flex rounded-xs  items-center gap-3 border-b border-gray-100 shadow-sm mb-3">
         <button onClick={() => navigate(-1)}>
           <ArrowLeft size={22} />
         </button>
         <h1 className="text-xl font-bold">Keranjang</h1>
       </div>
-
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-12">
         {items.length > 0 ? (
           <>
@@ -104,7 +103,7 @@ const CartPageOnline = () => {
                           onClick={() => setEditingItem(item)}
                           className="mt-2 text-md text-gray-400 bg-gray-100 w-full max-w-sm py-2 px-4 rounded-sm flex items-center gap-2"
                         >
-                          <FileText size={14} className="shrink-0" />
+                          <NotesIcon size={14} className="shrink-0" />
                           <span className="truncate">
                             {item.notes || "Tidak ada"}
                           </span>
@@ -144,10 +143,9 @@ const CartPageOnline = () => {
             </div>
           </>
         ) : (
-         <EmptyCartView onNavigate={() => navigate("/customer/menu")} />
+          <EmptyCartView onNavigate={() => navigate("/customer/menu")} />
         )}
       </main>
-
       {items.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 md:p-6 flex flex-wrap justify-between md:justify-end items-center gap-4 md:gap-8 shadow-[0_-8px_30px_rgb(0,0,0,0.04)] z-50">
           <div className="text-left md:text-right">
@@ -161,7 +159,11 @@ const CartPageOnline = () => {
 
           <button
             disabled={!items.some((i) => i.checked)}
-            onClick={() => navigate("/customer/checkout")}
+            onClick={() =>
+              navigate("/customer/checkout", {
+                state: { adminFee: 205 }, // Tambahkan state ini jika perlu
+              })
+            }
             className="bg-primary text-white px-6 py-2 rounded-full font-bold text-base flex items-center gap-2 shadow-lg"
           >
             Bayar Sekarang
@@ -171,8 +173,11 @@ const CartPageOnline = () => {
           </button>
         </div>
       )}
-      <DeleteCartModal
+ 
+      <DeleteConfirmationModal
         isOpen={!!itemToDelete}
+        title="Hapus dari Keranjang?"
+        description="Apakah anda yakin ingin menghapus item ini dari keranjang belanja anda?"
         onClose={() => setItemToDelete(null)}
         onConfirm={() => {
           if (itemToDelete) {

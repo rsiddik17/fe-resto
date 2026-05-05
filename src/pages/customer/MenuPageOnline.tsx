@@ -10,17 +10,23 @@ import MenuCard, {
 import Header from "../../components/HeaderOnline/HeaderOnline";
 import HeroSection from "../../components/HeroSectionOnline/HeroSectionOnline";
 import { useMenuStore } from "../../store/useMenuStore";
+import { useEffect } from "react";
 // --- MOCK DATA ---
 
 const MenuPageOnline = () => {
   const navigate = useNavigate();
-  const { menu } = useMenuStore();
+  const { menu, resetMenu } = useMenuStore();
+
+  // const { menu } = useMenuStore();
   const [activeCategory, setActiveCategory] = useState<
     "semua" | "makanan" | "minuman"
   >("semua");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [successItemName, setSuccessItemName] = useState<string | null>(null);
+  useEffect(() => {
+    resetMenu(); 
+  }, [resetMenu]);
 
   const addToCart = useCartStore((state) => state.addToCart);
   const cart = useCartStore((state) => state.items || []);

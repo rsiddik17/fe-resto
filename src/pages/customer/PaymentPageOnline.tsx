@@ -24,7 +24,7 @@ const PaymentPageOnline = () => {
     finalPayment = 0,
     subTotal = 0,
     discountAmount = 0,
-    adminFee = 0,
+    adminFee = 205,
     address = "",
   } = location.state || {};
 

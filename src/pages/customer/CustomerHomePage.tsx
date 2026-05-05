@@ -5,16 +5,18 @@ import MenuCard, { type MenuItem } from "../../components/MenuCardOnline/MenuCar
 import SuccessModal from "../../components/SuccessModalOnline/SuccessModalOnline";
 import MenuItemModal from "../../components/MenuItemModalOnline/MenuItemModalOnline";
 import Button from "../../components/ui/Button";
-import { Utensils, ShoppingCart, Banknote, MapPin, Mail, Phone } from "lucide-react";
+import {  Banknote, MapPin, Mail, Phone } from "lucide-react";
 import HeroSection from "../../components/HeroSectionOnline/HeroSectionOnline";
 import Header from "../../components/HeaderOnline/HeaderOnline";
 // Import data asli dari store
 import { useMenuStore } from "../../store/useMenuStore";
+import AllMenuIcon from "../../components/Icon/AllFoodDrink";
+import Keranjang from "../../components/Icon/Keranjang";
 
 
 const steps = [
-  { icon: Utensils, title: "Pilih Menu", desc: "Pilih makanan dan minuman favorit Anda dari menu yang tersedia" },
-  { icon: ShoppingCart, title: "Tambah ke Keranjang", desc: "Pilih jumlah dan tambahkan catatan khusus jika diperlukan" },
+  { icon: AllMenuIcon, title: "Pilih Menu", desc: "Pilih makanan dan minuman favorit Anda dari menu yang tersedia" },
+  { icon: Keranjang, title: "Tambah ke Keranjang", desc: "Pilih jumlah dan tambahkan catatan khusus jika diperlukan" },
   { icon: Banknote, title: "Lanjut ke Pembayaran", desc: "Selesaikan pembayaran dan pesanan Anda akan segera Kami proses" },
 ];
 
