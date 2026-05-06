@@ -86,7 +86,7 @@ const router = createBrowserRouter(
       children: [{ path: "/cashier/dashboard", Component: CashierDashboardPage }],
     },
     {
-      element: <PublicRoute />,
+      element: <ProtectedRoute allowedRoles={["WAITER"]} />,
       children: [
         {
           element: <WaiterLayout />,
