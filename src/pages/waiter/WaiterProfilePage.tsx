@@ -16,31 +16,31 @@ const WaiterProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#EEEEEE] flex flex-col font-sans pb-12">
+    <div className="min-h-screen bg-[#EEEEEE] flex flex-col pb-12">
       
       <ProfileHeader 
         userName={profileData.fullname.split(' ')[0]} 
         roleName={profileData.role} 
       />
 
-      <main className="flex-1 px-6 md:px-10 pt-8 max-w-350 mx-auto w-full">
+      <main className="flex-1 px-6 md:px-8 pt-8 max-w-350 mx-auto w-full">
         
         <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold mb-1.5 leading-tight">
+          <h1 className="text-xl md:text-2xl font-bold mb-1.5 leading-tight">
             Profil saya
           </h1>
-          <p className="text-gray-500 text-base md:text-lg">
+          <p className="text-[#73736C] text-sm md:text-[16px]">
             Informasi akun pengguna untuk mengakses sistem
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
+        <div className="flex flex-col md:flex-row gap-8 md:gap-12 justify-between items-start">
           
           {/* Komponen Kiri */}
           <ProfileAvatar name={profileData.fullname} />
 
           {/* Komponen Kanan */}
-          <div className="w-full md:w-[65%] flex flex-col gap-5">
+          <div className="w-full md:w-[55%] flex flex-col -mt-4 gap-5">
             <ProfileDetailsCard {...profileData} />
             <AccountStatusBar isActive={true} />
           </div>

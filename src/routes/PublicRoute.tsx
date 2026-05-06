@@ -10,9 +10,9 @@ const PublicRoute = () => {
       case "ADMIN":
         return <Navigate to="/admin/dashboard" replace />;
       case "CASHIER":
-        return <Navigate to="/kasir/dashboard" replace />;
+        return <Navigate to="/cashier/dashboard" replace />;
       case "WAITER":
-        return <Navigate to="/pelayan/order" replace />;
+        return <Navigate to="/waiter/dashboard" replace />;
       case "KITCHEN":
         return <Navigate to="/kitchen/queue" replace />;
       case "KIOSK_SYSTEM":

@@ -19,7 +19,7 @@ const WaiterDashboardPage = () => {
 
   return (
     <>
-      <div className="pt-8 pl-7 pr-2.5">
+      <div className="pt-7.5 pl-8 pr-3">
         {/* 1. HEADER */}
         <DashboardHeader
           title="Dashboard Pelayan"
@@ -29,10 +29,10 @@ const WaiterDashboardPage = () => {
         />
       </div>
 
-      <div className="pt-0 pb-6 px-7">
+      <div className="pt-0 pb-6 px-8">
 
         {/* 2. KARTU STATISTIK (Grid 3 Kolom) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-5">
           <StatCard title="Sedang Diproses" value="7" Icon={ProcessingIcon} />
           <StatCard
             title="Pesanan Harus Antar"
@@ -43,7 +43,7 @@ const WaiterDashboardPage = () => {
             title="Meja Terisi"
             value={
               <>
-                20<span className="text-gray-400 text-2xl font-bold">/25</span>
+                20<span className="text-gray/75 text-2xl font-bold">/25</span>
               </>
             }
             Icon={TableManagementIcon}
@@ -59,7 +59,7 @@ const WaiterDashboardPage = () => {
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-2">
                   <InfoCircleIcon className="text-primary" />
-                  <h2 className="font-bold text-base md:text-lg">
+                  <h2 className="font-bold text-base md:text-[17px]">
                     Pesanan Siap Saji
                   </h2>
                 </div>
@@ -72,7 +72,7 @@ const WaiterDashboardPage = () => {
               </div>
 
               {/* Grid Kartu Siap Saji */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <ReadyOrderCard
                   orderId="26040299"
                   tableName="Meja 07"
@@ -95,7 +95,7 @@ const WaiterDashboardPage = () => {
                   <div className="bg-primary text-white rounded-full p-1 flex items-center justify-center">
                     <ProcessingIcon className="w-4.5 h-4.5" />
                   </div>
-                  <h2 className="font-bold text-base md:text-lg">
+                  <h2 className="font-bold text-base md:text-[17px]">
                     Pesanan Diproses
                   </h2>
                 </div>
@@ -132,8 +132,8 @@ const WaiterDashboardPage = () => {
           <div className="lg:col-span-1 flex flex-col gap-6 mt-10.5">
             <Button
               variant="outline"
-              onClick={() => navigate("/pelayan/buat-pesanan")}
-              className="w-full bg-white border-2 border-white text-primary font-bold text-xl py-2.5 rounded-md shadow-sm hover:border-primary/20 transition-all flex justify-center items-center gap-2"
+              onClick={() => navigate("/waiter/create-order")}
+              className="w-full bg-white border-2 border-white text-primary font-bold text-[19px] py-2.5 rounded-md shadow-sm hover:border-primary/20 transition-all flex justify-center items-center gap-2"
             >
               <AddOrderIcon className="bg-primary text-white rounded-full w-6.5 h-6.5" />{" "}
               Buat Pesanan

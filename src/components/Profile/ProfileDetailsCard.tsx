@@ -9,32 +9,32 @@ interface ProfileDetailsProps {
 
 const ProfileDetailsCard = ({ fullname, phone, gender, email, role }: ProfileDetailsProps) => {
   return (
-    <div className="bg-white rounded-md shadow-sm border border-gray-100 p-6 md:px-8 md:pt-8 md:pb-20">
+    <div className="bg-white rounded-md shadow-sm border border-gray-100 p-6 md:pl-10 md:pr-8 md:pt-10 md:pb-25">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-6">
         
-        <div className="flex flex-col gap-2">
-          <span className="text-gray-500 text-sm md:text-base font-medium">Nama Lengkap</span>
-          <span className="font-bold text-lg md:text-xl text-black capitalize">{fullname}</span>
+        <div className="flex flex-col gap-3">
+          <span className="text-gray-500 text-xs md:text-sm font-medium">Nama Lengkap</span>
+          <span className="font-bold text-[15px] md:text-[17px]">{fullname}</span>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <span className="text-gray-500 text-sm md:text-base font-medium">Nomor Telepon</span>
-          <span className="font-bold text-lg md:text-xl text-black">{phone}</span>
+        <div className="flex flex-col gap-3">
+          <span className="text-gray-500 text-xs md:text-sm font-medium">Nomor Telepon</span>
+          <span className="font-bold text-[15px] md:text-[17px]">{phone}</span>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <span className="text-gray-500 text-sm md:text-base font-medium">Jenis Kelamin</span>
-          <span className="font-bold text-lg md:text-xl text-black capitalize">{gender}</span>
+        <div className="flex flex-col gap-3">
+          <span className="text-gray-500 text-xs md:text-sm font-medium">Jenis Kelamin</span>
+          <span className="font-bold text-[15px] md:text-[17px]">{gender}</span>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <span className="text-gray-500 text-sm md:text-base font-medium">Email</span>
-          <span className="font-bold text-lg md:text-xl text-black">{email}</span>
+        <div className="flex flex-col gap-3">
+          <span className="text-gray-500 text-xs md:text-sm font-medium">Email</span>
+          <span className="font-bold text-[15px] md:text-[17px]">{email}</span>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <span className="text-gray-500 text-sm md:text-base font-medium">Peran Pengguna</span>
-          <span className="font-bold text-lg md:text-xl text-black capitalize">{role}</span>
+        <div className="flex flex-col gap-3">
+          <span className="text-gray-500 text-xs md:text-sm font-medium">Peran Pengguna</span>
+          <span className="font-bold text-[15px] md:text-[17px]">{role}</span>
         </div>
 
       </div>

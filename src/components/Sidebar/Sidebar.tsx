@@ -32,7 +32,7 @@ const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
     <aside
       className={cn(
         "bg-primary h-screen flex flex-col relative transition-all duration-300 ease-in-out shadow-2xl shrink-0 z-40",
-        isCollapsed ? "w-22" : "w-70",
+        isCollapsed ? "w-22" : "w-69",
       )}
     >
       {/* Tombol Collapse */}
@@ -50,7 +50,7 @@ const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
       {/* Header Sidebar (Logo) */}
       <div
         className={cn(
-          "flex items-center mt-8 mb-8 transition-all duration-300",
+          "flex items-center mt-8 mb-7 transition-all duration-300",
           // Biarkan pl-[55px] agar logo sejajar lurus dengan ikon menu di bawahnya
           isCollapsed ? "justify-center" : "pl-6",
         )}
@@ -85,7 +85,7 @@ const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
               key={item.name}
               to={item.path}
               className={cn(
-                "flex items-center py-2.5 transition-all duration-300 ease-in-out group",
+                "flex items-center py-2 transition-all duration-300 ease-in-out group",
                 // PERBAIKAN: Pakai mx-auto dan rounded-2xl untuk mode lebar
                 isCollapsed
                   ? "w-12 mx-auto justify-center rounded-2xl"
@@ -100,7 +100,7 @@ const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
               <item.icon
                 size={32}
                 className={cn(
-                  "shrink-0 transition-colors",
+                  "shrink-0 transition-colors w-7.5 h-7.5",
                   isActive
                     ? "text-primary"
                     : "text-white/60 group-hover:text-white",
@@ -111,7 +111,7 @@ const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
                   "text-base whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out",
                   isCollapsed
                     ? "max-w-0 opacity-0 ml-0"
-                    : "max-w-50 opacity-100 ml-3",
+                    : "max-w-50 opacity-100 ml-2.5",
                 )}
               >
                 {item.name}
@@ -126,7 +126,7 @@ const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
         <Button
           onClick={onLogout}
           className={cn(
-            "flex items-center py-2.5 transition-all duration-300 ease-in-out text-white/60 hover:bg-white/10 hover:text-white cursor-pointer group",
+            "flex items-center py-2 transition-all duration-300 ease-in-out text-white/60 hover:bg-white/10 hover:text-white cursor-pointer group",
             // PERBAIKAN: Samakan dengan menu di atas
             isCollapsed
               ? "w-12 mx-auto justify-center rounded-2xl"
@@ -134,14 +134,14 @@ const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
           )}
           title={isCollapsed ? "Keluar" : ""}
         >
-          <LogOutIcon className="shrink-0 transition-colors group-hover:text-white text-white/60" />
+          <LogOutIcon className="shrink-0 w-7.5 h-7.5 transition-colors group-hover:text-white text-white/60" />
 
           <span
             className={cn(
               "font-normal text-base whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out",
               isCollapsed
                 ? "max-w-0 opacity-0 ml-0"
-                : "max-w-50 opacity-100 ml-3",
+                : "max-w-50 opacity-100 ml-2.5",
             )}
           >
             Keluar

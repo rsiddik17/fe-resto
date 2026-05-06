@@ -38,17 +38,17 @@ const NotificationModal = ({ isOpen, onClose, notifications, onMarkAsRead }: Not
     >
       <div 
         // Ukuran Fixed sesuai instruksi: w = 503px, h = 612px
-        className="bg-white rounded-lg p-6 shadow-2xl flex flex-col relative animate-in zoom-in-95 duration-200 w-100 h-122.5"
+        className="bg-white rounded-lg p-4.5 shadow-2xl flex flex-col relative animate-in zoom-in-95 duration-200 w-100 h-116"
         onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup saat area dalam diklik
       >
         {/* Header Modal - 18px Semibold */}
-        <h2 className="text-lg font-semibold mb-4 shrink-0">
+        <h2 className="text-base font-semibold mb-4 shrink-0">
           Pesanan Masuk
         </h2>
 
         {/* List Notifikasi (Bisa di-scroll HANYA JIKA showAll aktif) */}
         <div className={cn(
-          "flex flex-col gap-3 pr-1 custom-scrollbar",
+          "flex flex-col gap-3 custom-scrollbar",
           showAll ? "overflow-y-auto" : "overflow-hidden"
         )}>
           {displayedNotifications.map((notif) => (
@@ -79,7 +79,7 @@ const NotificationModal = ({ isOpen, onClose, notifications, onMarkAsRead }: Not
               {/* Konten Kanan */}
               <div className="flex-1 flex flex-col justify-center min-w-0">
                 <div className="flex justify-between items-start mb-0.5">
-                  <h3 className="font-bold text-black text-[15px] truncate pr-2">
+                  <h3 className="font-bold text-black text-[14.5px] truncate pr-2">
                     {notif.table}
                   </h3>
                   <span className="font-bold text-black text-xs shrink-0">
@@ -87,11 +87,11 @@ const NotificationModal = ({ isOpen, onClose, notifications, onMarkAsRead }: Not
                   </span>
                 </div>
                 
-                <p className="text-gray-500 text-xs mb-1.5 truncate">
+                <p className="text-gray-500 text-[12px] mb-1.5 truncate">
                   ID {notif.orderId}
                 </p>
                 
-                <p className="text-black text-[13px] line-clamp-2 leading-tight">
+                <p className="text-black text-xs line-clamp-2 leading-tight">
                   {notif.items}
                 </p>
               </div>
@@ -100,10 +100,10 @@ const NotificationModal = ({ isOpen, onClose, notifications, onMarkAsRead }: Not
         </div>
 
         {/* Tombol Lihat Semua (Hanya muncul jika item > 3 dan belum di-expand) */}
-          <div className="flex justify-center mt-8 shrink-0">
+          <div className="flex justify-center mt-6 shrink-0">
             <Button 
               onClick={() => setShowAll(!showAll)}
-              className="px-6 py-2.5 font-bold text-sm shadow-sm cursor-pointer"
+              className="px-8 py-2 font-semibold text-[13px] shadow-sm cursor-pointer"
             >
               {showAll && notifications.length > 3 ? "Tampilkan Sedikit" : "Lihat Semua"}
             </Button>

@@ -81,12 +81,12 @@ const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
 
         {/* HEADER MODAL */}
         <div className="flex justify-between items-center mb-4 md:mb-6 lg:mb-4">
-          <h2 className="text-lg md:text-2xl font-bold lg:text-lg">Tambah Diskon</h2>
+          <h2 className="text-lg md:text-2xl font-bold lg:text-[17px]">Tambah Diskon</h2>
           <button
             onClick={onClose}
-            className="p-1 md:p-2 lg:p-1.5 bg-gray/25 rounded-full hover:bg-gray-200 transition-colors"
+            className="p-1 md:p-2 lg:p-1 bg-gray/25 rounded-full hover:bg-gray-200 transition-colors"
           >
-            <X size={20} className="text-gray lg:w-4 lg:h-4" strokeWidth={4} />
+            <X size={20} className="text-gray lg:w-3.5 lg:h-3.5" strokeWidth={4} />
           </button>
         </div>
 
