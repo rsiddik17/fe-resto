@@ -18,19 +18,19 @@ const CreateOrderModal = ({ isOpen, onClose, onSelectTable }: CreateOrderModalPr
     >
       {/* PENYESUAIAN UKURAN: Lebar 400px agar pas di desktop */}
       <div 
-        className="bg-white rounded-sm shadow-xl flex flex-col relative animate-in zoom-in-95 duration-200 w-120 overflow-hidden"
+        className="bg-white rounded-sm shadow-xl flex flex-col relative animate-in zoom-in-95 duration-200 w-118 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Modal */}
-        <div className="flex justify-between items-center p-5 pb-3 border-b border-gray-100">
+        <div className="flex justify-between items-center p-5 mb-0.5 border-b border-gray-100">
           <h2 className="text-[17px] font-bold">Buat Pesanan Baru</h2>
-          <button onClick={onClose} className="text-black/70 hover:text-red-500 transition-colors bg-gray/30 hover:bg-gray/25 p-1 rounded-full cursor-pointer">
-            <X size={16} strokeWidth={4} />
+          <button onClick={onClose} className="text-black/70 hover:text-black transition-colors bg-gray/30 hover:bg-gray/25 p-1 rounded-full cursor-pointer">
+            <X size={14} strokeWidth={3} />
           </button>
         </div>
 
         {/* Konten Modal */}
-        <div className="pt-3 px-5 pb-5">
+        <div className="px-5 pb-5">
           {/* Kotak Ungu Muda */}
           <div className="bg-primary/15 rounded-sm p-4 flex flex-col items-center justify-center text-center gap-3 mb-5 border border-primary/10">
             {/* Ikon Meja (Custom SVG sederhana) */}
@@ -42,9 +42,9 @@ const CreateOrderModal = ({ isOpen, onClose, onSelectTable }: CreateOrderModalPr
 
           <Button 
             onClick={onSelectTable}
-            className="w-full py-2.5 rounded-sm text-sm font-bold flex items-center justify-center gap-1 shadow-sm"
+            className="w-full py-2.5 rounded-sm text-sm font-bold flex items-center justify-center gap-0.5 shadow-sm"
           >
-            Pilih Meja <ChevronRight size={16} strokeWidth={4} />
+            Pilih Meja <ChevronRight size={16} strokeWidth={3.5} />
           </Button>
         </div>
       </div>

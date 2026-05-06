@@ -21,11 +21,11 @@ const TableCard = ({ table, onClick }: TableCardProps) => {
     <div
       onClick={() => onClick(table)}
       className={cn(
-        "rounded-sm px-3 pt-3 pb-4  flex flex-col justify-between h-36 border-2 transition-all shadow-sm",
-        isTersedia && "bg-white border-lime cursor-pointer hover:shadow-md",
-        isTerisi && "bg-primary border-primary cursor-not-allowed opacity-95",
+        "rounded-sm pl-3.25 pr-2 pt-3 pb-5 flex flex-col justify-between h-36 border-[1.5px] transition-all shadow-sm cursor-pointer",
+        isTersedia && "bg-white border-lime hover:shadow-md",
+        isTerisi && "bg-primary border-primary opacity-95",
         isKotor &&
-          "bg-[#E5E7EB] border-transparent cursor-not-allowed opacity-80",
+          "bg-[#DEDED9] border-transparent opacity-80",
       )}
     >
       <div className="flex justify-between items-start">
@@ -44,12 +44,12 @@ const TableCard = ({ table, onClick }: TableCardProps) => {
         {/* Badge Status */}
         <span
           className={cn(
-            "px-2 py-0.5 rounded-full text-[8px] mt-2 font-bold uppercase tracking-wider",
+            "px-2 py-0.5 rounded-full text-[7.5px] mt-2 font-bold uppercase",
             isTersedia
               ? "bg-lime text-white"
               : isTerisi
-                ? "bg-white text-primary"
-                : "bg-gray-400 text-white",
+                ? "bg-white px-3 text-primary"
+                : "bg-[#73736C] px-3 text-white",
           )}
         >
           {table.status}
@@ -69,7 +69,7 @@ const TableCard = ({ table, onClick }: TableCardProps) => {
             )}
           >
             <UserIcon className="w-6 h-6" />
-            <span className="text-[11px] font-bold">
+            <span className="text-[10.5px] font-medium">
               {isTerisi ? `${table.capacity} Orang` : `Kapasitas : ${table.capacity}`}
             </span>
           </div>

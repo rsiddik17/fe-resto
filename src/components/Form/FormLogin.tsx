@@ -55,10 +55,10 @@ const FormLogin = () => {
           navigate("/admin/dashboard");
           break;
         case "CASHIER":
-          navigate("/kasir/dashboard");
+          navigate("/cashier/dashboard");
           break;
         case "WAITER" :
-          navigate("/pelayan/order");
+          navigate("/waiter/dashboard");
           break;
         case "KITCHEN":
           navigate("/kitchen/queue");

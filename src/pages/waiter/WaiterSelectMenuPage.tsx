@@ -58,13 +58,13 @@ const WaiterSelectMenuPage = () => {
 
   const handleConfirmOrder = () => {
     if (items.length === 0) return; // Proteksi ganda
-    console.log("Kirim Pesanan:", {
-      tableNumber,
-      items,
-      subTotal,
-      discountAmount,
+    navigate("/waiter/create-order/payment-order", {
+      state: {
+        tableNumber: location.state?.tableNumber || "10",
+        discountAmount: discountAmount,
+        orderId: `#${Math.floor(100000000 + Math.random() * 900000000)}`, // Mock Order ID
+      },
     });
-    alert("Pesanan Dikonfirmasi!");
   };
 
   const handleConfirmDelete = () => {
@@ -77,7 +77,7 @@ const WaiterSelectMenuPage = () => {
   return (
     <>
       {/* 1. HEADER (Sesuai Wrapper Permintaan) */}
-      <div className="pt-8 pl-7 pr-2.5">
+      <div className="pt-7.5 pl-8 pr-7">
         <DashboardHeader
           title="Pilih Menu"
           showBack={true}
@@ -88,13 +88,13 @@ const WaiterSelectMenuPage = () => {
       </div>
 
       {/* 2. MAIN CONTENT (Sesuai Wrapper Permintaan) */}
-      <div className="pt-0 pb-4 px-7 min-h-0">
+      <div className="pt-0 pb-0 px-8 min-h-0">
         {/* Layout 2 Kolom Kiri/Kanan dengan proporsi fixed 52% dan 48% */}
-        <div className="flex gap-4 md:gap-5 h-full min-h-0 w-full">
+        <div className="flex gap-4 h-full min-h-0 w-full">
           {/* --- KOLOM KIRI: MENU (52%) --- */}
-          <div className="w-[55%] bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5 flex flex-col min-h-0">
+          <div className="w-[55%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 md:p-5 flex flex-col min-h-0">
             {/* Search */}
-            <div className="relative mb-4 shrink-0 shadow">
+            <div className="relative mb-4 shrink-0">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="text-gray-400 w-4 h-4" />
               </div>
@@ -103,7 +103,7 @@ const WaiterSelectMenuPage = () => {
                 placeholder="Cari menu pesanan"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 py-2 text-sm border-gray-200"
+                className="pl-9 py-2 text-sm border-gray-200 shadow-sm"
               />
             </div>
 
@@ -116,7 +116,7 @@ const WaiterSelectMenuPage = () => {
             </div>
 
             {/* Menu Grid (Discroll, 2 Kolom) */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 pr-1 pb-2">
+            <div className="flex- overflow-y-auto custom-scrollbar min-h-0 pb-2 -mx-1.5">
               {isLoading ? (
                 <div className="flex justify-center items-center h-48">
                   <span className="text-primary font-bold animate-pulse text-lg">
@@ -184,31 +184,33 @@ const WaiterSelectMenuPage = () => {
           </div>
 
           {/* --- KOLOM KANAN: CART (48%) --- */}
-          <div className="w-[45%] bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5 flex flex-col h-full min-h-0">
+          <div className="w-[45%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 flex flex-col h-full min-h-0">
             {/* Header Cart */}
-            <div className="flex justify-between items-center shrink-0 border-b border-gray-100 pb-3">
-              <h2 className="font-bold text-[17px] text-black">Pesanan</h2>
+            <div className="flex justify-between items-center shrink-0 border-b border-gray-100 mb-1">
+              <h2 className="font-bold text-[19px]">Pesanan</h2>
               <span className="font-bold text-primary text-[14px] px-3 py-1 rounded-md">
                 {tableNumber}
               </span>
             </div>
 
             {/* List Cart Items (Bisa discroll, Kosong = Bersih tidak ada elemen) */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
-              <div className="flex flex-col gap-2.5">
-                {items.map((item) => (
-                  <WaiterCartItemCard
-                    key={item.cartId}
-                    item={item}
-                    onIncrease={(id) => updateQty(id, 1)}
-                    onDecrease={(id) => updateQty(id, -1)}
-                    onDeletePrompt={(id) => setItemToDelete(id)}
-                    onEditNote={(cartId) => {
-                      setSelectedCartItemId(cartId);
-                      setIsNoteOpen(true);
-                    }}
-                  />
-                ))}
+            <div className="flex-1 overflow-y-auto custom-scrollbar -mx-0.5">
+              <div className="flex flex-col gap-19">
+                <div className="flex flex-col gap-2.5">
+                  {items.map((item) => (
+                    <WaiterCartItemCard
+                      key={item.cartId}
+                      item={item}
+                      onIncrease={(id) => updateQty(id, 1)}
+                      onDecrease={(id) => updateQty(id, -1)}
+                      onDeletePrompt={(id) => setItemToDelete(id)}
+                      onEditNote={(cartId) => {
+                        setSelectedCartItemId(cartId);
+                        setIsNoteOpen(true);
+                      }}
+                    />
+                  ))}
+                </div>
 
                 {items.length > 0 && (
                   <div className="mt-6 pt-2 pb-2">
@@ -224,11 +226,11 @@ const WaiterSelectMenuPage = () => {
               </div>
             </div>
 
-            <div className="shrink-0 pt-4 border-t border-gray-100 mt-2">
+            <div className="shrink-0 flex justify-center border-t border-gray-100">
               <Button
                 onClick={handleConfirmOrder}
                 disabled={items.length === 0}
-                className="w-full py-2 text-[14px] font-bold rounded-lg shadow-sm disabled:bg-gray/50 disabled:cursor-not-allowed transition-all"
+                className="w-full max-w-80 py-2 text-[14px] font-bold rounded-lg shadow-sm disabled:bg-gray/50 disabled:cursor-not-allowed transition-all"
               >
                 Konfirmasi Pesanan
               </Button>
@@ -264,6 +266,7 @@ const WaiterSelectMenuPage = () => {
             setIsNoteOpen(false);
             setSelectedCartItemId(null);
           }}
+          mode="create"
         />
       )}
 

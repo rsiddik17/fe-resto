@@ -2,7 +2,7 @@ import { useState } from "react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import Button from "../../components/ui/Button";
 import CategoryTabs from "../../components/CategoryFilterTabs/CategoryFilterTabs";
-import MenuCard, { type MenuItem } from "../../components/Card/MenuCard";
+import MenuCard from "../../components/Card/MenuCard";
 import CreateOrderIcon from "../../components/Icon/CreateOrderIcon";
 import { useNavigate } from "react-router";
 import CreateOrderModal from "../../components/Modal/CreateOrderModal";
@@ -25,7 +25,7 @@ const WaiterCreateOrderPage = () => {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="pt-8 pl-7 pr-2.5">
+      <div className="pt-7.5 pl-8 pr-6">
         <DashboardHeader
           title="Buat Pesanan"
           subtitle="Mulai pesanan baru untuk pelanggan"
@@ -34,7 +34,7 @@ const WaiterCreateOrderPage = () => {
         />
       </div>
 
-      <div className="pt-0 pb-6 px-7 flex flex-col flex-1 min-h-0">
+      <div className="pt-0 pb-0 px-8 flex flex-col flex-1 min-h-0">
         {/* 2. TOMBOL BUAT PESANAN (Persis seperti gambar, putih rounded outline) */}
         <div className="mb-4">
           <Button
@@ -42,20 +42,20 @@ const WaiterCreateOrderPage = () => {
             className="bg-white w-62.5 text-primary text-center border-none shadow-sm rounded-md px-6 py-2.5 font-bold flex justify-center items-center gap-1 hover:bg-gray-50 transition-colors"
           >
             {/* Icon Plus Ungu */}
-            <CreateOrderIcon className="w-6 h-6" strokeWidth={3} />
+            <CreateOrderIcon className="w-6.5 h-6.5" strokeWidth={3} />
             Buat Pesanan
           </Button>
         </div>
 
         {/* 3. KONTEN PUTIH UTAMA */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
+        <div className="bg-white rounded-t-md shadow-sm border border-gray-100 p-4 md:p-6 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
           {/* Tab Kategori */}
           <CategoryTabs
             activeCategory={activeCategory}
             onCategoryChange={setActiveCategory}
           />
 
-          <div className="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1 mt-2">
+          <div className="flex-1 overflow-y-auto min-h-0 custom-scrollbar mt-2">
             {isLoading ? (
               <div className="flex justify-center items-center h-48">
                 <span className="text-primary font-bold animate-pulse text-lg">
@@ -80,7 +80,7 @@ const WaiterCreateOrderPage = () => {
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-1">
                 {filteredMenu.map((item) => (
                   <MenuCard key={item.id}>
                     <MenuCard.Header

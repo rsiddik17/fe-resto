@@ -50,6 +50,10 @@ import WaiterProfilePage from "../pages/waiter/WaiterProfilePage";
 import WaiterCreateOrderPage from "../pages/waiter/WaiterCreateOrderPage";
 import WaiterSelectTablePage from "../pages/waiter/WaiterSelectTablePage";
 import WaiterSelectMenuPage from "../pages/waiter/WaiterSelectMenuPage";
+import WaiterPaymentPage from "../pages/waiter/WaiterPaymentPage";
+import WaiterOrderListPage from "../pages/waiter/WaiterOrderListPage";
+import WaiterTableManagementPage from "../pages/waiter/WaiterTableManagementPage";
+import WaiterTableDetailPage from "../pages/waiter/WaiterTableDetailPage";
 
 const router = createBrowserRouter(
   [
@@ -79,7 +83,7 @@ const router = createBrowserRouter(
     },
     {
       element: <ProtectedRoute allowedRoles={["CASHIER"]} />,
-      children: [{ path: "/kasir/dashboard", Component: CashierDashboardPage }],
+      children: [{ path: "/cashier/dashboard", Component: CashierDashboardPage }],
     },
     {
       element: <PublicRoute />,
@@ -102,6 +106,22 @@ const router = createBrowserRouter(
             {
               path: "/waiter/create-order/select-menu",
               Component: WaiterSelectMenuPage,
+            },
+            {
+              path: "/waiter/create-order/payment-order",
+              Component: WaiterPaymentPage,
+            },
+            {
+              path: "/waiter/order-list",
+              Component: WaiterOrderListPage,
+            },
+            {
+              path: "/waiter/table-management",
+              Component: WaiterTableManagementPage,
+            },
+            {
+              path: "/waiter/table-management/:id",
+              Component: WaiterTableDetailPage,
             },
           ],
         },

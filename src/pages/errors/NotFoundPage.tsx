@@ -17,10 +17,10 @@ const NotFoundPage = () => {
         homePath = "/admin/dashboard";
         break;
       case "CASHIER":
-        homePath = "/kasir/dashboard";
+        homePath = "/cashier/dashboard";
         break;
       case "WAITER":
-        homePath = "/pelayan/order";
+        homePath = "/waiter/dashboard";
         break;
       case "KITCHEN":
         homePath = "/kitchen/queue";

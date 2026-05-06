@@ -57,7 +57,7 @@ const WaiterSelectTablePage = () => {
     <>
       {/* 1. HEADER (Menggunakan wrapper kamu) */}
 
-      <div className="pt-8 pl-7 pr-2.5">
+      <div className="pt-7.5 pl-8 pr-6">
         <DashboardHeader
           title="Pilih Meja"
           userName="Mila"
@@ -69,15 +69,15 @@ const WaiterSelectTablePage = () => {
 
       {/* 2. MAIN CONTENT (Menggunakan wrapper kamu) */}
 
-      <div className="pt-0 pb-6 px-7">
-        <div className="bg-white rounded-md shadow-sm border border-gray-100 p-3 md:px-4 md:py-5">
+      <div className="pt-0 pb-0 px-8">
+        <div className="bg-white rounded-t-md shadow-sm border min-h-screen border-gray-100 p-3 md:px-4 md:py-5">
           {/* TABS FILTER */}
 
           <TableFilterTabs filter={filter} setFilter={setFilter} />
 
           {/* GRID KARTU MEJA */}
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-3.5 gap-y-3.75">
             {filteredTables.map(
               (
                 table, // <-- PERBAIKAN: Pakai kurung biasa () di sini

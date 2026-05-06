@@ -1,6 +1,8 @@
 import UserIconSingle from "../Icon/UserIconSingle";
 import { useState } from "react";
-import NotificationModal, { type NotificationItem } from "../Modal/NotificationModal";
+import NotificationModal, {
+  type NotificationItem,
+} from "../Modal/NotificationModal";
 import NotificationIcon from "../Icon/NotificationIcon";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
@@ -8,8 +10,8 @@ import { ArrowLeft } from "lucide-react";
 interface DashboardHeaderProps {
   title: string;
   subtitle?: string;
-  userName: string;
-  roleName: string; // Misal: "Pelayan" atau "Kasir"
+  userName?: string;
+  roleName?: string; // Misal: "Pelayan" atau "Kasir"
   showBack?: boolean;
   onBack?: () => void;
 }
@@ -85,49 +87,64 @@ const DashboardHeader = ({
 
   return (
     <>
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
+      <header className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
         {/* Kiri: Judul & Subjudul */}
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
             {showBack && (
-              <button onClick={handleBackClick} className="hover:text-primary transition-colors cursor-pointer group mt-0.5">
-                <ArrowLeft size={24} strokeWidth={2} className="group-hover:-translate-x-0.5 -translate-y-1 transition-transform" />
+              <button
+                onClick={handleBackClick}
+                className="hover:text-primary transition-colors cursor-pointer group mt-0.5"
+              >
+                <ArrowLeft
+                  size={24}
+                  strokeWidth={2}
+                  className="group-hover:-translate-x-0.5 -translate-y-1 transition-transform"
+                />
               </button>
             )}
-            <h1 className="text-2xl font-bold mb-1">{title}</h1>
+            <h1 className="text-[23px] font-bold mb-1">{title}</h1>
           </div>
-          
+
           {subtitle && (
-            <p className="text-black/50 text-sm md:text-base">{subtitle}</p>
+            <p className="text-black/50 text-sm md:text-[15px]">{subtitle}</p>
           )}
         </div>
 
         {/* Kanan: Notifikasi & Profil */}
-        <div className="flex items-center gap-4">
-          {/* Tombol Notifikasi (Bulat) */}
-          <div className="relative">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="w-9 h-9 bg-primary rounded-full flex items-center justify-center text-white shadow-sm hover:bg-primary/90 transition-colors cursor-pointer"
+        {userName && roleName && (
+          <div className="flex items-center gap-5">
+            {/* Tombol Notifikasi (Bulat) */}
+            <div className="relative">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="w-8.5 h-8.5 bg-primary rounded-full flex items-center justify-center text-white shadow-sm hover:bg-primary/90 transition-colors cursor-pointer"
+              >
+                <NotificationIcon className="w-5 h-5" />
+              </button>
+
+              {unreadCount > 0 && (
+                <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 border-2 border-[#F3F4F6] rounded-full"></span>
+              )}
+            </div>
+
+            {/* Profil Pill */}
+            <div
+              onClick={() => navigate("/waiter/profile")}
+              className="flex items-center gap-2 bg-white border border-gray-200 rounded-[18px] pl-3 pr-1.5 py-1.5 shadow-sm cursor-pointer"
             >
-              <NotificationIcon />
-            </button>
-
-            {unreadCount > 0 && (
-              <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 border-2 border-[#F3F4F6] rounded-full"></span>
-            )}
-          </div>
-
-          {/* Profil Pill */}
-          <div onClick={() => navigate("/waiter/profile")} className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg pl-3 pr-1.5 py-1.5 shadow-sm cursor-pointer">
-            <span className="text-base">
-              {userName}/{roleName}
-            </span>
-            <div className="w-9 h-9 bg-primary rounded-full flex items-center justify-center">
-              <UserIconSingle className="text-white w-5 h-5" strokeWidth={2} />
+              <span className="text-[15px]">
+                {userName}/{roleName}
+              </span>
+              <div className="w-8.5 h-8.5 bg-primary rounded-full flex items-center justify-center">
+                <UserIconSingle
+                  className="text-white w-5 h-5"
+                  strokeWidth={2}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </header>
 
       <NotificationModal
