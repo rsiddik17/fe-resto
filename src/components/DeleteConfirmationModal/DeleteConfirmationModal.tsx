@@ -19,7 +19,7 @@ const DeleteConfirmationModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/10 backdrop-blur-[2px] p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/10 backdrop-blur-[2px] p-4 animate-in fade-in duration-200">
       {/* Container utama dengan rounded-xs sesuai request-mu */}
       <div className="bg-white rounded-xs p-8 max-w-sm w-full text-center shadow-2xl animate-in zoom-in duration-200">
         

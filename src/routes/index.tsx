@@ -1,11 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createBrowserRouter } from "react-router";
-import { lazy } from "react";
+// import { lazy } from "react";
 
 // IMPORT NORMAL (Hanya untuk Komponen Struktural)
-import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
-import PublicRoute from "../components/PublicRoute/PublicRoute";
-import SuspenseWrapper from "../components/SuspenseWrapper/SuspenseWrapper";
+import ProtectedRoute from "./ProtectedRoute";
+import PublicRoute from "./PublicRoute";
+// import SuspenseWrapper from "../components/SuspenseWrapper/SuspenseWrapper";
 
 // Auth Pages
 import LoginPage from "../pages/auth/LoginPage";
@@ -27,9 +27,14 @@ import CustomerHomePage from "../pages/customer/CustomerHomePage";
 
 // Kiosk Pages
 import KioskHomePage from "../pages/kiosk/KioskHomePage";
-import GuestInputPage from "../pages/kiosk/GuestInputPage";
-import TableInfoPage from "../pages/kiosk/TableInfoPage";
-import MenuPage from "../pages/kiosk/MenuPage";
+import KioskGuestInputPage from "../pages/kiosk/KioskGuestInputPage";
+import KioskTableInfoPage from "../pages/kiosk/KioskTableInfoPage";
+import KioskMenuPage from "../pages/kiosk/KioskMenuPage";
+import KioskCartPage from "../pages/kiosk/KioskCartPage";
+import KioskCheckoutPage from "../pages/kiosk/KioskCheckoutPage";
+import KioskPaymentPage from "../pages/kiosk/KioskPaymentPage";
+import KioskOrderSuccessPage from "../pages/kiosk/KioskOrderSuccessPage";
+import KioskProfilePage from "../pages/kiosk/KioskProfilePage";
 
 import MenuCardOnline from "../pages/customer/MenuPageOnline"
 import CartPageOnline from "../pages/customer/CartPageOnline";
@@ -40,22 +45,46 @@ import OrderTrackingPage from "../pages/customer/OrderTrackingPage";
 import OrderTrackingOnline from "../pages/customer/OrderTrackingOnline";
 import ProfilePage from "../pages/customer/ProfilPage";
 
-const router = createBrowserRouter([
 
-  {
-    element: <PublicRoute />,
-    children: [
-      { path: "/", Component: LoginPage },
-      { path: "/register", Component: RegisterPage },
-      { path: "/lupa-password", Component: ForgotPasswordPage },
-      { path: "/reset-password", Component: ResetPasswordPage },
-      { path: "/verifikasi-otp", Component: VerifyOtpPage },
-    ],
-  },
+// QR Pages
+import MobileTableInfoPage from "../pages/qr/MobileTableInfoPage";
+import MobileMenuPage from "../pages/qr/MobileMenuPage";
+import MobileCartPage from "../pages/qr/MobileCartPage";
+import MobileCheckoutPage from "../pages/qr/MobileCheckoutPage";
+import MobilePaymentPage from "../pages/qr/MobilePaymentPage";
+import MobileOrderSuccessPage from "../pages/qr/MobileOrderSuccessPage";
 
-  
-  { path: "/unauthorized", Component: UnauthorizedPage },
+// Waiter Pages
+import WaiterLayout from "../layouts/WaiterLayout/WaiterLayout";
+import WaiterProfilePage from "../pages/waiter/WaiterProfilePage";
+import WaiterCreateOrderPage from "../pages/waiter/WaiterCreateOrderPage";
+import WaiterSelectTablePage from "../pages/waiter/WaiterSelectTablePage";
+import WaiterSelectMenuPage from "../pages/waiter/WaiterSelectMenuPage";
+import WaiterPaymentPage from "../pages/waiter/WaiterPaymentPage";
+import WaiterOrderListPage from "../pages/waiter/WaiterOrderListPage";
+import WaiterTableManagementPage from "../pages/waiter/WaiterTableManagementPage";
+import WaiterTableDetailPage from "../pages/waiter/WaiterTableDetailPage";
 
+const router = createBrowserRouter(
+  [
+    {
+      element: <PublicRoute />,
+      children: [
+        { path: "/", Component: LoginPage },
+        { path: "/register", Component: RegisterPage },
+        { path: "/forgot-password", Component: ForgotPasswordPage },
+        { path: "/reset-password", Component: ResetPasswordPage },
+        { path: "/verification-otp", Component: VerifyOtpPage },
+        { path: "/qr/:tableId", Component: MobileTableInfoPage },
+        { path: "/qr/menu", Component: MobileMenuPage },
+        { path: "/qr/cart", Component: MobileCartPage },
+        { path: "/qr/checkout", Component: MobileCheckoutPage },
+        { path: "/qr/payment", Component: MobilePaymentPage },
+        { path: "/qr/order-success", Component: MobileOrderSuccessPage },
+      ],
+    },
+
+    { path: "/unauthorized", Component: UnauthorizedPage },
 
   // --- PROTECTED ROUTES ---
   {
@@ -75,15 +104,6 @@ const router = createBrowserRouter([
     children: [{ path: "/kitchen/queue", Component: KitchenDashboardPage }],
   },
   {
-    element: <ProtectedRoute allowedRoles={["KIOSK_SYSTEM"]} />, 
-    children: [
-      { path: "/kiosk/home", Component: KioskHomePage },
-      { path: "/kiosk/input-tamu", Component: GuestInputPage },
-      { path: "/kiosk/info-meja", Component: TableInfoPage },
-      { path: "/kiosk/menu", Component: MenuPage },
-    ],
-  },
-  {
     element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />, 
     children: [
       { path: "/customer/home", Component: CustomerHomePage },
@@ -98,13 +118,91 @@ const router = createBrowserRouter([
       
     ],
   },
+    // --- PROTECTED ROUTES ---
+    {
+      element: <ProtectedRoute allowedRoles={["ADMIN"]} />,
+      children: [{ path: "/admin/dashboard", Component: AdminDashboardPage }],
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["CASHIER"]} />,
+      children: [{ path: "/cashier/dashboard", Component: CashierDashboardPage }],
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["WAITER"]} />,
+      children: [
+        {
+          element: <WaiterLayout />,
+          children: [
+            {
+              path: "/waiter/dashboard",
+              Component: WaiterDashboardPage,
+            },
+            {
+              path: "/waiter/create-order",
+              Component: WaiterCreateOrderPage,
+            },
+            {
+              path: "/waiter/create-order/select-table",
+              Component: WaiterSelectTablePage,
+            },
+            {
+              path: "/waiter/create-order/select-menu",
+              Component: WaiterSelectMenuPage,
+            },
+            {
+              path: "/waiter/create-order/payment-order",
+              Component: WaiterPaymentPage,
+            },
+            {
+              path: "/waiter/order-list",
+              Component: WaiterOrderListPage,
+            },
+            {
+              path: "/waiter/table-management",
+              Component: WaiterTableManagementPage,
+            },
+            {
+              path: "/waiter/table-management/:id",
+              Component: WaiterTableDetailPage,
+            },
+          ],
+        },
+        {
+          path: "/waiter/profile",
+          Component: WaiterProfilePage,
+        },
+      ],
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["KITCHEN"]} />,
+      children: [{ path: "/kitchen/queue", Component: KitchenDashboardPage }],
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["KIOSK_SYSTEM"]} />,
+      children: [
+        { path: "/kiosk/home", Component: KioskHomePage },
+        { path: "/kiosk/guest-input", Component: KioskGuestInputPage },
+        { path: "/kiosk/info-table", Component: KioskTableInfoPage },
+        { path: "/kiosk/menu", Component: KioskMenuPage },
+        { path: "/kiosk/cart", Component: KioskCartPage },
+        { path: "/kiosk/checkout", Component: KioskCheckoutPage },
+        { path: "/kiosk/payment", Component: KioskPaymentPage },
+        { path: "/kiosk/order-success", Component: KioskOrderSuccessPage },
+        { path: "/kiosk/profile", Component: KioskProfilePage },
+      ],
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />,
+      children: [{ path: "/customer/home", Component: CustomerHomePage }],
+    },
 
-
-  // 🚨 RUTE 404 HARUS DI PALING BAWAH (Catch-All Route)
-  { 
-    path: "*", 
-    Component: NotFoundPage
-  },
-]);
+    // 🚨 RUTE 404 HARUS DI PALING BAWAH (Catch-All Route)
+    {
+      path: "*",
+      Component: NotFoundPage,
+    },
+  ],
+  { basename: "/its-resto" },
+);
 
 export default router;
