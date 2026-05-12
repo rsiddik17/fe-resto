@@ -41,7 +41,7 @@ const WaiterTableDetailPage = () => {
               onClick={() => navigate(-1)}
               className="text-black hover:text-primary transition-colors cursor-pointer"
             >
-              <ArrowLeft className="w-5 h-5" strokeWidth={3} />
+              <ArrowLeft className="w-5 h-5 hover:-translate-x-0.5 transition-transform" strokeWidth={3} />
             </button>
             <h2 className="text-lg font-bold">Detail Meja</h2>
           </div>

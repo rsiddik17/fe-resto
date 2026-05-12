@@ -130,7 +130,7 @@ const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
                   disabled={!isEligible}
                   variant={isSelected ? "primary" : "outline"}
                   className={cn(
-                    "px-4 md:px-6 lg:px-4 py-1.5 md:py-2 lg:py-1 rounded-md border-[1.5px] text-sm md:text-base lg:text-[13px] font-medium transition-colors",
+                    "px-4 md:px-6 lg:px-4 py-1.5 md:py-2 lg:py-1 rounded-md lg:rounded-sm border-[1.5px] text-sm md:text-base lg:text-[13px] font-medium transition-colors",
                     !isEligible &&
                       "border-gray-300 text-gray-400 cursor-not-allowed", // Tidak memenuhi syarat (abu-abu)
                     isEligible &&
@@ -149,7 +149,7 @@ const DiscountModal = ({ onClose, onApply, subTotal }: DiscountModalProps) => {
         <div className="border-t border-gray-100 mt-2 lg:mt-3">
           <Button
             onClick={handleApplyFinal}
-            className="w-full py-2.5 md:py-3 lg:py-2 rounded-md font-bold text-sm md:text-xl lg:text-sm disabled:opacity-50"
+            className="w-full py-2.5 md:py-3 lg:py-2 rounded-md lg:rounded-sm font-bold text-sm md:text-xl lg:text-sm disabled:opacity-50"
           >
             Gunakan Diskon
           </Button>

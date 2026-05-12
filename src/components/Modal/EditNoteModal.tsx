@@ -51,7 +51,7 @@ const EditNoteModal = ({ initialNote, onClose, onSave, mode = "edit" }: EditNote
           />
         </div>
 
-        <div className="flex gap-3 justify-end translate-y-4 lg:translate-y-0">
+        <div className="flex gap-8 md:gap-3 justify-end translate-y-0 md:translate-y-3.5 lg:translate-y-0">
           <Button 
             onClick={onClose}
             variant="outline" 

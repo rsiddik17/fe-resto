@@ -1,3 +1,4 @@
+import { Plus } from "lucide-react";
 import { type CartItem } from "../../store/useCartStore";
 import Button from "../ui/Button";
 
@@ -60,8 +61,8 @@ const WaiterOrderSummary = ({ items, subTotal, taxRate = 10, discountAmount = 0,
             Batalkan Diskon
           </Button>
         ) : (
-          <Button variant="outline" onClick={onAddDiscount} className="w-full py-1.5 text-[14px] font-bold border-[1.5px] border-primary text-primary hover:bg-primary/5 rounded-md">
-            + Tambah Diskon
+          <Button variant="outline" onClick={onAddDiscount} className="w-full py-1.5 text-[14px] font-bold border-2 border-primary text-primary hover:bg-primary/5 rounded-md flex justify-center items-center gap-2">
+            <Plus className="w-4.5 h-4.5" strokeWidth={3} /> Tambah Diskon
           </Button>
         )}
       </div>

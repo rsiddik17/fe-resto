@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import Button from "../../components/ui/Button";
-import StatCard from "../../components/Card/StatCard";
+import StatCardWaiter from "../../components/Card/StatCardWaiter";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import {
   ProcessingOrderCard,
@@ -33,13 +33,13 @@ const WaiterDashboardPage = () => {
 
         {/* 2. KARTU STATISTIK (Grid 3 Kolom) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-5">
-          <StatCard title="Sedang Diproses" value="7" Icon={ProcessingIcon} />
-          <StatCard
+          <StatCardWaiter title="Sedang Diproses" value="7" Icon={ProcessingIcon} />
+          <StatCardWaiter
             title="Pesanan Harus Antar"
             value="10"
             Icon={DeliveryIcon}
           />
-          <StatCard
+          <StatCardWaiter
             title="Meja Terisi"
             value={
               <>
@@ -51,7 +51,7 @@ const WaiterDashboardPage = () => {
         </div>
 
         {/* 3. AREA BAWAH (2 KOLOM di Layar Besar) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5.5">
           {/* KOLOM KIRI: Daftar Pesanan (Ambil 2 porsi grid) */}
           <div className="lg:col-span-2 flex flex-col gap-5">
             {/* --- SECTION: PESANAN SIAP SAJI --- */}
@@ -64,7 +64,7 @@ const WaiterDashboardPage = () => {
                   </h2>
                 </div>
                 <Link
-                  to="/waiter/daftar-pesanan"
+                  to="/waiter/order-list"
                   className="text-primary text-xs md:text-sm hover:underline flex items-center"
                 >
                   Lihat semua <ChevronRight size={18} className="ml-1" strokeWidth={2.5} />
@@ -100,7 +100,7 @@ const WaiterDashboardPage = () => {
                   </h2>
                 </div>
                 <Link
-                  to="/pelayan/daftar-pesanan"
+                  to="/waiter/order-list"
                   className="text-primary text-xs md:text-sm hover:underline flex items-center"
                 >
                   Lihat semua <ChevronRight size={18} className="ml-1" strokeWidth={2.5} />
@@ -129,7 +129,7 @@ const WaiterDashboardPage = () => {
           </div>
 
           {/* KOLOM KANAN: Status Meja & Tombol Buat Pesanan (Ambil 1 porsi grid) */}
-          <div className="lg:col-span-1 flex flex-col gap-6 mt-10.5">
+          <div className="lg:col-span-1 flex flex-col gap-5 mt-10.5">
             <Button
               variant="outline"
               onClick={() => navigate("/waiter/create-order")}

@@ -19,7 +19,7 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
 
 const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDeletePrompt }: CartItemCardProps) => {
   return (
-    <div className="bg-white rounded-sm shadow-sm border-2 border-gray/25 p-3 md:p-4.5 flex gap-4 md:gap-">
+    <div className="bg-white rounded-sm shadow-sm border-2 border-gray/25 p-3 md:p-4.5 flex gap-4 md:gap-5">
       
       {/* Gambar Kiri */}
       <div className="w-22 h-22 md:w-25 md:h-25 bg-gray-200 rounded-sm shrink-0 overflow-hidden">

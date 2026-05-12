@@ -3,13 +3,13 @@ import { type LucideIcon } from "lucide-react";
 import { type ComponentType, type SVGProps } from "react";
 type CustomIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
-interface StatCardProps {
+interface StatCardWaiterProps {
   title: string;
   value: string | React.ReactNode;
   Icon: LucideIcon | CustomIcon;
 }
 
-const StatCard = ({ title, value, Icon }: StatCardProps) => {
+const StatCardWaiter = ({ title, value, Icon }: StatCardWaiterProps) => {
   return (
     <div className="bg-white rounded-md shadow-sm flex overflow-hidden h-32.5">
       {/* Garis Aksen Kiri (Ungu) */}
@@ -37,4 +37,4 @@ const StatCard = ({ title, value, Icon }: StatCardProps) => {
   );
 };
 
-export default StatCard;
+export default StatCardWaiter;
