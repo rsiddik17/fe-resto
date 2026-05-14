@@ -21,7 +21,7 @@ const TableCard = ({ table, onClick }: TableCardProps) => {
     <div
       onClick={() => onClick(table)}
       className={cn(
-        "rounded-sm pl-3.25 pr-2 pt-3 pb-5 flex flex-col justify-between h-36 border-[1.5px] transition-all shadow-sm cursor-pointer",
+        "rounded-sm pl-3.25 pr-2 pt-3 pb-5 flex flex-col justify-between h-35 border-[1.5px] transition-all shadow-sm cursor-pointer",
         isTersedia && "bg-white border-lime hover:shadow-md",
         isTerisi && "bg-primary border-primary opacity-95",
         isKotor &&

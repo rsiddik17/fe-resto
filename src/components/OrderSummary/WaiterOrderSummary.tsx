@@ -20,7 +20,7 @@ const WaiterOrderSummary = ({ items, subTotal, taxRate = 10, discountAmount = 0,
   const grandTotal = subTotal + taxAmount - discountAmount;
 
   return (
-    <div className="bg-white border-[1.5px] border-gray-200 rounded-md p-3 shadow-sm flex flex-col gap-2 animate-in fade-in duration-300">
+    <div className="bg-white border-[1.5px] border-gray-200 rounded-sm p-3 shadow-sm flex flex-col gap-2 animate-in fade-in duration-300">
       
       <h3 className="font-extrabold text-[15px]">Ringkasan Pesanan</h3>
 

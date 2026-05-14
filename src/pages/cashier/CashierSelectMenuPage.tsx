@@ -15,7 +15,7 @@ import DeleteConfirmModal from "../../components/Modal/DeleteConfirmModal";
 import { useMenus } from "../../hooks/useMenus";
 import WarningIcon from "../../components/Icon/WarningIcon";
 
-const WaiterSelectMenuPage = () => {
+const CashierSelectMenuPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -58,7 +58,9 @@ const WaiterSelectMenuPage = () => {
 
   const handleConfirmOrder = () => {
     if (items.length === 0) return; // Proteksi ganda
-    navigate("/waiter/create-order/payment-order", {
+    
+    // PERBAIKAN: Arahkan ke rute payment milik Kasir
+    navigate("/cashier/order-list/create-order/payment-order", {
       state: {
         tableNumber: location.state?.tableNumber || "10",
         discountAmount: discountAmount,
@@ -82,16 +84,16 @@ const WaiterSelectMenuPage = () => {
           title="Pilih Menu"
           showBack={true}
           onBack={() => navigate(-1)}
-          userName="Mila"
-          roleName="Pelayan"
+          userName="Rina" // <-- Disesuaikan untuk Kasir
+          roleName="Kasir" // <-- Disesuaikan untuk Kasir
         />
       </div>
 
       {/* 2. MAIN CONTENT (Sesuai Wrapper Permintaan) */}
       <div className="pt-0 pb-0 px-8 min-h-0">
-        {/* Layout 2 Kolom Kiri/Kanan dengan proporsi fixed 52% dan 48% */}
+        {/* Layout 2 Kolom Kiri/Kanan dengan proporsi fixed 55% dan 45% */}
         <div className="flex gap-4 h-full min-h-0 w-full">
-          {/* --- KOLOM KIRI: MENU (52%) --- */}
+          {/* --- KOLOM KIRI: MENU (55%) --- */}
           <div className="w-[55%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 pb-0 md:p-5 md:pb-0 flex flex-col min-h-0">
             {/* Search */}
             <div className="relative mb-4 shrink-0">
@@ -116,7 +118,7 @@ const WaiterSelectMenuPage = () => {
             </div>
 
             {/* Menu Grid (Discroll, 2 Kolom) */}
-            <div className="flex- overflow-y-auto custom-scrollbar min-h-0 pb-4 -mx-1.5 px-1">
+            <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 pb-4 -mx-1.5 px-1">
               {isLoading ? (
                 <div className="flex justify-center items-center h-48">
                   <span className="text-primary font-bold animate-pulse text-lg">
@@ -183,7 +185,7 @@ const WaiterSelectMenuPage = () => {
             </div>
           </div>
 
-          {/* --- KOLOM KANAN: CART (48%) --- */}
+          {/* --- KOLOM KANAN: CART (45%) --- */}
           <div className="w-[45%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 flex flex-col h-full min-h-0">
             {/* Header Cart */}
             <div className="flex justify-between items-center shrink-0 border-b border-gray-100 mb-1">
@@ -281,4 +283,4 @@ const WaiterSelectMenuPage = () => {
   );
 };
 
-export default WaiterSelectMenuPage;
+export default CashierSelectMenuPage;

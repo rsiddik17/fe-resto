@@ -13,7 +13,7 @@ const CreateOrderModal = ({ isOpen, onClose, onSelectTable }: CreateOrderModalPr
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/1 backdrop-blur-[3px] animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/3 backdrop-blur-[3px] animate-in fade-in duration-200"
       onClick={onClose}
     >
       {/* PENYESUAIAN UKURAN: Lebar 400px agar pas di desktop */}
@@ -24,7 +24,7 @@ const CreateOrderModal = ({ isOpen, onClose, onSelectTable }: CreateOrderModalPr
         {/* Header Modal */}
         <div className="flex justify-between items-center p-5 mb-0.5 border-b border-gray-100">
           <h2 className="text-[17px] font-bold">Buat Pesanan Baru</h2>
-          <button onClick={onClose} className="text-black/70 hover:text-black transition-colors bg-gray/30 hover:bg-gray/25 p-1 rounded-full cursor-pointer">
+          <button onClick={onClose} className="text-black/70 hover:text-black transition-colors bg-gray/30 hover:bg-gray/25 p-0.75 rounded-full cursor-pointer">
             <X size={14} strokeWidth={3} />
           </button>
         </div>

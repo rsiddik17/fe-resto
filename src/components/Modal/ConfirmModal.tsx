@@ -21,9 +21,9 @@ const ConfirmModal = ({
   const isDanger = type === "danger";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[2px] animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/3 backdrop-blur-[3px] animate-in fade-in duration-200">
       <div 
-        className="bg-white rounded-2xl p-7 md:p-8 shadow-2xl flex flex-col items-center text-center w-[360px] animate-in zoom-in-95 duration-200"
+        className="bg-white rounded-2xl p-7 md:p-8 shadow-2xl flex flex-col items-center text-center w-90 animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Ikon Atas */}

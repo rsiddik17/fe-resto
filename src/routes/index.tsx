@@ -61,6 +61,13 @@ import CashierMenuStockPage from "../pages/cashier/CashierMenuStockPage";
 import CashierEditMenuPage from "../pages/cashier/CashierEditMenuPage";
 import CashierDetailMenuPage from "../pages/cashier/CashierDetailMenuPage";
 import CashierAddMenuPage from "../pages/cashier/CashierAddMenuPage";
+import CashierProfilePage from "../pages/cashier/CashierProfilePage";
+import CashierOrderListPage from "../pages/cashier/CashierOrderListPage";
+import CashierPaymentValidationPage from "../pages/cashier/CashierPaymentValidationPage";
+import CashierCreateOrderPage from "../pages/cashier/CashierCreateOrderPage";
+import CashierSelectTablePage from "../pages/cashier/CashierSelectTablePage";
+import CashierSelectMenuPage from "../pages/cashier/CashierSelectMenuPage";
+import CashierPaymentPage from "../pages/cashier/CashierPaymentPage";
 
 const router = createBrowserRouter(
   [
@@ -115,8 +122,35 @@ const router = createBrowserRouter(
               path: "/cashier/management-menu-stock/detail-menu/:id",
               Component: CashierDetailMenuPage,
             },
-            
+            {
+              path: "/cashier/order-list",
+              Component: CashierOrderListPage,
+            },
+            {
+              path: "/cashier/order-list/payment-validation",
+              Component: CashierPaymentValidationPage,
+            },
+            {
+              path: "/cashier/order-list/create-order",
+              Component: CashierCreateOrderPage,
+            },
+            {
+              path: "/cashier/order-list/create-order/select-table",
+              Component: CashierSelectTablePage,
+            },
+            {
+              path: "/cashier/order-list/create-order/select-menu",
+              Component: CashierSelectMenuPage,
+            },
+            {
+              path: "/cashier/order-list/create-order/payment-order",
+              Component: CashierPaymentPage,
+            },
           ],
+        },
+        {
+          path: "/cashier/profile",
+          Component: CashierProfilePage,
         },
       ],
     },

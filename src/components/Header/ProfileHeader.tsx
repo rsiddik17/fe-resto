@@ -26,7 +26,7 @@ const ProfileHeader = ({ userName, roleName, onBack }: ProfileHeaderProps) => {
         onClick={handleBack}
         className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors cursor-pointer group"
       >
-        <ArrowLeft size={24} strokeWidth={2} className="group-hover:-translate-x-0.5 transition-transform" />
+        <ArrowLeft size={20} strokeWidth={2} className="group-hover:-translate-x-0.5 transition-transform" />
         <span className="font-bold text-base md:text-lg">Kembali</span>
       </button>
 
