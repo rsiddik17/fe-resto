@@ -68,6 +68,9 @@ import CashierCreateOrderPage from "../pages/cashier/CashierCreateOrderPage";
 import CashierSelectTablePage from "../pages/cashier/CashierSelectTablePage";
 import CashierSelectMenuPage from "../pages/cashier/CashierSelectMenuPage";
 import CashierPaymentPage from "../pages/cashier/CashierPaymentPage";
+import CashierTableManagementPage from "../pages/cashier/CashierTableManagementPage";
+import CashierDiscountManagementPage from "../pages/cashier/CashierDiscountManagementPage";
+import CashierReportPage from "../pages/cashier/CashierReportPage";
 
 const router = createBrowserRouter(
   [
@@ -145,6 +148,18 @@ const router = createBrowserRouter(
             {
               path: "/cashier/order-list/create-order/payment-order",
               Component: CashierPaymentPage,
+            },
+            {
+              path: "/cashier/management-table",
+              Component: CashierTableManagementPage,
+            },
+            {
+              path: "/cashier/management-discount",
+              Component: CashierDiscountManagementPage,
+            },
+            {
+              path: "/cashier/report",
+              Component: CashierReportPage,
             },
           ],
         },

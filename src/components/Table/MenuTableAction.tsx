@@ -40,7 +40,7 @@ const MenuTableAction = ({
       {isOpen && (
         <div
           className={cn(
-            "absolute right-5 w-25 bg-[#EFEEEE] -top-1 mt-1.5 rounded-[10px] shadow-lg border border-gray-200 z-30 overflow-hidden flex flex-col",
+            "absolute right-5 w-25 bg-[#EFEEEE] -top-1 mt-1.5 rounded-[10px] shadow-sm border border-gray-200 z-30 overflow-hidden flex flex-col",
             // LOGIKA AJAIB: Jika isLast true, pop-up buka ke ATAS. Jika tidak, buka ke BAWAH.
           )}
         >

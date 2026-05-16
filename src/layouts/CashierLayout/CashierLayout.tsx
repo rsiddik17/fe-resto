@@ -24,7 +24,7 @@ const CashierLayout = () => {
     { name: "Daftar Pesanan", icon: OrderListIcon, path: "/cashier/order-list" },
     { name: "Manajemen Meja", icon: TableManagementIcon, path: "/cashier/management-table" },
     { name: "Manajemen Diskon", icon: DiscountIcon, path: "/cashier/management-discount" },
-    { name: "Laporan", icon: ReportIcon, path: "/cashier/reports" },
+    { name: "Laporan", icon: ReportIcon, path: "/cashier/report" },
   ];
 
   return (

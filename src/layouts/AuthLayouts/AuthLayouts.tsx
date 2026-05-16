@@ -25,7 +25,7 @@ const AuthLayouts = ({
       />
 
       <div className="relative w-full flex justify-center items-center p-4">
-        <div className="absolute -top-12">
+        <div className="absolute -top-11">
           <img
             src={`${import.meta.env.BASE_URL}images/new-logo.webp`}
             alt="Logo IT'S RESTO"
