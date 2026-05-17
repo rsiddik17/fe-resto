@@ -9,6 +9,7 @@ import TableFilterTabs from "../../components/Table/TableFilterTabs";
 import TableDetailModal from "../../components/Modal/TableDetailModal"; // <-- Import Modal Reusable
 import TableActionConfirmModal from "../../components/Modal/TableActionConfirmModal";
 import Loading from "../../components/Loading/Loading";
+import Toast from "../../components/Toast/Toast";
 
 type TableType = "semua" | "tersedia" | "terisi" | "kotor";
 
@@ -50,6 +51,18 @@ const CashierTableManagementPage = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
+
+  // --- STATE TOAST ---
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+    show: false,
+    message: "",
+    type: "success",
+  });
+
+  const triggerToast = (message: string, type: "success" | "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type }), 4000);
+  };
 
   // Logika Filter dan Search
   const filteredTables = useMemo(() => {
@@ -115,6 +128,7 @@ const CashierTableManagementPage = () => {
         // Logic Hapus
         const tableToDelete = confirmConfig.payload as TableItem;
         setTables(tables.filter((t) => t.id !== tableToDelete.id));
+        triggerToast(`Meja ${tableToDelete.id} berhasil dihapus!`, "success");
       } else if (confirmConfig.actionType === "save") {
         // Logic Simpan
         const dataToSave = confirmConfig.payload as {
@@ -130,6 +144,7 @@ const CashierTableManagementPage = () => {
               status: "tersedia",
             },
           ]);
+          triggerToast(`Meja ${dataToSave.id} berhasil ditambahkan!`, "success");
         } else if (detailModalMode === "edit" && selectedDetailTable) {
           setTables((prev) =>
             prev.map((t) =>
@@ -138,6 +153,7 @@ const CashierTableManagementPage = () => {
                 : t,
             ),
           );
+          triggerToast(`Perubahan meja ${dataToSave.id} berhasil disimpan!`, "success");
         }
         setIsDetailModalOpen(false); // Tutup form detail setelah disave
       }
@@ -248,6 +264,7 @@ const CashierTableManagementPage = () => {
       />
 
       <Loading show={isLoading} message={loadingMessage} />
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </div>
   );
 };

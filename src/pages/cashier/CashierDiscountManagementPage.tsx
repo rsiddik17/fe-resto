@@ -11,6 +11,7 @@ import DiscountDetailModal, {
 } from "../../components/Modal/DiscountDetailModal";
 import DiscountActionConfirmModal from "../../components/Modal/DiscountActionConfirmModal";
 import Loading from "../../components/Loading/Loading";
+import Toast from "../../components/Toast/Toast";
 
 // --- MOCK DATA DISKON ---
 const MOCK_DISCOUNTS: DiscountItem[] = [
@@ -84,7 +85,7 @@ const MOCK_DISCOUNTS: DiscountItem[] = [
 const formatDateToIndonesian = (dateString: string) => {
   if (!dateString) return "";
   // Trik split string untuk mencegah pergeseran timezone Date JS
-  const [year, monthStr, day] = dateString.split("-");
+  const [, monthStr, day] = dateString.split("-");
   const monthIndex = parseInt(monthStr, 10) - 1;
   const months = [
     "Jan",
@@ -151,6 +152,18 @@ const CashierDiscountManagementPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
 
+  // --- STATE TOAST ---
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+    show: false,
+    message: "",
+    type: "success",
+  });
+
+  const triggerToast = (message: string, type: "success" | "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type }), 4000);
+  };
+
   // Logika Filter Search
   const filteredDiscounts = useMemo(() => {
     return discounts.filter(
@@ -211,6 +224,8 @@ const CashierDiscountManagementPage = () => {
       if (confirmConfig.actionType === "delete") {
         const itemToDelete = confirmConfig.payload as DiscountItem;
         setDiscounts(discounts.filter((d) => d.id !== itemToDelete.id));
+
+        triggerToast(`Promo "${itemToDelete.name}" berhasil dihapus!`, "success");
       } else if (confirmConfig.actionType === "save") {
         const formData = confirmConfig.payload as DiscountFormData;
 
@@ -233,6 +248,8 @@ const CashierDiscountManagementPage = () => {
             status: computedStatus,
           };
           setDiscounts([...discounts, newDiscount]);
+
+          triggerToast(`Promo "${formData.name}" berhasil ditambahkan!`, "success");
         } else if (detailModalMode === "edit" && selectedDiscount) {
           setDiscounts((prev) =>
             prev.map((d) =>
@@ -249,6 +266,7 @@ const CashierDiscountManagementPage = () => {
                 : d,
             ),
           );
+          triggerToast(`Perubahan promo "${formData.name}" berhasil disimpan!`, "success");
         }
         setIsDetailModalOpen(false); // Tutup form
       }
@@ -335,6 +353,8 @@ const CashierDiscountManagementPage = () => {
 
       {/* LOADING */}
       <Loading show={isLoading} message={loadingMessage} />
+
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </>
   );
 };

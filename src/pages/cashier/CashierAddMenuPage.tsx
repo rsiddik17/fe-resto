@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import DashboardHeader from "../../components/Header/DashboardHeader";
+import { useState } from "react"; 
 
 // Zod & RHF
 import { z } from "zod";
@@ -11,6 +12,7 @@ import FormMenuImage from "../../components/Form/FormMenuImage";
 import FormMenuLayout from "../../layouts/FormMenuLayout/FormMenuLayout";
 import FormMenuInput from "../../components/Form/FormMenuInput";
 import Loading from "../../components/Loading/Loading";
+import Toast from "../../components/Toast/Toast";
 
 // API
 import { menuAPI } from "../../api/menu.api"; // Sesuaikan path import ini jika berbeda
@@ -29,6 +31,18 @@ type MenuFormValues = z.infer<typeof menuSchema>;
 
 const CashierAddMenuPage = () => {
   const navigate = useNavigate();
+
+  // --- STATE TOAST ---
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+    show: false,
+    message: "",
+    type: "error",
+  });
+
+  const triggerToast = (message: string, type: "success" | "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "error" }), 4000);
+  };
   
   // 2. SETUP REACT HOOK FORM
   const {
@@ -81,13 +95,13 @@ const CashierAddMenuPage = () => {
       await menuAPI.createMenu(formData);
 
       // Jika berhasil
-      alert("Menu baru berhasil ditambahkan!");
-      navigate("/cashier/management-menu-stock");
+      triggerToast("Menu baru berhasil ditambahkan!", "success");
+      setTimeout(() => navigate("/cashier/management-menu-stock"), 1500);
       
     } catch (error: any) {
       console.error("🚨 DETAIL ERROR DARI BACKEND:", error.response?.data);
       const errorMsg = error.response?.data?.message || error.response?.data?.error || "Terjadi kesalahan server backend";
-      alert(`Gagal dari Backend: ${errorMsg}`);
+      triggerToast(`Gagal: ${errorMsg}`, "error");
     }
   };
 
@@ -128,6 +142,7 @@ const CashierAddMenuPage = () => {
 
         </FormMenuLayout>
       </div>
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </>
   );
 };

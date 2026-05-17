@@ -26,7 +26,7 @@ interface MenuTableProps {
 const MenuTable = ({ menus, isLoading, isError, onTriggerDelete }: MenuTableProps) => {
   return (
     // DI SINI KITA HAPUS overflow-y-auto AGAR TABEL TIDAK SCROLL DI DALAM
-    <div className="w-full bg-white rounded-sm">
+    <div className="w-full bg-white rounded-sm overflow-x-auto custom-scrollbar">
       <table className="w-full text-left border-separate border-spacing-0">
         <thead className="bg-primary text-white">
           <tr className="text-[14.5px] uppercase tracking-wider">

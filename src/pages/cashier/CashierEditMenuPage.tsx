@@ -13,6 +13,7 @@ import FormMenuLayout from "../../layouts/FormMenuLayout/FormMenuLayout";
 import FormMenuInput from "../../components/Form/FormMenuInput";
 import MenuActionModal from "../../components/Modal/MenuActionModal";
 import Loading from "../../components/Loading/Loading"; // <--- Import Loading
+import Toast from "../../components/Toast/Toast";
 
 // API
 import { menuAPI } from "../../api/menu.api"; 
@@ -38,6 +39,18 @@ const CashierEditMenuPage = () => {
   const [formDataToSave, setFormDataToSave] = useState<MenuFormValues | null>(null);
   const [isFetching, setIsFetching] = useState(true); // Loading saat ambil data awal
   const [isUpdating, setIsUpdating] = useState(false); // Loading saat proses update API
+
+  // --- STATE TOAST ---
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+    show: false,
+    message: "",
+    type: "error",
+  });
+
+  const triggerToast = (message: string, type: "success" | "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "error" }), 4000);
+  };
   
   // State khusus untuk menampung URL gambar lama dari database
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
@@ -69,7 +82,6 @@ const CashierEditMenuPage = () => {
         setIsFetching(true);
         const response = await menuAPI.getMenuById(id);
         
-        // TRIK SAKTI: Deteksi apakah datanya dibungkus dalam properti "data" atau tidak
         // Jika response.data ada isinya, kita pakai itu. Jika tidak, pakai response langsung.
         const menuData = response.data ? response.data : response;
         
@@ -94,7 +106,7 @@ const CashierEditMenuPage = () => {
         }
       } catch (error) {
         console.error("Gagal mengambil detail menu:", error);
-        alert("Gagal memuat data menu!");
+        triggerToast("Gagal memuat data menu!", "error");
       } finally {
         setIsFetching(false);
       }
@@ -144,12 +156,13 @@ const CashierEditMenuPage = () => {
       // Tembak API Update Menu
       await menuAPI.updateMenu(id, formData);
 
-      alert(`Berhasil menyimpan perubahan!`);
-      navigate("/cashier/management-menu-stock");
+      triggerToast("Berhasil menyimpan perubahan!", "success");
+      
+      setTimeout(() => navigate("/cashier/management-menu-stock"), 1500);
     } catch (error: any) {
       console.error("🚨 DETAIL ERROR UPDATE:", error.response?.data);
       const errorMsg = error.response?.data?.message || error.response?.data?.error || "Terjadi kesalahan server saat update";
-      alert(`Gagal: ${errorMsg}`);
+      triggerToast(`Gagal: ${errorMsg}`, "error");
     } finally {
       setIsUpdating(false);
     }
@@ -202,6 +215,7 @@ const CashierEditMenuPage = () => {
         onClose={() => setIsSaveModalOpen(false)}
         onConfirm={handleSaveConfirm}
       />
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </>
   );
 };

@@ -30,7 +30,7 @@ const formatRupiah = (value: number) => {
 const DiscountTable = ({ discounts, onDetail, onEdit, onDelete }: DiscountTableProps) => {
 
   return (
-    <div className="w-full bg-white rounded-sm">
+    <div className="w-full bg-white rounded-sm overflow-x-auto custom-scrollbar">
       <table className="w-full text-left border-collapse min-w-225">
         {/* Header Tabel */}
         <thead className="bg-primary text-white sticky top-0 z-10">

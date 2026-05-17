@@ -9,6 +9,7 @@ import MenuFilterBar from "../../components/Filter/MenuFilterBar";
 import MenuTable from "../../components/Table/MenuTable";
 import TablePagination from "../../components/Table/TablePagination";
 import MenuActionModal from "../../components/Modal/MenuActionModal";
+import Toast from "../../components/Toast/Toast";
 import { Plus } from "lucide-react";
 
 // API
@@ -35,6 +36,18 @@ const CashierMenuStockPage = () => {
     id: string;
     name: string;
   } | null>(null);
+
+  // --- STATE TOAST ---
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+    show: false,
+    message: "",
+    type: "error",
+  });
+
+  const triggerToast = (message: string, type: "success" | "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "error" }), 4000);
+  };
 
   // LOGIC FILTERING
   const filteredMenus = useMemo(() => {
@@ -90,7 +103,7 @@ const CashierMenuStockPage = () => {
       // Tembak API Hapus
       await menuAPI.deleteMenu(selectedMenu.id);
 
-      alert(`Menu "${selectedMenu.name}" berhasil dihapus!`);
+      triggerToast(`Menu "${selectedMenu.name}" berhasil dihapus!`, "success");
 
       // Refresh data tabel setelah sukses dihapus
       if (refetch) {
@@ -102,7 +115,7 @@ const CashierMenuStockPage = () => {
     } catch (error: any) {
       console.error("Gagal menghapus menu:", error);
       const errorMsg = error.response?.data?.message || error.response?.data?.error || "Terjadi kesalahan server saat menghapus";
-      alert(`Gagal: ${errorMsg}`);
+      triggerToast(`Gagal: ${errorMsg}`, "error");
     } finally {
       setIsDeleting(false);
       setIsDeleteModalOpen(false); // Tutup modal
@@ -174,6 +187,8 @@ const CashierMenuStockPage = () => {
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
       />
+
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </>
   );
 };

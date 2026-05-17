@@ -6,6 +6,7 @@ import PaymentConfirmationModal from "../../components/Modal/PaymentConfirmation
 import PaymentBankSelector from "../../components/PaymentBankSelector/PaymentBankSelector";
 import PaymentOrderDetailCard from "../../components/Card/PaymentOrderDetailCard"; // <--- Import Card Baru
 import InfoIcon from "../../components/Icon/InfoIcon";
+import Toast from "../../components/Toast/Toast";
 import { useCartStore } from "../../store/useCartStore";
 
 const CashierPaymentValidationPage = () => {
@@ -20,11 +21,28 @@ const CashierPaymentValidationPage = () => {
   const [otherBankName, setOtherBankName] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // --- STATE TOAST ---
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+    show: false,
+    message: "",
+    type: "success",
+  });
+
+  const triggerToast = (message: string, type: "success" | "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type }), 4000);
+  };
+
   const handleConfirmValidation = () => {
     setIsModalOpen(false);
     clearCart();
-    alert("Pembayaran berhasil divalidasi!");
-    navigate("/cashier/order-list");
+    // GANTI ALERT DENGAN TOAST HIJAU
+    triggerToast("Pembayaran berhasil divalidasi!", "success");
+    
+    // Beri jeda 1.5 detik agar Toast terlihat sebelum pindah halaman
+    setTimeout(() => {
+      navigate("/cashier/order-list");
+    }, 1500);
   };
 
   return (
@@ -120,6 +138,8 @@ const CashierPaymentValidationPage = () => {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmValidation}
       />
+
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </>
   );
 };
