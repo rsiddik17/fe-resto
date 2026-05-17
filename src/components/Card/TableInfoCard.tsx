@@ -62,7 +62,7 @@ const TableInfoCard = ({
           onClick={onLanjut}
           className="w-full max-w-68 md:max-w-115 py-1.5 md:py-4 text-base font-semibold text-center md:text-xl flex items-center justify-center cursor-pointer"
         >
-          Lihat Menu <ChevronRight size={32} strokeWidth={2.5} className="-ml-1" />
+          Lihat Menu <ChevronRight size={24} strokeWidth={2} className="-ml-1 md:ml-0.5" />
         </Button>
 
         {/* Tombol Batal */}

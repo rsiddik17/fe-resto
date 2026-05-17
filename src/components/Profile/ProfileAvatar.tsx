@@ -8,7 +8,7 @@ interface ProfileAvatarProps {
 const ProfileAvatar = ({ name }: ProfileAvatarProps) => {
   return (
     <div className="w-full md:w-[35%] flex flex-col items-center pt-4 shrink-0">
-      <div className="w-40 h-40 md:w-42 md:h-42 bg-white rounded-full flex items-center justify-center shadow-md mb-5">
+      <div className="w-40 h-40 md:w-42 md:h-42 bg-white rounded-full flex items-center justify-center shadow-md mb-4">
         <UserIconSingle className="w-28 h-28 md:w-32 md:h-32 text-primary" strokeWidth={2} />
       </div>
       <h2 className="text-xl md:text-[22px] font-bold capitalize text-center">

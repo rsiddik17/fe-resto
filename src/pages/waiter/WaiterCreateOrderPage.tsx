@@ -55,7 +55,7 @@ const WaiterCreateOrderPage = () => {
             onCategoryChange={setActiveCategory}
           />
 
-          <div className="flex-1 overflow-y-auto min-h-0 custom-scrollbar mt-2">
+          <div className="flex-1 min-h-0 mt-2">
             {isLoading ? (
               <div className="flex justify-center items-center h-48">
                 <span className="text-primary font-bold animate-pulse text-lg">

@@ -16,7 +16,7 @@ const EditNoteModal = ({ initialNote, onClose, onSave, mode = "edit" }: EditNote
 
   return (
     <div 
-      className="fixed inset-0 z-100 flex items-center justify-center bg-black/1 backdrop-blur-[3px] p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-100 flex items-center justify-center bg-black/3 backdrop-blur-[3px] p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div 
@@ -51,7 +51,7 @@ const EditNoteModal = ({ initialNote, onClose, onSave, mode = "edit" }: EditNote
           />
         </div>
 
-        <div className="flex gap-3 justify-end translate-y-4 lg:translate-y-0">
+        <div className="flex gap-8 md:gap-3 justify-end translate-y-0 md:translate-y-3.5 lg:translate-y-0">
           <Button 
             onClick={onClose}
             variant="outline" 

@@ -15,8 +15,8 @@ const CategoryFilterTabs = ({ activeCategory, onCategoryChange }: CategoryFilter
   
   // Fungsi helper untuk style
   const getBtnStyle = (category: CategoryType) => 
-    cn("flex flex-col items-center p-2 justify-center w-19 h-15 md:w-23 md:h-16 lg:w-22 lg:h-15 rounded-md lg:rounded-sm transition-colors shrink-0", 
-        activeCategory === category ? "bg-primary/50 text-primary hover:text-white" : "bg-gray/25 text-white hover:bg-gray-400");
+    cn("flex flex-col items-center p-2 justify-center w-19 h-15 md:w-23 md:h-16 lg:w-22 lg:h-15 rounded-md lg:rounded-sm transition-colors duration-200 shrink-0", 
+        activeCategory === category ? "bg-primary/50 text-primary hover:text-white" : "bg-gray/30 text-white hover:bg-gray/50");
 
 
   return (

@@ -92,18 +92,18 @@ const WaiterSelectMenuPage = () => {
         {/* Layout 2 Kolom Kiri/Kanan dengan proporsi fixed 52% dan 48% */}
         <div className="flex gap-4 h-full min-h-0 w-full">
           {/* --- KOLOM KIRI: MENU (52%) --- */}
-          <div className="w-[55%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 md:p-5 flex flex-col min-h-0">
+          <div className="w-[55%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 pb-0 md:p-5 md:pb-0 flex flex-col min-h-0">
             {/* Search */}
             <div className="relative mb-4 shrink-0">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="text-gray-400 w-4 h-4" />
+                <Search className="text-black/50 w-4.5 h-4.5" />
               </div>
               <Input
                 type="text"
                 placeholder="Cari menu pesanan"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 py-2 text-sm border-gray-200 shadow-sm"
+                className="pl-9 py-2 text-[14.5px] border-gray-200 shadow-sm placeholder:text-black/50"
               />
             </div>
 
@@ -116,7 +116,7 @@ const WaiterSelectMenuPage = () => {
             </div>
 
             {/* Menu Grid (Discroll, 2 Kolom) */}
-            <div className="flex- overflow-y-auto custom-scrollbar min-h-0 pb-2 -mx-1.5">
+            <div className="flex- overflow-y-auto custom-scrollbar min-h-0 pb-4 -mx-1.5 px-1">
               {isLoading ? (
                 <div className="flex justify-center items-center h-48">
                   <span className="text-primary font-bold animate-pulse text-lg">
@@ -213,7 +213,7 @@ const WaiterSelectMenuPage = () => {
                 </div>
 
                 {items.length > 0 && (
-                  <div className="mt-6 pt-2 pb-2">
+                  <div className="mt-8 pt-2 pb-2">
                     <WaiterOrderSummary
                       items={items}
                       subTotal={subTotal}

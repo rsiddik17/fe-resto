@@ -15,7 +15,7 @@ const MOCK_TABLES: TableItem[] = Array.from({ length: 24 }).map((_, i) => {
   let status: TableItem["status"] = "tersedia";
   if ([2, 7, 8, 9, 16, 17, 23, 24].includes(i + 1)) status = "terisi";
   if ([4, 5, 6, 14, 15, 19, 20, 22].includes(i + 1)) status = "kotor";
-  let capacity = [2, 4, 6, 8, 10, 12][Math.floor(Math.random() * 6)];
+  const capacity = [2, 4, 6, 8, 10, 12][Math.floor(Math.random() * 6)];
   
   return { id, status, capacity };
 });

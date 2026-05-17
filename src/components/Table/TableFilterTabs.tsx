@@ -46,7 +46,7 @@ const TableFilterTabs = ({ filter, setFilter }: TableFilterTabsProps) => {
       <button
         onClick={() => setFilter("terisi")}
         className={cn(
-          "flex justify-center items-center gap-1.5 w-28 px-4 py-2 rounded-sm font-bold text-[13px] border-2 transition-all cursor-pointer",
+          "flex justify-center items-center gap-1.5 w-28 px-4 py-2 rounded-sm font-bold text-[13px] border-[1.5px] transition-all cursor-pointer",
           filter === "terisi"
             ? "bg-primary text-white border-primary"
             : "bg-white text-primary border-primary",
@@ -65,7 +65,7 @@ const TableFilterTabs = ({ filter, setFilter }: TableFilterTabsProps) => {
       <button
         onClick={() => setFilter("kotor")}
         className={cn(
-          "flex justify-center items-center gap-1.5 w-28 px-4 py-2 rounded-sm font-bold text-[13px] border-2 transition-all cursor-pointer",
+          "flex justify-center items-center gap-1.5 w-28 px-4 py-2 rounded-sm font-bold text-[13px] border-[1.5px] transition-all cursor-pointer",
           filter === "kotor"
             ? "bg-[#D9D9D9] text-gray-700 border-[#D9D9D9]"
             : "bg-white text-gray-400 border-gray-200",

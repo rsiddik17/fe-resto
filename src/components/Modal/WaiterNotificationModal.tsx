@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { ScrollText } from "lucide-react";
 import Button from "../ui/Button";
 import { cn } from "../../utils/utils";
+import ReceiptIcon from "../Icon/ReceiptIcon";
 
 // 1. Ekspor tipe data agar bisa dipakai di tempat lain
-export interface NotificationItem {
+export interface WaiterNotificationItem {
   id: string;
   table: string;
   time: string;
@@ -14,14 +14,14 @@ export interface NotificationItem {
   isRead: boolean;
 }
 
-interface NotificationModalProps {
+interface WaiterNotificationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  notifications: NotificationItem[];
+  notifications: WaiterNotificationItem[];
   onMarkAsRead: (id: string) => void;
 }
 
-const NotificationModal = ({ isOpen, onClose, notifications, onMarkAsRead }: NotificationModalProps) => {
+const WaiterNotificationModal = ({ isOpen, onClose, notifications, onMarkAsRead }: WaiterNotificationModalProps) => {
   // STATE BARU: Untuk mengontrol apakah semua notifikasi ditampilkan
   const [showAll, setShowAll] = useState(false);
 
@@ -33,12 +33,12 @@ const NotificationModal = ({ isOpen, onClose, notifications, onMarkAsRead }: Not
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/1 backdrop-blur-[3px] animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/3 backdrop-blur-[3px] animate-in fade-in duration-200"
       onClick={onClose} // Tutup modal jika klik background gelap
     >
       <div 
         // Ukuran Fixed sesuai instruksi: w = 503px, h = 612px
-        className="bg-white rounded-lg p-4.5 shadow-2xl flex flex-col relative animate-in zoom-in-95 duration-200 w-100 h-116"
+        className="bg-white rounded-md p-4.5 shadow-sm flex flex-col relative animate-in zoom-in-95 duration-200 w-100 h-116"
         onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup saat area dalam diklik
       >
         {/* Header Modal - 18px Semibold */}
@@ -60,10 +60,10 @@ const NotificationModal = ({ isOpen, onClose, notifications, onMarkAsRead }: Not
                 "w-full h-25 rounded-sm py-3 pl-2 pr-4 flex gap-4 cursor-pointer transition-all duration-300 shrink-0 border",
                 // Logika pewarnaan BG Card:
                 notif.isRead 
-                  ? "bg-white border-gray-200" // Sudah dibaca: Putih + Border
+                  ? "bg-white border-[1.5px] border-gray-200" // Sudah dibaca: Putih + Border
                   : notif.type === "new" 
-                    ? "bg-[#EAE0F0] border-transparent" // Belum dibaca (Baru): Ungu muda
-                    : "bg-[#FCECD8] border-transparent" // Belum dibaca (Dimasak): Orange muda
+                    ? "bg-[#EAE0F0]  border-[1.5px] border-transparent" // Belum dibaca (Baru): Ungu muda
+                    : "bg-[#FCECD8]   border-[1.5px] border-transparent" // Belum dibaca (Dimasak): Orange muda
               )}
             >
               {/* Ikon Kiri (PERBAIKAN: Warna TETAP menyesuaikan status tipe, tidak peduli isRead) */}
@@ -73,7 +73,7 @@ const NotificationModal = ({ isOpen, onClose, notifications, onMarkAsRead }: Not
                   ? "bg-primary/20 text-primary" 
                   : "bg-[#FF9F1C]/20 text-[#FF9F1C]"
               )}>
-                <ScrollText size={18} strokeWidth={2.5} />
+                <ReceiptIcon strokeWidth={2.5} />
               </div>
 
               {/* Konten Kanan */}
@@ -82,16 +82,16 @@ const NotificationModal = ({ isOpen, onClose, notifications, onMarkAsRead }: Not
                   <h3 className="font-bold text-black text-[14.5px] truncate pr-2">
                     {notif.table}
                   </h3>
-                  <span className="font-bold text-black text-xs shrink-0">
+                  <span className="font-semibold text-black text-xs shrink-0">
                     {notif.time}
                   </span>
                 </div>
                 
-                <p className="text-gray-500 text-[12px] mb-1.5 truncate">
+                <p className="text-gray-500 text-[12.5px] mb-1.5 truncate">
                   ID {notif.orderId}
                 </p>
                 
-                <p className="text-black text-xs line-clamp-2 leading-tight">
+                <p className="text-xs line-clamp-2 leading-tight">
                   {notif.items}
                 </p>
               </div>
@@ -113,4 +113,4 @@ const NotificationModal = ({ isOpen, onClose, notifications, onMarkAsRead }: Not
   );
 };
 
-export default NotificationModal;
+export default WaiterNotificationModal;
