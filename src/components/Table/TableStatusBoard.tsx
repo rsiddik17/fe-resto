@@ -18,32 +18,32 @@ const mockTables = [
 
 const TableStatusBoard = () => {
   return (
-    <div className="bg-white w-full rounded-md shadow-sm border border-secondary p-4 overflow-hidden">
+    <div className="bg-white w-full rounded-md shadow-sm border border-secondary px-4 py-5 overflow-hidden">
       <h3 className="font-bold text-lg mb-2.5">Status Meja</h3>
 
       {/* Legend */}
-      <div className="flex items-center gap-2 mb-3 text-gray-600">
+      <div className="flex items-center gap-3 mb-3 text-gray-600">
         <div className="flex items-center gap-1.5 ">
           <div className="w-3 h-3 rounded-full bg-[#D9D9D9]"></div>{" "}
-          <p className="text-sm">Kotor</p>
+          <p className="text-[15px]">Kotor</p>
         </div>
         <div className="flex items-center gap-1.5 ">
           <div className="w-3 h-3 rounded-full bg-primary"></div>{" "}
-          <p className="text-sm">Terisi</p>
+          <p className="text-[15px]">Terisi</p>
         </div>
         <div className="flex items-center gap-1.5 ">
           <div className="w-3 h-3 rounded-full border-2 border-lime"></div>{" "}
-          <p className="text-sm">Tersedia</p>
+          <p className="text-[15px]">Tersedia</p>
         </div>
       </div>
 
       {/* Grid Meja */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-3">
         {mockTables.map((table) => (
           <div
             key={table.id}
             className={cn(
-              "aspect-square p-0.5 rounded-sm text-center flex items-center justify-center text-sm",
+              "aspect-square p-px rounded-sm text-center flex items-center justify-center text-base",
               table.status === "terisi" && "bg-primary text-white",
               table.status === "kotor" && "bg-[#D9D9D9] text-white",
               table.status === "tersedia" &&
@@ -53,8 +53,6 @@ const TableStatusBoard = () => {
             {table.id}
           </div>
         ))}
-        {/* Titik-titik ... di akhir */}
-        <div className="flex items-end text-black font-bold pb-1 ml-1 text-sm">...</div>
       </div>
     </div>
   );

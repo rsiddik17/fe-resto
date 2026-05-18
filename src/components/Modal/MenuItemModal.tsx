@@ -43,7 +43,7 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
 
   return (
     <div
-      className="fixed inset-0 z-100 flex items-center justify-center bg-black/1 backdrop-blur-[3px] p-4"
+      className="fixed inset-0 z-100 flex items-center justify-center bg-black/3 backdrop-blur-[3px] p-4"
       onClick={onClose} // Menutup modal jika klik area luar
     >
       <div

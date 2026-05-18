@@ -1,11 +1,12 @@
 import UserIconSingle from "../Icon/UserIconSingle";
 import { useState } from "react";
-import NotificationModal, {
-  type NotificationItem,
-} from "../Modal/NotificationModal";
+import WaiterNotificationModal, {
+  type WaiterNotificationItem,
+} from "../Modal/WaiterNotificationModal";
 import NotificationIcon from "../Icon/NotificationIcon";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
+import CashierNotificationModal, { type CashierNotificationItem } from "../Modal/CashierNotificationModal";
 
 interface DashboardHeaderProps {
   title: string;
@@ -16,43 +17,21 @@ interface DashboardHeaderProps {
   onBack?: () => void;
 }
 
-const initialNotifications: NotificationItem[] = [
-  {
-    id: "1",
-    table: "Meja 07",
-    time: "12.07",
-    orderId: "#26040299",
-    items: "1x Ayam Penyet, 2x Matcha Latte, 1x Es Teler",
-    type: "new",
-    isRead: false,
-  },
-  {
-    id: "2",
-    table: "Meja 12",
-    time: "11.59",
-    orderId: "#26040298",
-    items: "1x Ayam Penyet, 2x Lychee Tea",
-    type: "new",
-    isRead: false,
-  },
-  {
-    id: "3",
-    table: "Meja 06",
-    time: "Dimasak",
-    orderId: "#26040297",
-    items: "1x Es Teler, 2x Ayam Penyet, 1x Bakso Urat",
-    type: "process",
-    isRead: false,
-  },
-  {
-    id: "4",
-    table: "Meja 06",
-    time: "Dimasak",
-    orderId: "#26040297",
-    items: "1x Es Teler, 2x Ayam Penyet, 1x Bakso Urat",
-    type: "process",
-    isRead: false,
-  },
+// --- MOCK DATA: Waiter Notifications ---
+const initialWaiterNotifications: WaiterNotificationItem[] = [
+  { id: "1", table: "Meja 07", time: "12.07", orderId: "#26040299", items: "1x Ayam Penyet, 2x Matcha Latte, 1x Es Teler", type: "new", isRead: false },
+  { id: "2", table: "Meja 12", time: "11.59", orderId: "#26040298", items: "1x Ayam Penyet, 2x Lychee Tea", type: "new", isRead: false },
+  { id: "3", table: "Meja 06", time: "Dimasak", orderId: "#26040297", items: "1x Es Teler, 2x Ayam Penyet, 1x Bakso Urat", type: "process", isRead: false },
+  { id: "4", table: "Meja 04", time: "Dimasak", orderId: "#26040297", items: "1x Ayam Penyet, 1x Bakso Borax", type: "process", isRead: false },
+];
+
+// --- MOCK DATA: Cashier Notifications (TAMBAHKAN isRead: false) ---
+const initialCashierNotifications: CashierNotificationItem[] = [
+  { id: "1", table: "Meja 01", time: "14.20", orderId: "#ORD-16", items: "Nasi Goreng Batagor, Matcha Latte", method: "QR", isRead: false },
+  { id: "2", table: "Meja 04", time: "16.11", orderId: "#ORD-15", items: "Ikan Bakar, Mie Ayam Bakso", method: "KIOSK", isRead: false },
+  { id: "3", table: "Meja 06", time: "19.47", orderId: "#ORD-14", items: "Mie Ayam Bakso, Lemon Tea", method: "ONLINE", isRead: false },
+  { id: "4", table: "Meja 02", time: "20.01", orderId: "#ORD-12", items: "Ayam Penyet, Es Teler", method: "KASIR", isRead: false },
+  { id: "5", table: "Meja 03", time: "22.01", orderId: "#ORD-13", items: "Ayam Bakar, Es Gobak", method: "KASIR", isRead: false },
 ];
 
 const DashboardHeader = ({
@@ -63,26 +42,40 @@ const DashboardHeader = ({
   showBack = false,
   onBack,
 }: DashboardHeaderProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [notifications, setNotifications] =
-    useState<NotificationItem[]>(initialNotifications);
-
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
-
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [waiterNotifs, setWaiterNotifs] = useState<WaiterNotificationItem[]>(initialWaiterNotifications);
+  const [cashierNotifs, setCashierNotifs] = useState<CashierNotificationItem[]>(initialCashierNotifications);
+
+  // Asumsi semua notif kasir yang baru belum dibaca (bisa disesuaikan nanti dengan API)
+  const unreadWaiterCount = waiterNotifs.filter((n) => !n.isRead).length;
+  const unreadCashierCount = cashierNotifs.filter((n) => !n.isRead).length;
+
+  const isCashier = roleName?.toLowerCase() === "kasir";
+  const unreadCount = isCashier ? unreadCashierCount : unreadWaiterCount;
 
   // Fungsi untuk menandai notifikasi sudah dibaca
   const handleMarkAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((notif) =>
-        notif.id === id ? { ...notif, isRead: true } : notif,
-      ),
-    );
+    if (isCashier) {
+      setCashierNotifs((prev) =>
+        prev.map((notif) => (notif.id === id ? { ...notif, isRead: true } : notif))
+      );
+    } else {
+      setWaiterNotifs((prev) =>
+        prev.map((notif) => (notif.id === id ? { ...notif, isRead: true } : notif))
+      );
+    }
   };
 
   const handleBackClick = () => {
     if (onBack) onBack();
     else navigate(-1); // Default kembali ke halaman sebelumnya
+  };
+
+  const handleProfileClick = () => {
+    if (isCashier) navigate("/cashier/profile");
+    else navigate("/waiter/profile");
   };
 
   return (
@@ -113,7 +106,7 @@ const DashboardHeader = ({
 
         {/* Kanan: Notifikasi & Profil */}
         {userName && roleName && (
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-3.5">
             {/* Tombol Notifikasi (Bulat) */}
             <div className="relative">
               <button
@@ -130,7 +123,7 @@ const DashboardHeader = ({
 
             {/* Profil Pill */}
             <div
-              onClick={() => navigate("/waiter/profile")}
+              onClick={handleProfileClick}
               className="flex items-center gap-2 bg-white border border-gray-200 rounded-[18px] pl-3 pr-1.5 py-1.5 shadow-sm cursor-pointer"
             >
               <span className="text-[15px]">
@@ -147,12 +140,24 @@ const DashboardHeader = ({
         )}
       </header>
 
-      <NotificationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        notifications={notifications}
-        onMarkAsRead={handleMarkAsRead}
-      />
+      {/* RENDER MODAL SESUAI ROLE */}
+      {userName && roleName && (
+        isCashier ? (
+          <CashierNotificationModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            notifications={cashierNotifs} 
+            onMarkAsRead={handleMarkAsRead} 
+          />
+        ) : (
+          <WaiterNotificationModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            notifications={waiterNotifs}
+            onMarkAsRead={handleMarkAsRead}
+          />
+        )
+      )}
     </>
   );
 };

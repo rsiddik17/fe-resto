@@ -20,7 +20,7 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
 const WaiterCartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDeletePrompt }: WaiterCartItemCardProps) => {
   return (
     // 1. Ubah wrapper utama jadi flex-col agar bisa atas-bawah
-    <div className="bg-white rounded-md border-[1.5px] border-gray-200 p-2.5 flex flex-col gap-3 shadow-sm hover:shadow-md transition-all">
+    <div className="bg-white rounded-sm border-[1.5px] border-gray-200 p-2.5 flex flex-col gap-3 shadow-sm hover:shadow-md transition-all">
       
       {/* --- BARIS ATAS: Gambar, Info (Nama & Qty), Harga --- */}
       <div className="flex gap-3 items-center w-full">

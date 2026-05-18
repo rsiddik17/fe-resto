@@ -27,8 +27,8 @@ const WaiterQRCodeBox = ({ finalPayment, onExpire }: WaiterQRCodeBoxProps) => {
   const qrisData = `00020101021126670016ID.CO.QRIS.WWW011893600...Nominal:${finalPayment}`;
 
   return (
-    <div className="bg-white rounded-md p-6 flex flex-col items-center shadow-sm text-center w-full h-full">
-      <p className="text-gray-500 text-base mb-1">Total Pembayaran</p>
+    <div className="bg-white rounded-md p-6 flex flex-col items-center text-center w-full h-full">
+      <p className="text-black/50 text-base mb-1">Total Pembayaran</p>
       
       <h2 className="text-[22px] font-bold text-primary mb-3">
         Rp{finalPayment.toLocaleString("id-ID")}
@@ -44,7 +44,7 @@ const WaiterQRCodeBox = ({ finalPayment, onExpire }: WaiterQRCodeBoxProps) => {
         <QRCodeSVG value={qrisData} className="w-full h-full" level="L" />
       </div>
 
-      <p className="text-gray-400 text-base">
+      <p className="text-black/50 text-base">
         Scan dengan e-wallet atau mobile banking anda
       </p>
     </div>

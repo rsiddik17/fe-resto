@@ -65,6 +65,23 @@ import WaiterOrderListPage from "../pages/waiter/WaiterOrderListPage";
 import WaiterTableManagementPage from "../pages/waiter/WaiterTableManagementPage";
 import WaiterTableDetailPage from "../pages/waiter/WaiterTableDetailPage";
 
+// Cashier Pages
+import CashierLayout from "../layouts/CashierLayout/CashierLayout";
+import CashierMenuStockPage from "../pages/cashier/CashierMenuStockPage";
+import CashierEditMenuPage from "../pages/cashier/CashierEditMenuPage";
+import CashierDetailMenuPage from "../pages/cashier/CashierDetailMenuPage";
+import CashierAddMenuPage from "../pages/cashier/CashierAddMenuPage";
+import CashierProfilePage from "../pages/cashier/CashierProfilePage";
+import CashierOrderListPage from "../pages/cashier/CashierOrderListPage";
+import CashierPaymentValidationPage from "../pages/cashier/CashierPaymentValidationPage";
+import CashierCreateOrderPage from "../pages/cashier/CashierCreateOrderPage";
+import CashierSelectTablePage from "../pages/cashier/CashierSelectTablePage";
+import CashierSelectMenuPage from "../pages/cashier/CashierSelectMenuPage";
+import CashierPaymentPage from "../pages/cashier/CashierPaymentPage";
+import CashierTableManagementPage from "../pages/cashier/CashierTableManagementPage";
+import CashierDiscountManagementPage from "../pages/cashier/CashierDiscountManagementPage";
+import CashierReportPage from "../pages/cashier/CashierReportPage";
+
 const router = createBrowserRouter(
   [
     {
@@ -123,10 +140,78 @@ const router = createBrowserRouter(
       element: <ProtectedRoute allowedRoles={["ADMIN"]} />,
       children: [{ path: "/admin/dashboard", Component: AdminDashboardPage }],
     },
+
     {
       element: <ProtectedRoute allowedRoles={["CASHIER"]} />,
-      children: [{ path: "/cashier/dashboard", Component: CashierDashboardPage }],
+      children: [
+        {
+          element: <CashierLayout />,
+          children: [
+            {
+              path: "/cashier/dashboard",
+              Component: CashierDashboardPage,
+            },
+            {
+              path: "/cashier/management-menu-stock",
+              Component: CashierMenuStockPage,
+            },
+            {
+              path: "/cashier/management-menu-stock/add-menu",
+              Component: CashierAddMenuPage,
+            },
+            {
+              path: "/cashier/management-menu-stock/edit-menu/:id",
+              Component: CashierEditMenuPage
+            },
+            {
+              path: "/cashier/management-menu-stock/detail-menu/:id",
+              Component: CashierDetailMenuPage,
+            },
+            {
+              path: "/cashier/order-list",
+              Component: CashierOrderListPage,
+            },
+            {
+              path: "/cashier/order-list/payment-validation",
+              Component: CashierPaymentValidationPage,
+            },
+            {
+              path: "/cashier/order-list/create-order",
+              Component: CashierCreateOrderPage,
+            },
+            {
+              path: "/cashier/order-list/create-order/select-table",
+              Component: CashierSelectTablePage,
+            },
+            {
+              path: "/cashier/order-list/create-order/select-menu",
+              Component: CashierSelectMenuPage,
+            },
+            {
+              path: "/cashier/order-list/create-order/payment-order",
+              Component: CashierPaymentPage,
+            },
+            {
+              path: "/cashier/management-table",
+              Component: CashierTableManagementPage,
+            },
+            {
+              path: "/cashier/management-discount",
+              Component: CashierDiscountManagementPage,
+            },
+            {
+              path: "/cashier/report",
+              Component: CashierReportPage,
+            },
+          ],
+        },
+        {
+          path: "/cashier/profile",
+          Component: CashierProfilePage,
+        },
+      ],
     },
+
     {
       element: <ProtectedRoute allowedRoles={["WAITER"]} />,
       children: [
@@ -173,10 +258,12 @@ const router = createBrowserRouter(
         },
       ],
     },
+
     {
       element: <ProtectedRoute allowedRoles={["KITCHEN"]} />,
       children: [{ path: "/kitchen/queue", Component: KitchenDashboardPage }],
     },
+
     {
       element: <ProtectedRoute allowedRoles={["KIOSK_SYSTEM"]} />,
       children: [
@@ -191,6 +278,7 @@ const router = createBrowserRouter(
         { path: "/kiosk/profile", Component: KioskProfilePage },
       ],
     },
+    
     {
       element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />,
       children: [{ path: "/customer/home", Component: CustomerHomePage }],

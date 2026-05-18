@@ -76,7 +76,7 @@ const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
       </div>
 
       {/* Menu Navigasi */}
-      <nav className="flex-1 flex flex-col gap-2.5 overflow-x-hidden">
+      <nav className="flex-1 flex flex-col gap-2.75 overflow-x-hidden">
         {menuItems.map((item) => {
           const isActive = location.pathname.includes(item.path);
 

@@ -16,7 +16,7 @@ const ExpiredModal = ({ onClose }: ExpiredModalProps) => {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/1 backdrop-blur-[3px] p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/3 backdrop-blur-[3px] p-4 animate-in fade-in duration-200">
       <div 
         className="bg-white w-full max-w-[98%] md:max-w-md rounded-sm md:rounded-md  p-6 md:p-8 shadow-sm flex flex-col items-center text-center animate-in zoom-in-95 duration-200"
       >
