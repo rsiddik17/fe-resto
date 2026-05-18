@@ -113,14 +113,16 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
         </div>
       </form>
 
+      {/* PERBAIKAN: onConfirm diatur ulang agar tidak memaksa pindah halaman */}
       <ConfirSandi
         isOpen={isModalOpen}
         title="Perbarui Kata Sandi?"
         description="Apakah anda yakin ingin mengubah kata sandi akun anda? Tindakan ini tidak dapat dibatalkan"
         onCancel={() => setIsModalOpen(false)}
         onConfirm={() => {
-          setIsModalOpen(false);
-          onCancel(); 
+          setIsModalOpen(false); // 1. Tutup modal konfirmasi
+          setPassword({ old: "", new: "", confirm: "" }); // 2. Reset inputan form
+          // onCancel() dihapus dari sini agar tab tidak melompat kembali ke edit profil secara otomatis
         }}
       />
     </div>

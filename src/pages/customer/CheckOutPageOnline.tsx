@@ -13,7 +13,7 @@ import {
   Bike,
   Plus,
 } from "lucide-react";
-import DiscountModal from "../../components/DiscountModalOnline/DiscountModalOnline";
+import DiscountModalOnline from "../../components/DiscountModalOnline/DiscountModalOnline";
 interface Address {
   id: string;
   detail: string;
@@ -89,17 +89,17 @@ const CheckoutPageOnline = () => {
       <Header mode="online" />
 
       {/* Header Page */}
-     <div className="bg-white border-b border-gray-100 shadow-sm mb-3 w-full">
-  <div className="w-full py-3 px-4 md:px-12 flex items-center gap-3">
-    <button 
-      onClick={() => navigate(-1)}
-      className="p-1 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center"
-    >
-      <ArrowLeft size={22} />
-    </button>
-    <h1 className="text-lg font-bold text-gray-800">Pembayaran</h1>
-  </div>
-</div>
+      <div className="bg-white border-b border-gray-100 shadow-sm mb-3 w-full">
+        <div className="w-full py-3 px-4 md:px-12 flex items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-1 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center"
+          >
+            <ArrowLeft size={22} />
+          </button>
+          <h1 className="text-lg font-bold text-gray-800">Pembayaran</h1>
+        </div>
+      </div>
 
       <main className="max-w-3xl mx-auto px-4 mt-4">
         <div className="bg-white rounded-xs shadow-sm p-5 md:p-6 space-y-6 border border-gray-100">
@@ -188,21 +188,30 @@ const CheckoutPageOnline = () => {
                   <span>PPN 10%</span>
                   <span>Rp{ppn.toLocaleString("id-ID")}</span>
                 </div>
-
-                {/* TOMBOL DISKON (Trigger Modal) */}
-                <button
-                  onClick={() => setIsDiscountModalOpen(true)}
-                  className="w-full border-2 border-primary rounded-md py-2.5 flex items-center justify-center gap-2 text-primary font-bold hover:bg-primary/5 transition-all"
-                >
-                  <Plus size={18} strokeWidth={3} />
-                  Tambah Diskon
-                </button>
-
                 {appliedDiscount > 0 && (
-                  <div className="flex justify-between items-center text-[14px] text-red-500 font-medium animate-in fade-in">
+                  <div className="flex justify-between items-center text-[14px] ">
                     <span>Diskon</span>
                     <span>-Rp{appliedDiscount.toLocaleString("id-ID")}</span>
                   </div>
+                )}
+
+                {appliedDiscount > 0 ? (
+                  // JIKA DISKON SUDAH ADA: Tombol berubah jadi abu-abu "Batalkan Diskon" sesuai gambar
+                  <button
+                    onClick={() => setAppliedDiscount(0)} // Menghapus diskon saat diklik
+                    className="w-full border border-gray-300 rounded-md py-2.5 flex items-center justify-center text-slate-600 font-bold bg-white hover:bg-gray-50 transition-all text-sm md:text-base"
+                  >
+                    Batalkan Diskon
+                  </button>
+                ) : (
+                  // JIKA BELUM ADA DISKON: Kembali ke tombol ungu asli bawaan kode kamu
+                  <button
+                    onClick={() => setIsDiscountModalOpen(true)}
+                    className="w-full border-2 border-primary rounded-md py-2.5 flex items-center justify-center gap-2 text-primary font-bold hover:bg-primary/5 transition-all text-sm md:text-base"
+                  >
+                    <Plus size={18} strokeWidth={3} />
+                    Tambah Diskon
+                  </button>
                 )}
 
                 <div className="flex justify-between items-center text-lg font-bold pt-4 text-black border-t border-gray-100">
@@ -251,7 +260,7 @@ const CheckoutPageOnline = () => {
 
       {/* MODAL DISKON */}
       {isDiscountModalOpen && (
-        <DiscountModal
+        <DiscountModalOnline
           subTotal={safeTotalPrice}
           onClose={() => setIsDiscountModalOpen(false)}
           onApply={(amount) => setAppliedDiscount(amount)}

@@ -1,39 +1,49 @@
+import { useEffect } from "react";
 import { AlertCircle } from "lucide-react";
-import Button from "../ui/Button";
 
 interface ExpiredModalOnlineProps {
   onClose: () => void;
 }
 
 const ExpiredModalOnline = ({ onClose }: ExpiredModalOnlineProps) => {
-  // Kita hapus timer auto-close karena di Web/HP user lebih baik menutupnya secara manual
   
+  // Timer otomatis 10 detik dari temanmu tetap jalan
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div 
-        className="bg-white w-full max-w-sm rounded-4xl p-8 shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200"
-      >
+    // Menggunakan kelas standar utility Tailwind tanpa library tambahan
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/10 backdrop-blur-sm p-4">
+      
+      {/* CARD PUTIH: Dipaksa bulat melengkung halus pakai rounded-[32px] atau rounded-3xl */}
+      <div className="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl flex flex-col items-center text-center">
         
-        {/* Ikon Merah Peringatan - Pakai bg-red-50 agar lembut */}
+        {/* LINGKARAN IKON: Bulatan merah muda lembut bg-red-50 */}
         <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
           <AlertCircle size={40} className="text-red-500" strokeWidth={2.5} />
         </div>
 
+        {/* JUDUL */}
         <h2 className="text-2xl font-bold mb-2 text-black">
           Waktu Habis!
         </h2>
         
-        <p className="text-gray-500 mb-8 leading-relaxed text-sm">
+        {/* DESKRIPSI */}
+        <p className="text-gray-500 mb-8 leading-relaxed text-sm max-w-[280px]">
           Waktu pembayaran Anda telah berakhir. Pesanan ini telah dibatalkan otomatis oleh sistem.
         </p>
 
-        {/* Button dengan radius melengkung sesuai style Amalia */}
-        <Button 
+        {/* TOMBOL: Diganti pakai tag <button> biasa + rounded-full agar PASTI berbentuk kapsul bulat oval */}
+        <button 
           onClick={onClose}
-          className="w-full py-3.5 rounded-full font-bold text-lg bg-primary text-white"
+          className="w-full py-3.5 rounded-full font-bold text-lg bg-[#7A1FA2] hover:bg-[#6A1B9A] text-white transition-all active:scale-95 shadow-md shadow-purple-900/10"
         >
           Kembali ke Menu
-        </Button>
+        </button>
 
       </div>
     </div>

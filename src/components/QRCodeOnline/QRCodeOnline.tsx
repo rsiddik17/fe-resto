@@ -7,7 +7,7 @@ interface QRCodeOnlineProps {
 }
 
 const QRCodeOnline = ({ finalPayment, onExpire }: QRCodeOnlineProps) => {
-  const [timeLeft, setTimeLeft] = useState(3600);
+  const [timeLeft, setTimeLeft] = useState(30);
 
   useEffect(() => {
     if (timeLeft <= 0) {

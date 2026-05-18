@@ -31,6 +31,10 @@ const ProfilePage = () => {
   const [addressView, setAddressView] = useState<"list" | "form">("list");
   const [startDate, setStartDate] = useState(new Date(2002, 3, 3));
 
+  // State untuk menangani nilai Custom Dropdown Jenis Kelamin
+  const [gender, setGender] = useState("Laki-laki");
+  const [isOpenJk, setIsOpenJk] = useState(false);
+
   // State untuk Modal dikelompokkan dalam satu object agar hemat baris
   const [modal, setModal] = useState({
     deleteAddress: false,
@@ -126,26 +130,54 @@ const ProfilePage = () => {
                       defaultValue="Wawan Hermawan"
                     />
                   </div>
-                  <div className="space-y-2">
+                  
+                  {/* DI SINI BAGIAN YANG DIGANTI KE CUSTOM DROPDOWN (100% AMAN DI MOBILE) */}
+                  <div className="space-y-2 relative">
                     <label className="text-black font-bold text-sm">
                       Jenis Kelamin
                     </label>
-                    <div className="relative">
-                      <select
+                    <div className="relative w-full">
+                      <button
+                        type="button"
                         disabled={!isEditingProfile}
-                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium appearance-none outline-none text-gray-700 disabled:text-black"
+                        onClick={() => setIsOpenJk(!isOpenJk)}
+                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium text-left outline-none text-gray-700 disabled:text-black text-sm flex justify-between items-center h-[54px]"
                       >
-                        <option>Laki-laki</option>
-                        <option>Perempuan</option>
-                      </select>
-                      {isEditingProfile && (
-                        <ChevronDown
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-primary pointer-events-none"
-                          size={20}
-                        />
+                        <span>{gender}</span>
+                        {isEditingProfile && (
+                          <ChevronDown
+                            className={`text-primary transition-transform duration-200 ${isOpenJk ? "rotate-180" : ""}`}
+                            size={20}
+                          />
+                        )}
+                      </button>
+
+                      {isEditingProfile && isOpenJk && (
+                        <>
+                          {/* Latar belakang transparan penutup otomatis jika klik di luar dropdown */}
+                          <div className="fixed inset-0 z-40" onClick={() => setIsOpenJk(false)} />
+                          
+                          <ul className="absolute left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xs shadow-xl z-50 overflow-hidden divide-y divide-gray-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                            {["Laki-laki", "Perempuan"].map((option) => (
+                              <li
+                                key={option}
+                                onClick={() => {
+                                  setGender(option);
+                                  setIsOpenJk(false);
+                                }}
+                                className={`p-4 text-sm cursor-pointer transition-colors text-left hover:bg-primary/5 ${
+                                  gender === option ? "text-primary font-bold bg-primary/5" : "text-gray-700"
+                                }`}
+                              >
+                                {option}
+                              </li>
+                            ))}
+                          </ul>
+                        </>
                       )}
                     </div>
                   </div>
+
                   <div className="space-y-2">
                     <label className="text-black font-bold text-sm">
                       No Telepon
@@ -156,6 +188,7 @@ const ProfilePage = () => {
                       defaultValue="+62 114 0986 7821"
                     />
                   </div>
+                  
                   {/* Tanggal Lahir */}
                   <div className="space-y-2">
                     <label className="text-black font-bold text-sm">
@@ -167,12 +200,9 @@ const ProfilePage = () => {
                         onChange={(date: Date) => setStartDate(date)}
                         disabled={!isEditingProfile}
                         dateFormat="dd/MM/yyyy"
-                        // SOLUSI AMPUH: Blokir input keyboard secara manual saat mengetik,
-                        // tetapi membiarkan fungsi klik memunculkan kalender tetap bekerja normal.
                         onKeyDown={(e) => e.preventDefault()}
-                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium pl-14 outline-none text-gray-700 disabled:text-black"
+                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium pl-14 outline-none text-gray-700 disabled:text-black caret-transparent cursor-pointer"
                       />
-                      {/* Ikon kalender ditaruh di bawah agar tidak menutupi area klik input */}
                       <Calendar
                         className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                         size={22}
@@ -180,6 +210,7 @@ const ProfilePage = () => {
                     </div>
                   </div>
                 </div>
+                
                 <div className="flex justify-end mt-16 font-poppins">
                   {isEditingProfile ? (
                     <div className="flex gap-4">

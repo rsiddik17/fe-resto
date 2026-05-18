@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router";
-import { Bell, User, Menu, X } from "lucide-react";
+import { User, Menu, X } from "lucide-react";
 import { useCartStore } from "../../store/useCartStore";
 import { useOrderStore } from "../../store/useOrderStore"; // Tambahkan import store pesanan
 import Keranjang from "../Icon/Keranjang";
 import NotificationModal from "../NotificationModal/NotificationModal";
+import NotificationIcon from "../Icon/NotificationIcon";
 
 const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
   const navigate = useNavigate();
@@ -87,7 +88,9 @@ const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
               onClick={() => setIsNotifOpen(true)}
               className="p-2 bg-primary text-white rounded-full hover:bg-primary/90 transition-all relative"
             >
-              <Bell size={18} />
+              <span className="w-4.5 h-4.5 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full">
+                <NotificationIcon />
+              </span>
               {/* Dot merah tanda ada notif baru masuk */}
               <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
@@ -123,9 +126,7 @@ const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
 
       {/* MODAL NOTIFIKASI: Diletakkan di sini agar bisa muncul overlay */}
       {isNotifOpen && (
-        <NotificationModal
-          onClose={() => setIsNotifOpen(false)}
-        />
+        <NotificationModal onClose={() => setIsNotifOpen(false)} />
       )}
 
       {/* Mobile Menu Overlay */}

@@ -5,7 +5,7 @@ import { useCartStore } from "../../store/useCartStore";
 import QRCodeOnline from "../../components/QRCodeOnline/QRCodeOnline";
 import { useState } from "react";
 import OrderSummaryOnline from "../../components/OrderSummaryOnline/OrderSummaryOnline";
-import ExpiredModalOnline from "../../components/ExpiredModalOnline/ExpiredModalOnline";
+import ExpiredModalFinal from "../../components/ExpiredModalFinal/ExpiredModalFinal";
 import Header from "../../components/HeaderOnline/HeaderOnline";
 import { useOrderStore } from "../../store/useOrderStore";
 import { useMenuStore } from "../../store/useMenuStore";
@@ -174,7 +174,7 @@ const PaymentPageOnline = () => {
       </main>
 
       {isExpired && (
-        <ExpiredModalOnline
+        <ExpiredModalFinal
           onClose={() => {
             clearCart();
             navigate("/customer/menu");
