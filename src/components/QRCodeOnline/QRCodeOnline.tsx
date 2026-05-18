@@ -28,9 +28,9 @@ const QRCodeOnline = ({ finalPayment, onExpire }: QRCodeOnlineProps) => {
   const qrisData = `00020101021126670016ID.CO.QRIS.WWW011893600...Nominal:${finalPayment}`;
 
   return (
-    <div className="bg-white rounded-xl p-6 flex flex-col items-center shadow-sm text-center border border-gray-100 w-full">
-      <p className="text-gray-500 text-lg mb-2">Total Pembayaran</p>
-      <h2 className="text-3xl font-bold text-primary mb-6">
+    <div className="bg-white rounded-xl p-5 flex flex-col items-center shadow-sm text-center border border-gray-100 w-full">
+      <p className="text-gray-500 text-lg mb-1">Total Pembayaran</p>
+      <h2 className="text-2xl font-bold text-primary mb-6">
         Rp{finalPayment.toLocaleString("id-ID")}
       </h2>
 
@@ -40,11 +40,11 @@ const QRCodeOnline = ({ finalPayment, onExpire }: QRCodeOnlineProps) => {
       </p>
 
       {/* Box QR Code yang Responsif untuk HP */}
-      <div className="bg-white p-4 border-4 border-gray-50 rounded-2xl mb-6 shadow-inner">
+      <div className="bg-white p-3 border-2 border-gray-50 rounded-2xl mb-6 shadow-inner">
         <QRCodeSVG 
           value={qrisData} 
-          size={250} // Ukuran dasar
-          className="w-50 h-50 md:w-70 md:h-70" // Responsif lewat CSS
+          size={200} // Ukuran dasar
+          className="w-48 h-48 md:w-52 md:h-52" // Responsif lewat CSS
           level="H" 
         />
       </div>

@@ -42,12 +42,13 @@ export const useCartStore = create<CartStore>()(
           if (existingItemIndex > -1) {
             const newItems = [...state.items];
             newItems[existingItemIndex].qty += qty;
+            newItems[existingItemIndex].checked = true;
             return { items: newItems };
           } else {
             return {
               items: [
                 ...state.items,
-                { ...item, cartId: uuidv4(), qty, notes },
+                { ...item, cartId: uuidv4(), qty, notes, checked: true },
               ],
             };
           }

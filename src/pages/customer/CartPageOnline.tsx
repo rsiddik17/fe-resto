@@ -44,13 +44,18 @@ const CartPageOnline = () => {
   return (
     <div className="min-h-screen bg-[#F3F4F6] flex flex-col pb-32">
       <Header mode="online" />
-      <div className="bg-white p-5 flex rounded-xs  items-center gap-3 border-b border-gray-100 shadow-sm mb-3">
-        <button onClick={() => navigate(-1)}>
-          <ArrowLeft size={22} />
-        </button>
-        <h1 className="text-xl font-bold">Keranjang</h1>
+      <div className="bg-white border-b border-gray-100 shadow-sm mb-3 w-full">
+        <div className="w-full py-3 px-4 md:px-12 flex items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-1 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center"
+          >
+            <ArrowLeft size={22} />
+          </button>
+          <h1 className="text-lg font-bold text-gray-800">Keranjang</h1>
+        </div>
       </div>
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-12">
+      <main className="flex-1 max-w-6xl mx-auto w-full px-4 md:px-12">
         {items.length > 0 ? (
           <>
             <div className="bg-white rounded-xs shadow-sm border border-gray-100 p-5 flex items-center gap-4 mb-4 mt-4">
@@ -147,33 +152,34 @@ const CartPageOnline = () => {
         )}
       </main>
       {items.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 md:p-6 flex flex-wrap justify-between md:justify-end items-center gap-4 md:gap-8 shadow-[0_-8px_30px_rgb(0,0,0,0.04)] z-50">
-          <div className="text-left md:text-right">
-            <p className="text-[13px] font-medium text-black leading-tight">
-              Total Pembayaran
-            </p>
-            <p className="text-xl md:text-2xl font-bold text-primary">
-              Rp{selectedTotalPrice.toLocaleString("id-ID")}
-            </p>
-          </div>
-
-          <button
-            disabled={!items.some((i) => i.checked)}
-            onClick={() =>
-              navigate("/customer/checkout", {
-                state: { adminFee: 205 }, // Tambahkan state ini jika perlu
-              })
-            }
-            className="bg-primary text-white px-6 py-2 rounded-full font-bold text-base flex items-center gap-2 shadow-lg"
-          >
-            Bayar Sekarang
-            <div className="flex items-center justify-center">
-              <ArrowLeft size={18} strokeWidth={3} className="rotate-180" />
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-3 px-6 md:px-12 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+          {/* Menggunakan justify-end agar teks dan tombol berjejer di sisi kanan */}
+          <div className="flex justify-end items-center gap-6 md:gap-10 w-full">
+            {/* Bagian Info Harga - Rata Kanan */}
+            <div className="flex flex-col text-right">
+              <p className="text-[13px] font-medium text-black leading-tight">
+                Total Pembayaran
+              </p>
+              <p className="text-xl font-extrabold text-primary leading-none">
+                Rp{selectedTotalPrice.toLocaleString("id-ID")}
+              </p>
             </div>
-          </button>
+
+            {/* Tombol Bayar */}
+            <button
+              disabled={!items.some((i) => i.checked)}
+              onClick={() =>
+                navigate("/customer/checkout", { state: { adminFee: 205 } })
+              }
+              className="bg-primary disabled:bg-gray-300 text-white px-8 py-2.5 rounded-full font-bold text-sm shadow-md flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all whitespace-nowrap"
+            >
+              Bayar Sekarang
+              <ArrowLeft size={16} strokeWidth={3} className="rotate-180" />
+            </button>
+          </div>
         </div>
       )}
- 
+
       <DeleteConfirmationModal
         isOpen={!!itemToDelete}
         title="Hapus dari Keranjang?"

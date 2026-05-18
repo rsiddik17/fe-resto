@@ -39,7 +39,7 @@ const DiscountSectionOnline = ({ onApplyDiscount }: DiscountSectionProps) => {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-1 space-y-4">
+    <div className="w-full max-w-4xl mx-auto px-1 space-y-4">
       {/* Font size sedikit mengecil di mobile agar proporsional */}
       <h3 className="text-[20px] md:text-[22px] font-bold text-black ml-1">Diskon</h3>
       

@@ -48,7 +48,7 @@ const PaymentPageOnline = () => {
         image: item.image, // Sangat penting agar modal detail tidak kosong gambarnya
       })),
       finalPayment: Number(finalPayment),
-      status: "Dimasak",
+      status: "Proses",
       date: new Date().toLocaleString("id-ID", {
         day: "2-digit",
         month: "short",
@@ -72,8 +72,6 @@ const PaymentPageOnline = () => {
         adminFee,
         address,
         purchasedItems: selectedItems,
-
-        
       },
     });
   };
@@ -82,20 +80,22 @@ const PaymentPageOnline = () => {
     <div className="min-h-screen bg-white pb-20">
       <Header mode="online" />
 
-      <div className="bg-white p-5 flex rounded-2xl items-center gap-3 border-b border-gray-100 shadow-sm mb-3">
-        <button
-          onClick={() => navigate(-1)}
-          className="hover:bg-gray-50 p-1 rounded-full"
-        >
-          <ArrowLeft size={22} className="text-black font-bold" />
-        </button>
-        <h1 className="text-xl font-bold text-black">Pembayaran</h1>
+      <div className="bg-white border-b border-gray-100 shadow-sm mb-3 w-full">
+        <div className="w-full py-3 px-4 md:px-12 flex items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-1 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center"
+          >
+            <ArrowLeft size={22} />
+          </button>
+          <h1 className="text-lg font-bold text-gray-800">Pembayaran</h1>
+        </div>
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 md:px-12">
-        <div className="flex flex-col items-center mb-10">
-          <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center mb-4 shadow-md">
-            <Check size={30} strokeWidth={4} className="text-white" />
+      <main className="max-w-6xl mx-auto px-4 md:px-12 mt-6">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
+            <Check size={32} strokeWidth={4} className="text-white" />
           </div>
           <h2 className="text-2xl font-bold text-black">
             Pesanan Berhasil Dibuat!
@@ -103,9 +103,9 @@ const PaymentPageOnline = () => {
           <p className="text-gray-400">Silakan lakukan pembayaran via QRIS</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          <div className="lg:col-span-7 bg-[#F9F5FB] rounded-xl p-6 border border-primary/10">
-            <div className="flex justify-between items-center mb-4 px-2">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="lg:col-span-7 bg-[#F9F5FB] rounded-xl p-5 border border-primary/10">
+            <div className="flex justify-between items-center mb-4 px-1">
               <span className="text-gray-400 text-sm">ID Pesanan</span>
               <span className="text-primary font-bold">#{orderId}</span>
             </div>
@@ -119,15 +119,15 @@ const PaymentPageOnline = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-5 space-y-6">
+          <div className="lg:col-span-5 flex-col">
             <div className="flex items-center gap-2 mb-4">
               <div className="bg-primary p-1.5 rounded-full text-white">
-                <FileText size={18} className="text-white" strokeWidth={2.5} />
+                <FileText size={16} className="text-white" strokeWidth={2.5} />
               </div>
               <h3 className="font-bold text-xl">Ringkasan Pesanan</h3>
             </div>
 
-            <div className="text-gray-600 space-y-4">
+            <div className="text-gray-600 space-y-3 mb-4">
               {" "}
               {/* Pakai space-y-4 supaya antar menu ada jarak */}
               {items
@@ -165,7 +165,7 @@ const PaymentPageOnline = () => {
 
             <Button
               onClick={handlePaymentSuccess}
-              className="w-full py-4 rounded-full text-lg font-bold shadow-lg mt-6 bg-primary text-white active:scale-95 transition-all"
+              className="w-full py-3 rounded-full text-lg font-bold shadow-lg mt-8 bg-primary text-white active:scale-95 transition-all"
             >
               Sudah Bayar
             </Button>

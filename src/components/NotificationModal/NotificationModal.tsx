@@ -1,69 +1,112 @@
 import { ArrowLeft } from "lucide-react";
+import { useOrderStore } from "../../store/useOrderStore";
+import { cn } from "../../utils/utils";
+import { useEffect } from "react";
 
-interface NotificationModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  orderStatus: string; // Ambil status dari store untuk membuat notif dinamis
-}
+const NotificationModal = ({ onClose }: { onClose: () => void }) => {
+  const { orders, hasSeenNotifications, setNotificationsRead } = useOrderStore();
 
-const NotificationModal = ({ isOpen, onClose, orderStatus }: NotificationModalProps) => {
-  if (!isOpen) return null;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setNotificationsRead();
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [setNotificationsRead]);
+
+  const orderNotifications = (orders || []).map((order, index) => {
+    const s = (order.status || "").toString().trim().toLowerCase();
+    const menuName = order.items[0]?.name || "Menu";
+    
+    let title = "Pembayaran Terverifikasi";
+    let desc = `Pembayaran ${menuName} berhasil diproses. Segera disiapkan!`;
+    let timeDisplay = "Baru Saja";
+
+    // KITA SINKRONKAN DENGAN DAFTAR STATUS ASLI
+    if (s === "dimasak") {
+      title = "Pesanan Sedang Disiapkan";
+      desc = `Dapur sudah menerima pesanan ${menuName}. Sedang disiapkan sepenuh hati.`;
+      timeDisplay = "5 Menit Lalu";
+    } else if (s === "diantar") {
+      title = "Pesanan Sedang Diantar";
+      desc = `Kabar baik! ${menuName} sedang dalam perjalanan ke lokasi Anda.`;
+      timeDisplay = "20 Menit Lalu";
+    } else if (s === "diterima" || s === "selesai") {
+      title = "Pesanan Telah Sampai";
+      desc = `${menuName} Anda sudah sampai. Terima kasih sudah memesan!`;
+      timeDisplay = "50 Menit Lalu";
+    }
+
+    return {
+      id: `order-${order.orderId}-${index}`,
+      title,
+      description: desc,
+      time: timeDisplay,
+      isNew: index === 0 && !hasSeenNotifications,
+    };
+  });
+
+  const allNotifications = [
+    ...orderNotifications,
+    {
+      id: "promo-1",
+      title: "Promo IT'S RESTO",
+      description: "Dapatkan diskon ongkir Rp10.000 untuk pesanan berikutnya!",
+      time: "1 Jam Lalu",
+      isNew: false,
+    },
+  ];
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end p-4 bg-black/20">
-      <div className="w-full max-w-md bg-white shadow-2xl rounded-xs overflow-hidden h-fit animate-in slide-in-from-right duration-300">
-        
-        {/* Header Notifikasi */}
-        <div className="flex items-center gap-4 p-6 border-b border-gray-50">
-          <button onClick={onClose} className="text-primary">
-            <ArrowLeft size={24} />
+    <>
+      <div className="fixed inset-0 z-9998 bg-black/5" onClick={onClose} />
+      <div
+        className="fixed top-16 right-6 z-9999 w-75 bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden border border-gray-50"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-3.5 flex items-center gap-3 border-b border-gray-50 bg-white">
+          <button onClick={onClose} className="text-primary p-1.5 hover:bg-gray-50 rounded-full">
+            <ArrowLeft size={16} strokeWidth={3} />
           </button>
-          <h2 className="text-xl font-bold text-primary">Notifikasi</h2>
+          <h2 className="text-[12px] font-black text-primary uppercase">Notifikasi</h2>
         </div>
 
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-black">Pembaruan Pesanan</h3>
-            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">4 BARU</span>
-          </div>
-
-          <div className="space-y-4">
-            {/* Notif 1: Pesanan Sedang Diantar */}
-            <div className={`p-4 rounded-xs border transition-all duration-500 ${orderStatus === 'Selesai' ? 'bg-[#F3E8F3] border-primary/20' : 'bg-white border-gray-100'}`}>
-              <div className="flex justify-between items-start mb-1">
-                <h4 className="font-bold text-sm text-black">Pesanan Sedang Diantar</h4>
-                <span className="text-[10px] text-gray-400">{orderStatus === 'Selesai' ? 'Sekarang' : '2 Menit Lalu'}</span>
-              </div>
-              <p className="text-[11px] text-gray-500 leading-tight">
-                Kabar baik! Kurir sedang dalam perjalanan menuju lokasi Anda.
-              </p>
-            </div>
-
-            {/* Notif 2: Pesanan Sedang Disiapkan */}
-            <div className="p-4 rounded-xs border border-gray-100 bg-white">
-              <div className="flex justify-between items-start mb-1">
-                <h4 className="font-bold text-sm text-black">Pesanan Sedang Disiapkan</h4>
-                <span className="text-[10px] text-gray-400">25 Menit Lalu</span>
-              </div>
-              <p className="text-[11px] text-gray-500 leading-tight">
-                Dapur telah menerima pesanan Anda. Hidangan Anda sedang disiapkan dengan sepenuh hati.
-              </p>
-            </div>
-
-            {/* Notif 3: Pembayaran Terverifikasi */}
-            <div className="p-4 rounded-xs border border-gray-100 bg-white">
-              <div className="flex justify-between items-start mb-1">
-                <h4 className="font-bold text-sm text-black">Pembayaran Terverifikasi</h4>
-                <span className="text-[10px] text-gray-400">30 Menit Lalu</span>
-              </div>
-              <p className="text-[11px] text-gray-500 leading-tight">
-                Pembayaran Anda untuk pesanan #ORD-20 telah berhasil diproses. Pesanan Anda segera disiapkan!
-              </p>
-            </div>
+        <div className="px-4 py-2 flex justify-between items-center bg-gray-50/40 border-b border-gray-50">
+          <span className="font-bold text-gray-400 text-[9px] uppercase tracking-widest">Pembaruan Pesanan</span>
+          <div className="bg-primary/10 px-2 py-0.5 rounded-full">
+            <span className="text-primary text-[9px] font-black uppercase">
+              {hasSeenNotifications ? "0" : "1"} BARU
+            </span>
           </div>
         </div>
+
+        <div className="overflow-y-auto max-h-90 p-3 space-y-2.5 custom-scrollbar bg-white">
+          {allNotifications.map((notif) => (
+            <div
+              key={notif.id}
+              className={cn(
+                "p-3.5 border rounded-[18px] transition-all duration-500",
+                notif.isNew ? "bg-[#F3E8F3] border-purple-100 shadow-sm" : "bg-white border-gray-100"
+              )}
+            >
+              <div className="flex justify-between items-start mb-0.5">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <h4 className="font-bold text-gray-900 text-[11px] leading-tight truncate">{notif.title}</h4>
+                  {notif.isNew && <span className="shrink-0 w-1 h-1 bg-primary rounded-full"></span>}
+                </div>
+                <span className="text-[9px] text-gray-400 font-bold whitespace-nowrap ml-2">{notif.time}</span>
+              </div>
+              <p className="text-[10px] text-gray-500 leading-snug font-medium">{notif.description}</p>
+            </div>
+          ))}
+        </div>
+        <div className="h-4 bg-white"></div>
       </div>
-    </div>
+
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #F3E8F3; border-radius: 10px; }
+      `}</style>
+    </>
   );
 };
 

@@ -25,7 +25,7 @@ const HeroSectionOnline = ({
   return (
     <div className="w-full bg-cover bg-center rounded-md p-6 md:px-10 md:pb-3 mb-6 relative overflow-hidden">
       <img
-        src={imageBg}
+        src={`${import.meta.env.BASE_URL}images/banner-menu.webp`}
         alt="Hero Background"
         className="absolute inset-0 w-full h-full object-cover z-0"
       />

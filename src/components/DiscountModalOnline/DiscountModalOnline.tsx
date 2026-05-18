@@ -42,22 +42,22 @@ const DiscountModalOnline = ({ onClose, onApply, subTotal }: DiscountModalProps)
       onClick={onClose}
     >
       <div 
-        className="bg-white w-full max-w-sm rounded-xs p-6 shadow-2xl flex flex-col animate-in zoom-in-95 duration-300 max-h-[85vh] relative"
+        className="bg-white w-full max-w-sm rounded-xs p-5 shadow-2xl flex flex-col animate-in zoom-in-95 duration-300 max-h-[80vh] relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER MODAL */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-[24px] font-bold text-black">Tambah Diskon</h2>
+        <div className="flex justify-between items-center mb-5">
+          <h2 className="text-lg font-bold text-black">Tambah Diskon</h2>
           <button 
             onClick={onClose} 
-            className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-all active:scale-90"
+            className="p-1.5 bg-gray-100 rounded-full hover:bg-gray-200 transition-all active:scale-90"
           >
-            <X size={22} className="text-gray-600" strokeWidth={3} />
+            <X size={18} className="text-gray-600" strokeWidth={3} />
           </button>
         </div>
 
         {/* LIST PROMO */}
-        <div className="flex flex-col gap-3 overflow-y-auto pr-1 mb-6 custom-scrollbar">
+        <div className="flex flex-col gap-3 overflow-y-auto pr-1 mb-5 custom-scrollbar">
           {MOCK_PROMOS.map((promo) => {
             const isSelected = selectedPromoId === promo.id;
             const isEligible = subTotal >= promo.minSpend;
@@ -66,7 +66,7 @@ const DiscountModalOnline = ({ onClose, onApply, subTotal }: DiscountModalProps)
               <div 
                 key={promo.id}
                 className={cn(
-                  "border-2 rounded-xs p-5 flex justify-between items-center transition-all duration-200",
+                  "border-2 rounded-xs p-4 flex justify-between items-center transition-all duration-200",
                   isSelected 
                     ? "border-primary bg-primary/5 shadow-sm" 
                     : "border-gray-100 bg-white hover:border-gray-50",
@@ -81,7 +81,7 @@ const DiscountModalOnline = ({ onClose, onApply, subTotal }: DiscountModalProps)
                     <span className="bg-[#F3E8F3] text-primary text-[11px] font-black px-4 py-1 rounded-full uppercase tracking-wider">
                       {promo.code}
                     </span>
-                    <span className="text-gray-400 text-[13px] font-medium">
+                    <span className="text-gray-400 text-[11px] font-medium">
                       Min. {rupiahFormatter.format(promo.minSpend)}
                     </span>
                   </div>
@@ -92,7 +92,7 @@ const DiscountModalOnline = ({ onClose, onApply, subTotal }: DiscountModalProps)
                   disabled={!isEligible}
                   onClick={() => setSelectedPromoId(promo.id)}
                   className={cn(
-                    "px-4 py-1.5 border rounded-md text-[13px] font-bold transition-all active:scale-95",
+                    "px-4 py-1.5 border rounded-md text-[11px] font-bold transition-all active:scale-95",
                     !isEligible && "border-gray-200 text-gray-300 cursor-not-allowed",
                     isEligible && !isSelected && "border-primary text-primary hover:bg-primary/5",
                     isSelected && "bg-primary text-white border-primary"
@@ -110,7 +110,7 @@ const DiscountModalOnline = ({ onClose, onApply, subTotal }: DiscountModalProps)
           <Button 
             onClick={handleApplyFinal}
             disabled={!selectedPromoId}
-            className="w-full py-2.5 rounded-2xl font-bold text-[18px] bg-primary text-white shadow-xl shadow-primary/30 transition-all active:scale-[0.97] disabled:bg-gray-300 disabled:shadow-none"
+            className="w-full py-2 rounded-xl font-bold text-[18px] bg-primary text-white shadow-xl  "
           >
             Gunakan Diskon
           </Button>
@@ -118,7 +118,7 @@ const DiscountModalOnline = ({ onClose, onApply, subTotal }: DiscountModalProps)
       </div>
 
       <style>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
       `}</style>

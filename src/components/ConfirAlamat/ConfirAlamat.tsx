@@ -8,12 +8,12 @@ interface ConfirmationModalProps {
   description: string;
 }
 
-const ConfirSandi = ({ isOpen, onConfirm, onCancel, title, description }: ConfirmationModalProps) => {
+const ConfirAlamat = ({ isOpen, onConfirm, onCancel, title, description }: ConfirmationModalProps) => {
   if (!isOpen) return null; // Modal hanya merender jika isOpen bernilai true[cite: 6]
 
   return (
-    <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/10 backdrop-blur-sm p-4 animate-in fade-in duration-300">
-      <div className="bg-white rounded-2xl p-10 max-w-sm w-full text-center shadow-2xl animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/10 backdrop-blur-[2px] p-4">
+      <div className="bg-white rounded-xs p-10 max-w-sm w-full text-center shadow-2xl animate-in zoom-in-95 duration-300">
         {/* Icon Check Bulat ungu tetap sama[cite: 6] */}
         <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary/20">
           <Check size={32} strokeWidth={4} />
@@ -41,4 +41,4 @@ const ConfirSandi = ({ isOpen, onConfirm, onCancel, title, description }: Confir
   );
 };
 
-export default ConfirSandi;
+export default ConfirAlamat;

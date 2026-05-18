@@ -5,24 +5,25 @@ import {
   Home,
   Building2,
   Lock,
-  LogOut,
-  Save,
   ChevronDown,
   Plus,
 } from "lucide-react";
-import Header from "../../components/HeaderOnline/HeaderOnline";
 import { useNavigate } from "react-router";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./datepicker-custom.css";
+import Header from "../../components/HeaderOnline/HeaderOnline";
 import MapSection from "../../components/MapSection/MapSection";
 import LogoutModal from "../../components/LogoutModal/LogoutModal";
 import ChangePwProf from "../../components/ChangePwProf/ChangePwProf";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal/DeleteConfirmationModal";
-import ConfirSandi from "../../components/ConfirSandi/ConfirSandi";
+import ConfirAlamat from "../../components/ConfirAlamat/ConfirAlamat";
+import { useAuthStore } from "../../store/useAuthStore";
+import LogoutIcon from "../../components/Icon/LogOutIcon";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
   const [activeTab, setActiveTab] = useState<"Profil" | "Alamat" | "Sandi">(
     "Profil",
   );
@@ -30,12 +31,18 @@ const ProfilePage = () => {
   const [addressView, setAddressView] = useState<"list" | "form">("list");
   const [startDate, setStartDate] = useState(new Date(2002, 3, 3));
 
-  const [isDeleteAddressOpen, setIsDeleteAddressOpen] = useState(false);
-  const [isConfirmAddressOpen, setIsConfirmAddressOpen] = useState(false);
-  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+  // State untuk Modal dikelompokkan dalam satu object agar hemat baris
+  const [modal, setModal] = useState({
+    deleteAddress: false,
+    confirmAddress: false,
+    logout: false,
+  });
+  const toggleModal = (key: keyof typeof modal, value: boolean) =>
+    setModal((prev) => ({ ...prev, [key]: value }));
+
   const handleOpenGoogleMaps = (address: string) => {
     window.open(
-      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`,
+      `http://maps.google.com/?q=${encodeURIComponent(address)}`,
       "_blank",
     );
   };
@@ -44,16 +51,16 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-white">
       <Header mode="online" />
       <main className="max-w-7xl mx-auto px-6 md:px-12 py-6 space-y-6">
-        {/* BANNER USER - Tombol di sini tetap rounded-full sesuai desain awal */}
+        {/* BANNER USER */}
         <div className="bg-[#F3E8F3] rounded-[20px] p-8 mb-8 relative flex flex-col md:flex-row items-center gap-8 border border-primary/5 shadow-sm text-center md:text-left">
-          <div className="w-24 h-24 bg-[#B197B1] rounded-full flex items-center justify-center text-white text-4xl font-black">
+          <div className="w-24 h-24 bg-[#B197B1] rounded-full flex items-center justify-center text-white text-4xl font-black font-poppins">
             WH
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="text-2xl font-black text-black mb-1">
+            <h2 className="text-2xl font-black text-black mb-1 font-poppins">
               Wawan Hermawan
             </h2>
-            <p className="text-gray-600 font-medium font-sans">
+            <p className="text-gray-600 font-medium font-poppins">
               wawanhrmwn@gmail.com
             </p>
           </div>
@@ -65,13 +72,13 @@ const ProfilePage = () => {
                     setActiveTab("Profil");
                     setIsEditingProfile(true);
                   }}
-                  className="bg-primary text-white px-6 py-2.5 rounded-full font-bold flex items-center gap-2 shadow-lg text-sm"
+                  className="bg-primary text-white px-6 py-2.5 rounded-full font-bold flex items-center gap-2 shadow-lg text-sm font-poppins"
                 >
                   <Edit3 size={16} /> Edit Profile
                 </button>
                 <button
                   onClick={() => setActiveTab("Sandi")}
-                  className="bg-primary text-white px-6 py-2.5 rounded-full font-bold flex items-center gap-2 shadow-lg text-sm"
+                  className="bg-primary text-white px-6 py-2.5 rounded-full font-bold flex items-center gap-2 shadow-lg text-sm font-poppins"
                 >
                   <Lock size={16} /> Ubah Kata Sandi
                 </button>
@@ -80,14 +87,14 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        <section className="bg-white rounded-xs shadow-sm p-6 md:p-10 min-h-[500px]">
+        <section className="bg-white rounded-xs shadow-sm p-6 md:p-10 min-h-500px">
           <div className="flex gap-8 border-b border-gray-100 mb-8 overflow-x-auto no-scrollbar">
             <button
               onClick={() => {
                 setActiveTab("Profil");
                 setIsEditingProfile(false);
               }}
-              className={`pb-4 text-lg font-bold transition-all ${activeTab === "Profil" || activeTab === "Sandi" ? "text-primary border-b-4 border-primary" : "text-gray-400"}`}
+              className={`pb-4 text-lg font-bold transition-all font-poppins ${activeTab === "Profil" || activeTab === "Sandi" ? "text-primary border-b-4 border-primary" : "text-gray-400"}`}
             >
               Profile Saya
             </button>
@@ -96,7 +103,7 @@ const ProfilePage = () => {
                 setActiveTab("Alamat");
                 setAddressView("list");
               }}
-              className={`pb-4 text-lg font-bold transition-all ${activeTab === "Alamat" ? "text-primary border-b-4 border-primary" : "text-gray-400"}`}
+              className={`pb-4 text-lg font-bold transition-all font-poppins ${activeTab === "Alamat" ? "text-primary border-b-4 border-primary" : "text-gray-400"}`}
             >
               Alamat
             </button>
@@ -105,17 +112,17 @@ const ProfilePage = () => {
           <div className="w-full text-left">
             {activeTab === "Profil" && (
               <div className="max-w-5xl animate-in fade-in duration-500">
-                <h3 className="text-lg font-black text-black mb-8">
+                <h3 className="text-lg font-black text-black mb-8 font-poppins">
                   {isEditingProfile ? "Edit Data Diri" : "Data Diri"}
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 font-sans">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 font-poppins">
                   <div className="space-y-2">
                     <label className="text-black font-bold text-sm">
                       Nama Lengkap
                     </label>
                     <input
                       disabled={!isEditingProfile}
-                      className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium outline-none"
+                      className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium outline-none text-gray-700 disabled:text-black"
                       defaultValue="Wawan Hermawan"
                     />
                   </div>
@@ -126,15 +133,17 @@ const ProfilePage = () => {
                     <div className="relative">
                       <select
                         disabled={!isEditingProfile}
-                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium appearance-none outline-none"
+                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium appearance-none outline-none text-gray-700 disabled:text-black"
                       >
                         <option>Laki-laki</option>
                         <option>Perempuan</option>
                       </select>
-                      <ChevronDown
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-primary"
-                        size={20}
-                      />
+                      {isEditingProfile && (
+                        <ChevronDown
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-primary pointer-events-none"
+                          size={20}
+                        />
+                      )}
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -143,10 +152,11 @@ const ProfilePage = () => {
                     </label>
                     <input
                       disabled={!isEditingProfile}
-                      className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium outline-none"
+                      className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium outline-none text-gray-700 disabled:text-black"
                       defaultValue="+62 114 0986 7821"
                     />
                   </div>
+                  {/* Tanggal Lahir */}
                   <div className="space-y-2">
                     <label className="text-black font-bold text-sm">
                       Tanggal Lahir
@@ -157,21 +167,25 @@ const ProfilePage = () => {
                         onChange={(date: Date) => setStartDate(date)}
                         disabled={!isEditingProfile}
                         dateFormat="dd/MM/yyyy"
-                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium pl-14 outline-none font-sans"
+                        // SOLUSI AMPUH: Blokir input keyboard secara manual saat mengetik,
+                        // tetapi membiarkan fungsi klik memunculkan kalender tetap bekerja normal.
+                        onKeyDown={(e) => e.preventDefault()}
+                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium pl-14 outline-none text-gray-700 disabled:text-black"
                       />
+                      {/* Ikon kalender ditaruh di bawah agar tidak menutupi area klik input */}
                       <Calendar
-                        className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"
+                        className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                         size={22}
                       />
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end mt-16">
+                <div className="flex justify-end mt-16 font-poppins">
                   {isEditingProfile ? (
                     <div className="flex gap-4">
                       <button
                         onClick={() => setIsEditingProfile(false)}
-                        className="px-10 py-3 bg-gray-100 text-gray-500 font-bold rounded-xs"
+                        className="px-10 py-3 bg-gray-200 text-gray-600 font-bold rounded-xs"
                       >
                         Batal
                       </button>
@@ -179,15 +193,15 @@ const ProfilePage = () => {
                         onClick={() => setIsEditingProfile(false)}
                         className="px-10 py-3 bg-primary text-white font-bold rounded-xs shadow-lg flex items-center gap-2"
                       >
-                        <Save size={18} /> Simpan
+                        Simpan
                       </button>
                     </div>
                   ) : (
                     <button
-                      onClick={() => setIsLogoutOpen(true)}
+                      onClick={() => toggleModal("logout", true)}
                       className="bg-primary text-white px-12 py-3.5 rounded-xs font-bold flex items-center gap-3 shadow-xl"
                     >
-                      <LogOut size={20} /> Keluar
+                      <LogoutIcon size={20} /> Keluar
                     </button>
                   )}
                 </div>
@@ -195,11 +209,11 @@ const ProfilePage = () => {
             )}
 
             {activeTab === "Alamat" && (
-              <div className="animate-in fade-in duration-500">
+              <div className="animate-in fade-in duration-500 font-poppins">
                 {addressView === "list" ? (
                   <>
                     <div className="flex justify-between items-center mb-8">
-                      <h3 className="text-xl font-black text-black font-sans">
+                      <h3 className="text-xl font-black text-black">
                         Alamat Pengiriman
                       </h3>
                       <button
@@ -210,7 +224,6 @@ const ProfilePage = () => {
                       </button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      {/* Card Rumah */}
                       <div className="border-l-4 border-primary p-6 rounded-xs bg-white shadow-sm relative">
                         <div className="flex justify-between items-start mb-4">
                           <div className="flex items-center gap-3">
@@ -228,7 +241,7 @@ const ProfilePage = () => {
                         </p>
                         <button
                           onClick={() => handleOpenGoogleMaps("Puri Nirwana 3")}
-                          className="text-primary font-bold text-sm underline mb-4 inline-block font-sans"
+                          className="text-primary font-bold text-sm underline mb-4 inline-block"
                         >
                           Lihat di Peta
                         </button>
@@ -240,15 +253,13 @@ const ProfilePage = () => {
                             Edit
                           </button>
                           <button
-                            onClick={() => setIsDeleteAddressOpen(true)}
-                            className="text-gray-300 font-bold text-sm hover:text-red-500 transition-colors"
+                            onClick={() => toggleModal("deleteAddress", true)}
+                            className="font-bold text-sm hover:text-red-500 transition-colors"
                           >
                             Hapus
                           </button>
                         </div>
                       </div>
-
-                      {/* Card Kantor */}
                       <div className="border-l-4 border-primary p-6 rounded-xs bg-white shadow-sm relative">
                         <div className="flex items-center gap-3 mb-4">
                           <div className="bg-primary/10 p-2 rounded-full text-primary">
@@ -263,7 +274,7 @@ const ProfilePage = () => {
                           onClick={() =>
                             handleOpenGoogleMaps("Gedung Sentra Sudirman")
                           }
-                          className="text-primary font-bold text-sm underline mb-4 inline-block font-sans"
+                          className="text-primary font-bold text-sm underline mb-4 inline-block"
                         >
                           Lihat di Peta
                         </button>
@@ -275,7 +286,7 @@ const ProfilePage = () => {
                             Edit
                           </button>
                           <button
-                            onClick={() => setIsDeleteAddressOpen(true)}
+                            onClick={() => toggleModal("deleteAddress", true)}
                             className="text-gray-300 font-bold text-sm hover:text-red-500 transition-colors"
                           >
                             Hapus
@@ -302,13 +313,13 @@ const ProfilePage = () => {
                     <div className="flex justify-end gap-4 pt-6">
                       <button
                         onClick={() => setAddressView("list")}
-                        className="px-12 py-3.5 bg-gray-100 text-gray-400 font-bold rounded-xs"
+                        className="px-10 py-3 bg-gray-200 text-gray-600 font-bold rounded-xs"
                       >
                         Batal
                       </button>
                       <button
-                        onClick={() => setIsConfirmAddressOpen(true)}
-                        className="px-12 py-3.5 bg-primary text-white font-bold rounded-xs shadow-lg"
+                        onClick={() => toggleModal("confirmAddress", true)}
+                        className="px-10 py-3 bg-primary text-white font-bold rounded-xs shadow-lg"
                       >
                         Simpan
                       </button>
@@ -317,7 +328,6 @@ const ProfilePage = () => {
                 )}
               </div>
             )}
-
             {activeTab === "Sandi" && (
               <ChangePwProf onCancel={() => setActiveTab("Profil")} />
             )}
@@ -326,30 +336,29 @@ const ProfilePage = () => {
       </main>
 
       <DeleteConfirmationModal
-        isOpen={isDeleteAddressOpen}
+        isOpen={modal.deleteAddress}
         title="Hapus Alamat?"
         description="Apakah anda yakin ingin menghapus alamat ini? Tindakan ini tidak dapat dibatalkan"
-        onClose={() => setIsDeleteAddressOpen(false)}
-        onConfirm={() => setIsDeleteAddressOpen(false)}
+        onClose={() => toggleModal("deleteAddress", false)}
+        onConfirm={() => toggleModal("deleteAddress", false)}
       />
-
-      <ConfirSandi
-        isOpen={isConfirmAddressOpen}
+      <ConfirAlamat
+        isOpen={modal.confirmAddress}
         title="Perbarui Alamat?"
         description="Apakah anda yakin ingin mengubah alamat? Tindakan ini tidak dapat dibatalkan"
-        onCancel={() => setIsConfirmAddressOpen(false)}
+        onCancel={() => toggleModal("confirmAddress", false)}
         onConfirm={() => {
-          setIsConfirmAddressOpen(false);
+          toggleModal("confirmAddress", false);
           setAddressView("list");
         }}
       />
-
       <LogoutModal
-        isOpen={isLogoutOpen}
-        onClose={() => setIsLogoutOpen(false)}
+        isOpen={modal.logout}
+        onClose={() => toggleModal("logout", false)}
         onConfirm={() => {
-          setIsLogoutOpen(false);
-          navigate("/customer/login"); // Arahkan ke halaman login[cite: 3]
+          logout();
+          toggleModal("logout", false);
+          navigate("/", { replace: true });
         }}
       />
     </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router";
-import { Bell,  User, Menu, X } from "lucide-react";
+import { Bell, User, Menu, X } from "lucide-react";
 import { useCartStore } from "../../store/useCartStore";
 import { useOrderStore } from "../../store/useOrderStore"; // Tambahkan import store pesanan
 import Keranjang from "../Icon/Keranjang";
@@ -41,9 +41,9 @@ const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
       {/* Kiri: Logo & Nav Desktop */}
       <div className="flex items-center shrink-0">
         <img
-          src="/images/logo.webp"
+          src={`${import.meta.env.BASE_URL}images/new-logo.webp`}
           alt="Logo"
-          className="h-10 md:h-12 w-auto"
+          className="h-10 md:h-14 w-auto"
         />
         <span className="ml-2 text-primary font-bold text-sm md:text-lg">
           IT'S Resto
@@ -83,7 +83,7 @@ const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
         {isOnline && (
           <>
             {/* BUTTON BELL: Ditambahkan onClick untuk buka notif */}
-            <button 
+            <button
               onClick={() => setIsNotifOpen(true)}
               className="p-2 bg-primary text-white rounded-full hover:bg-primary/90 transition-all relative"
             >
@@ -96,7 +96,7 @@ const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
               onClick={() => navigate("/customer/keranjang")}
               className="p-2 bg-primary text-white rounded-full relative hover:bg-primary/90 transition-all"
             >
-              <Keranjang  size={18}/>
+              <Keranjang size={18} />
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-white font-bold">
                   {totalItems}
@@ -122,11 +122,11 @@ const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
       </div>
 
       {/* MODAL NOTIFIKASI: Diletakkan di sini agar bisa muncul overlay */}
-      <NotificationModal 
-        isOpen={isNotifOpen} 
-        onClose={() => setIsNotifOpen(false)} 
-        orderStatus={latestStatus}
-      />
+      {isNotifOpen && (
+        <NotificationModal
+          onClose={() => setIsNotifOpen(false)}
+        />
+      )}
 
       {/* Mobile Menu Overlay */}
       {isOnline && isMenuOpen && (

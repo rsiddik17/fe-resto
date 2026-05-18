@@ -5,14 +5,13 @@ import MenuCard, { type MenuItem } from "../../components/MenuCardOnline/MenuCar
 import SuccessModal from "../../components/SuccessModalOnline/SuccessModalOnline";
 import MenuItemModal from "../../components/MenuItemModalOnline/MenuItemModalOnline";
 import Button from "../../components/ui/Button";
-import {  Banknote, MapPin, Mail, Phone } from "lucide-react";
+import { Banknote, MapPin, Mail, Phone } from "lucide-react";
 import HeroSection from "../../components/HeroSectionOnline/HeroSectionOnline";
 import Header from "../../components/HeaderOnline/HeaderOnline";
-// Import data asli dari store
-import { useMenuStore } from "../../store/useMenuStore";
+// Import Custom Hook data asli dari Backend
+import { useMenus } from "../../hooks/useMenus";
 import AllMenuIcon from "../../components/Icon/AllFoodDrink";
 import Keranjang from "../../components/Icon/Keranjang";
-
 
 const steps = [
   { icon: AllMenuIcon, title: "Pilih Menu", desc: "Pilih makanan dan minuman favorit Anda dari menu yang tersedia" },
@@ -22,11 +21,9 @@ const steps = [
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  // const { resetMenu } = useMenuStore();
-  const { menu } = useMenuStore(); // Mengambil master data menu
-  // useEffect(() => {
-  //   resetMenu(); 
-  // }, [resetMenu]);
+  
+  // Ambil data asli dari backend
+  const { data: menu = [], isLoading } = useMenus();
   
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [successItemName, setSuccessItemName] = useState<string | null>(null);
@@ -34,21 +31,44 @@ const LandingPage = () => {
   const addToCart = useCartStore((state) => state.addToCart);
   const cart = useCartStore((state) => state.items || []);
 
+  // --- LOGIKA MENYARING MENU REKOMENDASI (SUDAH BERSIH & FIX) ---
   const recommendationMenu = useMemo(() => {
     const currentCart = Array.isArray(cart) ? cart : [];
+    
+    // Kata kunci penentu menu andalan kamu di database
+    const targetKeywords = ["mie", "penyet", "jeruk", "teler", "lychee", "matcha", "sate", "soto", "mangga"];
 
-    // Tentukan ID menu yang ingin ditampilkan di Beranda
-    // Sesuaikan ID ini dengan yang ada di useMenuStore.ts kamu
-    const recommendationIds = ["3", "6", "7", "8", "9", "10"]; 
+    // 1. Filter nama menu yang mengandung salah satu kata kunci di atas
+    const filteredRecommendations = menu.filter((item) => {
+      const itemNameLower = (item.name || "").toLowerCase();
+      return targetKeywords.some((keyword) => itemNameLower.includes(keyword));
+    });
 
-    return menu
-      .filter((item) => recommendationIds.includes(item.id)) // Filter hanya ID rekomendasi
-      .map((item) => {
-        const itemInCart = currentCart.find((c) => String(c.id) === String(item.id));
-        const remainingStock = (item.stock || 0) - (itemInCart?.qty || 0);
-        return { ...item, stock: Math.max(0, remainingStock) };
-      })
-      .filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    // 2. Filter lapis kedua berdasarkan keyword ketikan user di Hero Section (jika ada)
+    const finalSearched = filteredRecommendations.filter((item) =>
+      (item.name || "").toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // 3. Ambil maksimal 6 item teratas saja lalu sinkronkan sisa stoknya
+    return finalSearched.slice(0, 6).map((item) => {
+      const itemInCart = currentCart.find((c) => String(c.id) === String(item.id));
+      const remainingStock = (item.stock || 0) - (itemInCart?.qty || 0);
+
+      // Bersihkan double slash (//) jika URL gambar dari backend berantakan
+      let cleanImage = item.image || "";
+      if (cleanImage.includes("localhost")) {
+        const urlParts = cleanImage.split("://");
+        if (urlParts.length === 2) {
+          cleanImage = urlParts[0] + "://" + urlParts[1].replace(/\/{2,}/g, "/");
+        }
+      }
+
+      return { 
+        ...item, 
+        image: cleanImage,
+        stock: Math.max(0, remainingStock) 
+      };
+    });
   }, [cart, searchQuery, menu]);
 
   const handleConfirmAddToCart = (item: MenuItem, qty: number, notes: string) => {
@@ -59,9 +79,19 @@ const LandingPage = () => {
     setSelectedItem(null);
   };
 
+  // LOADING INDICATOR (Posisinya aman di bawah hooks agar tidak melanggar aturan React)
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-secondary">
       <Header mode="online" />
+      
       <main className="max-w-7xl mx-auto px-6 md:px-12 py-6 space-y-6">
         <HeroSection 
           title="Pesan Menu<br />Favoritmu" 
@@ -72,6 +102,7 @@ const LandingPage = () => {
           onSearchChange={setSearchQuery} 
         />
 
+        {/* SECTION REKOMENDASI MENU */}
         <section className="bg-white rounded-xs shadow-sm p-6 md:p-10 mb-9">
           <h2 className="text-2xl font-bold text-primary mb-6">Rekomendasi Menu</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
@@ -82,7 +113,7 @@ const LandingPage = () => {
                   <MenuCard.Body 
                     name={item.name} 
                     price={item.price} 
-                    description={item.description} // Deskripsi otomatis muncul dari master data
+                    description={item.description} 
                   />
                   <MenuCard.Footer onAdd={() => setSelectedItem(item)} disabled={item.stock === 0} />
                 </MenuCard>
@@ -145,7 +176,7 @@ const LandingPage = () => {
                 </div>
               </div>
             </div>
-            <div className="p-6 border border-gray-100 rounded-xs shadow-sm">
+            <div className="p-6 border border-gray-150 rounded-xs shadow-sm">
               <h3 className="text-lg font-bold text-primary mb-5">Jam Operasional</h3>
               {[
                 { d: "Senin - Kamis", t: "09:00-22:00" }, 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FileText } from "lucide-react";
 import { useNavigate } from "react-router";
 import OrderDetailModal from "../../components/OrderDetailModal/OrderDetailModal"; 
-
+import AllMenuIcon from "../Icon/AllMenuIcon";
 const OrderCard = ({ order, activeTab }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate(); 
@@ -13,8 +13,9 @@ const OrderCard = ({ order, activeTab }: any) => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           
           <div className="flex items-center gap-3 sm:gap-6 min-w-0">
+            {/* Box Icon Ungu */}
             <div className="w-16 h-16 sm:w-24 sm:h-24 bg-primary rounded-xs flex items-center justify-center shrink-0 shadow-inner">
-              <FileText className="text-white w-8 h-8 sm:w-12 sm:h-12" strokeWidth={1.5} />
+              <AllMenuIcon className="text-white w-8 h-8 sm:w-12 sm:h-12" strokeWidth={1.5} />
             </div>
 
             <div className="flex flex-col min-w-0">
@@ -24,6 +25,7 @@ const OrderCard = ({ order, activeTab }: any) => {
               <p className="text-gray-900 font-bold text-[12px] sm:text-sm mb-1 sm:mb-2 truncate">
                 {order.items?.map((item: any) => `${item.name} x${item.qty}`).join(", ")}
               </p>
+              {/* TAMPILAN BERSIH: Tidak ada tambahan label status di sini */}
               <div className="mt-1">
                 <p className="hidden sm:block text-[10px] text-gray-400 font-medium uppercase tracking-widest">
                   Total Pembayaran
@@ -51,10 +53,8 @@ const OrderCard = ({ order, activeTab }: any) => {
               <button
                 onClick={() => {
                   if (activeTab === "Aktif") {
-                    // Selama di tab Aktif (Dimasak/Diantar), user bisa pantau status[cite: 5]
                     navigate("/customer/pantau-pesanan", { state: { order } });
                   } else {
-                    // Jika di tab Selesai, tombol berfungsi untuk order ulang[cite: 5]
                     navigate("/customer/menu");
                   }
                 }}

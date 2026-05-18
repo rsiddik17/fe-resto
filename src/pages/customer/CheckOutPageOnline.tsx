@@ -55,9 +55,10 @@ const CheckoutPageOnline = () => {
 
   // LOGIC PERHITUNGAN
   const selectedItems = items.filter((item) => item.checked === true);
-  
+
   // Tentukan alamat saat ini
-  const currentAddress = addresses.find((a) => a.id === selectedAddressId) || addresses[0];
+  const currentAddress =
+    addresses.find((a) => a.id === selectedAddressId) || addresses[0];
   const adminFeeValue = 205; // Buat variabel agar mudah diatur
   const safeTotalPrice = selectedItems.reduce(
     (acc, item) => acc + item.price * item.qty,
@@ -78,6 +79,7 @@ const CheckoutPageOnline = () => {
         discountAmount: appliedDiscount,
         adminFee: adminFeeValue,
         finalPayment: grandTotal,
+        status: "Proses",
       },
     });
   };
@@ -87,21 +89,23 @@ const CheckoutPageOnline = () => {
       <Header mode="online" />
 
       {/* Header Page */}
-      <div className="bg-white p-5 flex rounded-2xl items-center gap-3 border-b border-gray-100 shadow-sm mb-3">
-        <button
-          onClick={() => navigate(-1)}
-          className="hover:bg-gray-100 p-1 rounded-full transition-colors"
-        >
-          <ArrowLeft size={22} className="text-black font-bold" />
-        </button>
-        <h1 className="text-xl font-bold text-black">Pembayaran</h1>
-      </div>
+     <div className="bg-white border-b border-gray-100 shadow-sm mb-3 w-full">
+  <div className="w-full py-3 px-4 md:px-12 flex items-center gap-3">
+    <button 
+      onClick={() => navigate(-1)}
+      className="p-1 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center"
+    >
+      <ArrowLeft size={22} />
+    </button>
+    <h1 className="text-lg font-bold text-gray-800">Pembayaran</h1>
+  </div>
+</div>
 
-      <main className="max-w-4xl mx-auto px-4">
-        <div className="bg-white rounded-xs shadow-sm p-6 md:p-8 space-y-8 border border-gray-100">
+      <main className="max-w-3xl mx-auto px-4 mt-4">
+        <div className="bg-white rounded-xs shadow-sm p-5 md:p-6 space-y-6 border border-gray-100">
           {/* 1. SEKSI PENGANTARAN */}
           <div className="bg-white rounded-xs border border-gray-200 p-6">
-            <div className="flex justify-between items-center mb-5">
+            <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-3">
                 <div className="bg-primary p-2 rounded-full text-white flex items-center justify-center">
                   <Bike size={18} fill="white" />
@@ -122,7 +126,7 @@ const CheckoutPageOnline = () => {
                   Detail Alamat
                 </p>
               </div>
-              <p className="text-[13px] text-gray-400 leading-relaxed max-w-lg">
+              <p className="text-[12px] text-gray-400 leading-relaxed max-w-lg">
                 {currentAddress.detail}
               </p>
             </div>
@@ -140,15 +144,15 @@ const CheckoutPageOnline = () => {
             </div>
 
             {/* List Item */}
-            <div className="space-y-6">
+            <div className="space-y-4">
               {selectedItems.map((item) => (
-                <div key={item.cartId} className="flex gap-5 items-start">
+                <div key={item.cartId} className="flex gap-4 items-start">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-16 h-16 rounded-md object-cover border border-gray-100"
+                    className="w-14 h-14 rounded-md object-cover border border-gray-100"
                   />
-                  <div className="flex-1 pt-1">
+                  <div className="flex-1">
                     <h3 className="font-bold text-base text-black">
                       {item.name}
                     </h3>
@@ -165,7 +169,7 @@ const CheckoutPageOnline = () => {
             </div>
 
             {/* Ringkasan Pembayaran */}
-            <div className="pt-6 border-t border-gray-100 space-y-4">
+            <div className="pt-4 border-t border-gray-100 space-y-2.5">
               <div className="flex items-center gap-2 mb-2">
                 <div className="bg-primary p-1.5 rounded-full text-white">
                   <Wallet size={16} />
@@ -176,11 +180,11 @@ const CheckoutPageOnline = () => {
               </div>
 
               <div className="space-y-3 ml-1">
-                <div className="flex justify-between items-center text-[14px] text-black">
+                <div className="flex justify-between items-center text-[13px] text-black">
                   <span>Total Pesanan</span>
                   <span>Rp{safeTotalPrice.toLocaleString("id-ID")}</span>
                 </div>
-                <div className="flex justify-between items-center text-[14px] text-black">
+                <div className="flex justify-between items-center text-[13px] text-black">
                   <span>PPN 10%</span>
                   <span>Rp{ppn.toLocaleString("id-ID")}</span>
                 </div>
@@ -229,7 +233,7 @@ const CheckoutPageOnline = () => {
           <div className="pt-6 flex justify-center">
             <Button
               onClick={handleKonfirmasiPesanan}
-              className="w-full max-w-lg py-4 rounded-full text-white text-lg font-bold shadow-md shadow-primary/20 transition-all active:scale-95"
+              className="w-full md:w-2/3 py-3 rounded-full text-white text-lg font-bold shadow-md shadow-primary/20 transition-all active:scale-95"
             >
               Konfirmasi Pesanan
             </Button>
