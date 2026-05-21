@@ -4,7 +4,7 @@ import { Search } from "lucide-react"; // Import icon search bawaan lucide
 
 // Komponen Reusable yang sudah kita buat
 import Header from "../../components/Header/Header";
-import CategoryTabs from "../../components/CategoryFilterTabs/CategoryFilterTabs";
+import CategoryTabs from "../../components/Filter/CategoryFilterTabs";
 import MenuCard, { type MenuItem } from "../../components/Card/MenuCard";
 import CartBottomBar from "../../components/CartBottomBar/CartBottomBar";
 import MenuItemModal from "../../components/Modal/MenuItemModal";

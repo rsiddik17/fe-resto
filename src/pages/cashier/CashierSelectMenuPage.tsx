@@ -5,7 +5,7 @@ import DashboardHeader from "../../components/Header/DashboardHeader";
 import Button from "../../components/ui/Button";
 import { useCartStore } from "../../store/useCartStore";
 import MenuCard from "../../components/Card/MenuCard";
-import CategoryFilterTabs from "../../components/CategoryFilterTabs/CategoryFilterTabs";
+import CategoryFilterTabs from "../../components/Filter/CategoryFilterTabs";
 import WaiterCartItemCard from "../../components/Card/WaiterCartItemCard";
 import EditNoteModal from "../../components/Modal/EditNoteModal";
 import DiscountModal from "../../components/Modal/DiscountModal";

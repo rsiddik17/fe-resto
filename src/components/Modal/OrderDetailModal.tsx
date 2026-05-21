@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { Clock, X } from "lucide-react";
 import type { OrderItemDetail } from "../Card/WaiterOrderListCard";
 
 interface OrderDetailModalProps {
@@ -10,31 +10,53 @@ interface OrderDetailModalProps {
   items: OrderItemDetail[];
 }
 
-const OrderDetailModal = ({ isOpen, onClose, orderId, tableName, time, items }: OrderDetailModalProps) => {
+const OrderDetailModal = ({
+  isOpen,
+  onClose,
+  orderId,
+  tableName,
+  time,
+  items,
+}: OrderDetailModalProps) => {
   if (!isOpen) return null;
 
   const totalItemsCount = items.reduce((total, item) => total + item.qty, 0);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/3 backdrop-blur-[3px] p-4 animate-in fade-in duration-200" onClick={onClose}>
-      <div className="bg-white w-full max-w-107.5 rounded-sm shadow-sm overflow-hidden animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
-        
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/3 backdrop-blur-[3px] p-4 animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white w-full max-w-107.5 rounded-sm shadow-sm overflow-hidden animate-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Modal Header */}
         <div className="pl-4 pr-3 pt-2.5">
           <div className="flex justify-between items-start">
-            <span className="text-gray-500 text-[11px] md:text-xs">{time}</span>
+            <div className="flex items-center gap-1">
+              <Clock size={14} className="w-3 h-3" strokeWidth={2.5} />
+              <span className="text-gray-500 text-[11px] md:text-xs">
+                {time}
+              </span>
+            </div>
             <div className="flex items-center gap-3">
               <span className="bg-[#E6DB27] text-white px-5 py-0.5 rounded-full text-[10px] font-bold">
                 {tableName}
               </span>
-              <button onClick={onClose} className="text-gray-500 hover:text-black transition-colors bg-[#DEDED9] rounded-full p-0.5">
+              <button
+                onClick={onClose}
+                className="text-black/50 hover:text-black transition-colors bg-[#DEDED9] rounded-full p-0.5"
+              >
                 <X className="w-3.5 h-3.5" strokeWidth={3.5} />
               </button>
             </div>
           </div>
-          
+
           <h2 className="text-[13px] md:text-[14px] mb-0.5">Detail Pesanan</h2>
-          <h1 className="text-primary font-bold text-xl md:text-[21px]">{orderId}</h1>
+          <h1 className="text-primary font-bold text-xl md:text-[21px]">
+            {orderId}
+          </h1>
         </div>
 
         {/* Modal Body (List Items) */}
@@ -44,7 +66,7 @@ const OrderDetailModal = ({ isOpen, onClose, orderId, tableName, time, items }: 
               <div key={idx} className="flex gap-2.5 items-start">
                 {/* Kotak Ungu Kecil */}
                 <div className="w-3.5 h-3.5 bg-primary rounded-[3px] mt-1.5 shrink-0"></div>
-                
+
                 <div className="flex flex-col">
                   <span className="font-bold text-[15px] md:text-[17px]">
                     {item.name} x{item.qty}
@@ -64,10 +86,9 @@ const OrderDetailModal = ({ isOpen, onClose, orderId, tableName, time, items }: 
             Total Item: {totalItemsCount}
           </p>
         </div>
-
       </div>
     </div>
   );
 };
 
-export default OrderDetailModal;    
+export default OrderDetailModal;

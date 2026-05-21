@@ -61,7 +61,7 @@ const FormLogin = () => {
           navigate("/waiter/dashboard");
           break;
         case "KITCHEN":
-          navigate("/kitchen/queue");
+          navigate("/kitchen/order-list");
           break;
         case "KIOSK_SYSTEM":
           navigate("/kiosk/home");

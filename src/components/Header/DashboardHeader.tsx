@@ -74,7 +74,10 @@ const DashboardHeader = ({
   };
 
   const handleProfileClick = () => {
-    if (isCashier) navigate("/cashier/profile");
+    // Tambahkan logika pengecekan untuk Dapur
+    const role = roleName?.toLowerCase();
+    if (role === "cashier") navigate("/cashier/profile");
+    else if (role === "kitchen") navigate("/kitchen/profile");
     else navigate("/waiter/profile");
   };
 
