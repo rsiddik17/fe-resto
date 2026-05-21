@@ -14,7 +14,7 @@ const PublicRoute = () => {
       case "WAITER":
         return <Navigate to="/waiter/dashboard" replace />;
       case "KITCHEN":
-        return <Navigate to="/kitchen/queue" replace />;
+        return <Navigate to="/kitchen/order-list" replace />;
       case "KIOSK_SYSTEM":
         return <Navigate to="/kiosk/home" replace />;
       case "CUSTOMER":

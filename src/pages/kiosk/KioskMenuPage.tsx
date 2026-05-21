@@ -3,7 +3,7 @@
   import CartBottomBar from "../../components/CartBottomBar/CartBottomBar";
   import Header from "../../components/Header/Header";
   import HeroSection from "../../components/HeroSection/HeroSection";
-  import CategoryTabs from "../../components/CategoryFilterTabs/CategoryFilterTabs";
+  import CategoryTabs from "../../components/Filter/CategoryFilterTabs";
   import MenuItemModal from "../../components/Modal/MenuItemModal";
   import { useCartStore } from "../../store/useCartStore";
   import SuccessModal from "../../components/Modal/SuccessModal";

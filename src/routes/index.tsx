@@ -22,7 +22,6 @@ import NotFoundPage from "../pages/errors/NotFoundPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import CashierDashboardPage from "../pages/cashier/CashierDashboardPage";
 import WaiterDashboardPage from "../pages/waiter/WaiterDashboardPage";
-import KitchenDashboardPage from "../pages/kitchen/KitchenDashboardPage";
 import CustomerHomePage from "../pages/customer/CustomerHomePage";
 
 // Kiosk Pages
@@ -71,6 +70,11 @@ import CashierPaymentPage from "../pages/cashier/CashierPaymentPage";
 import CashierTableManagementPage from "../pages/cashier/CashierTableManagementPage";
 import CashierDiscountManagementPage from "../pages/cashier/CashierDiscountManagementPage";
 import CashierReportPage from "../pages/cashier/CashierReportPage";
+import KitchenOrderListPage from "../pages/kitchen/KitchenOrderListPage";
+import KitchenLayout from "../layouts/KitchenLayout/KitchenLayout";
+import KitchenProfilePage from "../pages/kitchen/KitchenProfilePage";
+import KitchenMenuStockPage from "../pages/kitchen/KitchenMenuStockPage";
+import KitchenDetailMenuPage from "../pages/kitchen/KitchenDetailMenuPage";
 
 const router = createBrowserRouter(
   [
@@ -119,7 +123,7 @@ const router = createBrowserRouter(
             },
             {
               path: "/cashier/management-menu-stock/edit-menu/:id",
-              Component: CashierEditMenuPage
+              Component: CashierEditMenuPage,
             },
             {
               path: "/cashier/management-menu-stock/detail-menu/:id",
@@ -219,7 +223,29 @@ const router = createBrowserRouter(
 
     {
       element: <ProtectedRoute allowedRoles={["KITCHEN"]} />,
-      children: [{ path: "/kitchen/queue", Component: KitchenDashboardPage }],
+      children: [
+        {
+          element: <KitchenLayout />,
+          children: [
+            {
+              path: "/kitchen/order-list",
+              Component: KitchenOrderListPage,
+            },
+            {
+              path: "/kitchen/menu-stock",
+              Component: KitchenMenuStockPage,
+            },
+            {
+              path: "/kitchen/menu-stock/detail-menu/:id",
+              Component: KitchenDetailMenuPage,
+            },
+          ],
+        },
+        {
+          path: "/kitchen/profile",
+          Component: KitchenProfilePage,
+        },
+      ],
     },
 
     {
@@ -236,7 +262,7 @@ const router = createBrowserRouter(
         { path: "/kiosk/profile", Component: KioskProfilePage },
       ],
     },
-    
+
     {
       element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />,
       children: [{ path: "/customer/home", Component: CustomerHomePage }],

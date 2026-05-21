@@ -1,7 +1,7 @@
 import { useState } from "react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import Button from "../../components/ui/Button";
-import CategoryTabs from "../../components/CategoryFilterTabs/CategoryFilterTabs";
+import CategoryTabs from "../../components/Filter/CategoryFilterTabs";
 import MenuCard from "../../components/Card/MenuCard";
 import CreateOrderIcon from "../../components/Icon/CreateOrderIcon";
 import { useNavigate } from "react-router";

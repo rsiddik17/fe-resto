@@ -36,7 +36,7 @@ const CustomDropdown = ({ label, options, value, onChange }: CustomDropdownProps
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex items-center justify-between gap-2 bg-white border border-gray-200 px-4.5 py-2.5 text-[13px] text-primary shadow-sm min-w-25 hover:border-primary transition-colors cursor-pointer",
+          "flex items-center justify-between gap-2 bg-white border border-gray-200 pl-5 pr-4 py-2.5 text-[13px] text-primary shadow-sm min-w-25 hover:border-primary transition-colors cursor-pointer",
           isOpen ? "rounded-t-sm rounded-b-none border-b-gray-100" : "rounded-sm"
         )}
       >
