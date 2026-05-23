@@ -20,7 +20,7 @@ const OrderItemCard = ({ item, isReceiptMode = false }: OrderItemCardProps) => {
       <div className="flex-1 flex flex-col gap-1 md:gap-1.5">
         <h3
           className={cn(
-            "text-base md:text-[26px] leading-tight",
+            "text-base md:text-[26px] lg:text-xl leading-tight",
             isReceiptMode ? "text-black" : "font-bold text-black",
           )}
         >
@@ -28,8 +28,8 @@ const OrderItemCard = ({ item, isReceiptMode = false }: OrderItemCardProps) => {
         </h3>
 
         <div className="flex items-center gap-1.5 md:gap-2 text-gray">
-          <NotesIcon className="shrink-0" />
-          <span className="text-xs md:text-xl line-clamp-1">
+          <NotesIcon className="w-5 h-5 lg:w-4.5 lg:h-4.5 shrink-0" />
+          <span className="text-[13px] md:text-xl lg:text-base line-clamp-1">
             {item.notes ? item.notes : "Tidak ada"}
           </span>
         </div>
@@ -38,7 +38,7 @@ const OrderItemCard = ({ item, isReceiptMode = false }: OrderItemCardProps) => {
       {/* SISI KANAN: Total Harga per Item */}
       <span
         className={cn(
-          "text-sm md:text-2xl shrink-0",
+          "text-sm md:text-2xl lg:text-lg shrink-0",
           isReceiptMode ? "text-black" : "font-bold text-primary",
         )}
       >

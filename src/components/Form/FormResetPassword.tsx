@@ -120,7 +120,7 @@ const FormResetPassword = () => {
           </span>
         )}
 
-        <Button className="w-full mb-2 mt-4" type="submit">
+        <Button className="w-full py-2 md:py-2.25 mb-2 mt-4" type="submit">
           Simpan Kata Sandi
         </Button>
       </form>

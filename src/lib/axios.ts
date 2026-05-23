@@ -8,7 +8,7 @@ export const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = useAuthStore.getState().token;
+    const token = useAuthStore.getState().token || localStorage.getItem("token");
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -27,20 +27,21 @@ axiosInstance.interceptors.response.use(
     // Cek apakah errornya adalah 401 (Unauthorized)
     if (error.response && error.response.status === 401) {
       
-      // BEST PRACTICE 3: Jangan lakukan auto-logout jika 401 terjadi di endpoint "/login"
       const isLoginUrl = error.config.url?.includes("login");
+      const currentPath = window.location.pathname;
+
+      // LOGIKA BARU: Cek apakah user sedang berada di halaman QR (Guest)
+      const isQrRoute = currentPath.includes("/qr/");
       
-      if (!isLoginUrl) {
+      if (!isLoginUrl && !isQrRoute) {
         console.warn("Sesi habis atau tidak valid. Melakukan auto-logout...");
         
-        // BEST PRACTICE 4: Wajib bersihkan state Zustand HINGGA BERSIH sebelum redirect!
-        // (Pastikan kamu punya aksi logout di dalam useAuthStore)
-        useAuthStore.getState().setAuth("", null); // Atau gunakan useAuthStore.getState().logout() jika ada
+        // Bersihkan state Zustand HINGGA BERSIH sebelum redirect!
+        useAuthStore.getState().setAuth("", null);
         
         // BEST PRACTICE 5: Cegah reload berulang jika sudah berada di halaman login
-        // (Asumsi halaman login kamu ada di route "/")
-        if (window.location.pathname !== "/") {
-          window.location.href = "/";
+        if (currentPath !== "/" && currentPath !== "/its-resto" && currentPath !== "/its-resto/") {
+          window.location.href = "/its-resto/"; 
         }
       }
     }

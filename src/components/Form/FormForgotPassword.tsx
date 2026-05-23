@@ -78,14 +78,14 @@ const FormForgotPassword = () => {
           </span>
         )}
 
-        <Button className="w-full mt-8" type="submit">
+        <Button className="w-full mt-8 py-2 md:py-2.25" type="submit">
           Kirim Kode OTP
         </Button>
         <Link
           to="/"
-          className="flex justify-center items-center gap-2 text-center my-6 text-black/50 underline"
+          className="flex justify-center items-center gap-2 text-sm text-center my-6 text-black/50 underline"
         >
-          <ArrowLeft size={20} /> kembali ke halaman login
+          <ArrowLeft size={18} /> kembali ke halaman login
         </Link>
       </form>
     </div>

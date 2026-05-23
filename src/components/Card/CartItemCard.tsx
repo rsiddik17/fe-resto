@@ -22,7 +22,7 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDeletePrompt
     <div className="bg-white rounded-sm shadow-sm border border-gray/25 p-3 md:p-4.5 flex gap-4 md:gap-5">
       
       {/* Gambar Kiri */}
-      <div className="w-22 h-22 md:w-25 md:h-25 bg-gray-200 rounded-sm shrink-0 overflow-hidden">
+      <div className="w-21 h-21 md:w-25 md:h-25 lg:w-23 lg:h-23 bg-gray-200 rounded-sm shrink-0 overflow-hidden">
         <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
       </div>
 
@@ -31,8 +31,8 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDeletePrompt
         
         {/* Baris Atas: Nama & Harga */}
         <div className="flex justify-between items-start">
-          <h3 className="font-bold text-sm md:text-2xl leading-tight line-clamp-1 md:translate-y-2">{item.name}</h3>
-          <span className="font-bold text-primary text-sm md:text-[22px] whitespace-nowrap">
+          <h3 className="font-bold text-sm md:text-2xl lg:text-xl leading-tight line-clamp-1 md:translate-y-2">{item.name}</h3>
+          <span className="font-bold text-primary text-sm md:text-[22px] lg:text-xl whitespace-nowrap">
             {rupiahFormatter.format(item.price * item.qty)}
           </span>
         </div>
@@ -41,13 +41,13 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDeletePrompt
         <div className="flex flex-col md:flex-row justify-between md:items-end gap-2 mt-2 md:mt-5">
           
           {/* Teks Catatan */}
-         <div className="order-2 md:order-1 flex-1">
+         <div className="order-2 md:order-1 flex-1 min-w-0 w-full">
             <Button 
               onClick={() => onEditNote(item.cartId, item.notes)}
-              className="flex items-center gap-1.5 bg-gray/15 text-gray px-3 py-1 md:px-4 md:py-2.5 rounded-xs font-normal w-full md:w-90 cursor-pointer text-left hover:bg-gray/15"
+              className="flex items-center gap-1.5 bg-gray/15 text-gray px-3 py-1.25 md:px-4 md:py-2.5 lg:py-2 rounded-xs font-normal w-full md:w-90 lg:w-100 cursor-pointer text-left hover:bg-gray/15"
             >
               <NotesIcon className="shrink-0" />
-              <span className="text-xs md:text-lg truncate">
+              <span className="text-[13px] md:text-lg lg:text-base flex-1 truncate">
                 {item.notes ? item.notes : "Tidak ada catatan"}
               </span>
             </Button>
@@ -65,18 +65,18 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDeletePrompt
               }}
               variant="outline"
               size="icon"
-              className="w-5 h-5 md:w-9 md:h-9 border-2"
+              className="w-5 h-5 md:w-9 md:h-9 lg:w-8 lg:h-8 border-2"
             >
               <Minus size={16} strokeWidth={2.5} />
             </Button>
 
-            <span className="font-bold w-4 text-sm md:text-lg text-center">{item.qty}</span>
+            <span className="font-bold w-4 text-sm md:text-lg lg:text-base text-center">{item.qty}</span>
             
             <Button 
               onClick={() => onIncrease(item.cartId)}
               variant="outline"
               size="icon"
-              className="w-5 h-5 md:w-9 md:h-9 border-2"
+              className="w-5 h-5 md:w-9 md:h-9 lg:w-8 lg:h-8 border-2"
             >
               <Plus size={16} strokeWidth={2.5} />
             </Button>

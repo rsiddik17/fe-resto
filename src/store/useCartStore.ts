@@ -11,6 +11,9 @@ export interface CartItem extends MenuItem {
 
 interface CartStore {
   items: CartItem[];
+  tableId: number | null; 
+  tableNumber: string | null; 
+  setTableInfo: (id: number | null, numberString: string | null) => void;
   addToCart: (item: MenuItem, qty: number, notes: string) => void;
   getTotalItems: () => number;
   updateQty: (cartId: string, delta: number) => void;
@@ -24,6 +27,10 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      tableId: null,
+      tableNumber: null,
+
+      setTableInfo: (id, numberString) => set({ tableId: id, tableNumber: numberString }),
 
       addToCart: (item, qty, notes) => {
         if (qty <= 0) return;
@@ -85,7 +92,7 @@ export const useCartStore = create<CartStore>()(
         }));
       },
 
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [], tableId: null, tableNumber: null }),
     }),
     {
       name: "its-resto-cart", // 3. NAMA KUNCI DI LOCAL STORAGE

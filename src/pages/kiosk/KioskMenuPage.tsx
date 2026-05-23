@@ -60,11 +60,11 @@ import { useMenus } from "../../hooks/useMenus";
     };
 
     return (
-      <div className="h-screen flex flex-col relative overflow-hidden">
+      <div className="h-screen lg:min-h-screen lg:h-auto flex flex-col relative overflow-hidden lg:overflow-visible">
         {/* HEADER LOGO */}
         <Header showProfile={true} profileHref="/kiosk/profile" />
 
-        <main className="flex-1 flex flex-col w-full max-w-7xl mx-auto px-4 md:px-6 pt-6 overflow-hidden">
+        <main className="flex-1 flex flex-col w-full max-w-7xl mx-auto px-4 md:px-6 pt-4 md:pt-6 overflow-hidden lg:overflow-visible">
           {/* HERO SECTION & PENCARIAN */}
           <HeroSection
             title="Pesan Menu<br />Favoritmu"
@@ -81,7 +81,7 @@ import { useMenus } from "../../hooks/useMenus";
           />
 
           {/* GRID MENU */}
-          <div className="flex-1 overflow-y-auto pb-28 -mx-3">
+          <div className="flex-1 overflow-y-auto lg:overflow-visible pb-28 -mx-3 lg:mx-0">
             {isLoading ? (
               <div className="flex justify-center items-center h-32">
                 <span className="text-primary font-bold animate-pulse">
@@ -102,7 +102,7 @@ import { useMenus } from "../../hooks/useMenus";
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mx-2.5 md:mx-0">
                 {filteredMenu.length > 0 ? (
                   filteredMenu.map((item) => {
                     const isOutOfStock =
