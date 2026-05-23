@@ -75,6 +75,7 @@ import KitchenLayout from "../layouts/KitchenLayout/KitchenLayout";
 import KitchenProfilePage from "../pages/kitchen/KitchenProfilePage";
 import KitchenMenuStockPage from "../pages/kitchen/KitchenMenuStockPage";
 import KitchenDetailMenuPage from "../pages/kitchen/KitchenDetailMenuPage";
+import GuestRoute from "./GuestRoute";
 
 const router = createBrowserRouter(
   [
@@ -86,7 +87,18 @@ const router = createBrowserRouter(
         { path: "/forgot-password", Component: ForgotPasswordPage },
         { path: "/reset-password", Component: ResetPasswordPage },
         { path: "/verification-otp", Component: VerifyOtpPage },
-        { path: "/qr/:tableId", Component: MobileTableInfoPage },
+      ],
+    },
+    
+
+    { path: "/unauthorized", Component: UnauthorizedPage },
+    
+
+    // --- GUEST ROUTES ---
+    { path: "/qr/:tableId", Component: MobileTableInfoPage },
+    {
+      element: <GuestRoute />, // Wrapper khusus Guest
+      children: [
         { path: "/qr/menu", Component: MobileMenuPage },
         { path: "/qr/cart", Component: MobileCartPage },
         { path: "/qr/checkout", Component: MobileCheckoutPage },
@@ -94,8 +106,6 @@ const router = createBrowserRouter(
         { path: "/qr/order-success", Component: MobileOrderSuccessPage },
       ],
     },
-
-    { path: "/unauthorized", Component: UnauthorizedPage },
 
     // --- PROTECTED ROUTES ---
     {

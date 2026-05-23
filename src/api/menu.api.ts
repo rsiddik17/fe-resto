@@ -3,7 +3,7 @@ import { axiosInstance } from "../lib/axios";
 export const menuAPI = {
   // Ambil semua menu
   getAllMenu: async () => {
-    const response = await axiosInstance.get("/menu/");
+    const response = await axiosInstance.get("/menu");
     return response.data; 
   },
   

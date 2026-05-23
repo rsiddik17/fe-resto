@@ -13,10 +13,10 @@ const StatusBanner = ({ status }: { status: PaymentStatus }) => {
     }`}>
       {isPending ? <Clock className="w-8 h-8 md:w-16.25 md:h-16.25" /> : <SuccessIcon className="w-8 h-8 md:w-16.25 md:h-16.25" />}
       
-      <h3 className="font-bold text-base md:text-2xl mt-1 md:mt-2">
+      <h3 className="font-bold text-base md:text-2xl lg:text-xl mt-1 md:mt-2">
         {isPending ? "Pesanan Pending" : "Pesanan Dikonfirmasi"}
       </h3>
-      <p className="text-[13px] md:text-xl">
+      <p className="text-[13px] md:text-xl lg:text-lg">
         {isPending 
           ? "Pesanan Anda sedang menunggu konfirmasi dari kasir." 
           : "Silakan tunggu di meja anda. Pesanan akan segera diantarkan."}

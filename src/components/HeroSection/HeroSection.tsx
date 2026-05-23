@@ -19,7 +19,7 @@ const HeroSection = ({
   searchPlaceholder = "Cari menu",
 }: HeroSectionProps) => {
   return (
-    <div className="w-full h-65 bg-cover bg-center rounded-md p-6 md:px-10 md:pb-3 mb-5 relative overflow-hidden">
+    <div className="w-full h-60 md:h-65 bg-cover bg-center rounded-md px-4 py-6 md:px-10 md:pb-3 mb-5 relative overflow-hidden">
       <img
         src={imageBg}
         alt="Hero Background"
@@ -28,12 +28,12 @@ const HeroSection = ({
       
       <div className="absolute inset-0 bg-black/15"></div>
 
-      <div className="relative ml-2 z-10 w-full max-w-lg">
+      <div className="relative ml-0 md:ml-2 mt-6 md:mt-0 lg:mt-10 z-10 w-full max-w-lg">
         <h1
-          className="text-4xl md:text-5xl font-bold text-white mb-2 leading-16 tracking-wide"
+          className="text-3xl md:text-5xl lg:text-4xl font-bold text-white mb-2 leading-10 md:leading-16 lg:leading-10 tracking-wide"
           dangerouslySetInnerHTML={{ __html: title }}
         />
-        <p className="text-white/95 text-sm md:text-[22px] mb-2.5">{subtitle}</p>
+        <p className="text-white/95 text-sm md:text-[22px] lg:text-xl mb-6 md:mb-2.5">{subtitle}</p>
 
         <div className="relative w-full">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -45,7 +45,7 @@ const HeroSection = ({
             placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-105 pl-11 pr-4 py-2.5 rounded-xs border focus:ring-2 focus:ring-primary placeholder:text-gray-500 shadow-sm text-black"
+            className="md:w-105 lg:w-160 pl-11 pr-4 md:py-2.5 rounded-xs border focus:ring-2 focus:ring-primary placeholder:text-gray-500 shadow-sm text-black"
           />
         </div>
         

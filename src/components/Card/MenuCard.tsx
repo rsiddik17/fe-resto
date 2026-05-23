@@ -20,7 +20,7 @@ interface MenuCardProps {
 
 const MenuCard = ({ children }: MenuCardProps) => {
   return (
-    <div className="bg-white rounded-2xl p-2.5 md:p-3 lg:p-2.5 shadow-sm border border-secondary/10 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow relative">
+    <div className="bg-white rounded-md md:rounded-2xl p-2 md:p-3 lg:p-2.5 shadow-sm border border-secondary/10 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow relative">
       {children}
     </div>
   );
@@ -35,7 +35,7 @@ interface HeaderProps {
 
 const Header = ({ image, name, isOutOfStock = false }: HeaderProps) => {
   return (
-    <div className="w-full h-35 md:h-48 lg:h-40 rounded-sm bg-gray/25 relative shrink-0 overflow-hidden">
+    <div className="w-full h-35 md:h-48 lg:h-40 rounded-xs md:rounded-sm bg-gray/25 relative shrink-0 overflow-hidden">
       <img src={image} alt={name} loading="lazy" className={cn(
           "w-full h-full object-cover transition-opacity",
           isOutOfStock ? "opacity-50 grayscale-30" : "opacity-100"
@@ -90,7 +90,7 @@ const Footer = ({ onAdd }: FooterProps) => {
     <div className="px-1.5 md:px-2 lg:px-1.5 py-0 mt-auto">
       <Button
         onClick={onAdd}
-        className="w-full py-1 md:py-2 lg:py-1.5 rounded-full text-sm md:text-base lg:text-sm font-normal shadow-sm"
+        className="w-full py-1.25 md:py-2 lg:py-1.75 rounded-full text-sm md:text-base lg:text-sm font-normal shadow-sm"
       >
         Tambah
       </Button>

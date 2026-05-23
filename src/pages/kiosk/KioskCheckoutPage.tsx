@@ -7,17 +7,33 @@ import OrderItemCard from "../../components/Card/OrderItemCard";
 import OrderSummary from "../../components/OrderSummary/OrderSummary";
 import { useCartStore } from "../../store/useCartStore";
 import DiscountModal from "../../components/Modal/DiscountModal";
+import Loading from "../../components/Loading/Loading";
+import Toast from "../../components/Toast/Toast";
+
+import { orderAPI, type CreateOrderPayload } from "../../api/order.api";
 
 const KioskCheckoutPage = () => {
-  const navigate = useNavigate();
-  
-  // Ambil data keranjang dari Zustand
-  const { items, getTotalPrice } = useCartStore();
+  const navigate = useNavigate();  
+  const { items, getTotalPrice, tableId, tableNumber } = useCartStore();
   const subTotal = getTotalPrice();
 
   // STATE HALAMAN CHECKOUT
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [discountId, setDiscountId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // STATE TOAST ERROR
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+    show: false,
+    message: "",
+    type: "error",
+  });
+
+  const triggerToast = (message: string, type: "success" | "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type }), 4000);
+  };
 
   // Proteksi: Jika keranjang kosong, paksa kembali ke Menu
   useEffect(() => {
@@ -27,39 +43,55 @@ const KioskCheckoutPage = () => {
   }, [items, navigate]);
 
   const handleBack = () => {
-    navigate("/kiosk/cart"); // Kembali ke halaman keranjang untuk edit
+    navigate("/kiosk/cart"); 
   };
 
-  const handleConfirmOrder = () => {
-    // --- DI SINI NANTI TEMPAT MENEMBAK API ---
-    // Kalkulasi final sebelum dikirim ke backend
-    const taxRate = 10;
-    const taxAmount = subTotal * (taxRate / 100);
-    const grandTotal = subTotal + taxAmount - discountAmount;
+  // --- LOGIKA HIT API CREATE ORDER ---
+  const handleConfirmOrder = async () => {
+    if (!tableId) {
+      triggerToast("Data meja tidak ditemukan. Silakan kembali ke awal.", "error");
+      return;
+    }
 
-    // Menyiapkan Payload (Data yang dikirim ke Backend)
-    const payload = {
-      table_number: "Meja 02",
-      sub_total: subTotal,
-      tax_amount: taxAmount,
-      discount_amount: discountAmount,
-      grand_total: grandTotal,
-      items: items.map((item) => ({
-        menu_id: item.id,
-        name: item.name,
-        qty: item.qty,
-        notes: item.notes,
-        price: item.price
-      })),
-    };
+    try {
+      setIsSubmitting(true);
 
-    console.log("MENGIRIM DATA KE BACKEND:", payload);
-    
-    // Simulasi sukses bayar, pindah ke halaman Sukses
-    // alert("Berhasil! Silakan cek console untuk melihat Payload API-nya.");
-    navigate("/kiosk/payment", {
-      state: { discountAmount }
-    }); 
+      // 2. Siapkan Payload persis seperti JSON backend
+      const payload: CreateOrderPayload = {
+        source: "KIOSK",
+        table_id: tableId,
+        order_items: items.map((item) => ({
+          menu_id: item.id,
+          quantity: item.qty,
+          notes: item.notes || "Tidak ada", // Pastikan tidak kosong sesuai struktur database
+        })),
+      };
+
+      // Hanya masukkan discount_id ke dalam payload jika nilainya ada
+      if (discountId) {
+        payload.discount_id = discountId;
+      }
+
+      console.log("MENGIRIM DATA KE BACKEND:", payload);
+
+      // 3. Tembak API!
+      const response = await orderAPI.createOrder(payload);
+      
+      const backendOrderId = response.data.id; 
+      // 4. Pindah ke halaman pembayaran dan bawa datanya
+      navigate("/kiosk/payment", {
+        state: { 
+          discountAmount,
+          orderId: backendOrderId // Bawa orderId asli ke halaman QRIS!
+        }
+      }); 
+
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.message || error.response?.data?.error || "Gagal menghubungi server.";
+      triggerToast(`Pesanan Gagal: ${errorMsg}`, "error");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Jangan render apa-apa selama useEffect sedang memproses redirect (kalau kosong)
@@ -68,21 +100,22 @@ const KioskCheckoutPage = () => {
   return (
     <div className="min-h-screen bg-white pb-8 relative flex flex-col">
       <Header showProfile />
+      <Loading show={isSubmitting} />
 
-      <main className="flex-1 w-full max-w-3xl mx-auto pt-6">
+      <main className="flex-1 w-full px-4 max-w-full md:max-w-190 lg:max-w-4xl mx-auto pt-4 md:pt-6">
         
         {/* --- HEADER CHECKOUT --- */}
         <div className="border-b border-gray-100 pb-4">
           <button 
             onClick={handleBack}
-            className="flex items-center gap-2 text-[28px] font-bold mb-1"
+            className="flex items-center gap-2 text-base md:text-[28px] lg:text-[22px] font-bold mb-1"
           >
-            <ArrowLeft size={24} strokeWidth={3} /> Ringkasan Pesanan
+            <ArrowLeft className="w-4.5 h-4.5 md:w-6 md:h-6" size={24} strokeWidth={3} /> Ringkasan Pesanan
           </button>
           
           <div className="mt-1">
-            <p className="text-gray text-xl mb-2">Nomor meja</p>
-            <p className="font-extrabold text-primary text-2xl">Meja 02</p>
+            <p className="text-gray text-[15px] md:text-xl lg:text-lg mb-0.5 md:mb-2">Nomor meja</p>
+            <p className="font-extrabold text-primary text-base md:text-2xl lg:text-xl">{tableNumber || "Meja --"}</p>
           </div>
         </div>
 
@@ -93,8 +126,6 @@ const KioskCheckoutPage = () => {
           ))}
         </div>
 
-        {/* --- RINGKASAN HARGA (SUBTOTAL & PPN) --- */}
-        {/* Kita melempar subTotal dari Zustand dan discountAmount dari Local State */}
         <OrderSummary 
           subTotal={subTotal} 
           taxRate={10} 
@@ -105,16 +136,16 @@ const KioskCheckoutPage = () => {
               <Button
                 onClick={() => setIsModalOpen(true)}
                 variant="outline"
-                className="w-full py-2.5 rounded-md font-bold border-2 border-primary text-primary flex items-center justify-center gap-2 hover:bg-primary/5"
+                className="w-full py-1.75 md:py-2.5 lg:py-2.25 rounded-md font-bold border-2 border-primary text-primary text-sm md:text-base lg:text-[15px] flex items-center justify-center gap-2 hover:bg-primary/5"
               >
-                <Plus size={20} strokeWidth={3} /> Tambah Diskon
+                <Plus className="w-4.5 h-4.5 md:w-6 md:h-6 lg:w-5 lg:h-5" size={20} strokeWidth={3} /> Tambah Diskon
               </Button>
             ) : (
               // TOMBOL BATALKAN DISKON
               <Button
-                onClick={() => setDiscountAmount(0)}
+                onClick={() => { setDiscountAmount(0); setDiscountId(null); }}
                 variant="outline"
-                className="w-full py-3 rounded-lg font-bold text-lg border-2 border-gray-200 text-gray-400 hover:bg-gray-50"
+                className="w-full py-1.75 md:py-2.5 rounded-md font-bold text-sm md:text-base border-2 border-gray-200 text-gray-400 hover:bg-gray-50"
               >
                 Batalkan Diskon
               </Button>
@@ -125,12 +156,12 @@ const KioskCheckoutPage = () => {
       </main>
 
       {/* --- STICKY BOTTOM BAR (TOMBOL KONFIRMASI) --- */}
-        <div className="w-full max-w-150 mx-auto">
+        <div className="w-full max-w-78 md:max-w-150 mx-auto">
           <Button 
             onClick={handleConfirmOrder} 
-            className="w-full mx-auto py-3 rounded-full font-bold text-lg shadow-md"
+            className="w-full mx-auto py-2 md:py-3 lg:py-2.5 rounded-full font-bold text-[14.5px] md:text-lg lg:text-base shadow-md"
           >
-            Konfirmasi Pesanan
+            {isSubmitting ? "Memproses..." : "Konfirmasi Pesanan"}
           </Button>
       </div>
 
@@ -139,11 +170,15 @@ const KioskCheckoutPage = () => {
       {isModalOpen && (
         <DiscountModal 
           onClose={() => setIsModalOpen(false)}
-          onApply={(amount) => setDiscountAmount(amount)}
+          onApply={(amount, id) => {
+            setDiscountAmount(amount);
+            setDiscountId(id);
+          }}
           subTotal={subTotal}
         />
       )}
 
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </div>
   );
 };

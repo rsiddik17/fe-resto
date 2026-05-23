@@ -133,7 +133,7 @@ const FormLogin = () => {
         </Link>
 
         <div className="flex flex-col items-center w-full mb-3">
-          <div className="transform scale-90 origin-top">
+          <div className="transform scale-87 md:scale-90 origin-top">
           <ReCAPTCHA
             // Ingat: Nanti ganti sitekey ini dengan key asli dari Google (biasanya disimpan di file .env)
             sitekey={import.meta.env.VITE_RECAPTCHA_SITEKEY}
@@ -156,7 +156,7 @@ const FormLogin = () => {
           </span>
         )}
 
-        <Button className="w-full" type="submit">
+        <Button className="w-full py-2 md:py-2.25" type="submit">
           Masuk
         </Button>
       </form>

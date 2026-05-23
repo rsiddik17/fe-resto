@@ -47,16 +47,16 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
       onClick={onClose} // Menutup modal jika klik area luar
     >
       <div
-        className="bg-white w-full max-w-[70%] md:max-w-md p-4 md:p-5.5 rounded-2xl overflow-hidden shadow-sm flex flex-col animate-in zoom-in-95 duration-200"
+        className="bg-white w-full max-w-[88%] md:max-w-md lg:max-w-sm p-4 md:p-5.5 lg:p-4.5 rounded-2xl overflow-hidden shadow-sm flex flex-col animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup jika isinya diklik
       >
         {/* --- HEADER: GAMBAR & TOMBOL KEMBALI --- */}
-        <div className="relative h-62 md:h-95 w-full bg-gray/25 rounded-sm shrink-0">
+        <div className="relative h-60 md:h-95 lg:h-70 w-full bg-gray/25 rounded-sm shrink-0">
           <img
             src={item.image}
             alt={item.name}
            className={cn(
-              "w-full h-full object-cover transition-opacity",
+              "w-full h-full object-cover transition-opacity rounded-sm",
               isOutOfStock ? "opacity-50 grayscale-30" : "opacity-100"
             )}
           />
@@ -71,7 +71,7 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
 
           <button
             onClick={onClose}
-            className="absolute top-2 left-1 md:left-2 bg-white/90 backdrop-blur px-3 py-1 md:py-1.5 rounded-full flex items-center gap-1.5 text-sm shadow-sm hover:bg-white transition-colors"
+            className="absolute top-2 left-1 md:left-2 bg-white/90 backdrop-blur px-3 py-1 md:py-1.5 rounded-full flex items-center gap-1.5 text-[13px] md:text-sm shadow-sm hover:bg-white transition-colors"
           >
             <ArrowLeft size={16} /> Kembali
           </button>
@@ -81,31 +81,31 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
         <div className="pt-4 md:pt-6 flex flex-col gap-3 md:gap-4">
           <div className="flex flex-col items-start border-b border-gray/10">
             <div className="w-full flex justify-between gap-2 md:gap-4">
-              <h2 className="text-md md:text-2xl font-bold">{item.name}</h2>
-              <span className="text-primary font-bold text-md md:text-xl whitespace-nowrap">
+              <h2 className="text-md md:text-2xl lg:text-xl font-bold">{item.name}</h2>
+              <span className="text-primary font-bold text-md md:text-xl lg:text-lg whitespace-nowrap">
                 {rupiahFormatter.format(item.price)}
               </span>
             </div>
-            <p className="text-xs md:text-sm pr-4 md:pr-0 text-gray mt-1 leading-relaxed">
+            <p className="text-[12.5px] md:text-sm lg:text-[13.5px] pr-4 md:pr-0 text-gray mt-1 leading-relaxed">
               {item.description}
             </p>
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="font-bold text-sm md:text-lg self-start">Jumlah</span>
+            <span className="font-bold text-sm md:text-lg lg:text-base self-start">Jumlah</span>
             <div className="flex items-center gap-3 md:gap-4">
               <button
                 onClick={handleDec}
                 disabled={qty <= 0}
-                className="w-6 h-6 md:w-8 md:h-8 rounded-sm border-2 border-primary flex items-center justify-center text-primary disabled:opacity-40 disabled:border-gray-400 disabled:text-gray-400 transition-colors"
+                className="w-6 h-6 md:w-8 md:h-8 lg:w-7 lg:h-7 rounded-sm border-2 border-primary flex items-center justify-center text-primary disabled:opacity-40 disabled:border-gray-400 disabled:text-gray-400 transition-colors"
               >
                 <Minus size={16} strokeWidth={3} />
               </button>
-              <span className="font-bold text-md md:text-xl w-6 text-center">{qty}</span>
+              <span className="font-bold text-md md:text-xl lg:text-lg w-6 text-center">{qty}</span>
               <button
                 onClick={handleInc}
                 disabled={qty >= stock}
-                className="w-6 h-6 md:w-8 md:h-8 rounded-sm border-2 border-primary flex items-center justify-center text-primary disabled:opacity-40 disabled:border-gray-400 disabled:text-gray-400 transition-colors"
+                className="w-6 h-6 md:w-8 md:h-8 lg:w-7 lg:h-7 rounded-sm border-2 border-primary flex items-center justify-center text-primary disabled:opacity-40 disabled:border-gray-400 disabled:text-gray-400 transition-colors"
               >
                 <Plus size={16} strokeWidth={3} />
               </button>
@@ -113,8 +113,8 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
           </div>
 
           <div className="flex justify-between items-center text-sm">
-            <span className="text-sm md:text-lg">Stok</span>
-            <span className="font-bold text-sm md:text-lg">{stock}</span>
+            <span className="text-sm md:text-lg lg:text-base">Stok</span>
+            <span className="font-bold text-sm md:text-lg lg:text-base">{stock}</span>
           </div>
 
           <div className="relative">
@@ -126,7 +126,7 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
               placeholder="Catatan (opsional)"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-gray/15 border-transparent focus:bg-white focus:border-primary text-xs md:text-sm rounded-md"
+              className="w-full pl-10 pr-4 py-2.75 md:py-3 lg:py-2.5 bg-gray/15 border-transparent focus:bg-white focus:border-primary text-xs md:text-sm rounded-md"
             />
           </div>
 
@@ -134,7 +134,7 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
             onClick={handleAddToCart}
             disabled={qty === 0}
             className={cn(
-              "w-full mt-2 py-1.5 md:py-3.5 rounded-xl flex items-center justify-center gap-2 font-bold text-xs md:text-base",
+              "w-full mt-2 py-1.5 md:py-3.5 lg:py-2.25 rounded-xl flex items-center justify-center gap-2 font-bold text-xs md:text-base lg:text-sm",
               qty === 0 && "opacity-50 cursor-not-allowed",
             )}
           >
