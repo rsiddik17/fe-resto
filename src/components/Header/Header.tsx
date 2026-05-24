@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router";
 import UserIconSingle from "../Icon/UserIconSingle";
+import { useAuthStore } from "../../store/useAuthStore";
 
 interface NavLink {
   label: string;
@@ -22,12 +23,16 @@ interface HeaderProps {
 const Header = ({
   navLinks,
   showProfile = false,
-  userName = "KiosK",
+  userName,
   profileHref = "/kiosk/profile",
   showBackButton = false,
   onBack,
 }: HeaderProps) => {
   const navigate = useNavigate();
+
+  const { user } = useAuthStore();
+
+  const displayName = userName || user?.fullname || "Kiosk";
 
   return (
     <header className="bg-white h-17.5 md:h-27.5 lg:h-20 py-3 px-2 md:px-4 flex items-center justify-between border-b border-gray/50">
@@ -69,7 +74,7 @@ const Header = ({
             className="flex items-center gap-3 md:gap-4 border border-gray-300 rounded-lg pl-4 md:pl-5 pr-1 md:pr-2 py-1 md:py-1.5 hover:bg-gray-50 transition-colors cursor-pointer"
           >
             <span className="text-black font-medium text-sm md:text-xl lg:text-lg">
-              {userName}
+               {displayName}
             </span>
             <div className="bg-primary rounded-full w-8 h-8 md:w-10 md:h-10 lg:w-8 lg:h-8 flex items-center justify-center">
               <UserIconSingle

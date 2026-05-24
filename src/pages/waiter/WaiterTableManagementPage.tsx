@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Search } from "lucide-react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
@@ -6,6 +6,8 @@ import Input from "../../components/ui/Input";
 import TableCard, { type TableItem } from "../../components/Card/TableCard";
 import ChangeTableStatusModal from "../../components/Modal/ChangeTableStatusModal";
 import TableFilterTabs from "../../components/Table/TableFilterTabs";
+import { useAuthStore } from "../../store/useAuthStore";
+import { profileAPI } from "../../api/profile.api";
 
 type TableType = "semua" | "tersedia" | "terisi" | "kotor";
 
@@ -22,6 +24,7 @@ const MOCK_TABLES: TableItem[] = Array.from({ length: 24 }).map((_, i) => {
 
 const WaiterTableManagementPage = () => {
   const navigate = useNavigate();
+  const { user, setUser } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState<TableType>("semua");
   
@@ -57,21 +60,41 @@ const WaiterTableManagementPage = () => {
     }
   };
 
+  useEffect(() => {
+          if (!user) {
+            const fetchProfile = async () => {
+              try {
+                const response = await profileAPI.getStaffProfile();
+                if (response.success && response.data) {
+                  setUser(response.data);
+                }
+              } catch (error) {
+                console.error("Gagal mengambil data profil:", error);
+              }
+            };
+            fetchProfile();
+          }
+        }, [user, setUser]);
+      
+        // Ekstrak nama depan untuk header
+        const firstName = user?.fullname ? user.fullname.split(" ")[0] : "Memuat...";
+        const roleName = user?.role === "WAITER" ? "Pelayan" : "Pelayan";
+
   return (
     <div className="flex flex-col min-h-screen">
       
       {/* 1. HEADER (Menggunakan wrapper permintaanmu) */}
-      <div className="pt-7.5 pl-8 pr-6 shrink-0">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0 shrink-0">
         <DashboardHeader
           title="Manajemen Meja"
           subtitle="Pantau dan ubah meja restoran secara langsung"
-          userName="Mila"
-          roleName="Pelayan"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
       {/* 2. MAIN CONTENT */}
-      <div className="pt-0 pb-4 px-8 flex flex-col flex-1">
+      <div className="pt-1 lg:pt-1 pb-4 lg:pb-4 px-4 lg:px-8 flex flex-col flex-1">
         
         {/* Search Bar */}
         <div className="relative mb-3 shrink-0 max-w-110">

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { QRCodeSVG } from "qrcode.react";
 
 interface QRCodeBoxProps {
   finalPayment: number;
@@ -29,23 +28,32 @@ const QRCodeBox = ({ finalPayment, onExpire }: QRCodeBoxProps) => {
   const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0");
   const seconds = String(timeLeft % 60).padStart(2, "0");
 
-  const qrisData = `00020101021126670016ID.CO.QRIS.WWW011893600...Nominal:${finalPayment}`;
-
   return (
     <div className="bg-white rounded-md px-2.5 py-4 md:p-6 flex flex-col items-center shadow-sm text-center">
-      <p className="text-gray text-[15px] md:text-2xl lg:text-xl mb-1 md:mb-2.5">Total Pembayaran</p>
+      <p className="text-gray text-[15px] md:text-2xl lg:text-xl mb-1 md:mb-2.5">
+        Total Pembayaran
+      </p>
       <h2 className="text-base md:text-3xl lg:text-2xl font-bold text-primary mb-4 md:mb-7">
         Rp{finalPayment.toLocaleString("id-ID")}
       </h2>
 
-      <p className="text-[13px] md:text-[22px] lg:text-lg mb-1 md:mb-6">Scan QRIS untuk melakukan pembayaran</p>
+      <p className="text-[13px] md:text-[22px] lg:text-lg mb-1 md:mb-6">
+        Scan QRIS untuk melakukan pembayaran
+      </p>
       <p className="text-[13px] md:text-[22px] lg:text-lg mb-3 md:mb-6">
-        Selesaikan pembayaran dalam <span className="font-bold">{minutes}:{seconds}</span>
+        Selesaikan pembayaran dalam{" "}
+        <span className="font-bold">
+          {minutes}:{seconds}
+        </span>
       </p>
 
       {/* RENDER QR CODE DI SINI */}
       <div className="inline-block mb-4 md:mb-6 w-38 h-38 md:w-75 md:h-75 lg:w-60 lg:h-60">
-        <QRCodeSVG value={qrisData} className="w-full h-full" level="L" />
+        <img
+          src={`${import.meta.env.BASE_URL}images/qris-client.jpeg`}
+          alt="QRIS IT Mart"
+          className="w-full h-full"
+        />
       </div>
 
       <p className="text-gray text-[13px] md:text-[22px] lg:text-lg">

@@ -1,7 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import Button from "../../components/ui/Button";
-import StatCardWaiter from "../../components/Card/StatCardWaiter";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import {
   ProcessingOrderCard,
@@ -13,33 +12,64 @@ import InfoCircleIcon from "../../components/Icon/InfoCircleIcon";
 import ProcessingIcon from "../../components/Icon/ProcessingIcon";
 import DeliveryIcon from "../../components/Icon/DeliveryIcon";
 import AddOrderIcon from "../../components/Icon/AddOrderIcon";
+import StatCardCashier from "../../components/Card/StatCardCashier";
+
+import { useAuthStore } from "../../store/useAuthStore";
+import { profileAPI } from "../../api/profile.api";
+import { useEffect } from "react";
 
 const WaiterDashboardPage = () => {
   const navigate = useNavigate();
 
+  const { user, setUser } = useAuthStore();
+
+  // HIT API JIKA DATA USER BELUM ADA DI ZUSTAND
+  useEffect(() => {
+    if (!user) {
+      const fetchProfile = async () => {
+        try {
+          const response = await profileAPI.getStaffProfile();
+          if (response.success && response.data) {
+            setUser(response.data);
+          }
+        } catch (error) {
+          console.error("Gagal mengambil data profil:", error);
+        }
+      };
+      fetchProfile();
+    }
+  }, [user, setUser]);
+
+  // Ekstrak nama depan untuk header
+  const firstName = user?.fullname ? user.fullname.split(" ")[0] : "Memuat...";
+  const roleName = user?.role === "WAITER" ? "Pelayan" : "Pelayan";
+
   return (
     <>
-      <div className="pt-7.5 pl-8 pr-3">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-3 mx-4 lg:mx-0">
         {/* 1. HEADER */}
         <DashboardHeader
           title="Dashboard Pelayan"
           subtitle="Pantau aktivitas pesanan dan layanan meja"
-          userName="Mila" // Nanti ganti dengan user?.fullname
-          roleName="Pelayan"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
-      <div className="pt-0 pb-6 px-8">
-
+      <div className="pt-1 lg:pt-1 pb-6 lg:pb-6 px-4 lg:px-8">
         {/* 2. KARTU STATISTIK (Grid 3 Kolom) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-5">
-          <StatCardWaiter title="Sedang Diproses" value="7" Icon={ProcessingIcon} />
-          <StatCardWaiter
+          <StatCardCashier
+            title="Sedang Diproses"
+            value="7"
+            Icon={ProcessingIcon}
+          />
+          <StatCardCashier
             title="Pesanan Harus Antar"
             value="10"
             Icon={DeliveryIcon}
           />
-          <StatCardWaiter
+          <StatCardCashier
             title="Meja Terisi"
             value={
               <>
@@ -58,16 +88,17 @@ const WaiterDashboardPage = () => {
             <div>
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-2">
-                  <InfoCircleIcon className="text-primary" />
+                  <InfoCircleIcon className="text-primary w-6 h-6" />
                   <h2 className="font-bold text-base md:text-[17px]">
                     Pesanan Siap Saji
                   </h2>
                 </div>
                 <Link
                   to="/waiter/order-list"
-                  className="text-primary text-xs md:text-sm hover:underline flex items-center"
+                  className="text-primary text-[13.5px] md:text-sm hover:underline flex items-center"
                 >
-                  Lihat semua <ChevronRight size={18} className="ml-1" strokeWidth={2.5} />
+                  Lihat semua{" "}
+                  <ChevronRight size={18} className="ml-1" strokeWidth={2.5} />
                 </Link>
               </div>
 
@@ -101,9 +132,10 @@ const WaiterDashboardPage = () => {
                 </div>
                 <Link
                   to="/waiter/order-list"
-                  className="text-primary text-xs md:text-sm hover:underline flex items-center"
+                  className="text-primary text-[13.5px] md:text-sm hover:underline flex items-center"
                 >
-                  Lihat semua <ChevronRight size={18} className="ml-1" strokeWidth={2.5} />
+                  Lihat semua{" "}
+                  <ChevronRight size={18} className="ml-1" strokeWidth={2.5} />
                 </Link>
               </div>
 
@@ -129,11 +161,11 @@ const WaiterDashboardPage = () => {
           </div>
 
           {/* KOLOM KANAN: Status Meja & Tombol Buat Pesanan (Ambil 1 porsi grid) */}
-          <div className="lg:col-span-1 flex flex-col gap-5 mt-10.5">
+          <div className="lg:col-span-1 flex flex-col gap-5 mt-5.5 lg:mt-10.5">
             <Button
               variant="outline"
               onClick={() => navigate("/waiter/create-order")}
-              className="w-full bg-white border-2 border-white text-primary font-bold text-[19px] py-2.5 rounded-md shadow-sm hover:border-primary/20 transition-all flex justify-center items-center gap-2"
+              className="w-full bg-white border-2 border-white text-primary font-bold text-[17px] lg:text-[19px] py-2.5 rounded-md shadow-sm hover:border-primary/20 transition-all flex justify-center items-center gap-2"
             >
               <AddOrderIcon className="bg-primary text-white rounded-full w-6.5 h-6.5" />{" "}
               Buat Pesanan
