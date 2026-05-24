@@ -17,10 +17,20 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
 
 const OrderSummary = ({ subTotal, taxRate = 10, discountAmount = 0, adminFee = 0, hideAlertInfo = false, discountActionNode }: OrderSummaryProps) => {
   
-  // Kalkulasi Angka (Ditempatkan di sini agar komponen luar tidak pusing menghitung PPN)
-  const taxAmount = subTotal * (taxRate / 100);
-  const grandTotal = subTotal + taxAmount - discountAmount + adminFee;
+  const discountedSubtotal = Math.max(
+  0,
+  subTotal - discountAmount
+);
 
+const taxAmount =
+  discountedSubtotal * (taxRate / 100);
+
+const grandTotal =
+  discountedSubtotal +
+  taxAmount +
+  adminFee;
+
+  
   return (
     <div className="flex flex-col w-full gap-3 md:gap-4 py-2 md:py-4">
       

@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import ExpiredModal from "../../components/Modal/ExpiredModal";
 import { useAuthStore } from "../../store/useAuthStore";
 import { profileAPI } from "../../api/profile.api";
+import { useOrderPayment } from "../../hooks/useOrderPayment";
 
 const rupiahFormatter = new Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -27,16 +28,20 @@ const WaiterPaymentPage = () => {
   const tableNumber = location.state?.tableNumber
     ? `Meja ${location.state.tableNumber}`
     : "Meja 10";
-  const orderId = location.state?.orderId || "#260412992";
+  const orderId = location.state?.orderId || "UNKNOWN";
   const discountAmount = location.state?.discountAmount || 15000; // Contoh Mock Diskon
-  const adminFee = 92; // Sesuai desain Figma
+  const { items, getTotalPrice, clearCart } = useCartStore();
+
   const taxRate = 10;
 
-  // Data dari Store
-  const { items, getTotalPrice, clearCart } = useCartStore();
   const subTotal = getTotalPrice();
-  const taxAmount = subTotal * (taxRate / 100);
-  const grandTotal = subTotal + taxAmount - discountAmount + adminFee;
+
+  const { adminFee, taxAmount, finalPayment } = useOrderPayment(
+    orderId,
+    subTotal,
+    discountAmount,
+    taxRate,
+  );
 
   const handleFinishPayment = () => {
     clearCart(); // Kosongkan keranjang
@@ -92,7 +97,7 @@ const WaiterPaymentPage = () => {
 
             {/* QR Component */}
             <WaiterQRCodeBox
-              finalPayment={grandTotal}
+              finalPayment={finalPayment}
               onExpire={() => setIsExpiredOpen(true)}
             />
           </div>
@@ -149,7 +154,7 @@ const WaiterPaymentPage = () => {
               <div className="flex justify-between items-center pt-1 mb-4 border-t border-gray-100">
                 <span className="font-bold text-[17px]">Total Pembayaran</span>
                 <span className="font-bold text-[17px]">
-                  {rupiahFormatter.format(grandTotal)}
+                  {rupiahFormatter.format(finalPayment)}
                 </span>
               </div>
 

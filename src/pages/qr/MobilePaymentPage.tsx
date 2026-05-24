@@ -19,19 +19,16 @@ const MobilePaymentPage = () => {
   const [isExpired, setIsExpired] = useState(false);
 
   const subTotal = getTotalPrice();
-  const taxRate = 10;
-  const taxAmount = subTotal * (taxRate / 100);
-
   const checkoutData = location.state;
   const discountAmount = checkoutData?.discountAmount || 0;
   const backendOrderId = checkoutData?.orderId || "UNKNOWN";
+  const taxRate = 10;
 
-  // Custom Hook
-  const { adminFee, finalPayment } = useOrderPayment(
+  const { adminFee, taxAmount, finalPayment } = useOrderPayment(
     backendOrderId,
     subTotal,
-    taxAmount,
     discountAmount,
+    taxRate,
   );
 
   const handleSudahBayar = () => {
@@ -71,7 +68,9 @@ const MobilePaymentPage = () => {
         <div className="w-12 h-12 md:w-18 md:h-18 lg:w-16 lg:h-16 bg-primary rounded-full flex items-center justify-center mb-3">
           <SuccessIcon className="text-primary w-17 h-17" />
         </div>
-        <h1 className="text-base md:text-[22px] lg:text-xl font-bold mb-1">Pesanan Berhasil Dibuat!</h1>
+        <h1 className="text-base md:text-[22px] lg:text-xl font-bold mb-1">
+          Pesanan Berhasil Dibuat!
+        </h1>
         <p className="text-gray-500 mb-6 text-[13px] md:text-lg lg:text-base">
           Silakan lakukan pembayaran via QRIS
         </p>
@@ -82,7 +81,9 @@ const MobilePaymentPage = () => {
           <div className="flex flex-col gap-1.5 border-b border-[#E3D1EE] pb-2">
             <div className="flex justify-between text-[13.5px] md:text-base">
               <span className="text-gray-500">Nomor meja</span>
-              <span className="font-bold text-primary">{tableNumber || "Meja --"}</span>
+              <span className="font-bold text-primary">
+                {tableNumber || "Meja --"}
+              </span>
             </div>
             <div className="flex justify-between text-[13.5px] md:text-base">
               <span className="text-gray-500">ID Pesanan</span>
@@ -119,13 +120,13 @@ const MobilePaymentPage = () => {
       </main>
 
       {/* --- STICKY BOTTOM BAR --- */}
-        <div className="w-full max-w-sm md:max-w-2xl lg:max-w-3xl mx-auto mt-20 px-3">
-          <Button
-            onClick={handleSudahBayar}
-            className="w-full md:max-w-2xl lg:max-w-3xl py-1.5 md:py-2.25 lg:py-2 rounded-xl font-semibold text-base md:text-lg lg:text-base"
-          >
-            Sudah Bayar
-          </Button>
+      <div className="w-full max-w-sm md:max-w-2xl lg:max-w-3xl mx-auto mt-20 px-3">
+        <Button
+          onClick={handleSudahBayar}
+          className="w-full md:max-w-2xl lg:max-w-3xl py-1.5 md:py-2.25 lg:py-2 rounded-xl font-semibold text-base md:text-lg lg:text-base"
+        >
+          Sudah Bayar
+        </Button>
       </div>
 
       {/* MODAL KADALUARSA */}

@@ -7,6 +7,7 @@ import WaiterReceiptItemCard from "../../components/Card/WaiterReceiptItemCard";
 import { useCartStore } from "../../store/useCartStore";
 import { useState } from "react";
 import ExpiredModal from "../../components/Modal/ExpiredModal";
+import { useOrderPayment } from "../../hooks/useOrderPayment";
 
 const rupiahFormatter = new Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -22,16 +23,23 @@ const CashierPaymentPage = () => {
 
   // Ambil state dari halaman sebelumnya, fallback default
   const tableNumber = location.state?.tableNumber ? `Meja ${location.state.tableNumber}` : "Meja 10";
-  const orderId = location.state?.orderId || "#260412992";
-  const discountAmount = location.state?.discountAmount || 15000; // Contoh Mock Diskon
-  const adminFee = 92; // Sesuai desain Figma
-  const taxRate = 10;
-
+  const orderId = location.state?.orderId || "UNKNOWN";
+  const discountAmount = location.state?.discountAmount || 0; 
+  
   // Data dari Store
   const { items, getTotalPrice } = useCartStore();
   const subTotal = getTotalPrice();
-  const taxAmount = subTotal * (taxRate / 100);
-  const grandTotal = subTotal + taxAmount - discountAmount + adminFee;
+  const taxRate = 10;
+  const {
+  adminFee,
+  taxAmount,
+  finalPayment,
+} = useOrderPayment(
+  orderId,
+  subTotal,
+  discountAmount,
+  taxRate,
+);
 
   const handleValidatePayment = () => {
     const passedOrder = {
@@ -81,7 +89,7 @@ const CashierPaymentPage = () => {
 
             {/* QR Component */}
             <WaiterQRCodeBox 
-              finalPayment={grandTotal} 
+              finalPayment={finalPayment} 
               onExpire={() => setIsExpiredOpen(true)}
             />
           </div>
@@ -132,7 +140,7 @@ const CashierPaymentPage = () => {
               {/* Total Pembayaran Akhir */}
               <div className="flex justify-between items-center pt-1 mb-4 border-t border-gray-100">
                 <span className="font-bold text-sm">Total Pembayaran</span>
-                <span className="font-bold text-sm">{rupiahFormatter.format(grandTotal)}</span>
+                <span className="font-bold text-sm">{rupiahFormatter.format(finalPayment)}</span>
               </div>
 
               {/* Tombol Validasi Pembayaran (Khusus Kasir) */}
