@@ -131,7 +131,7 @@ const MapSection = () => {
       </div>
 
       {/* TANDAI SEBAGAI */}
-      <div className="space-y-3 text-left">
+      <div className="flex flex-col gap-3 text-left">
         <label className="text-black font-bold text-sm">Tandai Sebagai</label>
         <div className="flex gap-4">
           <button

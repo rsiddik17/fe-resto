@@ -33,96 +33,111 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
       newErrors.new = "Kata sandi baru wajib diisi";
       isValid = false;
     } else if (password.new.length < 8) {
-      newErrors.new = "Kata sandi baru minimal harus 8 karakter!";
+      newErrors.new = "Kata sandi baru harus minimal 8 karakter!";
       isValid = false;
     }
 
-    // Cek konfirmasi password baru
+    // Cek konfirmasi password (wajib sama dengan password baru)
     if (!password.confirm) {
       newErrors.confirm = "Konfirmasi kata sandi wajib diisi";
       isValid = false;
     } else if (password.new !== password.confirm) {
-      newErrors.confirm = "Konfirmasi kata sandi tidak cocok!";
+      newErrors.confirm = "Konfirmasi kata sandi tidak cocok dengan kata sandi baru!";
       isValid = false;
     }
 
     setErrors(newErrors);
 
-    // Kalau semua kriteria aman, baru buka modal konfirmasi
+    // Jika semua validasi lolos, munculkan modal konfirmasi
     if (isValid) {
       setIsModalOpen(true);
     }
   };
 
+  // Array konfigurasi field agar mapping code bersih
+  const fields = [
+    { id: "old" as const, label: "Kata Sandi Lama", placeholder: "Masukkan kata sandi lama" },
+    { id: "new" as const, label: "Kata Sandi Baru", placeholder: "Masukkan kata sandi baru" },
+    { id: "confirm" as const, label: "Konfirmasi Kata Sandi Baru", placeholder: "Masukkan kembali kata sandi baru" },
+  ];
+
   return (
-    <div className="animate-in fade-in duration-500 text-left font-poppins">
+    <div className="w-full font-poppins text-left">
+      {/* Judul Tab "Ubah Kata Sandi" agar persis seperti di screenshot desain kamu */}
       <h3 className="text-xl font-black text-black mb-8">Ubah Kata Sandi</h3>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {[
-          { label: "Kata Sandi Lama", id: "old" as const },
-          { label: "Kata Sandi Baru", id: "new" as const },
-          { label: "Konfirmasi Kata Sandi Baru", id: "confirm" as const },
-        ].map((item) => (
-          <div key={item.id} className="space-y-2">
-            <label className="text-black font-bold text-sm">
-              {item.label}*
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword[item.id] ? "text" : "password"}
-                placeholder="Min 8 karakter"
-                value={password[item.id]}
-                onChange={(e) => setPassword({ ...password, [item.id]: e.target.value })}
-                // Border otomatis merah kalau field tersebut ada error-nya
-                className={`w-full p-4 bg-gray-50 border rounded-sm font-medium outline-none text-sm transition-colors ${
-                  errors[item.id] ? "border-red-500 focus:border-red-500" : "border-gray-100 focus:border-primary"
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((p) => ({ ...p, [item.id]: !p[item.id] }))}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-              >
-                {showPassword[item.id] ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-            {/* Munculkan alert teks merah tepat di bawah field yang error */}
-            {errors[item.id] && (
-              <p className="text-red-500 text-xs font-bold mt-1 pl-1 animate-in fade-in duration-300">
-                {errors[item.id]}
-              </p>
-            )}
-          </div>
-        ))}
+      {/* FORM di-set w-full penuh agar container tombol di bawah bisa rata kanan mentok */}
+      <form onSubmit={handleSubmit} className="space-y-6 w-full">
         
-        <div className="flex justify-end gap-4 pt-12">
+        {/* KELOMPOK INPUT: Di sini kita kunci max-w-xl agar field-nya tidak melar ke kanan */}
+        <div className="space-y-6 max-w-xl">
+          {fields.map((item) => (
+            <div key={item.id} className="space-y-2 flex flex-col">
+              <label className="text-black font-bold text-[16px]">
+                {item.label}*
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword[item.id] ? "text" : "password"}
+                  placeholder={item.placeholder}
+                  value={password[item.id]}
+                  onChange={(e) => {
+                    setPassword((p) => ({ ...p, [item.id]: e.target.value }));
+                    if (errors[item.id]) {
+                      setErrors((err) => ({ ...err, [item.id]: "" }));
+                    }
+                  }}
+                  className={`w-full p-4 bg-gray-50 border rounded-xs font-medium outline-none text-sm pr-12 transition-colors ${
+                    errors[item.id] ? "border-red-500 focus:border-red-500" : "border-gray-100 focus:border-primary/30"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((p) => ({ ...p, [item.id]: !p[item.id] }))}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword[item.id] ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+              {errors[item.id] && (
+                <p className="text-red-500 text-xs font-bold mt-1 pl-1 animate-in fade-in duration-300">
+                  {errors[item.id]}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+        
+        {/* CONTAINER TOMBOL: Bebas dari max-w-xl, menggunakan w-full & justify-end 
+            Sekarang posisinya otomatis bergeser rata kanan mengisi ruang kosong seperti desain!
+        */}
+        <div className="w-full flex justify-end gap-4 pt-12">
           <button
             type="button"
             onClick={onCancel}
-            className="px-10 py-3 bg-gray-200 text-gray-600 font-bold rounded-xs"
+            className="px-10 py-3 bg-gray-200 text-gray-600 font-bold rounded-xs active:scale-95 transition-transform text-sm"
           >
             Batal
           </button>
           <button
             type="submit"
-            className="px-10 py-3 bg-primary text-white font-bold rounded-xs shadow-lg"
+            className="px-10 py-3 bg-primary text-white font-bold rounded-xs shadow-lg active:scale-95 transition-all text-sm"
           >
             Simpan
           </button>
         </div>
       </form>
 
-      {/* PERBAIKAN: onConfirm diatur ulang agar tidak memaksa pindah halaman */}
+      {/* Modal konfirmasi */}
       <ConfirSandi
         isOpen={isModalOpen}
         title="Perbarui Kata Sandi?"
-        description="Apakah anda yakin ingin mengubah kata sandi akun anda? Tindakan ini tidak dapat dibatalkan"
+        description="Apakah anda yakin ingin mengubah kata sandi? Tindakan ini tidak dapat dibatalkan"
         onCancel={() => setIsModalOpen(false)}
         onConfirm={() => {
-          setIsModalOpen(false); // 1. Tutup modal konfirmasi
-          setPassword({ old: "", new: "", confirm: "" }); // 2. Reset inputan form
-          // onCancel() dihapus dari sini agar tab tidak melompat kembali ke edit profil secara otomatis
+          setIsModalOpen(false);
+          setPassword({ old: "", new: "", confirm: "" });
+          onCancel(); 
         }}
       />
     </div>

@@ -76,13 +76,13 @@ const ProfilePage = () => {
                     setActiveTab("Profil");
                     setIsEditingProfile(true);
                   }}
-                  className="bg-primary text-white px-6 py-2.5 rounded-full font-bold flex items-center gap-2 shadow-lg text-sm font-poppins"
+                  className="bg-primary text-white px-6 py-2.5 rounded-xs font-bold flex items-center gap-2 shadow-lg text-sm font-poppins"
                 >
                   <Edit3 size={16} /> Edit Profile
                 </button>
                 <button
                   onClick={() => setActiveTab("Sandi")}
-                  className="bg-primary text-white px-6 py-2.5 rounded-full font-bold flex items-center gap-2 shadow-lg text-sm font-poppins"
+                  className="bg-primary text-white px-6 py-2.5 rounded-xs font-bold flex items-center gap-2 shadow-lg text-sm font-poppins"
                 >
                   <Lock size={16} /> Ubah Kata Sandi
                 </button>
@@ -98,7 +98,7 @@ const ProfilePage = () => {
                 setActiveTab("Profil");
                 setIsEditingProfile(false);
               }}
-              className={`pb-4 text-lg font-bold transition-all font-poppins ${activeTab === "Profil" || activeTab === "Sandi" ? "text-primary border-b-4 border-primary" : "text-gray-400"}`}
+              className={`pb-4 text-lg  transition-all font-poppins ${activeTab === "Profil" || activeTab === "Sandi" ? "text-primary border-b-4 border-primary" : "text-gray-400"}`}
             >
               Profile Saya
             </button>
@@ -107,7 +107,7 @@ const ProfilePage = () => {
                 setActiveTab("Alamat");
                 setAddressView("list");
               }}
-              className={`pb-4 text-lg font-bold transition-all font-poppins ${activeTab === "Alamat" ? "text-primary border-b-4 border-primary" : "text-gray-400"}`}
+              className={`pb-4 text-lg  transition-all font-poppins ${activeTab === "Alamat" ? "text-primary border-b-4 border-primary" : "text-gray-400"}`}
             >
               Alamat
             </button>
@@ -130,7 +130,7 @@ const ProfilePage = () => {
                       defaultValue="Wawan Hermawan"
                     />
                   </div>
-                  
+
                   {/* DI SINI BAGIAN YANG DIGANTI KE CUSTOM DROPDOWN (100% AMAN DI MOBILE) */}
                   <div className="space-y-2 relative">
                     <label className="text-black font-bold text-sm">
@@ -141,7 +141,7 @@ const ProfilePage = () => {
                         type="button"
                         disabled={!isEditingProfile}
                         onClick={() => setIsOpenJk(!isOpenJk)}
-                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium text-left outline-none text-gray-700 disabled:text-black text-sm flex justify-between items-center h-[54px]"
+                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium text-left outline-none text-gray-700 disabled:text-black text-sm flex justify-between items-center h-13.5]"
                       >
                         <span>{gender}</span>
                         {isEditingProfile && (
@@ -155,8 +155,11 @@ const ProfilePage = () => {
                       {isEditingProfile && isOpenJk && (
                         <>
                           {/* Latar belakang transparan penutup otomatis jika klik di luar dropdown */}
-                          <div className="fixed inset-0 z-40" onClick={() => setIsOpenJk(false)} />
-                          
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setIsOpenJk(false)}
+                          />
+
                           <ul className="absolute left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xs shadow-xl z-50 overflow-hidden divide-y divide-gray-50 animate-in fade-in slide-in-from-top-1 duration-150">
                             {["Laki-laki", "Perempuan"].map((option) => (
                               <li
@@ -166,7 +169,9 @@ const ProfilePage = () => {
                                   setIsOpenJk(false);
                                 }}
                                 className={`p-4 text-sm cursor-pointer transition-colors text-left hover:bg-primary/5 ${
-                                  gender === option ? "text-primary font-bold bg-primary/5" : "text-gray-700"
+                                  gender === option
+                                    ? "text-primary font-bold bg-primary/5"
+                                    : "text-gray-700"
                                 }`}
                               >
                                 {option}
@@ -188,7 +193,7 @@ const ProfilePage = () => {
                       defaultValue="+62 114 0986 7821"
                     />
                   </div>
-                  
+
                   {/* Tanggal Lahir */}
                   <div className="space-y-2">
                     <label className="text-black font-bold text-sm">
@@ -210,19 +215,19 @@ const ProfilePage = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-end mt-16 font-poppins">
                   {isEditingProfile ? (
                     <div className="flex gap-4">
                       <button
                         onClick={() => setIsEditingProfile(false)}
-                        className="px-10 py-3 bg-gray-200 text-gray-600 font-bold rounded-xs"
+                        className="px-10 py-3 bg-gray-200 text-gray-600 font-bold rounded-xs active:scale-95 transition-transform text-sm"
                       >
                         Batal
                       </button>
                       <button
                         onClick={() => setIsEditingProfile(false)}
-                        className="px-10 py-3 bg-primary text-white font-bold rounded-xs shadow-lg flex items-center gap-2"
+                        className="px-10 py-3 bg-primary text-white font-bold rounded-xs active:scale-95 transition-transform text-sm"
                       >
                         Simpan
                       </button>
@@ -230,9 +235,9 @@ const ProfilePage = () => {
                   ) : (
                     <button
                       onClick={() => toggleModal("logout", true)}
-                      className="bg-primary text-white px-12 py-3.5 rounded-xs font-bold flex items-center gap-3 shadow-xl"
+                      className="bg-primary text-white px-6 py-2.5 rounded-xs font-bold flex items-center gap-2 shadow-lg text-sm font-poppins"
                     >
-                      <LogoutIcon size={20} /> Keluar
+                      <LogoutIcon size={16} /> Keluar
                     </button>
                   )}
                 </div>
@@ -350,7 +355,7 @@ const ProfilePage = () => {
                       </button>
                       <button
                         onClick={() => toggleModal("confirmAddress", true)}
-                        className="px-10 py-3 bg-primary text-white font-bold rounded-xs shadow-lg"
+                        className="px-10 py-3 bg-primary text-white font-bold rounded-xs shadow-lg active:scale-95 transition-all text-sm"
                       >
                         Simpan
                       </button>
