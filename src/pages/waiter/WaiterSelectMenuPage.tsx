@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { Search } from "lucide-react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
@@ -14,9 +14,12 @@ import Input from "../../components/ui/Input";
 import DeleteConfirmModal from "../../components/Modal/DeleteConfirmModal";
 import { useMenus } from "../../hooks/useMenus";
 import WarningIcon from "../../components/Icon/WarningIcon";
+import { useAuthStore } from "../../store/useAuthStore";
+import { profileAPI } from "../../api/profile.api";
 
 const WaiterSelectMenuPage = () => {
   const navigate = useNavigate();
+  const { user, setUser } = useAuthStore();
   const location = useLocation();
 
   // Tangkap nomor meja dari halaman Pilih Meja, fallback "Meja 10"
@@ -74,25 +77,45 @@ const WaiterSelectMenuPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (!user) {
+      const fetchProfile = async () => {
+        try {
+          const response = await profileAPI.getStaffProfile();
+          if (response.success && response.data) {
+            setUser(response.data);
+          }
+        } catch (error) {
+          console.error("Gagal mengambil data profil:", error);
+        }
+      };
+      fetchProfile();
+    }
+  }, [user, setUser]);
+
+  // Ekstrak nama depan untuk header
+  const firstName = user?.fullname ? user.fullname.split(" ")[0] : "Memuat...";
+  const roleName = user?.role === "WAITER" ? "Pelayan" : "Pelayan";
+
   return (
     <>
       {/* 1. HEADER (Sesuai Wrapper Permintaan) */}
-      <div className="pt-7.5 pl-8 pr-7">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-7 mx-4 lg:mx-0">
         <DashboardHeader
           title="Pilih Menu"
           showBack={true}
           onBack={() => navigate(-1)}
-          userName="Mila"
-          roleName="Pelayan"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
       {/* 2. MAIN CONTENT (Sesuai Wrapper Permintaan) */}
-      <div className="pt-0 pb-0 px-8 min-h-0">
+      <div className="pt-1 lg:pt-1 pb-0 lg:pb-0 px-4 lg:px-8 min-h-0">
         {/* Layout 2 Kolom Kiri/Kanan dengan proporsi fixed 52% dan 48% */}
-        <div className="flex gap-4 h-full min-h-0 w-full">
-          {/* --- KOLOM KIRI: MENU (52%) --- */}
-          <div className="w-[55%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 pb-0 md:p-5 md:pb-0 flex flex-col min-h-0">
+        <div className="flex flex-col md:flex-row gap-4 h-screen md:h-full min-h-0 w-full">
+          {/* --- KOLOM KIRI: MENU (55%) --- */}
+          <div className="w-full md:w-[55%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 pb-0 md:p-5 md:pb-0 flex flex-col h-full min-h-0">
             {/* Search */}
             <div className="relative mb-4 shrink-0">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -183,8 +206,8 @@ const WaiterSelectMenuPage = () => {
             </div>
           </div>
 
-          {/* --- KOLOM KANAN: CART (48%) --- */}
-          <div className="w-[45%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 flex flex-col h-full min-h-0">
+          {/* --- KOLOM KANAN: CART (45%) --- */}
+          <div className="w-full md:w-[45%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 flex flex-col h-full min-h-0">
             {/* Header Cart */}
             <div className="flex justify-between items-center shrink-0 border-b border-gray-100 mb-1">
               <h2 className="font-bold text-[19px]">Pesanan</h2>
@@ -230,7 +253,7 @@ const WaiterSelectMenuPage = () => {
               <Button
                 onClick={handleConfirmOrder}
                 disabled={items.length === 0}
-                className="w-full max-w-80 py-2 text-[14px] font-bold rounded-lg shadow-sm disabled:bg-gray/50 disabled:cursor-not-allowed transition-all"
+                className="w-full max-w-80 py-2 text-[14px] md:text-[14px] lg:text-[14px] font-bold rounded-lg shadow-sm disabled:bg-gray/50 disabled:cursor-not-allowed transition-all"
               >
                 Konfirmasi Pesanan
               </Button>

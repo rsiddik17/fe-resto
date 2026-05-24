@@ -41,10 +41,4 @@ export const authAPI = {
     const response = await axiosInstance.post("/auth/resend-otp", data);
     return response.data;
   },
-
-  getProfile: async () => {
-    // Sesuaikan "/auth/me" dengan endpoint asli dari Backend-mu
-    const response = await axiosInstance.get("/auth/me"); 
-    return response.data;
-  }
 };

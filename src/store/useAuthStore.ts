@@ -9,6 +9,7 @@ export interface UserProfile {
   gender?: string;
   email?: string;
   role?: string;
+  is_active?: boolean;
 }
 
 interface AuthState {

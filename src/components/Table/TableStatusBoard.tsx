@@ -43,7 +43,7 @@ const TableStatusBoard = () => {
           <div
             key={table.id}
             className={cn(
-              "aspect-square p-px rounded-sm text-center flex items-center justify-center text-base",
+              "aspect-square p-px rounded-sm text-center flex items-center justify-center text-base md:text-xl lg:text-base",
               table.status === "terisi" && "bg-primary text-white",
               table.status === "kotor" && "bg-[#D9D9D9] text-white",
               table.status === "tersedia" &&

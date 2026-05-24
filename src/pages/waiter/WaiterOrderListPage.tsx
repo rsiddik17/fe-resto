@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search } from "lucide-react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import Input from "../../components/ui/Input";
@@ -9,6 +9,8 @@ import OrderDetailModal from "../../components/Modal/OrderDetailModal";
 import ConfirmFinishModal from "../../components/Modal/ConfirmFinishModal";
 import { cn } from "../../utils/utils";
 import { useNavigate } from "react-router";
+import { useAuthStore } from "../../store/useAuthStore";
+import { profileAPI } from "../../api/profile.api";
 
 // --- MOCK DATA SEMENTARA ---
 // Nanti ini diganti dengan data asli dari Backend menggunakan React Query
@@ -88,6 +90,7 @@ const WaiterOrderListPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<OrderStatus>("DIMASAK");
   const navigate = useNavigate();
+  const { user, setUser } = useAuthStore();
 
   // State untuk Modal
   const [selectedOrder, setSelectedOrder] = useState<
@@ -115,19 +118,39 @@ const WaiterOrderListPage = () => {
     setOrderToFinish(null);
   };
 
+  useEffect(() => {
+    if (!user) {
+      const fetchProfile = async () => {
+        try {
+          const response = await profileAPI.getStaffProfile();
+          if (response.success && response.data) {
+            setUser(response.data);
+          }
+        } catch (error) {
+          console.error("Gagal mengambil data profil:", error);
+        }
+      };
+      fetchProfile();
+    }
+  }, [user, setUser]);
+
+  // Ekstrak nama depan untuk header
+  const firstName = user?.fullname ? user.fullname.split(" ")[0] : "Memuat...";
+  const roleName = user?.role === "WAITER" ? "Pelayan" : "Pelayan";
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* 1. HEADER */}
-      <div className="pt-7.5 pl-8 pr-6">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0">
         <DashboardHeader
           title="Daftar Pesanan"
           subtitle="Pantau aktivitas pesanan dan layanan meja"
-          userName="Mila" // Nanti ganti dengan user?.fullname
-          roleName="Pelayan"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
-      <div className="pt-0 pb-0 px-8 flex flex-col flex-1 min-h-0">
+      <div className="pt-1 lg:pt-1 pb-0 lg:pb-0 px-4 lg:px-8 flex flex-col flex-1 min-h-0">
         {/* 2. SEARCH BAR */}
         <div className="relative mb-3 shrink-0 max-w-110">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -135,7 +158,7 @@ const WaiterOrderListPage = () => {
           </div>
           <Input
             type="text"
-            className="w-full pl-11 pr-4 py-2 text-[14px] rounded-sm border-gray-200 focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-black/50 shadow-sm"
+            className="w-full pl-11 pr-4 py-2 text-[14.5px] rounded-sm border-gray-200 focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-black/50 shadow-sm"
             placeholder="Cari nomor meja"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -143,7 +166,7 @@ const WaiterOrderListPage = () => {
         </div>
 
         {/* 3. TAB FILTER (Custom Styling sesuai Figma) */}
-        <div className="flex gap-5 mb-4 shrink-0">
+        <div className="flex flex-col md:flex-row gap-5 mb-4 shrink-0">
           <button
             onClick={() => setActiveTab("DIMASAK")}
             className={cn(
