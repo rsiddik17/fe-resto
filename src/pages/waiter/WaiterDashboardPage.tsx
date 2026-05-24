@@ -165,7 +165,7 @@ const WaiterDashboardPage = () => {
             <Button
               variant="outline"
               onClick={() => navigate("/waiter/create-order")}
-              className="w-full bg-white border-2 border-white text-primary font-bold text-[17px] lg:text-[19px] py-2.5 rounded-md shadow-sm hover:border-primary/20 transition-all flex justify-center items-center gap-2"
+              className="w-full bg-white border-2 border-white text-primary font-bold text-[17px] lg:text-[17.5px] py-2.5 rounded-md shadow-sm hover:border-primary/20 transition-all flex justify-center items-center gap-2"
             >
               <AddOrderIcon className="bg-primary text-white rounded-full w-6.5 h-6.5" />{" "}
               Buat Pesanan

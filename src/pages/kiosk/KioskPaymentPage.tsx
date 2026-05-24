@@ -23,14 +23,10 @@ const KioskPaymentPage = () => {
 
   // Kalkulasi Dasar
   const subTotal = getTotalPrice();
-  const taxRate = 10;
-  const taxAmount = subTotal * (taxRate / 100);
 
-  // Memanggil Custom Hook kita
-  const { adminFee, finalPayment } = useOrderPayment(
+  const { adminFee, taxAmount, finalPayment } = useOrderPayment(
     backendOrderId,
     subTotal,
-    taxAmount,
     discountAmount,
   );
 
@@ -65,7 +61,9 @@ const KioskPaymentPage = () => {
         <div className="w-14 h-14 md:w-18 md:h-18 bg-primary rounded-full flex items-center justify-center mb-6 shadow-md">
           <SuccessIcon className="text-primary w-36 h-36 md:w-40 md:h-40" />
         </div>
-        <h1 className="text-lg md:text-[28px] lg:text-2xl font-bold mb-1">Pesanan Berhasil Dibuat!</h1>
+        <h1 className="text-lg md:text-[28px] lg:text-2xl font-bold mb-1">
+          Pesanan Berhasil Dibuat!
+        </h1>
         <p className="text-gray mb-6 text-base md:text-2xl lg:text-xl">
           Silakan lakukan pembayaran via QRIS
         </p>
@@ -76,7 +74,9 @@ const KioskPaymentPage = () => {
           <div className="flex flex-col gap-2">
             <div className="flex justify-between text-base md:text-xl lg:text-lg">
               <span className="text-gray">Nomor meja</span>
-              <span className="font-bold text-primary">{tableNumber || "Meja --"}</span>
+              <span className="font-bold text-primary">
+                {tableNumber || "Meja --"}
+              </span>
             </div>
             <div className="flex justify-between text-base md:text-xl lg:text-lg">
               <span className="text-gray">ID Pesanan</span>
@@ -93,7 +93,9 @@ const KioskPaymentPage = () => {
 
         {/* --- STRUK / RINGKASAN PESANAN BAWAH --- */}
         <div className="w-full text-left">
-          <h3 className="font-bold text-[17px] md:text-2xl lg:text-xl mb-2">Ringkasan Pesanan</h3>
+          <h3 className="font-bold text-[17px] md:text-2xl lg:text-xl mb-2">
+            Ringkasan Pesanan
+          </h3>
 
           <div className="flex flex-col">
             {items.map((item) => (
