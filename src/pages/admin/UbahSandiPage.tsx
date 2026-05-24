@@ -1,0 +1,136 @@
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import AdminSidebar from "../../components/AdminComponents/AdminSidebar";
+import AdminHeader from "../../components/AdminComponents/AdminHeader";
+import ConfirAlamat from "../../components/ConfirmationModal/ConfirmationModal";
+
+const UbahSandiPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
+  // State Input Form
+  const [sandiLama, setSandiLama] = useState("");
+  const [sandiBaru, setSandiBaru] = useState("");
+  const [konfirmasiSandi, setKonfirmasiSandi] = useState("");
+
+  // State Mata Intip Input Password
+  const [showLama, setShowLama] = useState(false);
+  const [showBaru, setShowBaru] = useState(false);
+  const [showKonfirmasi, setShowKonfirmasi] = useState(false);
+
+  const handleTriggerConfirm = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (sandiBaru !== konfirmasiSandi) {
+      alert("Konfirmasi kata sandi baru tidak cocok!");
+      return;
+    }
+    setIsConfirmOpen(true); // Picu pop-up konfirmasi ungu
+  };
+
+  const handleFinalSave = () => {
+    setIsConfirmOpen(false);
+    // Kirim state parameter toast sukses ke halaman utama
+    navigate("/admin/manajemen-pegawai", { state: { showSuccessToast: true } });
+  };
+
+  return (
+    <div className="flex h-screen w-screen overflow-hidden bg-[#F3F4F6]">
+      <AdminSidebar onLogout={() => console.log("Admin Logout")} />
+
+      <main className="flex-1 flex flex-col h-full min-w-0 overflow-y-auto p-5 md:p-6">
+        <AdminHeader title="Manajemen Pegawai" subtitle="Pantau data sistem dan aktivitas pegawai" />
+
+        <div className="w-full max-w-300 mx-auto space-y-4">
+          
+          {/* Tombol Back Navigasi */}
+          <button 
+            onClick={() => navigate("/admin/manajemen-pegawai")}
+            className="flex items-center gap-2 text-gray-800 font-extrabold text-[15px] hover:text-primary transition-colors cursor-pointer w-fit"
+          >
+            <ArrowLeft size={18} strokeWidth={2.5} />
+            Ubah Kata Sandi
+          </button>
+
+          {/* Form Utama */}
+          <div className="bg-white rounded-[20px] shadow-xs border border-gray-150 p-6 md:p-8">
+            <form onSubmit={handleTriggerConfirm} className="space-y-5 max-w-xl">
+              
+              {/* Kata Sandi Lama */}
+              <div className="space-y-1.5 relative">
+                <label className="text-[11.5px] font-extrabold text-black uppercase tracking-wider">Kata Sandi Lama<span className="text-red-500 ml-0.5">*</span></label>
+                <div className="relative w-full">
+                  <input
+                    type={showLama ? "text" : "password"} required placeholder="Min 8 karakter" value={sandiLama} onChange={(e) => setSandiLama(e.target.value)}
+                    className="w-full bg-[#F3F4F6]/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
+                  />
+                  <button type="button" onClick={() => setShowLama(!showLama)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer">
+                    {showLama ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Kata Sandi Baru */}
+              <div className="space-y-1.5 relative">
+                <label className="text-[11.5px] font-extrabold text-black uppercase tracking-wider">Kata Sandi Baru<span className="text-red-500 ml-0.5">*</span></label>
+                <div className="relative w-full">
+                  <input
+                    type={showBaru ? "text" : "password"} required placeholder="Min 8 karakter" value={sandiBaru} onChange={(e) => setSandiBaru(e.target.value)}
+                    className="w-full bg-[#F3F4F6]/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
+                  />
+                  <button type="button" onClick={() => setShowBaru(!showBaru)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer">
+                    {showBaru ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Konfirmasi Kata Sandi Baru */}
+              <div className="space-y-1.5 relative">
+                <label className="text-[11.5px] font-extrabold text-black uppercase tracking-wider">Konfirmasi Kata Sandi Baru<span className="text-red-500 ml-0.5">*</span></label>
+                <div className="relative w-full">
+                  <input
+                    type={showKonfirmasi ? "text" : "password"} required placeholder="Konfirmasi Kata Sandi" value={konfirmasiSandi} onChange={(e) => setKonfirmasiSandi(e.target.value)}
+                    className="w-full bg-[#F3F4F6]/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
+                  />
+                  <button type="button" onClick={() => setShowKonfirmasi(!showKonfirmasi)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer">
+                    {showKonfirmasi ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Tombol Control */}
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
+                <button
+                  type="button" onClick={() => navigate("/admin/manajemen-pegawai")}
+                  className="px-6 py-2.5 text-[13.5px] font-bold text-gray-500 hover:text-black rounded-xs border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="bg-primary hover:opacity-95 text-white font-bold text-[13.5px] px-8 py-2.5 rounded-xs transition-all shadow-md shadow-purple-900/15 cursor-pointer"
+                >
+                  Simpan
+                </button>
+              </div>
+
+            </form>
+          </div>
+
+          {/* MODAL DIALOG UNGU PERBAHARUI KATA SANDI (Kelola Pengguna (7).png) */}
+          <ConfirAlamat 
+            isOpen={isConfirmOpen}
+            onCancel={() => setIsConfirmOpen(false)}
+            onConfirm={handleFinalSave}
+            title="Perbarui Kata Sandi?"
+            description="Apakah anda yakin ingin mengubah kata sandi pegawai ini? Tindakan ini tidak dapat dibatalkan"
+          />
+
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default UbahSandiPage;

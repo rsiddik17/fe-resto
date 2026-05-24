@@ -17,7 +17,7 @@ import MapSection from "../../components/MapSection/MapSection";
 import LogoutModal from "../../components/LogoutModal/LogoutModal";
 import ChangePwProf from "../../components/ChangePwProf/ChangePwProf";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal/DeleteConfirmationModal";
-import ConfirAlamat from "../../components/ConfirAlamat/ConfirAlamat";
+import ConfirAlamat from "../../components/ConfirmationModal/ConfirmationModal";
 import { useAuthStore } from "../../store/useAuthStore";
 import LogoutIcon from "../../components/Icon/LogOutIcon";
 
@@ -130,7 +130,7 @@ const ProfilePage = () => {
                       defaultValue="Wawan Hermawan"
                     />
                   </div>
-                  
+
                   {/* DI SINI BAGIAN YANG DIGANTI KE CUSTOM DROPDOWN (100% AMAN DI MOBILE) */}
                   <div className="space-y-2 relative">
                     <label className="text-black font-bold text-sm">
@@ -155,8 +155,11 @@ const ProfilePage = () => {
                       {isEditingProfile && isOpenJk && (
                         <>
                           {/* Latar belakang transparan penutup otomatis jika klik di luar dropdown */}
-                          <div className="fixed inset-0 z-40" onClick={() => setIsOpenJk(false)} />
-                          
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setIsOpenJk(false)}
+                          />
+
                           <ul className="absolute left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xs shadow-xl z-50 overflow-hidden divide-y divide-gray-50 animate-in fade-in slide-in-from-top-1 duration-150">
                             {["Laki-laki", "Perempuan"].map((option) => (
                               <li
@@ -166,7 +169,9 @@ const ProfilePage = () => {
                                   setIsOpenJk(false);
                                 }}
                                 className={`p-4 text-sm cursor-pointer transition-colors text-left hover:bg-primary/5 ${
-                                  gender === option ? "text-primary font-bold bg-primary/5" : "text-gray-700"
+                                  gender === option
+                                    ? "text-primary font-bold bg-primary/5"
+                                    : "text-gray-700"
                                 }`}
                               >
                                 {option}
@@ -188,7 +193,7 @@ const ProfilePage = () => {
                       defaultValue="+62 114 0986 7821"
                     />
                   </div>
-                  
+
                   {/* Tanggal Lahir */}
                   <div className="space-y-2">
                     <label className="text-black font-bold text-sm">
@@ -210,7 +215,7 @@ const ProfilePage = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-end mt-16 font-poppins">
                   {isEditingProfile ? (
                     <div className="flex gap-4">

@@ -1,4 +1,4 @@
-import { LogOut } from "lucide-react";
+// import { LogOut } from "lucide-react";
 import LogoutIcon from "../Icon/LogOutIcon";
 
 interface LogoutModalProps {

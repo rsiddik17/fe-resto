@@ -1,21 +1,25 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import ConfirSandi from "../ConfirAlamat/ConfirAlamat";
+import ConfirSandi from "../ConfirmationModal/ConfirmationModal";
 
 const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
-  const [showPassword, setShowPassword] = useState({ old: false, new: false, confirm: false });
+  const [showPassword, setShowPassword] = useState({
+    old: false,
+    new: false,
+    confirm: false,
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 1. State untuk menampung value teks password
   const [password, setPassword] = useState({ old: "", new: "", confirm: "" });
-  
+
   // 2. State untuk menyimpan pesan error
   const [errors, setErrors] = useState({ old: "", new: "", confirm: "" });
 
   // 3. Fungsi validasi saat form di-submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const newErrors = { old: "", new: "", confirm: "" };
     let isValid = true;
 
@@ -73,18 +77,28 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
                 type={showPassword[item.id] ? "text" : "password"}
                 placeholder="Min 8 karakter"
                 value={password[item.id]}
-                onChange={(e) => setPassword({ ...password, [item.id]: e.target.value })}
+                onChange={(e) =>
+                  setPassword({ ...password, [item.id]: e.target.value })
+                }
                 // Border otomatis merah kalau field tersebut ada error-nya
                 className={`w-full p-4 bg-gray-50 border rounded-sm font-medium outline-none text-sm transition-colors ${
-                  errors[item.id] ? "border-red-500 focus:border-red-500" : "border-gray-100 focus:border-primary"
+                  errors[item.id]
+                    ? "border-red-500 focus:border-red-500"
+                    : "border-gray-100 focus:border-primary"
                 }`}
               />
               <button
                 type="button"
-                onClick={() => setShowPassword((p) => ({ ...p, [item.id]: !p[item.id] }))}
+                onClick={() =>
+                  setShowPassword((p) => ({ ...p, [item.id]: !p[item.id] }))
+                }
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
               >
-                {showPassword[item.id] ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword[item.id] ? (
+                  <EyeOff size={20} />
+                ) : (
+                  <Eye size={20} />
+                )}
               </button>
             </div>
             {/* Munculkan alert teks merah tepat di bawah field yang error */}
@@ -95,7 +109,7 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
             )}
           </div>
         ))}
-        
+
         <div className="flex justify-end gap-4 pt-12">
           <button
             type="button"

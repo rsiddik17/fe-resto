@@ -81,6 +81,18 @@ import CashierPaymentPage from "../pages/cashier/CashierPaymentPage";
 import CashierTableManagementPage from "../pages/cashier/CashierTableManagementPage";
 import CashierDiscountManagementPage from "../pages/cashier/CashierDiscountManagementPage";
 import CashierReportPage from "../pages/cashier/CashierReportPage";
+import { Component } from "lucide-react";
+import ManajemenPegawaiPage from "../pages/admin/ManajemenPegawai";
+import TambahPegawaiPage from "../components/AdminComponents/TambahPegawaiPage";
+import EditPegawaiPage from "../components/AdminComponents/EditPegawai";
+import DetailPegawaiPage from "../components/AdminComponents/DetailPegawaiPage";
+import UbahSandiPage from "../pages/admin/UbahSandiPage";
+import DaftarPelangganPage from "../pages/admin/DaftarPelanggan";
+import LaporanPage from "../pages/admin/LaporanPage";
+import LaporanMingguanPage from "../pages/admin/LaporanMingguanPage";
+import LaporanBulananPage from "../pages/admin/LaporanBulanan";
+import AdminProfilePage from "../pages/admin/AdminProfilePage";
+
 
 const router = createBrowserRouter(
   [
@@ -106,7 +118,19 @@ const router = createBrowserRouter(
   // --- PROTECTED ROUTES ---
   {
     element: <ProtectedRoute allowedRoles={["ADMIN"]} />,
-    children: [{ path: "/admin/dashboard", Component: AdminDashboardPage }],
+    children: [
+      { path: "/admin/dashboard", Component: AdminDashboardPage },
+      { path: "/admin/manajemen-pegawai", Component: ManajemenPegawaiPage },
+      { path: "/admin/manajemen-pegawai/tambah", Component: TambahPegawaiPage },
+      { path: "/admin/manajemen-pegawai/edit/:id", Component: EditPegawaiPage },
+      { path: "/admin/manajemen-pegawai/detail/:id", Component: DetailPegawaiPage },
+      { path: "/admin/manajemen-pegawai/ubah-sandi/:id", Component: UbahSandiPage },
+      { path: "/admin/daftar-pelanggan", Component: DaftarPelangganPage },
+      { path: "/admin/laporan", Component: LaporanPage },
+      { path: "/admin/laporan/mingguan", Component: LaporanMingguanPage },
+      { path: "/admin/laporan/bulanan", Component: LaporanBulananPage },
+      { path: "/admin/profil", Component: AdminProfilePage },
+    ],
   },
   {
     element: <ProtectedRoute allowedRoles={["CASHIER"]} />,
