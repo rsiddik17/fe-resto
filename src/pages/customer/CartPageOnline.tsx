@@ -31,8 +31,8 @@ const CartPageOnline = () => {
   } = useCartStore();
 
   const [editingItem, setEditingItem] = useState<CartItem | null>(null);
-  // State untuk mengontrol modal hapus
   const [itemToDelete, setItemToDelete] = useState<CartItem | null>(null);
+
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     toggleAllChecked(e.target.checked);
   };
@@ -40,6 +40,20 @@ const CartPageOnline = () => {
   const selectedTotalPrice = items
     .filter((item) => item.checked)
     .reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  // Handler untuk tombol Minus
+  const handleDecrement = (item: CartItem) => {
+    if (item.qty > 1) {
+      updateQty(item.cartId, -1); // Kirim delta -1
+    } else {
+      setItemToDelete(item);
+    }
+  };
+
+  // Handler untuk tombol Plus
+  const handleIncrement = (item: CartItem) => {
+    updateQty(item.cartId, 1); // Kirim delta +1
+  };
 
   return (
     <div className="min-h-screen bg-[#F3F4F6] flex flex-col pb-32">
@@ -61,7 +75,7 @@ const CartPageOnline = () => {
             <div className="bg-white rounded-xs shadow-sm border border-gray-100 p-5 flex items-center gap-4 mb-4 mt-4">
               <input
                 type="checkbox"
-                className="w-5 h-5 accent-primary border-2 border-primary-100 rounded focus:ring-0 focus:ring-offset-0 cursor-pointer "
+                className="w-5 h-5 accent-primary border-2 border-primary-100 rounded focus:ring-0 focus:ring-offset-0 cursor-pointer"
                 onChange={handleSelectAll}
                 checked={items.length > 0 && items.every((i) => i.checked)}
               />
@@ -86,7 +100,7 @@ const CartPageOnline = () => {
                   >
                     <input
                       type="checkbox"
-                      className="w-5 h-5 accent-primary border-2 border-primary-100 rounded focus:ring-0 focus:ring-offset-0 cursor-pointer "
+                      className="w-5 h-5 accent-primary border-2 border-primary-100 rounded focus:ring-0 focus:ring-offset-0 cursor-pointer"
                       checked={!!item.checked}
                       onChange={() => toggleChecked(item.cartId)}
                     />
@@ -117,12 +131,7 @@ const CartPageOnline = () => {
                         <div className="flex justify-end mt-2">
                           <div className="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
                             <button
-                              onClick={
-                                () =>
-                                  item.qty > 1
-                                    ? updateQty(item.cartId, item.qty - 1)
-                                    : setItemToDelete(item) // Trigger modal jika qty 1
-                              }
+                              onClick={() => handleDecrement(item)}
                               className="w-8 h-8 flex items-center justify-center border-2 border-primary rounded-xs text-primary hover:bg-primary/5 transition-all"
                             >
                               <Minus size={16} strokeWidth={3} />
@@ -131,9 +140,7 @@ const CartPageOnline = () => {
                               {item.qty}
                             </span>
                             <button
-                              onClick={() =>
-                                updateQty(item.cartId, item.qty + 1)
-                              }
+                              onClick={() => handleIncrement(item)}
                               className="w-8 h-8 flex items-center justify-center border-2 border-primary rounded-xs text-primary hover:bg-primary hover:text-white transition-all"
                             >
                               <Plus size={16} strokeWidth={3} />
@@ -153,9 +160,7 @@ const CartPageOnline = () => {
       </main>
       {items.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-3 px-6 md:px-12 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
-          {/* Menggunakan justify-end agar teks dan tombol berjejer di sisi kanan */}
           <div className="flex justify-end items-center gap-6 md:gap-10 w-full">
-            {/* Bagian Info Harga - Rata Kanan */}
             <div className="flex flex-col text-right">
               <p className="text-[13px] font-medium text-black leading-tight">
                 Total Pembayaran
@@ -165,7 +170,6 @@ const CartPageOnline = () => {
               </p>
             </div>
 
-            {/* Tombol Bayar */}
             <button
               disabled={!items.some((i) => i.checked)}
               onClick={() =>
@@ -192,7 +196,7 @@ const CartPageOnline = () => {
           }
         }}
       />
-      {/* Modal Edit Notes */}
+
       {editingItem && (
         <EditNoteModal
           item={editingItem}
