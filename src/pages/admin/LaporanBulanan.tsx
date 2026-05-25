@@ -48,36 +48,120 @@ const DATA_PENDAPATAN_BULANAN = [
 
 const DATA_MENU_BULANAN = [
   { id: 1, nama: "Es Teler", harga: 20000, kategori: "Minuman", total: 210 },
-  { id: 2, nama: "Mie Ayam Bakso", harga: 30000, kategori: "Makanan", total: 205 },
+  {
+    id: 2,
+    nama: "Mie Ayam Bakso",
+    harga: 30000,
+    kategori: "Makanan",
+    total: 205,
+  },
   { id: 3, nama: "Ayam Penyet", harga: 40000, kategori: "Makanan", total: 200 },
-  { id: 4, nama: "Nasi Goreng Kambing", harga: 40000, kategori: "Makanan", total: 195 },
+  {
+    id: 4,
+    nama: "Nasi Goreng Kambing",
+    harga: 40000,
+    kategori: "Makanan",
+    total: 195,
+  },
   { id: 5, nama: "Sate Ayam", harga: 40000, kategori: "Makanan", total: 190 },
   { id: 6, nama: "Sop Iga", harga: 50000, kategori: "Makanan", total: 185 },
   { id: 7, nama: "Lychee Tea", harga: 20000, kategori: "Minuman", total: 180 },
   { id: 8, nama: "Gado-gado", harga: 30000, kategori: "Makanan", total: 165 },
-  { id: 9, nama: "Matcha Latte", harga: 30000, kategori: "Minuman", total: 160 },
+  {
+    id: 9,
+    nama: "Matcha Latte",
+    harga: 30000,
+    kategori: "Minuman",
+    total: 160,
+  },
   { id: 10, nama: "Lemon Tea", harga: 20000, kategori: "Minuman", total: 158 },
   { id: 11, nama: "Bakso Urat", harga: 30000, kategori: "Makanan", total: 151 },
   { id: 12, nama: "Le Mineral", harga: 5000, kategori: "Minuman", total: 150 },
-  { id: 13, nama: "Jus Alpukat", harga: 20000, kategori: "Minuman", total: 148 },
+  {
+    id: 13,
+    nama: "Jus Alpukat",
+    harga: 20000,
+    kategori: "Minuman",
+    total: 148,
+  },
   { id: 14, nama: "Dimsum", harga: 30000, kategori: "Makanan", total: 145 },
   { id: 15, nama: "Jus Mangga", harga: 20000, kategori: "Minuman", total: 143 },
   { id: 16, nama: "Nasi Bakar", harga: 30000, kategori: "Makanan", total: 140 },
-  { id: 17, nama: "Nasi Goreng", harga: 30000, kategori: "Makanan", total: 138 },
+  {
+    id: 17,
+    nama: "Nasi Goreng",
+    harga: 30000,
+    kategori: "Makanan",
+    total: 138,
+  },
   { id: 18, nama: "Es Jeruk", harga: 20000, kategori: "Minuman", total: 135 },
   { id: 19, nama: "Soto Ayam", harga: 40000, kategori: "Makanan", total: 133 },
   { id: 20, nama: "Nasi Liwet", harga: 30000, kategori: "Makanan", total: 130 },
   { id: 21, nama: "Kopi Susu", harga: 20000, kategori: "Minuman", total: 128 },
-  { id: 22, nama: "Nasi Goreng Udang", harga: 40000, kategori: "Makanan", total: 125 },
-  { id: 23, nama: "Nasi Kuning", harga: 30000, kategori: "Makanan", total: 123 },
-  { id: 24, nama: "Milkshake Stroberi", harga: 20000, kategori: "Minuman", total: 120 },
-  { id: 25, nama: "Nasi Kebuli", harga: 50000, kategori: "Makanan", total: 118 },
-  { id: 26, nama: "Cireng Bumbu Rujak", harga: 20000, kategori: "Makanan", total: 115 },
-  { id: 27, nama: "Roti Bakar Cokelat", harga: 20000, kategori: "Makanan", total: 112 },
-  { id: 28, nama: "Es Kelapa Muda", harga: 20000, kategori: "Minuman", total: 110 },
+  {
+    id: 22,
+    nama: "Nasi Goreng Udang",
+    harga: 40000,
+    kategori: "Makanan",
+    total: 125,
+  },
+  {
+    id: 23,
+    nama: "Nasi Kuning",
+    harga: 30000,
+    kategori: "Makanan",
+    total: 123,
+  },
+  {
+    id: 24,
+    nama: "Milkshake Stroberi",
+    harga: 20000,
+    kategori: "Minuman",
+    total: 120,
+  },
+  {
+    id: 25,
+    nama: "Nasi Kebuli",
+    harga: 50000,
+    kategori: "Makanan",
+    total: 118,
+  },
+  {
+    id: 26,
+    nama: "Cireng Bumbu Rujak",
+    harga: 20000,
+    kategori: "Makanan",
+    total: 115,
+  },
+  {
+    id: 27,
+    nama: "Roti Bakar Cokelat",
+    harga: 20000,
+    kategori: "Makanan",
+    total: 112,
+  },
+  {
+    id: 28,
+    nama: "Es Kelapa Muda",
+    harga: 20000,
+    kategori: "Minuman",
+    total: 110,
+  },
   { id: 29, nama: "Pempek", harga: 40000, kategori: "Makanan", total: 108 },
-  { id: 30, nama: "Jus Stroberi", harga: 20000, kategori: "Minuman", total: 105 },
-  { id: 31, nama: "Kwetiau Goreng", harga: 30000, kategori: "Makanan", total: 100 },
+  {
+    id: 30,
+    nama: "Jus Stroberi",
+    harga: 20000,
+    kategori: "Minuman",
+    total: 105,
+  },
+  {
+    id: 31,
+    nama: "Kwetiau Goreng",
+    harga: 30000,
+    kategori: "Makanan",
+    total: 100,
+  },
   { id: 32, nama: "Capcay", harga: 30000, kategori: "Makanan", total: 95 },
   { id: 33, nama: "Jus Jambu", harga: 20000, kategori: "Minuman", total: 90 },
   { id: 34, nama: "Nasi Putih", harga: 10000, kategori: "Makanan", total: 85 },
@@ -87,22 +171,34 @@ const DATA_MENU_BULANAN = [
 
 const LaporanBulananPage = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"Semua" | "Pesanan" | "Pendapatan" | "Menu">("Semua");
-  const [selectedBulans, setSelectedBulans] = useState<string[]>(["Januari", "Februari", "Maret"]);
+  const [activeTab, setActiveTab] = useState<
+    "Semua" | "Pesanan" | "Pendapatan" | "Menu"
+  >("Semua");
+  const [selectedBulans, setSelectedBulans] = useState<string[]>([
+    "Januari",
+    "Februari",
+    "Maret",
+  ]);
   const [tahun, setTahun] = useState("2026");
   const [showLaporan, setShowLaporan] = useState(false);
 
   // ✅ PERBAIKAN 1: Pakai useMemo agar tidak dibuat ulang setiap render
   const filteredPesanan = useMemo(() => {
-    return DATA_PESANAN_BULANAN.filter((item) => selectedBulans.includes(item.bulan));
+    return DATA_PESANAN_BULANAN.filter((item) =>
+      selectedBulans.includes(item.bulan),
+    );
   }, [selectedBulans]);
 
   const filteredPendapatan = useMemo(() => {
-    return DATA_PENDAPATAN_BULANAN.filter((item) => selectedBulans.includes(item.bulan));
+    return DATA_PENDAPATAN_BULANAN.filter((item) =>
+      selectedBulans.includes(item.bulan),
+    );
   }, [selectedBulans]);
 
   const [sortedPesanan, setSortedPesanan] = useState<PesananBulanan[]>([]);
-  const [sortedPendapatan, setSortedPendapatan] = useState<PendapatanBulanan[]>([]);
+  const [sortedPendapatan, setSortedPendapatan] = useState<PendapatanBulanan[]>(
+    [],
+  );
 
   // ✅ PERBAIKAN 2: useEffect tetap, tapi filteredPesanan sudah stabil
   useEffect(() => {
@@ -114,7 +210,8 @@ const LaporanBulananPage = () => {
   const periodeText = useMemo(() => {
     if (selectedBulans.length === 0) return "Tidak ada bulan dipilih";
     if (selectedBulans.length === 12) return `Tahun ${tahun}`;
-    if (selectedBulans.length === 1) return `Bulan ${selectedBulans[0]} ${tahun}`;
+    if (selectedBulans.length === 1)
+      return `Bulan ${selectedBulans[0]} ${tahun}`;
     return `Bulan ${selectedBulans[0]} - ${selectedBulans[selectedBulans.length - 1]} ${tahun}`;
   }, [selectedBulans, tahun]);
 
@@ -129,50 +226,102 @@ const LaporanBulananPage = () => {
     setSortedPesanan(newSortedData);
   }, []);
 
-  const handleSortPendapatan = useCallback((newSortedData: PendapatanBulanan[]) => {
-    setSortedPendapatan(newSortedData);
-  }, []);
+  const handleSortPendapatan = useCallback(
+    (newSortedData: PendapatanBulanan[]) => {
+      setSortedPendapatan(newSortedData);
+    },
+    [],
+  );
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F3F4F6]">
       <AdminSidebar onLogout={() => console.log("Admin Logout")} />
 
       <main className="flex-1 flex flex-col h-full min-w-0 overflow-y-auto p-4 md:p-6">
-        <AdminHeader title="Laporan" subtitle="Kelola dan lihat laporan harian, mingguan, atau bulanan" />
+        <AdminHeader
+          title="Laporan"
+          subtitle="Kelola dan lihat laporan harian, mingguan, atau bulanan"
+        />
 
         <div className="w-full max-w-6xl mx-auto mt-4 space-y-6">
           {/* KOTAK PUTIH 1: FILTER */}
           <div className="bg-white rounded-[20px] border border-gray-150 p-6 space-y-6 overflow-visible">
             {/* Jenis Laporan */}
             <div className="space-y-3">
-              <h3 className="text-[13.5px] font-extrabold text-black uppercase">Jenis Laporan</h3>
+              <h3 className="text-[13.5px] font-extrabold text-black uppercase tracking-wider">
+                Jenis Laporan
+              </h3>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                {[
-                  { id: "Semua", label: "Semua Laporan" },
-                  { id: "Pesanan", label: "Laporan Total Pesanan" },
-                  { id: "Pendapatan", label: "Laporan Pendapatan" },
-                  { id: "Menu", label: "Laporan Menu" },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer ${
-                      activeTab === tab.id
-                        ? "bg-purple-50 border-primary text-primary shadow-xs"
-                        : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
+                <button
+                  onClick={() => setActiveTab("Semua")}
+                  className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${
+                    activeTab === "Semua"
+                      ? "bg-purple-50 border-primary text-primary shadow-xs"
+                      : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <span>Semua</span>
+                  <span>Laporan</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab("Pesanan")}
+                  className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${
+                    activeTab === "Pesanan"
+                      ? "bg-purple-50 border-primary text-primary shadow-xs"
+                      : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <span>Total</span>
+                  <span>Pesanan</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab("Pendapatan")}
+                  className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${
+                    activeTab === "Pendapatan"
+                      ? "bg-purple-50 border-primary text-primary shadow-xs"
+                      : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <span>Laporan</span>
+                  <span>Pendapatan</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab("Menu")}
+                  className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${
+                    activeTab === "Menu"
+                      ? "bg-purple-50 border-primary text-primary shadow-xs"
+                      : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <span>Laporan</span>
+                  <span>Menu</span>
+                </button>
               </div>
             </div>
 
             {/* Rentang Waktu */}
             <div className="flex items-center gap-6 text-[13.5px] font-bold text-gray-500 border-b border-gray-100 pb-3">
-              <button onClick={() => navigate("/admin/laporan")} className="pb-1 cursor-pointer">Harian</button>
-              <button onClick={() => navigate("/admin/laporan/mingguan")} className="pb-1 cursor-pointer">Mingguan</button>
-              <button onClick={() => navigate("/admin/laporan/bulanan")} className="pb-1 cursor-pointer text-black border-b-[2.5px] border-primary font-extrabold">Bulanan</button>
+              <button
+                onClick={() => navigate("/admin/laporan")}
+                className="pb-1 cursor-pointer"
+              >
+                Harian
+              </button>
+              <button
+                onClick={() => navigate("/admin/laporan/mingguan")}
+                className="pb-1 cursor-pointer"
+              >
+                Mingguan
+              </button>
+              <button
+                onClick={() => navigate("/admin/laporan/bulanan")}
+                className="pb-1 cursor-pointer text-black border-b-[2.5px] border-primary font-extrabold"
+              >
+                Bulanan
+              </button>
             </div>
 
             {/* Filter Bulanan - PAKAI useCallback */}
@@ -191,75 +340,113 @@ const LaporanBulananPage = () => {
           {showLaporan && selectedBulans.length > 0 && (
             <div className="bg-white rounded-[20px] border border-gray-150 p-6">
               <div className="flex justify-end mb-4">
-                <button onClick={() => setShowLaporan(false)} className="text-[12px] font-bold text-gray-400 hover:text-black">Tutup</button>
+                <button
+                  onClick={() => setShowLaporan(false)}
+                  className="text-[12px] font-bold text-gray-400 hover:text-black"
+                >
+                  Tutup
+                </button>
               </div>
 
               <div className="space-y-12">
                 {/* LAPORAN PESANAN */}
-                {(activeTab === "Semua" || activeTab === "Pesanan") && filteredPesanan.length > 0 && (
-                  <div className="space-y-4 overflow-visible">
-                    <div className="flex items-end justify-between flex-wrap gap-3">
-                      <div>
-                        <h4 className="text-[17px] font-extrabold text-black">Laporan Total Pesanan</h4>
-                        <p className="text-[12px] text-gray-400">Periode: {periodeText}</p>
+                {(activeTab === "Semua" || activeTab === "Pesanan") &&
+                  filteredPesanan.length > 0 && (
+                    <div className="space-y-4 overflow-visible">
+                      <div className="flex items-end justify-between flex-wrap gap-3">
+                        <div>
+                          <h4 className="text-[17px] font-extrabold text-black">
+                            Laporan Total Pesanan
+                          </h4>
+                          <p className="text-[12px] text-gray-400">
+                            Periode: {periodeText}
+                          </p>
+                        </div>
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() =>
+                              eksporKePDFPesananBulanan(
+                                sortedPesanan,
+                                periodeText,
+                              )
+                            }
+                            className="bg-primary text-white font-bold text-[12.5px] px-5 py-2 rounded-xs flex items-center gap-1.5 cursor-pointer shadow-md"
+                          >
+                            <FileText size={12} /> Ekspor PDF
+                          </button>
+                          <button
+                            onClick={() =>
+                              eksporKeExcelPesananBulanan(
+                                sortedPesanan,
+                                periodeText,
+                              )
+                            }
+                            className="bg-primary text-white font-bold text-[12.5px] px-5 py-2 rounded-xs flex items-center gap-1.5 cursor-pointer shadow-md"
+                          >
+                            <FileSpreadsheet size={12} /> Ekspor Excel
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => eksporKePDFPesananBulanan(sortedPesanan, periodeText)}
-                          className="bg-primary text-white font-bold text-[12.5px] px-5 py-2 rounded-xs flex items-center gap-1.5 cursor-pointer shadow-md"
-                        >
-                          <FileText size={12} /> Ekspor PDF
-                        </button>
-                        <button
-                          onClick={() => eksporKeExcelPesananBulanan(sortedPesanan, periodeText)}
-                          className="bg-primary text-white font-bold text-[12.5px] px-5 py-2 rounded-xs flex items-center gap-1.5 cursor-pointer shadow-md"
-                        >
-                          <FileSpreadsheet size={12} /> Ekspor Excel
-                        </button>
-                      </div>
+                      <TabelPesananBulanan
+                        key={selectedBulans.join(",")}
+                        data={filteredPesanan}
+                        onSortChange={handleSortPesanan}
+                      />
                     </div>
-                    <TabelPesananBulanan
-                      key={selectedBulans.join(",")}
-                      data={filteredPesanan}
-                      onSortChange={handleSortPesanan}
-                    />
-                  </div>
-                )}
+                  )}
 
                 {/* LAPORAN PENDAPATAN */}
-                {(activeTab === "Semua" || activeTab === "Pendapatan") && filteredPendapatan.length > 0 && (
-                  <div className="space-y-4 overflow-visible">
-                    <div className="flex items-end justify-between flex-wrap gap-3">
-                      <div>
-                        <h4 className="text-[17px] font-extrabold text-black">Laporan Total Pendapatan</h4>
-                        <p className="text-[12px] text-gray-400">Periode: {periodeText}</p>
+                {(activeTab === "Semua" || activeTab === "Pendapatan") &&
+                  filteredPendapatan.length > 0 && (
+                    <div className="space-y-4 overflow-visible">
+                      <div className="flex items-end justify-between flex-wrap gap-3">
+                        <div>
+                          <h4 className="text-[17px] font-extrabold text-black">
+                            Laporan Total Pendapatan
+                          </h4>
+                          <p className="text-[12px] text-gray-400">
+                            Periode: {periodeText}
+                          </p>
+                        </div>
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() =>
+                              eksporKePDFPendapatanBulanan(
+                                sortedPendapatan,
+                                periodeText,
+                              )
+                            }
+                            className="bg-primary text-white font-bold text-[12.5px] px-5 py-2 rounded-xs flex items-center gap-1.5 cursor-pointer shadow-md"
+                          >
+                            <FileText size={12} /> Ekspor PDF
+                          </button>
+                          <button
+                            onClick={() =>
+                              eksporKeExcelPendapatanBulanan(
+                                sortedPendapatan,
+                                periodeText,
+                              )
+                            }
+                            className="bg-primary text-white font-bold text-[12.5px] px-5 py-2 rounded-xs flex items-center gap-1.5 cursor-pointer shadow-md"
+                          >
+                            <FileSpreadsheet size={12} /> Ekspor Excel
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => eksporKePDFPendapatanBulanan(sortedPendapatan, periodeText)}
-                          className="bg-primary text-white font-bold text-[12.5px] px-5 py-2 rounded-xs flex items-center gap-1.5 cursor-pointer shadow-md"
-                        >
-                          <FileText size={12} /> Ekspor PDF
-                        </button>
-                        <button
-                          onClick={() => eksporKeExcelPendapatanBulanan(sortedPendapatan, periodeText)}
-                          className="bg-primary text-white font-bold text-[12.5px] px-5 py-2 rounded-xs flex items-center gap-1.5 cursor-pointer shadow-md"
-                        >
-                          <FileSpreadsheet size={12} /> Ekspor Excel
-                        </button>
-                      </div>
+                      <TabelPendapatanBulanan
+                        key={selectedBulans.join(",")}
+                        data={filteredPendapatan}
+                        onSortChange={handleSortPendapatan}
+                      />
                     </div>
-                    <TabelPendapatanBulanan
-                      key={selectedBulans.join(",")}
-                      data={filteredPendapatan}
-                      onSortChange={handleSortPendapatan}
-                    />
-                  </div>
-                )}
+                  )}
 
                 {/* LAPORAN MENU */}
                 {(activeTab === "Semua" || activeTab === "Menu") && (
-                  <LaporanTableMenuBulanan data={DATA_MENU_BULANAN} periode={periodeText} />
+                  <LaporanTableMenuBulanan
+                    data={DATA_MENU_BULANAN}
+                    periode={periodeText}
+                  />
                 )}
               </div>
             </div>

@@ -187,28 +187,57 @@ const LaporanMingguanPage = () => {
           <div className="bg-white rounded-[20px] border border-gray-150 p-6 space-y-6 overflow-visible">
             {/* Jenis Laporan */}
             <div className="space-y-3">
-              <h3 className="text-[13.5px] font-extrabold text-black uppercase">
+              <h3 className="text-[13.5px] font-extrabold text-black uppercase tracking-wider">
                 Jenis Laporan
               </h3>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                {[
-                  { id: "Semua", label: "Semua Laporan" },
-                  { id: "Pesanan", label: "Laporan Total Pesanan" },
-                  { id: "Pendapatan", label: "Laporan Pendapatan" },
-                  { id: "Menu", label: "Laporan Menu" },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer ${
-                      activeTab === tab.id
-                        ? "bg-purple-50 border-primary text-primary shadow-xs"
-                        : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
+                <button
+                  onClick={() => setActiveTab("Semua")}
+                  className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${
+                    activeTab === "Semua"
+                      ? "bg-purple-50 border-primary text-primary shadow-xs"
+                      : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <span>Semua</span>
+                  <span>Laporan</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab("Pesanan")}
+                  className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${
+                    activeTab === "Pesanan"
+                      ? "bg-purple-50 border-primary text-primary shadow-xs"
+                      : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <span>Total</span>
+                  <span>Pesanan</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab("Pendapatan")}
+                  className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${
+                    activeTab === "Pendapatan"
+                      ? "bg-purple-50 border-primary text-primary shadow-xs"
+                      : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <span>Laporan</span>
+                  <span>Pendapatan</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab("Menu")}
+                  className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${
+                    activeTab === "Menu"
+                      ? "bg-purple-50 border-primary text-primary shadow-xs"
+                      : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <span>Laporan</span>
+                  <span>Menu</span>
+                </button>
               </div>
             </div>
 
