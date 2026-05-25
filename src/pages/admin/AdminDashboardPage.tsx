@@ -181,12 +181,10 @@ const AdminDashboardPage = () => {
             />
           </div>
 
-          {/* TABEL MENU */}
-          {/* TABEL MENU SERING DIPESAN - UKURAN KECIL */}
-          {/* TABEL MENU SERING DIPESAN */}
+          {/* TABEL MENU SERING DIPESAN - UKURAN LEBIH BESAR */}
           <section className="bg-white rounded-xs shadow-sm border border-gray-100 overflow-hidden w-full">
-            <div className="bg-primary py-1.5 px-4 ">
-              <h2 className="font-bold text-white text-[12px]">
+            <div className="bg-primary py-3 px-5">
+              <h2 className="font-bold text-white text-[15px]">
                 Menu Sering Dipesan
               </h2>
             </div>
@@ -194,19 +192,19 @@ const AdminDashboardPage = () => {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b-2 border-gray-200 bg-gray-50">
-                    <th className="py-1.5 text-center w-10 text-[12px] text-black">
+                    <th className="py-3 text-center w-12 text-[14px] font-bold text-black">
                       NO
                     </th>
-                    <th className="py-1.5 pl-8 text-[12px] text-black">
+                    <th className="py-3 pl-10 text-[14px] font-bold text-black">
                       Nama Produk
                     </th>
-                    <th className="py-1.5 text-center text-[12px] text-black">
+                    <th className="py-3 text-center text-[14px] font-bold text-black">
                       Harga
                     </th>
-                    <th className="py-1.5 text-center text-[12px] text-black">
+                    <th className="py-3 text-center text-[14px] font-bold text-black">
                       Kategori
                     </th>
-                    <th className="py-1.5 text-center pr-8 text-[12px] text-black">
+                    <th className="py-3 text-center pr-10 text-[14px] font-bold text-black">
                       Total
                     </th>
                   </tr>
@@ -216,7 +214,7 @@ const AdminDashboardPage = () => {
                     <tr>
                       <td
                         colSpan={5}
-                        className="py-5 text-center text-gray-400 text-[10px]"
+                        className="py-8 text-center text-gray-400 text-[13px]"
                       >
                         Memuat data...
                       </td>
@@ -225,34 +223,34 @@ const AdminDashboardPage = () => {
                     filteredMenus.map((menu, index) => (
                       <tr
                         key={menu.id}
-                        className="border-b border-gray-50 hover:bg-gray-50/50"
+                        className="border-b border-gray-100 hover:bg-gray-50/50"
                       >
-                        <td className="py-1.5 text-center text-gray-400 font-semibold text-[11px]">
+                        <td className="py-3 text-center text-gray-500 font-semibold text-[13px]">
                           {index + 1}
                         </td>
-                        <td className="py-1.5 pl-8">
-                          <div className="flex items-center gap-2.5">
+                        <td className="py-3 pl-10">
+                          <div className="flex items-center gap-3">
                             <img
                               src={menu.image}
                               alt={menu.name}
-                              className="w-7 h-7 object-cover rounded-full border border-gray-100"
+                              className="w-10 h-10 object-cover rounded-full border border-gray-200"
                               onError={(e) => {
                                 e.currentTarget.src =
                                   "https://placehold.co/100x100?text=Food";
                               }}
                             />
-                            <span className="text-black font-medium text-[11px]">
+                            <span className="text-black font-medium text-[14px]">
                               {menu.name}
                             </span>
                           </div>
                         </td>
-                        <td className="py-1.5 text-center text-black text-[10px]">
+                        <td className="py-3 text-center text-black text-[13px]">
                           Rp{menu.price.toLocaleString()}
                         </td>
-                        <td className="py-1.5 text-center text-black text-[10px] capitalize">
+                        <td className="py-3 text-center text-black text-[13px] capitalize">
                           {menu.category}
                         </td>
-                        <td className="py-1.5 text-center pr-8 text-black text-[10px] ">
+                        <td className="py-3 text-center pr-10 text-black text-[13px]">
                           ⭐ {angkaStatik[index] || menu.stock} Terjual
                         </td>
                       </tr>
@@ -261,7 +259,7 @@ const AdminDashboardPage = () => {
                     <tr>
                       <td
                         colSpan={5}
-                        className="py-5 text-center text-gray-400 text-[10px]"
+                        className="py-8 text-center text-gray-400 text-[13px]"
                       >
                         Menu tidak ditemukan.
                       </td>
