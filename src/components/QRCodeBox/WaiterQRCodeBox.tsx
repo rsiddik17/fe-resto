@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { QRCodeSVG } from "qrcode.react";
 
 interface WaiterQRCodeBoxProps {
   finalPayment: number;
@@ -23,9 +22,6 @@ const WaiterQRCodeBox = ({ finalPayment, onExpire }: WaiterQRCodeBoxProps) => {
   const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0");
   const seconds = String(timeLeft % 60).padStart(2, "0");
 
-  // Format data QRIS sesuai standar
-  const qrisData = `00020101021126670016ID.CO.QRIS.WWW011893600...Nominal:${finalPayment}`;
-
   return (
     <div className="bg-white rounded-md p-6 flex flex-col items-center text-center w-full h-full">
       <p className="text-black/50 text-base mb-1">Total Pembayaran</p>
@@ -41,7 +37,11 @@ const WaiterQRCodeBox = ({ finalPayment, onExpire }: WaiterQRCodeBoxProps) => {
 
       {/* RENDER QR CODE (Ukurannya pas Desktop) */}
       <div className="inline-block mb-6 w-48 h-48">
-        <QRCodeSVG value={qrisData} className="w-full h-full" level="L" />
+        <img
+          src={`${import.meta.env.BASE_URL}images/qris-client.jpeg`}
+          alt="QRIS IT Mart"
+          className="w-full h-full"
+        />
       </div>
 
       <p className="text-black/50 text-base">

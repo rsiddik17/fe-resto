@@ -20,7 +20,7 @@ const ConfirmTableModal = ({ isOpen, onClose, tableNumber, capacity, onConfirm }
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-sm shadow-md flex flex-col relative animate-in zoom-in-95 duration-200 w-92.5 overflow-hidden"
+        className="bg-white rounded-sm shadow-md mx-4 md:mx-0 flex flex-col relative animate-in zoom-in-95 duration-200 w-92.5 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

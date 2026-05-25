@@ -6,6 +6,11 @@ export const authAPI = {
     const response = await axiosInstance.post("/auth/login", data);
     return response.data; // Langsung return data-nya
   },
+
+  guestLogin: async (data: { tableId: number }) => {
+    const response = await axiosInstance.post("/auth/guest-login", data);
+    return response.data;
+  },
   
   register: async (data: any) => {
     const response = await axiosInstance.post("/auth/register", data);
@@ -36,10 +41,4 @@ export const authAPI = {
     const response = await axiosInstance.post("/auth/resend-otp", data);
     return response.data;
   },
-
-  getProfile: async () => {
-    // Sesuaikan "/auth/me" dengan endpoint asli dari Backend-mu
-    const response = await axiosInstance.get("/auth/me"); 
-    return response.data;
-  }
 };

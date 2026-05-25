@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 // Definisikan semua role yang ada (kecuali QR karena dia temporary guest)
-export type UserRole = "ADMIN" | "CASHIER" | "WAITER" | "KIOSK_SYSTEM" | "KITCHEN" | "CUSTOMER" | null;
+export type UserRole = "ADMIN" | "CASHIER" | "WAITER" | "KIOSK_SYSTEM" | "KITCHEN" | "CUSTOMER" | "GUEST" | null;
 
 export interface UserProfile {
   fullname?: string;
@@ -9,6 +9,7 @@ export interface UserProfile {
   gender?: string;
   email?: string;
   role?: string;
+  is_active?: boolean;
 }
 
 interface AuthState {

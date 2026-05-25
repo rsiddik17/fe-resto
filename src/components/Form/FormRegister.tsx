@@ -173,7 +173,7 @@ const FormRegister = () => {
           </span>
         )}
 
-        <Button className="w-full mt-4" type="submit">
+        <Button className="w-full py-2 md:py-2.25 mt-4" type="submit">
           Daftar
         </Button>
       </form>

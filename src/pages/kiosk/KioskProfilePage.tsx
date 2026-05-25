@@ -5,7 +5,7 @@ import { useAuthStore } from "../../store/useAuthStore";
 import UserIconSingle from "../../components/Icon/UserIconSingle";
 import InfoIcon from "../../components/Icon/InfoIcon";
 import { useEffect, useState } from "react";
-import { authAPI } from "../../api/auth.api";
+import { profileAPI } from "../../api/profile.api";
 import LogoutIcon from "../../components/Icon/LogOutIcon";
 
 const KioskProfilePage = () => {
@@ -15,12 +15,15 @@ const KioskProfilePage = () => {
   const { user, setUser, logout } = useAuthStore();
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchProfile = async () => {
       try {
         setIsLoading(true);
-        const responseData = await authAPI.getProfile();
 
-        setUser(responseData.data);
+        const response = await profileAPI.getStaffProfile();
+
+        if (response.success && response.data) {
+          setUser(response.data);
+        }
       } catch (error) {
         console.error("Gagal mengambil data profil:", error);
       } finally {
@@ -28,13 +31,25 @@ const KioskProfilePage = () => {
       }
     };
 
-    // Hit API hanya jika data user belum ada di Zustand
-    if (!user) {
-      fetchUserProfile();
-    } else {
-      setIsLoading(false);
-    }
-  }, [user, setUser]);
+    fetchProfile();
+  }, [setUser]);
+
+  const isActive = user?.is_active ?? true;
+
+  const formatGender = (gender?: string) => {
+    if (gender === "MALE") return "Laki-laki";
+    if (gender === "FEMALE") return "Perempuan";
+    return "-";
+  };
+
+  const formatRole = (role?: string) => {
+    if (role === "KIOSK_SYSTEM") return "Kiosk";
+    if (role === "WAITER") return "Pelayan";
+    if (role === "CASHIER") return "Kasir";
+    if (role === "KITCHEN") return "Dapur";
+
+    return role || "-";
+  };
 
   const handleLogout = () => {
     if (logout) logout();
@@ -43,17 +58,17 @@ const KioskProfilePage = () => {
 
   return (
     // Background sedikit abu-abu agar card putih terlihat jelas (bayangannya)
-    <div className="min-h-screen bg-white pb-16">
+    <div className="min-h-screen bg-white pb-8">
       {/* 1. HEADER (Menggunakan prop showBackButton yang baru kita buat) */}
       <Header showBackButton={true} onBack={() => navigate(-1)} />
 
-      <main className="max-w-3xl mx-auto px-2 pt-6 md:pt-8">
+      <main className="max-w-3xl mx-auto px-4 md:px-6 pt-6 md:pt-8">
         {/* --- JUDUL HALAMAN --- */}
-        <div className="mb-2 md:mb-3">
-          <h1 className="text-2xl md:text-3xl font-bold mb-1 md:mb-2">
+        <div className="mb-4 md:mb-3">
+          <h1 className="text-[22px] md:text-3xl lg:text-[28px] font-bold mb-1 md:mb-2">
             Profil saya
           </h1>
-          <p className="text-gray-500 text-lg md:text-[22px]">
+          <p className="text-gray-500 text-base md:text-[22px] lg:text-xl">
             Informasi akun pengguna untuk mengakses sistem
           </p>
         </div>
@@ -67,13 +82,15 @@ const KioskProfilePage = () => {
             {/* --- AVATAR & NAMA --- */}
             <div className="flex flex-col items-center mb-8 md:mb-12">
               {/* Lingkaran Avatar */}
-              <div className="w-24 h-24 md:w-34 md:h-34 bg-white rounded-full flex items-center justify-center shadow-xl mb-4 md:mb-8">
+              <div className="w-24 h-24 md:w-36 md:h-36 bg-white rounded-full flex items-center justify-center shadow-xl mb-4 md:mb-8">
                 <UserIconSingle
                   className="w-12 h-12 md:w-20 md:h-20 text-primary"
                   strokeWidth={2.5}
                 />
               </div>
-              <h2 className="text-xl md:text-3xl font-bold">{user?.fullname || "KiosK Its Resto"}</h2>
+              <h2 className="text-xl md:text-3xl font-bold">
+                {user?.fullname || "KiosK Its Resto"}
+              </h2>
             </div>
 
             {/* --- CARD INFORMASI AKUN --- */}
@@ -103,7 +120,7 @@ const KioskProfilePage = () => {
                     Jenis Kelamin
                   </span>
                   <span className="font-bold text-base md:text-xl text-black">
-                    {user?.gender || "Laki-laki"}
+                    {formatGender(user?.gender)}
                   </span>
                 </div>
 
@@ -121,7 +138,7 @@ const KioskProfilePage = () => {
                     Peran Pengguna
                   </span>
                   <span className="font-bold text-base md:text-xl text-black">
-                    {user?.role?.replace("_", " ") || "-"}
+                    {formatRole(user?.role)}
                   </span>
                 </div>
               </div>
@@ -133,7 +150,7 @@ const KioskProfilePage = () => {
         <div className="flex justify-center mb-8 md:mb-12">
           <Button
             onClick={handleLogout}
-            className="w-full max-w-73 py-3.5 md:py-4 rounded-full flex items-center justify-center gap-3 font-bold text-base md:text-xl"
+            className="w-full max-w-55 md:max-w-73 lg:max-w-65 py-3 md:py-4 lg:py-2.5 rounded-full flex items-center justify-center gap-3 font-bold text-base md:text-xl lg:text-lg"
           >
             <LogoutIcon
               className="w-6 h-6 md:w-8 md:h-8 -translate-x-4 text-white/50"
@@ -147,15 +164,19 @@ const KioskProfilePage = () => {
         <div className="bg-white rounded-md shadow-sm border border-gray-200 p-4 md:p-6 flex items-center justify-between max-w-2xl mx-auto">
           <div className="flex items-center gap-3 md:gap-4">
             {/* Titik Hijau */}
-            <div className="w-3 h-3 md:w-4 md:h-4 ml-8 bg-[#8AC926] rounded-full"></div>
-            <span className="font-bold text-lg md:text-xl ml-6 text-black">
-              Status Akun Aktif
+            <div
+              className={`w-3 h-3 md:w-4 md:h-4 ml-8 rounded-full ${
+                isActive ? "bg-[#8AC926]" : "bg-red-500"
+              }`}
+            ></div>
+            <span className="font-bold text-base md:text-xl ml-6 text-black">
+              {isActive ? "Status Akun Aktif" : "Status Akun Nonaktif"}
             </span>
           </div>
           {/* Ikon Info */}
           <div className="w-6 h-6 md:w-8 md:h-8 bg-black/75 rounded-full flex items-center justify-center">
             <InfoIcon
-              className="text-white w-3 h-3 md:w-8 md:h-8"
+              className="text-white w-6 h-6 md:w-8 md:h-8"
               strokeWidth={3}
             />
           </div>

@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import type { TableItem } from "../../components/Card/TableCard";
 import TableFilterTabs from "../../components/Table/TableFilterTabs";
 import TableCard from "../../components/Card/TableCard";
 import ConfirmTableModal from "../../components/Modal/ConfirmTableModal";
+import { useAuthStore } from "../../store/useAuthStore";
+import { profileAPI } from "../../api/profile.api";
 
 // --- MOCK DATA MEJA ---
 
@@ -32,6 +34,7 @@ type FilterType = "semua" | "tersedia" | "terisi" | "kotor";
 
 const WaiterSelectTablePage = () => {
   const navigate = useNavigate();
+  const { user, setUser } = useAuthStore();
 
   const [filter, setFilter] = useState<FilterType>("semua");
 
@@ -52,16 +55,35 @@ const WaiterSelectTablePage = () => {
     }
   };
 
-  return (
+  useEffect(() => {
+    if (!user) {
+      const fetchProfile = async () => {
+        try {
+          const response = await profileAPI.getStaffProfile();
+          if (response.success && response.data) {
+            setUser(response.data);
+          }
+        } catch (error) {
+          console.error("Gagal mengambil data profil:", error);
+        }
+      };
+      fetchProfile();
+    }
+  }, [user, setUser]);
 
+  // Ekstrak nama depan untuk header
+  const firstName = user?.fullname ? user.fullname.split(" ")[0] : "Memuat...";
+  const roleName = user?.role === "WAITER" ? "Pelayan" : "Pelayan";
+
+  return (
     <>
       {/* 1. HEADER (Menggunakan wrapper kamu) */}
 
-      <div className="pt-7.5 pl-8 pr-6">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0">
         <DashboardHeader
           title="Pilih Meja"
-          userName="Mila"
-          roleName="Pelayan"
+          userName={firstName}
+          roleName={roleName}
           showBack={true}
           onBack={() => navigate(-1)}
         />
@@ -69,7 +91,7 @@ const WaiterSelectTablePage = () => {
 
       {/* 2. MAIN CONTENT (Menggunakan wrapper kamu) */}
 
-      <div className="pt-0 pb-0 px-8">
+      <div className="pt-1 lg:pt-1 pb-0 lg:pb-0 px-4 lg:px-8">
         <div className="bg-white rounded-t-md shadow-sm border min-h-screen border-gray-100 p-3 md:px-4 md:py-5">
           {/* TABS FILTER */}
 

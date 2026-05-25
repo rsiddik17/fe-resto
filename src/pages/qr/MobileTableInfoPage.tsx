@@ -1,35 +1,159 @@
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import TableInfoCard from "../../components/Card/TableInfoCard";
+import Loading from "../../components/Loading/Loading";
+import Button from "../../components/ui/Button";
 
-// import { useCartStore } from "../../store/useCartStore"; // Nanti buka ini untuk simpan meja
+// Import API & Store
+import { tableAPI } from "../../api/table.api";
+import { authAPI } from "../../api/auth.api";
+import { useAuthStore } from "../../store/useAuthStore";
+import { useCartStore } from "../../store/useCartStore";
+
+interface TableData {
+  id: number;
+  table_number: string;
+  capacity: number;
+  status: "AVAILABLE" | "OCCUPIED";
+}
 
 const MobileTableInfoPage = () => {
   const navigate = useNavigate();
-
-  // 1. Tangkap parameter dari URL (contoh: /scan/03)
   const { tableId } = useParams();
+  const { setTableInfo } = useCartStore();
+  const { setAuth, logout } = useAuthStore();
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [tableData, setTableData] = useState<TableData | null>(null);
+  const [errorMsg, setErrorMsg] = useState<{
+    main: string;
+    sub?: string;
+  } | null>(null);
 
   // 2. Cegah error TypeScript dan format angkanya jadi M-XX
   const rawNumber = tableId?.replace(/\D/g, "") || "00"; // Fallback ke "00" jika undefined
   const formattedTableId = `M-${rawNumber.padStart(2, "0")}`;
 
+  useEffect(() => {
+    const validateTable = async () => {
+      try {
+        setIsLoading(true);
+
+        const loginPayload = { tableId: parseInt(rawNumber, 10) };
+        const loginResponse = await authAPI.guestLogin(loginPayload);
+
+        if (loginResponse.success && loginResponse.data?.token) {
+          setAuth(loginResponse.data.token, "GUEST");
+        } else {
+          throw new Error(
+            loginResponse.message || "Gagal melakukan login Guest.",
+          );
+        }
+
+        // Hit API untuk ambil semua meja
+        const response = await tableAPI.getAllTables();
+        const tables: TableData[] = response.data;
+
+        // Cari meja yang sesuai dengan hasil scan QR
+        const foundTable = tables.find(
+          (t) => t.table_number === formattedTableId,
+        );
+
+        if (foundTable) {
+          if (foundTable.status === "OCCUPIED") {
+            setErrorMsg({
+              main: "Meja Sedang Digunakan",
+              sub: `Maaf, meja nomor ${formattedTableId} saat ini sedang digunakan. Silakan pindah ke meja yang kosong dan scan ulang QR Code.`,
+            });
+          } else {
+            // Jika meja tersedia, masukkan ke state
+            setTableData(foundTable);
+          }
+        } else {
+          // Jika meja tidak ditemukan di database
+          setErrorMsg({
+            main: "Meja Tidak Ditemukan",
+            sub: `Meja dengan nomor ${formattedTableId} tidak terdaftar di sistem. Pastikan Anda men-scan QR Code yang valid.`,
+          });
+        }
+      } catch (err: any) {
+        console.error("Gagal memvalidasi meja:", err);
+
+        const backendMsg = err.response?.data?.message;
+
+        setErrorMsg({
+          main: "Sesi Pemesanan Tidak Valid",
+          sub:
+            backendMsg ||
+            "Gagal terhubung ke server. Silakan muat ulang halaman ini.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (rawNumber !== "00") {
+      validateTable();
+    }
+  }, [formattedTableId, rawNumber, setAuth]);
+
+  const handleLanjut = () => {
+    if (tableData) {
+      // Simpan ID asli dari database dan nomor meja ke Zustand
+      setTableInfo(tableData.id, tableData.table_number);
+      navigate("/qr/menu");
+    }
+  };
+
+  const handleCancel = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
-    <div className="w-full min-h-screen flex flex-col bg-linear-to-b from-primary/0 to-primary/15 relative overflow-hidden pb-4 px-4">
-      {/* Logo di atas */}
-      <div className="w-full flex justify-center z-10 pt-8 md:pt-14 pb-2">
+    <div className="w-full min-h-screen flex flex-col bg-linear-to-b from-primary/0 to-primary/15 relative overflow-hidden pb-4 md:pb-8 px-4">
+      <Loading show={isLoading} />
+
+      <div className="w-full flex justify-center z-10 pt-4 md:pt-8">
         <img
-          src={`${import.meta.env.BASE_URL}images/new-logo.webp`} 
+          src={`${import.meta.env.BASE_URL}images/new-logo.webp`}
           alt="Logo IT'S RESTO"
-          className="w-45 object-cover"
+          className="w-43 md:w-50 object-cover"
         />
       </div>
       <div className="flex-1 w-full flex items-start justify-center">
-        <div className="w-full max-w-[90%]">
-        <TableInfoCard
-          tableNumber={formattedTableId}
-          onLanjut={() => navigate("/qr/menu")}
-          onBatal={() => navigate("/")}
-        />
+        <div className="w-full max-w-[93%] flex justify-center">
+          {errorMsg && !isLoading && (
+            <div className="w-full max-w-md bg-white p-6 md:p-8 rounded-md shadow-sm text-center flex flex-col items-center">
+              <h2 className="text-lg md:text-2xl lg:text-xl font-bold text-red-500 mb-2 md:mb-4 lg:mb-3">
+                Ups!
+              </h2>
+              <p className="text-black/60 text-sm md:text-[17px] lg:text-base mb-4 md:mb-6">
+                {errorMsg.main}
+              </p>
+
+              {errorMsg.sub && (
+                <p className="text-black/50 text-[13px] md:text-[15px] mb-6 md:mb-8 leading-relaxed px-2">
+                  {errorMsg.sub}
+                </p>
+              )}
+              <Button
+                onClick={handleCancel}
+                className="w-full py-2 md:py-3 lg:py-2.5 text-[14px] md:text-base lg:text-[15px]"
+              >
+                Kembali ke Awal
+              </Button>
+            </div>
+          )}
+
+          {tableData && !isLoading && !errorMsg && (
+            <TableInfoCard
+              tableNumber={tableData.table_number}
+              onLanjut={handleLanjut}
+              onBatal={handleCancel}
+              isKioskMode={false} // Beritahu card bahwa ini bukan penentuan otomatis
+            />
+          )}
         </div>
       </div>
     </div>

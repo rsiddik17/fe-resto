@@ -1,16 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import Button from "../../components/ui/Button";
-import CategoryTabs from "../../components/CategoryFilterTabs/CategoryFilterTabs";
+import CategoryTabs from "../../components/Filter/CategoryFilterTabs";
 import MenuCard from "../../components/Card/MenuCard";
 import CreateOrderIcon from "../../components/Icon/CreateOrderIcon";
 import { useNavigate } from "react-router";
 import CreateOrderModal from "../../components/Modal/CreateOrderModal";
 import { useMenus } from "../../hooks/useMenus";
 import WarningIcon from "../../components/Icon/WarningIcon";
+import { Search } from "lucide-react";
+import Input from "../../components/ui/Input";
+import { useAuthStore } from "../../store/useAuthStore";
+import { profileAPI } from "../../api/profile.api";
 
 const WaiterCreateOrderPage = () => {
   const navigate = useNavigate();
+  const { user, setUser } = useAuthStore();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const { data: menus = [], isLoading, isError, refetch } = useMenus();
@@ -19,27 +24,55 @@ const WaiterCreateOrderPage = () => {
     "semua" | "makanan" | "minuman"
   >("semua");
 
-  const filteredMenu = menus.filter((item) =>
-    activeCategory === "semua" ? true : item.category === activeCategory,
-  );
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredMenu = menus.filter((item) => {
+    const matchCategory =
+      activeCategory === "semua" ? true : item.category === activeCategory;
+    const matchSearch = item.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    return matchCategory && matchSearch;
+  });
+
+  useEffect(() => {
+    if (!user) {
+      const fetchProfile = async () => {
+        try {
+          const response = await profileAPI.getStaffProfile();
+          if (response.success && response.data) {
+            setUser(response.data);
+          }
+        } catch (error) {
+          console.error("Gagal mengambil data profil:", error);
+        }
+      };
+      fetchProfile();
+    }
+  }, [user, setUser]);
+
+  // Ekstrak nama depan untuk header
+  const firstName = user?.fullname ? user.fullname.split(" ")[0] : "Memuat...";
+  const roleName = user?.role === "WAITER" ? "Pelayan" : "Pelayan";
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="pt-7.5 pl-8 pr-6">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0">
         <DashboardHeader
           title="Buat Pesanan"
           subtitle="Mulai pesanan baru untuk pelanggan"
-          userName="Mila"
-          roleName="Pelayan"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
-      <div className="pt-0 pb-0 px-8 flex flex-col flex-1 min-h-0">
+      <div className="pt-1 lg:pt-1 pb-0 lg:pb-0 px-4 lg:px-8 flex flex-col flex-1 min-h-0">
         {/* 2. TOMBOL BUAT PESANAN (Persis seperti gambar, putih rounded outline) */}
         <div className="mb-4">
           <Button
             onClick={() => setIsCreateModalOpen(true)}
-            className="bg-white w-62.5 text-primary text-center border-none shadow-sm rounded-md px-6 py-2.5 font-bold flex justify-center items-center gap-1 hover:bg-gray-50 transition-colors"
+            className="bg-white w-full md:w-62.5 text-primary text-center border-none shadow-sm rounded-md px-6 py-2.5 font-bold flex justify-center items-center gap-1 hover:bg-gray-50 transition-colors"
           >
             {/* Icon Plus Ungu */}
             <CreateOrderIcon className="w-6.5 h-6.5" strokeWidth={3} />
@@ -48,7 +81,20 @@ const WaiterCreateOrderPage = () => {
         </div>
 
         {/* 3. KONTEN PUTIH UTAMA */}
-        <div className="bg-white rounded-t-md shadow-sm border border-gray-100 p-4 md:p-6 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
+        <div className="bg-white rounded-t-md shadow-sm border border-gray-100 p-3 md:p-6 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
+          <div className="relative mb-5 w-full lg:w-md">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="text-black/50 w-4.5 h-4.5" />
+            </div>
+            <Input
+              type="text"
+              placeholder="Cari menu pesanan"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 py-2 text-[14.5px] border-gray-200 shadow-sm placeholder:text-black/50"
+            />
+          </div>
+
           {/* Tab Kategori */}
           <CategoryTabs
             activeCategory={activeCategory}

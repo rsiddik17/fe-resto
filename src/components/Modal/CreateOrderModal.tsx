@@ -18,7 +18,7 @@ const CreateOrderModal = ({ isOpen, onClose, onSelectTable }: CreateOrderModalPr
     >
       {/* PENYESUAIAN UKURAN: Lebar 400px agar pas di desktop */}
       <div 
-        className="bg-white rounded-sm shadow-xl flex flex-col relative animate-in zoom-in-95 duration-200 w-118 overflow-hidden"
+        className="bg-white rounded-sm shadow-xl mx-4 md:mx-0 flex flex-col relative animate-in zoom-in-95 duration-200 w-118 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Modal */}

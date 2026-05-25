@@ -18,13 +18,13 @@ const StatCardCashier = ({
     <div className="relative h-32.5 w-full">
       
       {/* Layer Ungu */}
-      <div className="absolute inset-0 bg-primary w-40 rounded-l-[18px]" />
+      <div className="absolute inset-0 bg-primary max-w-30 rounded-l-[18px] rounded-r-[18px]" />
 
       {/* Card Putih */}
-      <div className="absolute inset-y-0 left-4.5 right-0 bg-white rounded-2xl shadow-md pl-3 pr-2.5 flex flex-col justify-center">
+      <div className="absolute inset-y-0 left-4.5 right-0 bg-white rounded-2xl shadow-md pl-3 pr-2.5 flex flex-col justify-center gap-4">
         
         {/* Header */}
-        <div className="flex justify-between items-center mb-2.5">
+        <div className="flex justify-between items-center">
           <h3 className="text-black/50 font-bold text-[14px] md:text-[15px]">
             {title}
           </h3>
@@ -38,7 +38,7 @@ const StatCardCashier = ({
         </div>
 
         {/* Value */}
-        <div className="text-[26px] font-bold text-black">
+        <div className="text-[26px] font-bold text-black mb-2">
           {value}
         </div>
       </div>

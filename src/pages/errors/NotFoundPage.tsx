@@ -23,13 +23,16 @@ const NotFoundPage = () => {
         homePath = "/waiter/dashboard";
         break;
       case "KITCHEN":
-        homePath = "/kitchen/queue";
+        homePath = "/kitchen/order-list";
         break;
       case "KIOSK_SYSTEM":
         homePath = "/kiosk/home";
         break;
       case "CUSTOMER":
         homePath = "/customer/home";
+        break;
+      case "GUEST":
+        homePath = "/"; 
         break;
       default:
         // Jika belum login (role = null), kembalikan ke halaman login awal

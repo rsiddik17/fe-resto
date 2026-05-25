@@ -13,7 +13,7 @@ const MobileCartPage = () => {
   const navigate = useNavigate();
 
   // Ambil state dan actions dari Zustand
-  const { items, updateQty, updateNote, removeItem } = useCartStore();
+  const { items, updateQty, updateNote, removeItem, tableNumber } = useCartStore();
 
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [editingNote, setEditingNote] = useState<{ cartId: string; notes: string } | null>(null);
@@ -44,16 +44,16 @@ const MobileCartPage = () => {
     <div className="min-h-screen bg-secondary/25 pb-4 relative flex flex-col">
       <Header />
 
-      <main className="flex-1 w-full max-w-md mx-auto px-5 pt-6">
+      <main className="flex-1 w-full max-w-md md:max-w-2xl lg:max-w-3xl mx-auto px-4 pt-6">
         {/* --- JUDUL & INFO MEJA --- */}
         <div className="mb-5">
           <button
             onClick={handleBackToMenu}
-            className="flex items-center gap-2 text-xl font-bold text-black mb-1"
+            className="flex items-center gap-2 text-lg md:text-2xl lg:text-xl font-bold text-black mb-1"
           >
-            <ArrowLeft size={24} strokeWidth={2.5} /> Keranjang
+            <ArrowLeft size={22} strokeWidth={2.5} /> Keranjang
           </button>
-          <p className="text-gray-500 text-base ml-0">Meja-03</p>
+          <p className="text-gray-500 text-[15px] md:text-xl lg:text[17px] ml-0">{tableNumber || "Meja --"}</p>
         </div>
 
         {items.length > 0 ? (
@@ -61,9 +61,9 @@ const MobileCartPage = () => {
             {/* TOMBOL TAMBAH MENU (State Terisi) */}
             <Button
               onClick={handleBackToMenu}
-              className="w-full py-1.5 text-md rounded-xl flex items-center justify-center gap-2 font-bold mb-4"
+              className="w-full py-1.5 md:py-2 lg:py-1.75 text-[15px] md:text-lg lg:text-base rounded-xl flex items-center justify-center gap-2 font-bold mb-4"
             >
-              <Plus size={20} /> Tambah Menu
+              <Plus size={20} strokeWidth={2.5} /> Tambah Menu
             </Button>
 
             {/* LIST CART ITEM */}
@@ -88,12 +88,12 @@ const MobileCartPage = () => {
               alt="Keranjang Kosong"
               className="w-80 mb-16"
             />
-            <p className="text-gray-500 text-center text-[15px] mb-57">
+            <p className="text-gray-500 text-center text-[15px] md:text-xl lg:text-lg mb-57">
               Keranjangmu masih kosong, yuk pilih menu!
             </p>
             <Button
               onClick={handleBackToMenu}
-              className="w-full max-w-sm py-1 rounded-xl flex justify-center items-center gap-2 font-semibold"
+              className="w-full max-w-sm md:max-w-2xl lg:max-w-3xl py-1.75 md:py-2.25 lg:py-2 rounded-xl flex justify-center items-center gap-2 font-semibold md:text-lg lg:text-base"
             >
               <Plus size={18} /> Tambah Menu
             </Button>
@@ -103,10 +103,10 @@ const MobileCartPage = () => {
 
       {/* --- STICKY BOTTOM BAR --- */}
       {items.length > 0 && (
-          <div className="w-full max-w-sm mx-auto px-3">
+          <div className="w-full max-w-sm md:max-w-2xl lg:max-w-3xl mx-auto px-3">
             <Button
               onClick={handleProceedToPayment}
-              className="w-full max-w-sm py-1.5 rounded-xl font-semibold text-base"
+              className="w-full max-w-sm md:max-w-2xl lg:max-w-3xl py-1.75 md:py-2.25 lg:py-2 rounded-xl font-semibold text-base md:text-lg lg:text-base"
             >
               Lanjut ke Pembayaran
             </Button>

@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { cn } from "../../utils/utils";
 
-const baseStyle = "inline-block font-bold text-lg rounded-xs shadow-sm cursor-pointer transition";
+const baseStyle = "inline-block font-bold text-base md:text-lg lg:text-base rounded-xs shadow-sm cursor-pointer transition";
 
 const variants = {
   primary: "bg-primary hover:bg-primary-hover text-white",

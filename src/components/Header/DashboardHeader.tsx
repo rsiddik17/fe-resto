@@ -1,38 +1,22 @@
 import UserIconSingle from "../Icon/UserIconSingle";
-import { useState } from "react";
-import WaiterNotificationModal, {
-  type WaiterNotificationItem,
-} from "../Modal/WaiterNotificationModal";
+import { useEffect, useState } from "react";
+import NotificationModal, {
+  type NotificationItem,
+} from "../Modal/NotificationModal";
 import NotificationIcon from "../Icon/NotificationIcon";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
-import CashierNotificationModal, { type CashierNotificationItem } from "../Modal/CashierNotificationModal";
+
+import { notificationAPI } from "../../api/notification.api";
 
 interface DashboardHeaderProps {
   title: string;
   subtitle?: string;
   userName?: string;
-  roleName?: string; // Misal: "Pelayan" atau "Kasir"
+  roleName?: string; 
   showBack?: boolean;
   onBack?: () => void;
 }
-
-// --- MOCK DATA: Waiter Notifications ---
-const initialWaiterNotifications: WaiterNotificationItem[] = [
-  { id: "1", table: "Meja 07", time: "12.07", orderId: "#26040299", items: "1x Ayam Penyet, 2x Matcha Latte, 1x Es Teler", type: "new", isRead: false },
-  { id: "2", table: "Meja 12", time: "11.59", orderId: "#26040298", items: "1x Ayam Penyet, 2x Lychee Tea", type: "new", isRead: false },
-  { id: "3", table: "Meja 06", time: "Dimasak", orderId: "#26040297", items: "1x Es Teler, 2x Ayam Penyet, 1x Bakso Urat", type: "process", isRead: false },
-  { id: "4", table: "Meja 04", time: "Dimasak", orderId: "#26040297", items: "1x Ayam Penyet, 1x Bakso Borax", type: "process", isRead: false },
-];
-
-// --- MOCK DATA: Cashier Notifications (TAMBAHKAN isRead: false) ---
-const initialCashierNotifications: CashierNotificationItem[] = [
-  { id: "1", table: "Meja 01", time: "14.20", orderId: "#ORD-16", items: "Nasi Goreng Batagor, Matcha Latte", method: "QR", isRead: false },
-  { id: "2", table: "Meja 04", time: "16.11", orderId: "#ORD-15", items: "Ikan Bakar, Mie Ayam Bakso", method: "KIOSK", isRead: false },
-  { id: "3", table: "Meja 06", time: "19.47", orderId: "#ORD-14", items: "Mie Ayam Bakso, Lemon Tea", method: "ONLINE", isRead: false },
-  { id: "4", table: "Meja 02", time: "20.01", orderId: "#ORD-12", items: "Ayam Penyet, Es Teler", method: "KASIR", isRead: false },
-  { id: "5", table: "Meja 03", time: "22.01", orderId: "#ORD-13", items: "Ayam Bakar, Es Gobak", method: "KASIR", isRead: false },
-];
 
 const DashboardHeader = ({
   title,
@@ -45,26 +29,81 @@ const DashboardHeader = ({
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [waiterNotifs, setWaiterNotifs] = useState<WaiterNotificationItem[]>(initialWaiterNotifications);
-  const [cashierNotifs, setCashierNotifs] = useState<CashierNotificationItem[]>(initialCashierNotifications);
+  // STATE DINAMIS DARI API
+  const [Notifs, setNotifs] = useState<NotificationItem[]>([]);
 
-  // Asumsi semua notif kasir yang baru belum dibaca (bisa disesuaikan nanti dengan API)
-  const unreadWaiterCount = waiterNotifs.filter((n) => !n.isRead).length;
-  const unreadCashierCount = cashierNotifs.filter((n) => !n.isRead).length;
+  // 1. HIT API MENGAMBIL DATA NOTIFIKASI
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await notificationAPI.getNotifications();
 
-  const isCashier = roleName?.toLowerCase() === "kasir";
-  const unreadCount = isCashier ? unreadCashierCount : unreadWaiterCount;
+        if (response.success && response.data) {
+          // Mapping data dari backend ke format UI
+          const formattedNotifs: NotificationItem[] = response.data.map((item: any) => {
+            const timeString = new Date(item.created_at).toLocaleTimeString(
+                "id-ID",
+                {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }
+              );
+            
+            let notifTitle = item.tittle;
+            if (!notifTitle) {
+                 const role = roleName?.toLowerCase();
+                 if (role === "kasir" || role === "cashier") {
+                   notifTitle = "Pesanan Masuk";
+                 } else {
+                   notifTitle = "Pesanan Siap Antar"; // Default untuk Waiter/Kitchen
+                 }
+              }
+
+            return {
+                id: item.id,
+                title: notifTitle, // Menambahkan Title dinamis
+                table: item.table_number
+                  ? `Meja ${item.table_number}`
+                  : "Pemberitahuan",
+                time: timeString,
+                orderId: item.order_id ? `#${item.order_id}` : "-",
+                items: item.message,
+                isRead: item.is_read,
+              };
+          });
+
+          setNotifs(formattedNotifs);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data notifikasi:", error);
+      }
+    };
+
+    // Panggil saat komponen dirender pertama kali
+    fetchNotifications();
+
+    // Opsional: Lakukan polling setiap 15 detik untuk mendapat notif baru secara real-time
+    const intervalId = setInterval(fetchNotifications, 15000);
+    return () => clearInterval(intervalId);
+  }, [roleName]);
+
+  // Hitung jumlah notifikasi yang belum dibaca
+  const unreadCount = Notifs.filter((n) => !n.isRead).length;
 
   // Fungsi untuk menandai notifikasi sudah dibaca
-  const handleMarkAsRead = (id: string) => {
-    if (isCashier) {
-      setCashierNotifs((prev) =>
-        prev.map((notif) => (notif.id === id ? { ...notif, isRead: true } : notif))
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      // Optimistic update: Ubah state UI lebih dulu agar terasa cepat bagi user
+      setNotifs((prev) =>
+        prev.map((notif) =>
+          notif.id === id ? { ...notif, isRead: true } : notif,
+        ),
       );
-    } else {
-      setWaiterNotifs((prev) =>
-        prev.map((notif) => (notif.id === id ? { ...notif, isRead: true } : notif))
-      );
+
+      // Hit API
+      await notificationAPI.markAsRead(id);
+    } catch (error) {
+      console.error("Gagal menandai notifikasi telah dibaca:", error);
     }
   };
 
@@ -74,7 +113,10 @@ const DashboardHeader = ({
   };
 
   const handleProfileClick = () => {
-    if (isCashier) navigate("/cashier/profile");
+    // Tambahkan logika pengecekan untuk Dapur
+    const role = roleName?.toLowerCase();
+    if (role === "cashier") navigate("/cashier/profile");
+    else if (role === "kitchen") navigate("/kitchen/profile");
     else navigate("/waiter/profile");
   };
 
@@ -82,7 +124,7 @@ const DashboardHeader = ({
     <>
       <header className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
         {/* Kiri: Judul & Subjudul */}
-        <div className="flex flex-col">
+        <div className="flex w-full flex-col">
           <div className="flex items-center gap-2">
             {showBack && (
               <button
@@ -96,17 +138,17 @@ const DashboardHeader = ({
                 />
               </button>
             )}
-            <h1 className="text-[23px] font-bold mb-1">{title}</h1>
+            <h1 className="text-[22px] font-bold mb-0.5">{title}</h1>
           </div>
 
           {subtitle && (
-            <p className="text-black/50 text-sm md:text-[15px]">{subtitle}</p>
+            <p className="text-black/50 text-sm md:text-[14.5px]">{subtitle}</p>
           )}
         </div>
 
         {/* Kanan: Notifikasi & Profil */}
         {userName && roleName && (
-          <div className="flex items-center gap-3.5">
+          <div className="flex w-full justify-between md:justify-end lg:justify-end items-center gap-3.5">
             {/* Tombol Notifikasi (Bulat) */}
             <div className="relative">
               <button
@@ -126,10 +168,10 @@ const DashboardHeader = ({
               onClick={handleProfileClick}
               className="flex items-center gap-2 bg-white border border-gray-200 rounded-[18px] pl-3 pr-1.5 py-1.5 shadow-sm cursor-pointer"
             >
-              <span className="text-[15px]">
+              <span className="text-[14.75px]">
                 {userName}/{roleName}
               </span>
-              <div className="w-8.5 h-8.5 bg-primary rounded-full flex items-center justify-center">
+              <div className="w-8.25 h-8.25 bg-primary rounded-full flex items-center justify-center">
                 <UserIconSingle
                   className="text-white w-5 h-5"
                   strokeWidth={2}
@@ -142,21 +184,12 @@ const DashboardHeader = ({
 
       {/* RENDER MODAL SESUAI ROLE */}
       {userName && roleName && (
-        isCashier ? (
-          <CashierNotificationModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            notifications={cashierNotifs} 
-            onMarkAsRead={handleMarkAsRead} 
-          />
-        ) : (
-          <WaiterNotificationModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            notifications={waiterNotifs}
-            onMarkAsRead={handleMarkAsRead}
-          />
-        )
+        <NotificationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          notifications={Notifs}
+          onMarkAsRead={handleMarkAsRead}
+        />
       )}
     </>
   );

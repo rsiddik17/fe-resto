@@ -54,16 +54,16 @@ const WaiterOrderListCard = ({
       {/* Header Info */}
       <div className="flex justify-between items-start mb-2.5">
         <div>
-          <p className="text-gray-400 text-xs md:text-sm font-bold mb-1.5">{orderId}</p>
-          <h3 className="font-bold text-base md:text-[17px]">{tableName}</h3>
+          <p className="text-black/50 text-[13.5px] md:text-sm font-bold mb-1.5">{orderId}</p>
+          <h3 className="font-bold text-[16.5px] md:text-[17px]">{tableName}</h3>
         </div>
-        <span className="text-gray-400 text-xs md:text-[13px] mt-5">{time}</span>
+        <span className="text-gray-400 text-[13px] md:text-[13px] mt-5">{time}</span>
       </div>
 
       {/* Detail Pesanan Preview */}
       <div className="mb-2">
-        <p className="text-[13px] md:text-[13.5px] mb-1">Detail Pesanan:</p>
-        <ul className="text-[13px] md:text-[13.5px] flex flex-col gap-0.5">
+        <p className="text-[14px] md:text-[13.5px] mb-1">Detail Pesanan:</p>
+        <ul className="text-[14px] md:text-[13.5px] flex flex-col gap-0.5">
           {visibleItems.map((item, idx) => (
             <li key={idx}>
               {item.name} x{item.qty}
@@ -71,7 +71,7 @@ const WaiterOrderListCard = ({
           ))}
         </ul>
         {hiddenItemsCount > 0 && (
-          <p className="text-primary text-xs md:text-[12.5px] mt-1.5">
+          <p className="text-primary text-[13px] md:text-[12.5px] mt-1.5">
             +{hiddenItemsCount} item lainnya
           </p>
         )}
@@ -79,8 +79,8 @@ const WaiterOrderListCard = ({
 
       {/* Total Tagihan */}
       <div className="flex justify-between items-center border-t border-gray-500 pt-2 mt-auto mb-3 mr-3">
-        <span className="text-black text-[13px] md:text-sm">Total Tagihan</span>
-        <span className="text-black text-[13px] md:text-sm font-medium">{rupiahFormatter.format(totalPrice)}</span>
+        <span className="text-black text-[14px] md:text-sm">Total Tagihan</span>
+        <span className="text-black text-[14px] md:text-sm font-medium">{rupiahFormatter.format(totalPrice)}</span>
       </div>
 
       {/* Buttons */}
@@ -88,13 +88,13 @@ const WaiterOrderListCard = ({
         <Button 
           variant="outline" 
           onClick={onViewDetail}
-          className="flex-1 py-2 md:py-2.5 text-xs md:text-[13px] font-normal border-primary text-primary hover:bg-primary/5 rounded-sm"
+          className="flex-1 py-2 md:py-2.5 text-[14px] md:text-[13px] lg:text-[13px] font-normal border-primary text-primary hover:bg-primary/5 rounded-sm"
         >
           Lihat Detail
         </Button>
         <Button 
           onClick={onFinish}
-          className="flex-1 py-2 md:py-2.5 text-xs md:text-[13px] font-normal bg-primary text-white rounded-sm shadow-sm"
+          className="flex-1 py-2 md:py-2.5 text-[14px] md:text-[13px] lg:text-[13px] font-normal bg-primary text-white rounded-sm shadow-sm"
         >
           Selesai
         </Button>

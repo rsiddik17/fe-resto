@@ -44,7 +44,7 @@ const FormOtp = ({ onSuccess }: FormOtpProps) => {
       <div className="space-y-3">
         
         <div>
-          <Label htmlFor="otp-0" className="px-5">
+          <Label htmlFor="otp-0" className="px-1 md:px-5">
             Kode OTP
           </Label>
 
@@ -82,20 +82,20 @@ const FormOtp = ({ onSuccess }: FormOtpProps) => {
         </div>
 
 
-        <p className="text-start px-5 text-sm text-black">
+        <p className="text-start px-1 md:px-5 text-sm text-black">
           Kode akan kadaluwarsa dalam:{" "}
-          <span className="font-bold text-foreground">
+          <span className="font-bold text-center text-foreground">
             {formatMmSs(otpExpirySeconds)}
           </span>
         </p>
 
         {otpError && (
-          <p className="text-start px-5 text-xs text-red-500">
+          <p className="text-start px-1 md:px-5 text-xs text-red-500">
             Kode OTP yang anda masukan salah. Silakan coba lagi.
           </p>
         )}
 
-        <p className="text-start px-5 text-sm text-black">
+        <p className="text-start px-1 md:px-5 text-sm text-black">
           Belum menerima kode?{" "}
           {resendSeconds > 0 ? (
             <span className="text-primary font-semibold">
@@ -113,14 +113,14 @@ const FormOtp = ({ onSuccess }: FormOtpProps) => {
         </p>
 
         {resendError && (
-            <p className="text-start px-5 text-xs text-red-500">
+            <p className="text-start px-1 md:px-5 text-xs text-red-500">
               {resendError}
             </p>
           )}
 
         <div className="pt-2">
           <Button
-            className="w-full"
+            className="w-full py-2 md:py-2.25"
             type="button"
             onClick={handleVerifyClick}
             disabled={isVerifying || digits.some((d) => !d)}
@@ -129,12 +129,12 @@ const FormOtp = ({ onSuccess }: FormOtpProps) => {
           </Button>
         </div>
 
-        <div className="border-t border-black/10 pt-4">
+        <div className="border-t border-black/10 pt-1">
           <Link
             to="/"
-            className="flex justify-center items-center gap-2 text-center text-black/50 underline"
+            className="flex justify-center items-center gap-2 text-sm text-center text-black/50 underline"
           >
-            <ArrowLeft size={20} aria-hidden />
+            <ArrowLeft size={18} aria-hidden />
             Kembali Ke Halaman Login
           </Link>
         </div>

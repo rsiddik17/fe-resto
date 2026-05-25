@@ -20,7 +20,7 @@ const ProfileHeader = ({ userName, roleName, onBack }: ProfileHeaderProps) => {
   };
 
   return (
-    <header className="bg-white h-18 pl-6 pr-8 flex justify-between items-center shadow-sm shrink-0">
+    <header className="bg-white h-18 px-4 lg:pl-6 lg:pr-8 flex justify-between items-center shadow-sm shrink-0">
       {/* Tombol Kembali Kiri */}
       <button 
         onClick={handleBack}

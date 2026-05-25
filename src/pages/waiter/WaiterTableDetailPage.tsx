@@ -22,7 +22,7 @@ const WaiterTableDetailPage = () => {
     <div className="flex flex-col h-screen">
       
       {/* HEADER UTAMA */}
-      <div className="pt-7.5 pl-8 pr-6 shrink-0">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0 shrink-0">
         <DashboardHeader
           title="Manajemen Meja"
           subtitle="Pantau dan ubah meja restoran secara langsung"
@@ -30,13 +30,13 @@ const WaiterTableDetailPage = () => {
       </div>
 
       {/* KONTEN UTAMA */}
-      <div className="pt-0 pb-6 pl-8 pr-12 flex flex-col flex-1 min-h-0">
+      <div className="pt-1 lg:pt-1 pb-6 lg:pb-6 px-4 lg:pl-8 lg:pr-12 flex flex-col flex-1 min-h-0">
         
         {/* Card Putih Besar */}
         <div className="bg-white rounded-md shadow-sm border border-gray-100 p-3 md:px-5 md:py-4 flex flex-col flex-1">
           
           {/* Header Internal Card (Tombol Kembali & Judul) */}
-          <div className="flex items-center gap-2 mb-9 shrink-0">
+          <div className="flex items-center gap-2 mb-6 md:mb-8 shrink-0">
             <button 
               onClick={() => navigate(-1)}
               className="text-black hover:text-primary transition-colors cursor-pointer"
@@ -47,13 +47,13 @@ const WaiterTableDetailPage = () => {
           </div>
 
           {/* Layout 2 Kolom Kiri-Kanan */}
-          <div className="flex gap-4 md:gap-5 flex-1">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-5 flex-1">
             
             {/* KOLOM KIRI: Kotak Ungu Ikon Meja */}
-            <div className="w-85 h-75 bg-primary/25 rounded-xs flex items-center justify-center shrink-0">
+            <div className="max-w-85 h-70 md:w-85 md:h-75 bg-primary/25 rounded-xs flex items-center justify-center shrink-0">
               {/* Lingkaran Ungu Tua */}
-              <div className="w-28 h-28 bg-primary/25 rounded-full flex items-center justify-center">
-                <TableIcon className="w-16 h-16 text-primary" />
+              <div className="w-26 h-26 md:w-28 md:h-28 bg-primary/25 rounded-full flex items-center justify-center">
+                <TableIcon className="w-14 h-14 md:w-16 md:h-16 text-primary" />
               </div>
             </div>
 
