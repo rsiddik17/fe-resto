@@ -157,10 +157,7 @@ const router = createBrowserRouter(
     element: <ProtectedRoute allowedRoles={["WAITER"]} />,
     children: [{ path: "/pelayan/order", Component: WaiterDashboardPage }],
   },
-  // {
-  //   element: <ProtectedRoute allowedRoles={["KITCHEN"]} />,
-  //   children: [{ path: "/kitchen/queue", Component: KitchenDashboardPage }],
-  // },
+ 
   {
     element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />, 
     children: [
