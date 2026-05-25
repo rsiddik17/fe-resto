@@ -31,7 +31,7 @@ const AdminSidebar = ({ onLogout }: AdminSidebarProps) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     if (onLogout) onLogout();
-    navigate("/login");
+    navigate("/");
   };
 
   return (

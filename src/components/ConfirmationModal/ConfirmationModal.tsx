@@ -25,13 +25,13 @@ const ConfirAlamat = ({ isOpen, onConfirm, onCancel, title, description }: Confi
         <div className="flex gap-4">
           <button 
             onClick={onCancel} 
-            className="flex-1 py-3 bg-[#E5E7EB] text-gray-500 font-bold rounded-xl hover:bg-gray-200 transition-all active:scale-95"
+            className="flex-1 py-3 bg-[#E5E7EB] text-gray-500 font-bold rounded-xs hover:bg-gray-200 transition-all active:scale-95"
           >
             Batal
           </button>
           <button 
             onClick={onConfirm} 
-            className="flex-1 py-3 bg-primary text-white font-bold rounded-xl  transition-all active:scale-95"
+            className="flex-1 py-3 bg-primary text-white font-bold rounded-xs  transition-all active:scale-95"
           >
             Ya, Simpan
           </button>
