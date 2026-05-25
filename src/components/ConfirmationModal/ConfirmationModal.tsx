@@ -31,7 +31,7 @@ const ConfirAlamat = ({ isOpen, onConfirm, onCancel, title, description }: Confi
           </button>
           <button 
             onClick={onConfirm} 
-            className="flex-1 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95"
+            className="flex-1 py-3 bg-primary text-white font-bold rounded-xl  transition-all active:scale-95"
           >
             Ya, Simpan
           </button>

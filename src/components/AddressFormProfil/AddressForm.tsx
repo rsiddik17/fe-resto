@@ -53,8 +53,8 @@ const AddressForm = ({ onCancel, onSave }: AddressFormProps) => {
         </div>
 
         {/* TANDA SEBAGAI */}
-        <div className="space-y-3">
-          <label className="text-black font-bold text-sm">Tandai Sebagai</label>
+        <div className="space-y-2">
+          <label className="text-black font-bold text-sm ">Tandai Sebagai</label>
           <div className="flex gap-4">
             {['Rumah', 'Kantor'].map((tag) => (
               <button 

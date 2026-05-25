@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -131,7 +131,7 @@ const MapSection = () => {
       </div>
 
       {/* TANDAI SEBAGAI */}
-      <div className="space-y-3 text-left">
+      <div className="flex flex-col gap-3 text-left">
         <label className="text-black font-bold text-sm">Tandai Sebagai</label>
         <div className="flex gap-4">
           <button
