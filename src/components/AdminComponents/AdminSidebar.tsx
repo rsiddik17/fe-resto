@@ -9,6 +9,7 @@ import UserIcon from "../Icon/UserIcon";
 import DashboardIcon from "../Icon/DashboardIcon";
 import LogoutModal from "../LogoutModal/LogoutModal";
 
+
 interface AdminSidebarProps {
   onLogout?: () => void;
 }
@@ -31,7 +32,9 @@ const AdminSidebar = ({ onLogout }: AdminSidebarProps) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     if (onLogout) onLogout();
-    navigate("/");
+    
+    // Ganti navigate("/") menjadi ini agar refresh total ke login
+    window.location.href = "/its-resto/"; 
   };
 
   return (
@@ -112,7 +115,7 @@ const AdminSidebar = ({ onLogout }: AdminSidebarProps) => {
         </div>
       </aside>
 
-      <LogoutModal
+     <LogoutModal
         isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={handleLogout}
