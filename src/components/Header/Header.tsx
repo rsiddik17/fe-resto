@@ -32,7 +32,7 @@ const Header = ({
 
   const { user } = useAuthStore();
 
-  const displayName = userName || user?.fullname || "Kiosk";
+  const displayName = userName || user?.fullname;
 
   return (
     <header className="bg-white h-17.5 md:h-27.5 lg:h-20 py-3 px-2 md:px-4 flex items-center justify-between border-b border-gray/50">

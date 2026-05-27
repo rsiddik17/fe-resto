@@ -50,17 +50,17 @@ const PaymentOrderDetailCard = ({ passedOrder }: PaymentOrderDetailCardProps) =>
           {passedOrder?.items?.map((item: any, idx: number) => (
             <div key={idx} className="flex justify-between items-start">
               <div className="flex flex-col">
-                <span className="text-xs md:text-[13px]">
+                <span className="text-[13.5px] md:text-[13px]">
                   {item.name} x{item.qty}
                 </span>
                 {/* Garis Kiri Catatan (Sesuai Gambar: Warna Ungu) */}
                 <div className="border-l-2 border-primary pl-1 ml-px">
-                  <span className="text-black/50 text-[11px] md:text-xs">
+                  <span className="text-black/50 text-[12.5px] md:text-xs">
                     Catatan: {item.note || "Tidak ada"}
                   </span>
                 </div>
               </div>
-              <span className="text-xs md:text-[13px]">
+              <span className="text-[13.5px] md:text-[13px]">
                 {item.price ? rupiahFormatter.format(item.price) : "-"}
               </span>
             </div>

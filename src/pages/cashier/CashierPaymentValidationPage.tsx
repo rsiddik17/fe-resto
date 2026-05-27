@@ -8,6 +8,7 @@ import PaymentOrderDetailCard from "../../components/Card/PaymentOrderDetailCard
 import InfoIcon from "../../components/Icon/InfoIcon";
 import Toast from "../../components/Toast/Toast";
 import { useCartStore } from "../../store/useCartStore";
+import { useProfile } from "../../hooks/useProfile";
 
 const CashierPaymentValidationPage = () => {
   const navigate = useNavigate();
@@ -22,7 +23,11 @@ const CashierPaymentValidationPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // --- STATE TOAST ---
-  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: "success" | "error";
+  }>({
     show: false,
     message: "",
     type: "success",
@@ -38,27 +43,29 @@ const CashierPaymentValidationPage = () => {
     clearCart();
     // GANTI ALERT DENGAN TOAST HIJAU
     triggerToast("Pembayaran berhasil divalidasi!", "success");
-    
+
     // Beri jeda 1.5 detik agar Toast terlihat sebelum pindah halaman
     setTimeout(() => {
       navigate("/cashier/order-list");
     }, 1500);
   };
 
+  const { firstName, roleName } = useProfile();
+
   return (
     <>
       {/* HEADER */}
-      <div className="pt-7.5 pl-8 pr-6">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0">
         <DashboardHeader
           title="Daftar Pesanan"
           subtitle="Ringkasan data pesanan dan aktivitas restoran"
-          userName="Rina"
-          roleName="Kasir"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
       {/* MAIN CONTENT */}
-      <div className="pt-0 pb-0 px-8">
+      <div className="pt-1 lg:pt-1 pb-0 lg:pb-0 px-4 lg:px-8">
         <div className="bg-white rounded-md shadow-sm border min-h-[83vh] border-gray-100 p-3 flex flex-col flex-1">
           {/* Tombol Kembali & Judul */}
           <div className="flex items-center gap-1 mb-2">
@@ -97,10 +104,13 @@ const CashierPaymentValidationPage = () => {
               </div>
 
               {/* Bagian Bawah Kanan: Info & Tombol Aksi (Terdorong ke bawah) */}
-              <div className="flex flex-col gap-7 mt-auto">
+              <div className="flex flex-col gap-7 mt-4 md:mt-auto">
                 <div className="bg-[#FF9100]/25 border-[1.35px] border-[#FF9100] rounded-sm py-2 px-7 flex items-start gap-3">
                   <div className="text-[#FF9100] mt-0.5 shrink-0">
-                    <InfoIcon className="bg-[#FF9100] text-white rounded-full w-5 h-5" strokeWidth={2.5} />
+                    <InfoIcon
+                      className="bg-[#FF9100] text-white rounded-full w-5 h-5"
+                      strokeWidth={2.5}
+                    />
                   </div>
                   <p className="text-[#FF9100] text-xs leading-relaxed font-medium">
                     Silakan cek mutasi pembayaran pada sistem merchant QRIS
@@ -108,10 +118,10 @@ const CashierPaymentValidationPage = () => {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3 w-full">
+                <div className="flex flex-col md:flex-row items-center gap-3 w-full">
                   <button
                     onClick={() => navigate(-1)}
-                    className="flex-[0.9] bg-[#DEDED9] text-white font-bold text-sm py-3 rounded-sm hover:bg-gray/40 transition-colors cursor-pointer"
+                    className="flex-[0.9] bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 w-full font-bold text-sm md:text-sm lg:text-sm py-3 rounded-sm transition-colors cursor-pointer"
                   >
                     Batalkan Pesanan
                   </button>
@@ -122,7 +132,7 @@ const CashierPaymentValidationPage = () => {
                       !selectedBank ||
                       (selectedBank === "Lainnya" && !otherBankName)
                     }
-                    className="flex-1 bg-primary text-white font-bold text-sm py-3 rounded-sm hover:bg-primary-hover transition-colors cursor-pointer disabled:cursor-not-allowed"
+                    className="flex-1 bg-primary w-full text-white font-bold text-sm md:text-sm lg:text-sm py-3 rounded-sm hover:bg-primary-hover transition-colors cursor-pointer disabled:cursor-not-allowed"
                   >
                     Pembayaran Diterima
                   </button>

@@ -44,6 +44,8 @@ const MobileOrderSuccessPage = () => {
     }
   };
 
+  const tableNo = tableNumber?.match(/\d+/)?.[0];
+
   if (!orderData) return null;
 
   return (
@@ -69,7 +71,7 @@ const MobileOrderSuccessPage = () => {
             <div className="flex justify-between text-sm md:text-base">
               <span className="text-gray-500">Nomor meja</span>
               <span className="font-bold text-primary">
-                {tableNumber || "Meja --"}
+                {tableNumber ? `Meja ${tableNo}` : "Meja --"}
               </span>
             </div>
             <div className="flex justify-between text-sm md:text-base">

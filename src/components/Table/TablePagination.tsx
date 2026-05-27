@@ -44,9 +44,9 @@ const TablePagination = ({
   };
 
   return (
-    <div className="flex justify-between items-start w-full">
+    <div className="flex flex-col md:flex-row justify-start md:justify-between md:items-start w-full gap-2 md:gap-0">
       {/* Teks Keterangan - Kiri (BAGIAN INI TIDAK DISENTUH) */}
-      <span className="text-[12.5px] text-black/50">
+      <span className="text-[13px] md:text-[12.5px] text-black/50">
         Menampilkan{" "}
         <span className="font-bold text-black/50">
           {startIndex}-{endIndex}

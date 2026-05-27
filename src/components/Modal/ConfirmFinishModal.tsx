@@ -38,7 +38,7 @@ const ConfirmFinishModal = ({ isOpen, onClose, onConfirm }: ConfirmFinishModalPr
         <div className="flex justify-center w-full gap-10">
           <Button 
             onClick={onClose}
-            className="py-2 w-32 bg-[#D9D9D9] hover:bg-[#C4C4C4] text-sm text-black font-normal rounded-[6px] shadow-none"
+            className="py-2 w-32 bg-[#FFFFFF] hover:bg-black/5 border-[1.5px] border-gray/50 text-sm text-black font-normal rounded-[6px]"
           >
             Batal
           </Button>

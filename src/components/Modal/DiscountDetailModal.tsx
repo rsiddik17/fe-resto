@@ -128,7 +128,7 @@ const DiscountDetailModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white w-full max-w-2xl h-130 ml-auto mr-50 mt-12 rounded-sm shadow-sm overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col"
+        className="bg-white w-full max-w-2xl md:h-130 md:ml-auto md:mr-50 md:mt-12 rounded-sm shadow-sm overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Modal (Background Ungu sesuai gambar) */}
@@ -141,7 +141,7 @@ const DiscountDetailModal = ({
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 pt-5 flex flex-col gap-5">
           
           {/* Baris 1: Nama & Kode */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-20">
             <div>
               <label htmlFor="name" className="block text-[13px] uppercase text-black mb-1.5">
                 NAMA DISKON
@@ -152,7 +152,7 @@ const DiscountDetailModal = ({
                 disabled={isReadOnly}
                 {...register("name")}
                 className={`w-full text-[14.5px] px-3.5 py-2.5 rounded-xs outline-none transition-colors border ${
-                  isReadOnly ? "bg-[#DEDED9]/50 border-transparent cursor-not-allowed" : errors.name ? "bg-white border-red-500 focus:ring-1 focus:ring-red-500" : "bg-[#EFEEEE] border-transparent focus:border-primary/50 focus:bg-white focus:ring-1 focus:ring-primary"
+                  isReadOnly ? "bg-[#DEDED9]/50 border-transparent cursor-not-allowed" : errors.name ? "bg-white border-red-500 focus:ring-1 focus:ring-red-500" : "bg-[#FFFFFF] border-[1.5px] border-primary focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary"
                 }`}
               />
               {errors.name && <p className="text-red-500 text-[11px] mt-1">{errors.name.message}</p>}
@@ -168,7 +168,7 @@ const DiscountDetailModal = ({
                 disabled={isReadOnly}
                 {...register("code")}
                 className={`w-full text-[14.5px] px-3.5 py-2.5 rounded-xs outline-none transition-colors border uppercase ${
-                  isReadOnly ? "bg-[#DEDED9]/50 border-transparent cursor-not-allowed" : errors.code ? "bg-white border-red-500 focus:ring-1 focus:ring-red-500" : "bg-[#EFEEEE] border-transparent focus:border-primary/50 focus:bg-white focus:ring-1 focus:ring-primary"
+                  isReadOnly ? "bg-[#DEDED9]/50 border-transparent cursor-not-allowed" : errors.code ? "bg-white border-red-500 focus:ring-1 focus:ring-red-500" : "bg-[#FFFFFF] border-[1.5px] border-primary focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary"
                 }`}
               />
               {errors.code && <p className="text-red-500 text-[11px] mt-1">{errors.code.message}</p>}
@@ -176,7 +176,7 @@ const DiscountDetailModal = ({
           </div>
 
           {/* Baris 2: Minimal & Total */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-20">
             <div>
               <label htmlFor="minPurchase" className="block text-[13px] uppercase text-black mb-1.5">
                 MINIMAL PEMBELIAN
@@ -187,7 +187,7 @@ const DiscountDetailModal = ({
                 disabled={isReadOnly}
                 {...register("minPurchase")}
                 className={`w-full text-[14.5px] px-3.5 py-2.5 rounded-xs outline-none transition-colors border ${
-                  isReadOnly ? "bg-[#DEDED9]/50 border-transparent cursor-not-allowed" : errors.minPurchase ? "bg-white border-red-500 focus:ring-1 focus:ring-red-500" : "bg-[#EFEEEE] border-transparent focus:border-primary/50 focus:bg-white focus:ring-1 focus:ring-primary"
+                  isReadOnly ? "bg-[#DEDED9]/50 border-transparent cursor-not-allowed" : errors.minPurchase ? "bg-white border-red-500 focus:ring-1 focus:ring-red-500" : "bg-[#FFFFFF] border-[1.5px] border-primary focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary"
                 }`}
               />
               {errors.minPurchase && <p className="text-red-500 text-[11px] mt-1">{errors.minPurchase.message}</p>}
@@ -203,7 +203,7 @@ const DiscountDetailModal = ({
                 disabled={isReadOnly}
                 {...register("discountAmount")}
                 className={`w-full text-[14.5px] px-3.5 py-2.5 rounded-xs outline-none transition-colors border ${
-                  isReadOnly ? "bg-[#DEDED9]/50 border-transparent cursor-not-allowed" : errors.discountAmount ? "bg-white border-red-500 focus:ring-1 focus:ring-red-500" : "bg-[#EFEEEE] border-transparent focus:border-primary/50 focus:bg-white focus:ring-1 focus:ring-primary"
+                  isReadOnly ? "bg-[#DEDED9]/50 border-transparent cursor-not-allowed" : errors.discountAmount ? "bg-white border-red-500 focus:ring-1 focus:ring-red-500" : "bg-[#FFFFFF] border-[1.5px] border-primary focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary"
                 }`}
               />
               {errors.discountAmount && <p className="text-red-500 text-[11px] mt-1">{errors.discountAmount.message}</p>}
@@ -216,7 +216,7 @@ const DiscountDetailModal = ({
               MASA BERLAKU
             </label>
             <div className={`w-full flex items-center justify-between rounded-xs border px-4 py-2 transition-colors ${
-               isReadOnly ? "bg-[#DEDED9]/50 border-transparent" : (errors.startDate || errors.endDate) ? "bg-white border-red-500" : "bg-[#EFEEEE] border-transparent"
+               isReadOnly ? "bg-[#DEDED9]/50 border-transparent" : (errors.startDate || errors.endDate) ? "bg-white border-red-500" : "bg-[#FFFFFF] border-[1.5px] border-primary"
             }`}>
               <div className="flex flex-col flex-1 cursor-pointer" onClick={() => {
                   if (!isReadOnly && startDateRef.current) {
@@ -270,11 +270,11 @@ const DiscountDetailModal = ({
 
           {/* Tombol Action (Batal / Simpan - Hilang kalau mode Detail) */}
           {!isReadOnly && (
-            <div className="flex items-center justify-end gap-3 mt-12">
+            <div className="flex items-center justify-between md:justify-end gap-3 md:mt-12">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-8 py-2 bg-white border-[1.5px] border-black text-primary font-bold text-[13.5px] rounded-sm hover:bg-gray-50 transition-colors cursor-pointer"
+                className="px-8 py-2 bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 font-bold text-[13.5px] rounded-sm transition-colors cursor-pointer"
               >
                 Batal
               </button>

@@ -4,15 +4,8 @@ import TableInfoCard from "../../components/Card/TableInfoCard";
 import Loading from "../../components/Loading/Loading";
 import Button from "../../components/ui/Button";
 
-import { tableAPI } from "../../api/table.api";
+import { tableAPI, type TableData } from "../../api/table.api";
 import { useCartStore } from "../../store/useCartStore";
-
-interface TableData {
-  id: number;
-  table_number: string;
-  capacity: number;
-  status: "AVAILABLE" | "OCCUPIED";
-}
 
 const KioskTableInfoPage = () => {
   const navigate = useNavigate();
@@ -126,7 +119,7 @@ const KioskTableInfoPage = () => {
         )}
 
         {/* JIKA MEJA BERHASIL DITEMUKAN */}
-        {tableNumber && !isLoading && (
+        {tableNumber && tableId !== null && !isLoading && (
           <TableInfoCard
             tableNumber={tableNumber}
             onLanjut={() => {

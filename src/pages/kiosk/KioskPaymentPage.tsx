@@ -43,6 +43,8 @@ const KioskPaymentPage = () => {
     });
   };
 
+  const tableNo = tableNumber?.match(/\d+/)?.[0];
+
   const handlePaymentExpired = () => {
     setIsExpired(true);
   };
@@ -75,7 +77,7 @@ const KioskPaymentPage = () => {
             <div className="flex justify-between text-base md:text-xl lg:text-lg">
               <span className="text-gray">Nomor meja</span>
               <span className="font-bold text-primary">
-                {tableNumber || "Meja --"}
+                {tableNumber ? `Meja ${tableNo}` : "Meja --"}
               </span>
             </div>
             <div className="flex justify-between text-base md:text-xl lg:text-lg">

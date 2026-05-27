@@ -1,9 +1,7 @@
 import { useNavigate } from "react-router";
 import {
-  CircleDollarSign,
   LayoutGrid,
   Plus,
-  ClipboardList,
 } from "lucide-react";
 
 import DashboardHeader from "../../components/Header/DashboardHeader";
@@ -11,6 +9,11 @@ import StatCardCashier from "../../components/Card/StatCardCashier";
 import TableStatusBoard from "../../components/Table/TableStatusBoard";
 import TotalOrderIcon from "../../components/Icon/TotalOrderIcon";
 import IncomingOrderTable from "../../components/Table/IncomingOrderTable";
+import StockIcon from "../../components/Icon/StockIcon";
+import MoneyIcon from "../../components/Icon/MoneyIcon";
+import { useProfile } from "../../hooks/useProfile";
+import { tableAPI, type TableData } from "../../api/table.api";
+import { useEffect, useState } from "react";
 
 // --- MOCK DATA ---
 const MOCK_INCOMING_ORDERS = [
@@ -74,21 +77,51 @@ const MOCK_INCOMING_ORDERS = [
 
 const CashierDashboardPage = () => {
   const navigate = useNavigate();
+  const { firstName, roleName } = useProfile();
+
+  // STATE UNTUK STATISTIK MEJA
+    const [totalTables, setTotalTables] = useState<number>(0);
+    const [occupiedTables, setOccupiedTables] = useState<number>(0);
+  
+    // HIT API MEJA
+    useEffect(() => {
+      const fetchTableStats = async () => {
+        try {
+          const response = await tableAPI.getAllTables();
+          if (response.success && response.data) {
+            const tables: TableData[] = response.data;
+            
+            setTotalTables(tables.length);
+            
+            const occupiedCount = tables.filter((t) => t.status === "OCCUPIED").length;
+            setOccupiedTables(occupiedCount);
+          }
+        } catch (error) {
+          console.error("Gagal mengambil data meja untuk statistik:", error);
+        }
+      };
+  
+      fetchTableStats();
+      
+      // Opsional: Polling setiap 5 detik untuk memperbarui status meja
+      const intervalId = setInterval(fetchTableStats, 5000);
+      return () => clearInterval(intervalId);
+    }, []);
 
   return (
     <>
       {/* 1. HEADER */}
-      <div className="pt-7.5 pl-8 pr-6">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0">
         <DashboardHeader
           title="Dashboard Kasir"
           subtitle="Ringkasan data pesanan dan aktivitas restoran"
-          userName="Rina" // Ganti dinamis nanti
-          roleName="Kasir"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
       {/* 2. MAIN CONTENT (Scrollable keseluruhan) */}
-      <div className="pt-0 pb-6 px-8">
+      <div className="pt-1 lg:pt-1 pb-6 lg:pb-6 px-4 lg:px-8">
         {/* ROW 1: 3 Stat Cards */}
         <div className="flex flex-col lg:flex-row gap-4.5 mb-5">
           <div className="flex-1 flex flex-col md:flex-row gap-4.5 w-full">
@@ -103,7 +136,7 @@ const CashierDashboardPage = () => {
               <StatCardCashier
                 title="Pemasukkan Hari Ini"
                 value="Rp5.070.000"
-                Icon={CircleDollarSign}
+                Icon={MoneyIcon}
               />
             </div>
           </div>
@@ -112,7 +145,7 @@ const CashierDashboardPage = () => {
               title="Meja Terisi"
               value={
                 <span>
-                  20<span className="text-gray/75 text-2xl font-bold">/25</span>
+                  {occupiedTables}<span className="text-gray/75 text-2xl font-bold">/{totalTables}</span>
                 </span>
               }
               Icon={LayoutGrid}
@@ -151,7 +184,7 @@ const CashierDashboardPage = () => {
                   className="flex items-center gap-4 bg-white border border-gray-200 rounded-md px-3 py-2 transition-all shadow-sm cursor-pointer"
                 >
                   <div className="bg-primary w-7.5 h-7.5 rounded-full flex items-center justify-center text-white shrink-0 transition-transform">
-                    <ClipboardList size={18} strokeWidth={2.5} />
+                    <StockIcon className="w-5 h-5 md:w-5.5 md:h-5.5" strokeWidth={2.5} />
                   </div>
                   <span className="font-extrabold text-[15px] text-black">
                     Lihat Stok

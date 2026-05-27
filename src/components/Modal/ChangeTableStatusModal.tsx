@@ -1,12 +1,12 @@
-import { type TableItem } from "../Card/TableCard"; // Pastikan path sesuai
 import ChecklistWhiteIcon from "../Icon/ChecklistWhiteIcon";
 import AvailableDirtyIcon from "../Icon/AvailableDirtyIcon";
+import type { TableData } from "../../api/table.api";
 
 interface ChangeTableStatusModalProps {
   isOpen: boolean;
   onClose: () => void;
-  table: TableItem | null;
-  onStatusChange: (status: TableItem["status"]) => void;
+  table: TableData | null;
+  onStatusChange: (status: "tersedia" | "terisi" | "kotor") => void;
   onViewDetail: () => void;
 }
 
@@ -19,10 +19,23 @@ const ChangeTableStatusModal = ({
 }: ChangeTableStatusModalProps) => {
   if (!isOpen || !table) return null;
 
+  const isTersedia = table.status === "AVAILABLE";
+  const isTerisi = table.status === "OCCUPIED";
+
   // Render warna status saat ini
-  const statusColor = 
-    table.status === "tersedia" ? "text-lime" : 
-    table.status === "terisi" ? "text-primary" : "text-gray-500";
+  const statusColor = isTersedia ? "text-lime" : isTerisi ? "text-primary" : "text-gray-500";
+  const statusText = isTersedia ? "Tersedia" : isTerisi ? "Terisi" : "Kotor";
+
+  const formatTableNumber = (raw: string) => {
+    // Hanya tangkap bagian angkanya saja, buang M dan buang _i/_o
+    const match = raw.match(/M(\d+)/i);
+    if (match) {
+      return match[1]; // Kembalikan hanya angkanya saja, misal "01"
+    }
+    return raw.replace(/\D/g, "") || raw; // Fallback jika format berbeda
+  };
+
+  const displayTable = formatTableNumber(table.table_number);
 
   return (
     <div
@@ -35,16 +48,16 @@ const ChangeTableStatusModal = ({
       >
         {/* Nomor Meja Besar di Atas */}
         <div className="bg-[#D9D9D9]/50 p-2.5 rounded-xs mb-5 shadow">
-          <h1 className="text-[26px] font-bold leading-none">{table.id}</h1>
+          <h1 className="text-[26px] font-bold leading-none">{displayTable}</h1>
         </div>
 
         <h2 className="text-xl font-bold mb-1">
           Ubah status meja saat ini
         </h2>
-        <p className="text-[11px] text-black/50 mb-5">
-          Meja {table.id} - Status sekarang:{" "}
+        <p className="text-[12px] text-black/50 mb-5">
+          Meja {displayTable} - Status sekarang:{" "}
           <span className={`font-bold capitalize ${statusColor}`}>
-            {table.status}
+            {statusText}
           </span>
         </p>
 

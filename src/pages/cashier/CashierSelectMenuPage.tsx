@@ -14,6 +14,7 @@ import Input from "../../components/ui/Input";
 import DeleteConfirmModal from "../../components/Modal/DeleteConfirmModal";
 import { useMenus } from "../../hooks/useMenus";
 import WarningIcon from "../../components/Icon/WarningIcon";
+import { useProfile } from "../../hooks/useProfile";
 
 const CashierSelectMenuPage = () => {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ const CashierSelectMenuPage = () => {
 
   const handleConfirmOrder = () => {
     if (items.length === 0) return; // Proteksi ganda
-    
+
     // PERBAIKAN: Arahkan ke rute payment milik Kasir
     navigate("/cashier/order-list/create-order/payment-order", {
       state: {
@@ -76,25 +77,27 @@ const CashierSelectMenuPage = () => {
     }
   };
 
+  const { firstName, roleName } = useProfile();
+
   return (
     <>
       {/* 1. HEADER (Sesuai Wrapper Permintaan) */}
-      <div className="pt-7.5 pl-8 pr-7">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-7 mx-4 lg:mx-0">
         <DashboardHeader
           title="Pilih Menu"
           showBack={true}
           onBack={() => navigate(-1)}
-          userName="Rina" // <-- Disesuaikan untuk Kasir
-          roleName="Kasir" // <-- Disesuaikan untuk Kasir
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
       {/* 2. MAIN CONTENT (Sesuai Wrapper Permintaan) */}
-      <div className="pt-0 pb-0 px-8 min-h-0">
+      <div className="pt-1 lg:pt-1 pb-0 lg:pb-0 px-4 lg:px-8 min-h-0">
         {/* Layout 2 Kolom Kiri/Kanan dengan proporsi fixed 55% dan 45% */}
-        <div className="flex gap-4 h-full min-h-0 w-full">
+        <div className="flex flex-col md:flex-row gap-4 h-screen md:h-full min-h-0 w-full">
           {/* --- KOLOM KIRI: MENU (55%) --- */}
-          <div className="w-[55%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 pb-0 md:p-5 md:pb-0 flex flex-col min-h-0">
+          <div className="w-full md:w-[55%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 pb-0 md:p-5 md:pb-0 flex flex-col h-full min-h-0">
             {/* Search */}
             <div className="relative mb-4 shrink-0">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -186,7 +189,7 @@ const CashierSelectMenuPage = () => {
           </div>
 
           {/* --- KOLOM KANAN: CART (45%) --- */}
-          <div className="w-[45%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 flex flex-col h-full min-h-0">
+          <div className="w-full md:w-[45%] bg-white rounded-t-md shadow-sm border border-gray-100 p-4 flex flex-col h-full min-h-0">
             {/* Header Cart */}
             <div className="flex justify-between items-center shrink-0 border-b border-gray-100 mb-1">
               <h2 className="font-bold text-[19px]">Pesanan</h2>
@@ -232,7 +235,7 @@ const CashierSelectMenuPage = () => {
               <Button
                 onClick={handleConfirmOrder}
                 disabled={items.length === 0}
-                className="w-full max-w-80 py-2 text-[14px] font-bold rounded-lg shadow-sm disabled:bg-gray/50 disabled:cursor-not-allowed transition-all"
+                className="w-full max-w-80 py-2 text-[14px] md:text-[14px] lg:text-[14px] font-bold rounded-lg shadow-sm disabled:bg-gray/50 disabled:cursor-not-allowed transition-all"
               >
                 Konfirmasi Pesanan
               </Button>

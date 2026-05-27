@@ -5,11 +5,10 @@ import Button from "../../components/ui/Button";
 import WaiterQRCodeBox from "../../components/QRCodeBox/WaiterQRCodeBox";
 import WaiterReceiptItemCard from "../../components/Card/WaiterReceiptItemCard";
 import { useCartStore } from "../../store/useCartStore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ExpiredModal from "../../components/Modal/ExpiredModal";
-import { useAuthStore } from "../../store/useAuthStore";
-import { profileAPI } from "../../api/profile.api";
 import { useOrderPayment } from "../../hooks/useOrderPayment";
+import { useProfile } from "../../hooks/useProfile";
 
 const rupiahFormatter = new Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -19,17 +18,39 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
 
 const WaiterPaymentPage = () => {
   const navigate = useNavigate();
-  const { user, setUser } = useAuthStore();
   const location = useLocation();
+  const { firstName, roleName } = useProfile();
 
   const [isExpiredOpen, setIsExpiredOpen] = useState(false);
 
   // Ambil state dari halaman sebelumnya, fallback default
-  const tableNumber = location.state?.tableNumber
-    ? `Meja ${location.state.tableNumber}`
-    : "Meja 10";
+  const formatTableNumber = (raw?: string) => {
+    if (!raw) return "Tanpa Meja";
+    
+    // Jika string sudah mengandung kata "Meja" atau "Tanpa" (Berarti sudah diformat dari page sebelumnya)
+    if (raw.toLowerCase().includes("meja") || raw.toLowerCase().includes("tanpa")) {
+      return raw; 
+    }
+    
+    // Jika masih mentah dari API (Contoh: "M01_i")
+    const match = raw.match(/M(\d+)(_i|_o)?/i);
+    if (match) {
+      const num = match[1];
+      let suffix = "";
+      if (match[2]) {
+        suffix = match[2].toLowerCase() === "_i" ? "_indoor" : "_outdoor";
+      }
+      return `Meja ${num}${suffix}`;
+    }
+    
+    // Fallback default
+    return `Meja ${raw}`;
+  };
+
+  const tableNumber = formatTableNumber(location.state?.tableNumber);
+
   const orderId = location.state?.orderId || "UNKNOWN";
-  const discountAmount = location.state?.discountAmount || 15000; // Contoh Mock Diskon
+  const discountAmount = location.state?.discountAmount || 0; // Contoh Mock Diskon
   const { items, getTotalPrice, clearCart } = useCartStore();
 
   const taxRate = 10;
@@ -48,25 +69,6 @@ const WaiterPaymentPage = () => {
     navigate("/waiter/dashboard"); // Kembali ke dashboard
   };
 
-  useEffect(() => {
-    if (!user) {
-      const fetchProfile = async () => {
-        try {
-          const response = await profileAPI.getStaffProfile();
-          if (response.success && response.data) {
-            setUser(response.data);
-          }
-        } catch (error) {
-          console.error("Gagal mengambil data profil:", error);
-        }
-      };
-      fetchProfile();
-    }
-  }, [user, setUser]);
-
-  // Ekstrak nama depan untuk header
-  const firstName = user?.fullname ? user.fullname.split(" ")[0] : "Memuat...";
-  const roleName = user?.role === "WAITER" ? "Pelayan" : "Pelayan";
 
   return (
     <>
@@ -91,7 +93,7 @@ const WaiterPaymentPage = () => {
               </div>
               <div className="flex justify-between items-center text-[14.5px]">
                 <span className="text-black/50">ID Pesanan</span>
-                <span className="font-bold text-primary">{orderId}</span>
+                <span className="font-bold text-primary">#{orderId}</span>
               </div>
             </div>
 

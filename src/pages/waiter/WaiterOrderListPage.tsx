@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import Input from "../../components/ui/Input";
@@ -9,8 +9,7 @@ import OrderDetailModal from "../../components/Modal/OrderDetailModal";
 import ConfirmFinishModal from "../../components/Modal/ConfirmFinishModal";
 import { cn } from "../../utils/utils";
 import { useNavigate } from "react-router";
-import { useAuthStore } from "../../store/useAuthStore";
-import { profileAPI } from "../../api/profile.api";
+import { useProfile } from "../../hooks/useProfile";
 
 // --- MOCK DATA SEMENTARA ---
 // Nanti ini diganti dengan data asli dari Backend menggunakan React Query
@@ -90,7 +89,7 @@ const WaiterOrderListPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<OrderStatus>("DIMASAK");
   const navigate = useNavigate();
-  const { user, setUser } = useAuthStore();
+  const { firstName, roleName } = useProfile();
 
   // State untuk Modal
   const [selectedOrder, setSelectedOrder] = useState<
@@ -118,25 +117,6 @@ const WaiterOrderListPage = () => {
     setOrderToFinish(null);
   };
 
-  useEffect(() => {
-    if (!user) {
-      const fetchProfile = async () => {
-        try {
-          const response = await profileAPI.getStaffProfile();
-          if (response.success && response.data) {
-            setUser(response.data);
-          }
-        } catch (error) {
-          console.error("Gagal mengambil data profil:", error);
-        }
-      };
-      fetchProfile();
-    }
-  }, [user, setUser]);
-
-  // Ekstrak nama depan untuk header
-  const firstName = user?.fullname ? user.fullname.split(" ")[0] : "Memuat...";
-  const roleName = user?.role === "WAITER" ? "Pelayan" : "Pelayan";
 
   return (
     <div className="flex flex-col min-h-screen">

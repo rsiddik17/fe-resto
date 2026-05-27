@@ -5,6 +5,7 @@ import type { TableItem } from "../../components/Card/TableCard";
 import TableFilterTabs from "../../components/Table/TableFilterTabs";
 import TableCard from "../../components/Card/TableCard";
 import ConfirmTableModal from "../../components/Modal/ConfirmTableModal";
+import { useProfile } from "../../hooks/useProfile";
 
 // --- MOCK DATA MEJA ---
 
@@ -52,15 +53,17 @@ const CashierSelectTablePage = () => {
     }
   };
 
+  const { firstName, roleName } = useProfile();
+
   return (
     <>
       {/* 1. HEADER (Menggunakan wrapper kamu) */}
 
-      <div className="pt-7.5 pl-8 pr-6">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0">
         <DashboardHeader
           title="Pilih Meja"
-          userName="Rina" // <-- Disesuaikan untuk Kasir
-          roleName="Kasir" // <-- Disesuaikan untuk Kasir
+          userName={firstName}
+          roleName={roleName}
           showBack={true}
           onBack={() => navigate(-1)}
         />
@@ -68,7 +71,7 @@ const CashierSelectTablePage = () => {
 
       {/* 2. MAIN CONTENT (Menggunakan wrapper kamu) */}
 
-      <div className="pt-0 pb-0 px-8">
+      <div className="pt-1 lg:pt-1 pb-0 lg:pb-0 px-4 lg:px-8">
         <div className="bg-white rounded-t-md shadow-sm border min-h-screen border-gray-100 p-3 md:px-4 md:py-5">
           {/* TABS FILTER */}
 
@@ -77,17 +80,13 @@ const CashierSelectTablePage = () => {
           {/* GRID KARTU MEJA */}
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-3.5 gap-y-3.75">
-            {filteredTables.map(
-              (
-                table,
-              ) => (
-                <TableCard
-                  key={table.id}
-                  table={table}
-                  onClick={handleTableClick}
-                />
-              ),
-            )}
+            {filteredTables.map((table) => (
+              <TableCard
+                key={table.id}
+                table={table}
+                onClick={handleTableClick}
+              />
+            ))}
           </div>
         </div>
       </div>

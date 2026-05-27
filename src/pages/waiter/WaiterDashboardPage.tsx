@@ -13,36 +13,42 @@ import ProcessingIcon from "../../components/Icon/ProcessingIcon";
 import DeliveryIcon from "../../components/Icon/DeliveryIcon";
 import AddOrderIcon from "../../components/Icon/AddOrderIcon";
 import StatCardCashier from "../../components/Card/StatCardCashier";
-
-import { useAuthStore } from "../../store/useAuthStore";
-import { profileAPI } from "../../api/profile.api";
-import { useEffect } from "react";
+import { useProfile } from "../../hooks/useProfile";
+import { tableAPI, type TableData } from "../../api/table.api";
+import { useEffect, useState } from "react";
 
 const WaiterDashboardPage = () => {
   const navigate = useNavigate();
+  const { firstName, roleName } = useProfile();
 
-  const { user, setUser } = useAuthStore();
+  // STATE UNTUK STATISTIK MEJA
+  const [totalTables, setTotalTables] = useState<number>(0);
+  const [occupiedTables, setOccupiedTables] = useState<number>(0);
 
-  // HIT API JIKA DATA USER BELUM ADA DI ZUSTAND
+  // HIT API MEJA
   useEffect(() => {
-    if (!user) {
-      const fetchProfile = async () => {
-        try {
-          const response = await profileAPI.getStaffProfile();
-          if (response.success && response.data) {
-            setUser(response.data);
-          }
-        } catch (error) {
-          console.error("Gagal mengambil data profil:", error);
+    const fetchTableStats = async () => {
+      try {
+        const response = await tableAPI.getAllTables();
+        if (response.success && response.data) {
+          const tables: TableData[] = response.data;
+          
+          setTotalTables(tables.length);
+          
+          const occupiedCount = tables.filter((t) => t.status === "OCCUPIED").length;
+          setOccupiedTables(occupiedCount);
         }
-      };
-      fetchProfile();
-    }
-  }, [user, setUser]);
+      } catch (error) {
+        console.error("Gagal mengambil data meja untuk statistik:", error);
+      }
+    };
 
-  // Ekstrak nama depan untuk header
-  const firstName = user?.fullname ? user.fullname.split(" ")[0] : "Memuat...";
-  const roleName = user?.role === "WAITER" ? "Pelayan" : "Pelayan";
+    fetchTableStats();
+    
+    // Opsional: Polling setiap 5 detik untuk memperbarui status meja
+    const intervalId = setInterval(fetchTableStats, 5000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <>
@@ -73,7 +79,7 @@ const WaiterDashboardPage = () => {
             title="Meja Terisi"
             value={
               <>
-                20<span className="text-gray/75 text-2xl font-bold">/25</span>
+                {occupiedTables}<span className="text-gray/75 text-2xl font-bold">/{totalTables}</span>
               </>
             }
             Icon={TableManagementIcon}
@@ -165,7 +171,7 @@ const WaiterDashboardPage = () => {
             <Button
               variant="outline"
               onClick={() => navigate("/waiter/create-order")}
-              className="w-full bg-white border-2 border-white text-primary font-bold text-[17px] lg:text-[17.5px] py-2.5 rounded-md shadow-sm hover:border-primary/20 transition-all flex justify-center items-center gap-2"
+              className="w-full bg-white border-2 border-white text-primary font-bold text-[17px] lg:text-[17.5px] py-2.5 rounded-md shadow-sm hover:bg-gray-50 transition-all flex justify-center items-center gap-2"
             >
               <AddOrderIcon className="bg-primary text-white rounded-full w-6.5 h-6.5" />{" "}
               Buat Pesanan

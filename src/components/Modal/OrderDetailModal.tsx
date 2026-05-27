@@ -35,7 +35,7 @@ const OrderDetailModal = ({
         <div className="pl-4 pr-3 pt-2.5">
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-1">
-              <Clock size={14} className="w-3 h-3" strokeWidth={2.5} />
+              <Clock size={14} className="w-2.75 h-2.75" strokeWidth={2.5} />
               <span className="text-gray-500 text-[11px] md:text-xs">
                 {time}
               </span>

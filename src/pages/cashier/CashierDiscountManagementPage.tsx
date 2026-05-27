@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Plus, Search } from "lucide-react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import Input from "../../components/ui/Input";
@@ -12,96 +12,18 @@ import DiscountDetailModal, {
 import DiscountActionConfirmModal from "../../components/Modal/DiscountActionConfirmModal";
 import Loading from "../../components/Loading/Loading";
 import Toast from "../../components/Toast/Toast";
+import { useProfile } from "../../hooks/useProfile";
+import { discountAPI } from "../../api/discount.api";
 
-// --- MOCK DATA DISKON ---
-const MOCK_DISCOUNTS: DiscountItem[] = [
-  {
-    id: 1,
-    name: "Diskon Pelajar",
-    code: "PJR35",
-    minPurchase: 35000,
-    discount: 7000,
-    date: "30 Feb - 30 Ags",
-    status: "AKTIF",
-  },
-  {
-    id: 2,
-    name: "Diskon Akhir Pekan",
-    code: "PKN160",
-    minPurchase: 160000,
-    discount: 35000,
-    date: "25 Jan - 10 Okt",
-    status: "AKTIF",
-  },
-  {
-    id: 3,
-    name: "Diskon Makan Siang",
-    code: "MKS60",
-    minPurchase: 65000,
-    discount: 15000,
-    date: "5 Apr - 5 Jun",
-    status: "AKTIF",
-  },
-  {
-    id: 4,
-    name: "Diskon Ramadhan",
-    code: "RMDN95",
-    minPurchase: 95000,
-    discount: 30000,
-    date: "19 Feb - 25 Mar",
-    status: "HABIS",
-  },
-  {
-    id: 5,
-    name: "Diskon Keluarga",
-    code: "KLG350",
-    minPurchase: 350000,
-    discount: 50000,
-    date: "25 Apr - 14 Nov",
-    status: "AKTIF",
-  },
-  {
-    id: 6,
-    name: "Diskon Hari Senin",
-    code: "SEN150",
-    minPurchase: 150000,
-    discount: 40000,
-    date: "4 Feb - 30 Mei",
-    status: "AKTIF",
-  },
-  {
-    id: 7,
-    name: "Diskon Member",
-    code: "MBR170",
-    minPurchase: 170000,
-    discount: 45000,
-    date: "1 Apr - 15 Apr",
-    status: "HABIS",
-  },
-];
 
 // --- HELPER: YYYY-MM-DD to DD MMM ---
 // Mengubah "2026-05-15" menjadi "15 Mei"
 const formatDateToIndonesian = (dateString: string) => {
   if (!dateString) return "";
-  // Trik split string untuk mencegah pergeseran timezone Date JS
-  const [, monthStr, day] = dateString.split("-");
+  const cleanDate = dateString.split("T")[0]; // Tangani format ISO (cth: 2026-05-24T00:00:00.000Z)
+  const [, monthStr, day] = cleanDate.split("-");
   const monthIndex = parseInt(monthStr, 10) - 1;
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "Mei",
-    "Jun",
-    "Jul",
-    "Ags",
-    "Sep",
-    "Okt",
-    "Nov",
-    "Des",
-  ];
-  // Hapus angka 0 di depan hari (misal "05" jadi "5")
+  const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
   return `${parseInt(day, 10)} ${months[monthIndex]}`;
 };
 
@@ -113,24 +35,19 @@ const formatDateRange = (start: string, end: string) => {
 // HELPER: Menentukan status Aktif / Habis berdasarkan tanggal
 const determineDiscountStatus = (endDateString: string) => {
   if (!endDateString) return "AKTIF";
+  const cleanDate = endDateString.split("T")[0];
   const today = new Date();
-  // Hilangkan jam/menit/detik untuk perbandingan adil
   today.setHours(0, 0, 0, 0);
 
-  // Karena input dari form adalah YYYY-MM-DD, kita pakai itu
-  const endParts = endDateString.split("-");
-  const endDate = new Date(
-    Number(endParts[0]),
-    Number(endParts[1]) - 1,
-    Number(endParts[2]),
-  );
+  const endParts = cleanDate.split("-");
+  const endDate = new Date(Number(endParts[0]), Number(endParts[1]) - 1, Number(endParts[2]));
 
   return endDate >= today ? "AKTIF" : "HABIS";
 };
 
 const CashierDiscountManagementPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [discounts, setDiscounts] = useState<DiscountItem[]>(MOCK_DISCOUNTS);
+  const [discounts, setDiscounts] = useState<DiscountItem[]>([]);
 
   // --- STATE MODAL DETAIL ---
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -150,10 +67,15 @@ const CashierDiscountManagementPage = () => {
 
   // --- STATE LOADING ---
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState("");
 
   // --- STATE TOAST ---
-  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: "success" | "error";
+  }>({
     show: false,
     message: "",
     type: "success",
@@ -163,6 +85,38 @@ const CashierDiscountManagementPage = () => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast({ show: false, message: "", type }), 4000);
   };
+
+  // --- 1. FETCH API DISKON ---
+  const fetchDiscounts = async () => {
+    try {
+      setIsFetching(true);
+      const response = await discountAPI.getAllDiscounts();
+      
+      if (response.data) {
+        // Mapping data Backend ke format Tabel UI
+        const formattedDiscounts: DiscountItem[] = response.data.map((d: any) => ({
+          id: d.id,
+          name: d.discount_name,
+          code: d.discount_code,
+          minPurchase: Number(d.min_purches),
+          discount: Number(d.value),
+          date: formatDateRange(d.start_date, d.end_date),
+          status: determineDiscountStatus(d.end_date), // Asumsikan status dari tanggal
+        }));
+        
+        setDiscounts(formattedDiscounts);
+      }
+    } catch (error) {
+      console.error("Gagal menarik data diskon:", error);
+      triggerToast("Gagal memuat daftar diskon", "error");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDiscounts();
+  }, []);
 
   // Logika Filter Search
   const filteredDiscounts = useMemo(() => {
@@ -193,8 +147,35 @@ const CashierDiscountManagementPage = () => {
   };
 
   // --- TRIGGER AKSI (Menuju Konfirmasi Dulu) ---
-  const handleTriggerSave = (data: DiscountFormData) => {
-    setConfirmConfig({ isOpen: true, actionType: "save", payload: data });
+  const handleTriggerSave = async (data: DiscountFormData) => {
+    if (detailModalMode === "add") {
+      // JIKA ADD: Langsung tembak API tanpa lewat modal konfirmasi
+      setLoadingMessage("Menambahkan diskon baru...");
+      setIsLoading(true);
+      
+      try {
+        await discountAPI.createDiscount({
+          discount_code: data.code.toUpperCase(),
+          discount_name: data.name,
+          value: Number(data.discountAmount),
+          min_purches: Number(data.minPurchase),
+          start_date: data.startDate, 
+          end_date: data.endDate
+        });
+
+        triggerToast(`Promo "${data.name}" berhasil ditambahkan!`, "success");
+        setIsDetailModalOpen(false);
+        fetchDiscounts(); // Refresh data
+      } catch (error: any) {
+        console.error("Gagal membuat diskon:", error);
+        triggerToast(error.response?.data?.message || "Gagal membuat diskon", "error");
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      // JIKA EDIT: Buka modal konfirmasi terlebih dahulu
+      setConfirmConfig({ isOpen: true, actionType: "save", payload: data });
+    }
   };
 
   const handleTriggerDelete = (id: number) => {
@@ -204,91 +185,66 @@ const CashierDiscountManagementPage = () => {
   };
 
   // --- EKSEKUSI FINAL ---
-  const executeAction = () => {
+  const executeAction = async () => {
     setConfirmConfig({ ...confirmConfig, isOpen: false });
 
     // Set Loading Message
     if (confirmConfig.actionType === "delete") {
       setLoadingMessage("Menghapus promo diskon...");
     } else {
-      setLoadingMessage(
-        detailModalMode === "add"
-          ? "Menambahkan diskon baru..."
-          : "Menyimpan perubahan...",
-      );
+      setLoadingMessage("Menyimpan perubahan...");
     }
 
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
       if (confirmConfig.actionType === "delete") {
         const itemToDelete = confirmConfig.payload as DiscountItem;
-        setDiscounts(discounts.filter((d) => d.id !== itemToDelete.id));
-
+        await discountAPI.deleteDiscount(itemToDelete.id);
+        
         triggerToast(`Promo "${itemToDelete.name}" berhasil dihapus!`, "success");
-      } else if (confirmConfig.actionType === "save") {
+      } 
+      else if (confirmConfig.actionType === "save" && selectedDiscount) {
         const formData = confirmConfig.payload as DiscountFormData;
+        
+        await discountAPI.updateDiscount(selectedDiscount.id, {
+          discount_code: formData.code.toUpperCase(),
+          discount_name: formData.name,
+          value: Number(formData.discountAmount),
+          min_purches: Number(formData.minPurchase),
+          start_date: formData.startDate,
+          end_date: formData.endDate
+        });
 
-        // --- PERBAIKAN: Format ke "DD MMM - DD MMM" ---
-        const formattedDate = formatDateRange(
-          formData.startDate,
-          formData.endDate,
-        );
-        // --- PERBAIKAN: Tentukan status dinamis ---
-        const computedStatus = determineDiscountStatus(formData.endDate);
-
-        if (detailModalMode === "add") {
-          const newDiscount: DiscountItem = {
-            id: Date.now(),
-            name: formData.name,
-            code: formData.code.toUpperCase(),
-            minPurchase: Number(formData.minPurchase),
-            discount: Number(formData.discountAmount),
-            date: formattedDate,
-            status: computedStatus,
-          };
-          setDiscounts([...discounts, newDiscount]);
-
-          triggerToast(`Promo "${formData.name}" berhasil ditambahkan!`, "success");
-        } else if (detailModalMode === "edit" && selectedDiscount) {
-          setDiscounts((prev) =>
-            prev.map((d) =>
-              d.id === selectedDiscount.id
-                ? {
-                    ...d,
-                    name: formData.name,
-                    code: formData.code.toUpperCase(),
-                    minPurchase: Number(formData.minPurchase),
-                    discount: Number(formData.discountAmount),
-                    date: formattedDate,
-                    status: computedStatus,
-                  }
-                : d,
-            ),
-          );
-          triggerToast(`Perubahan promo "${formData.name}" berhasil disimpan!`, "success");
-        }
-        setIsDetailModalOpen(false); // Tutup form
+        triggerToast(`Perubahan promo "${formData.name}" berhasil disimpan!`, "success");
+        setIsDetailModalOpen(false);
       }
 
+      fetchDiscounts(); // Refresh data
+    } catch (error: any) {
+      console.error("Gagal mengeksekusi aksi:", error);
+      triggerToast(error.response?.data?.message || "Terjadi kesalahan", "error");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
+
+  const { firstName, roleName } = useProfile();
 
   return (
     <>
       {/* 1. HEADER */}
-      <div className="pt-7.5 pl-8 pr-6 shrink-0">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0 shrink-0">
         <DashboardHeader
           title="Promo Diskon"
           subtitle="Kelola semua promo dan diskon untuk pelanggan"
-          userName="Rina"
-          roleName="Kasir"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
       {/* 2. MAIN CONTENT */}
-      <div className="pt-0 pb-6 px-8 flex flex-col flex-1">
+      <div className="pt-1 lg:pt-1 pb-6 lg:pb-6 px-4 lg:px-8 flex flex-col flex-1">
         {/* Search Bar & Tambah Diskon */}
         <div className="flex flex-col md:flex-row items-center gap-4 mb-3 shrink-0">
           <div className="relative w-full md:w-112.5">
@@ -312,7 +268,7 @@ const CashierDiscountManagementPage = () => {
               setDetailModalMode("add");
               setIsDetailModalOpen(true);
             }}
-            className="w-full flex gap-0.5 items-center justify-center md:w-auto bg-primary text-sm text-white font-bold py-2 px-4.5 rounded-sm shadow-sm hover:bg-primary-hover"
+            className="w-full flex gap-0.5 items-center justify-center md:w-auto bg-primary text-sm md:text-[13px] lg:text-[13px] text-white font-bold py-2 px-4.5 rounded-sm shadow-sm hover:bg-primary-hover"
           >
             <Plus size={15} strokeWidth={2.5} /> Tambah Diskon
           </Button>

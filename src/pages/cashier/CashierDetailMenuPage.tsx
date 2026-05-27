@@ -12,6 +12,7 @@ import FormMenuInput from "../../components/Form/FormMenuInput";
 
 // API
 import { menuAPI } from "../../api/menu.api";
+import { useProfile } from "../../hooks/useProfile";
 
 const CashierDetailMenuPage = () => {
   const navigate = useNavigate();
@@ -65,22 +66,24 @@ const CashierDetailMenuPage = () => {
     fetchMenuDetail();
   }, [id, reset]);
 
+  const { firstName, roleName } = useProfile();
+
   return (
     // Styling luar dibuat sedikit berbeda (bg-[#EFEEEE]) seperti yang kamu minta di page aslinya
     <>
-      <div className="pt-7.5 pl-8 pr-6 shrink-0 z-10">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0 shrink-0 z-10">
         <DashboardHeader
           title="Manajemen Menu & Stok"
           subtitle="Kelola daftar menu serta ketersediaan stok"
-          userName="Rina"
-          roleName="Kasir"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
-      <div className="flex-1 px-8 pb-10 pt-2">
+      <div className="flex-1 px-4 lg:px-8 pb-6 lg:pb-10 pt-2 lg:pt-2">
         <FormMenuLayout title="Detail Menu" onBack={() => navigate(-1)}>
           
-          <form className="flex flex-col lg:flex-row gap-8 lg:gap-10 mt-2 pointer-events-none">
+          <form className="flex flex-col lg:flex-row gap-0 lg:gap-6 mt-1 pointer-events-none">
             
             <div className="w-full lg:w-[320px] shrink-0">
               <FormMenuImage 
