@@ -1,15 +1,20 @@
 import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import TableIcon from "../Icon/TableIcon";
-import { type TableItem } from "../Card/TableCard";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { TableData } from "../../api/table.api";
 
 // 2. Buat Schema Zod untuk validasi
 const tableSchema = z.object({
-  tableId: z.string().min(1, { message: "Nomor meja wajib diisi" }),
-  capacity: z.string().min(1, { message: "Kapasitas meja wajib diisi" }),
+  table_number: z.string().min(1, { message: "Nomor meja wajib diisi" }),
+  capacity: z
+    .string()
+    .min(1, { message: "Kapasitas meja wajib diisi" })
+    .refine((val) => Number(val) > 0, {
+      message: "Kapasitas harus lebih dari 0",
+    }),
 });
 
 // Otomatis bikin tipe data dari schema Zod
@@ -19,8 +24,8 @@ interface TableDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   mode: "add" | "edit" | "detail";
-  table?: TableItem | null;
-  onSave?: (data: { id: string; capacity: number }) => void;
+  table?: TableData | null;
+  onSave?: (data: { table_number: string; capacity: number }) => void;
 }
 
 const TableDetailModal = ({
@@ -30,7 +35,6 @@ const TableDetailModal = ({
   table,
   onSave,
 }: TableDetailModalProps) => {
-  
   const {
     register,
     handleSubmit,
@@ -43,14 +47,23 @@ const TableDetailModal = ({
   });
 
   // Populate data kalau modenya edit / detail
- useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
-      setValue("tableId", table?.id || "");
+      let displayTableNumber = table?.table_number || "";
+
+      if (mode === "detail" && displayTableNumber) {
+        const numOnly = displayTableNumber.replace(/\D/g, ""); // Ambil angkanya saja
+        if (numOnly) {
+          displayTableNumber = `Meja ${numOnly}`;
+        }
+      }
+
+      setValue("table_number", displayTableNumber);
       setValue("capacity", table?.capacity ? String(table.capacity) : "");
     } else {
       reset(); // Bersihkan form saat modal ditutup
     }
-  }, [isOpen, table, setValue, reset]);
+  }, [isOpen, table, mode, setValue, reset]);
 
   if (!isOpen) return null;
 
@@ -62,10 +75,13 @@ const TableDetailModal = ({
         ? "Edit Meja"
         : "Detail Meja";
 
- // Fungsi yang dipanggil saat form valid dan disubmit
+  // Fungsi yang dipanggil saat form valid dan disubmit
   const onSubmit = (data: TableFormData) => {
     if (onSave) {
-      onSave({ id: data.tableId, capacity: Number(data.capacity) });
+      onSave({
+        table_number: data.table_number,
+        capacity: Number(data.capacity),
+      });
     }
   };
 
@@ -76,7 +92,7 @@ const TableDetailModal = ({
     >
       {/* Container Putih Modal */}
       <div
-        className="bg-white w-full max-w-231 h-135 ml-auto mr-8 mt-25 rounded-md shadow-sm overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col p-5"
+        className="bg-white w-full max-w-231 md:h-135 md:ml-auto md:mr-8 mt-25 rounded-md shadow-sm overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col p-5"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Modal */}
@@ -94,7 +110,10 @@ const TableDetailModal = ({
         </div>
 
         {/* Layout Kiri-Kanan */}
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-6 flex-1">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col md:flex-row gap-6 flex-1"
+        >
           {/* KIRI: Ilustrasi Meja Ungu (Persis desain) */}
           <div className="w-full md:w-80 h-55 md:h-75 bg-primary/25 rounded-md flex items-center justify-center shrink-0">
             <div className="w-28 h-28 bg-primary/25 rounded-full flex items-center justify-center">
@@ -105,24 +124,29 @@ const TableDetailModal = ({
           {/* KANAN: Form Input */}
           <div className="flex-1 flex flex-col gap-3">
             <div>
-              <label htmlFor="tableId" className="block text-[14.5px] mb-1.5">
+              <label
+                htmlFor="table_number"
+                className="block text-[14.5px] mb-1.5"
+              >
                 Nomor Meja
               </label>
               <input
-              id="tableId"
+                id="table_number"
                 type="text"
                 disabled={isReadOnly}
-              {...register("tableId", { required: true })}
+                {...register("table_number")}
                 placeholder="Masukkan nomor meja"
-                className={`w-full text-[14.5px] px-3 py-2.75 rounded-sm border border-transparent outline-none transition-colors ${
+                className={`w-full text-[14.5px] px-3 py-2.75 rounded-sm border outline-none transition-colors ${
                   isReadOnly
-                    ? "bg-[#EFEEEE]/70 cursor-not-allowed text-black/80"
-                    : "bg-[#EFEEEE] focus:border-primary/50 focus:bg-white focus:ring-1 focus:ring-primary"
+                    ? "bg-[#EFEEEE]/70 border-transparent cursor-not-allowed text-black/80"
+                    : "bg-[#FFFFFF] border-[1.5px] border-primary focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary"
                 }`}
               />
               {/* Teks Error Zod */}
-              {errors.tableId && (
-                <p className="text-red-500 text-[11px] mt-1">{errors.tableId.message}</p>
+              {errors.table_number && (
+                <p className="text-red-500 text-[11px] mt-1">
+                  {errors.table_number.message}
+                </p>
               )}
             </div>
 
@@ -131,20 +155,22 @@ const TableDetailModal = ({
                 Kapasitas Meja
               </label>
               <input
-              id="capacity"
+                id="capacity"
                 type="number"
                 disabled={isReadOnly}
-                {...register("capacity", { required: true })}
+                {...register("capacity")}
                 placeholder="Masukkan kapasitas meja"
-                className={`w-full text-[14.5px] px-3 py-2.75 rounded-sm border border-transparent outline-none transition-colors ${
+                className={`w-full text-[14.5px] px-3 py-2.75 rounded-sm border outline-none transition-colors ${
                   isReadOnly
-                    ? "bg-[#EFEEEE]/70 cursor-not-allowed text-black/80"
-                    : "bg-[#EFEEEE] focus:border-primary/50 focus:bg-white focus:ring-1 focus:ring-primary"
+                    ? "bg-[#EFEEEE]/70 border-transparent cursor-not-allowed text-black/80"
+                    : "bg-[#FFFFFF] border-[1.5px] border-primary focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary"
                 }`}
               />
               {/* Teks Error Zod */}
               {errors.capacity && (
-                <p className="text-red-500 text-[11px] mt-1">{errors.capacity.message}</p>
+                <p className="text-red-500 text-[11px] mt-1">
+                  {errors.capacity.message}
+                </p>
               )}
             </div>
 

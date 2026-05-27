@@ -11,9 +11,11 @@
   import Button from "../../components/ui/Button";
   import WarningIcon from "../../components/Icon/WarningIcon";
 import { useMenus } from "../../hooks/useMenus";
+import { useAuthStore } from "../../store/useAuthStore";
 
   const KioskMenuPage = () => {
     const navigate = useNavigate();
+    const { user } = useAuthStore();
 
     const { data: menus = [], isLoading, isError, refetch } = useMenus();
 
@@ -62,7 +64,7 @@ import { useMenus } from "../../hooks/useMenus";
     return (
       <div className="h-screen lg:min-h-screen lg:h-auto flex flex-col relative overflow-hidden lg:overflow-visible">
         {/* HEADER LOGO */}
-        <Header showProfile={true} profileHref="/kiosk/profile" />
+        <Header showProfile={true} profileHref="/kiosk/profile" userName={user?.fullname} />
 
         <main className="flex-1 flex flex-col w-full max-w-7xl mx-auto px-4 md:px-6 pt-4 md:pt-6 overflow-hidden lg:overflow-visible">
           {/* HERO SECTION & PENCARIAN */}

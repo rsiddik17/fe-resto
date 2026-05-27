@@ -17,6 +17,7 @@ import Toast from "../../components/Toast/Toast";
 
 // API
 import { menuAPI } from "../../api/menu.api"; 
+import { useProfile } from "../../hooks/useProfile";
 
 // SCHEMA VALIDASI (Gambar opsional saat Edit)
 const menuSchema = z.object({
@@ -168,24 +169,26 @@ const CashierEditMenuPage = () => {
     }
   };
 
+  const { firstName, roleName } = useProfile();
+
   return (
     <>
       {/* Tampilkan Loading saat ambil data ATAU saat proses update */}
       <Loading show={isFetching || isUpdating} message={isFetching ? "Memuat data menu..." : "Menyimpan perubahan..."} />
 
-      <div className="pt-7.5 pl-8 pr-6 shrink-0 z-10">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0 shrink-0 z-10">
         <DashboardHeader
           title="Manajemen Menu & Stok"
           subtitle="Kelola daftar menu serta ketersediaan stok"
-          userName="Rina"
-          roleName="Kasir"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
-      <div className="flex-1 px-8 pb-10 pt-2">
+      <div className="flex-1 px-4 lg:px-8 pb-6 lg:pb-10 pt-2 lg:pt-2">
         <FormMenuLayout title="Edit Menu" onBack={() => navigate(-1)}>
           
-          <form onSubmit={handleSubmit(onTriggerSave)} className="flex flex-col lg:flex-row gap-8 lg:gap-10 mt-2">
+          <form onSubmit={handleSubmit(onTriggerSave)} className="flex flex-col lg:flex-row gap-0 lg:gap-6 mt-1">
             
             <div className="w-full lg:w-[320px] shrink-0">
               <FormMenuImage 

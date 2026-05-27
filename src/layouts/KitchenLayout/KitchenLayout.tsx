@@ -4,6 +4,8 @@ import { useAuthStore } from "../../store/useAuthStore";
 // Asumsi kamu punya icon ini, kalau beda silakan disesuaikan
 import OrderListIcon from "../../components/Icon/OrderListIcon"; 
 import StockIcon from "../../components/Icon/StockIcon"; 
+import { MenuIcon } from "lucide-react";
+import AllMenuIcon from "../../components/Icon/AllMenuIcon";
 
 const KitchenLayout = () => {
   const navigate = useNavigate();
@@ -16,7 +18,7 @@ const KitchenLayout = () => {
 
   const kitchenMenus: SidebarItem[] = [
     { name: "Daftar Pesanan", icon: OrderListIcon, path: "/kitchen/order-list" },
-    { name: "Menu Stok", icon: StockIcon, path: "/kitchen/menu-stock" },
+    { name: "Menu Stok", icon: AllMenuIcon, path: "/kitchen/menu-stock" },
   ];
 
   return (

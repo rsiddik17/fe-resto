@@ -94,6 +94,8 @@ const KioskCheckoutPage = () => {
     }
   };
 
+  const tableNo = tableNumber?.match(/\d+/)?.[0];
+
   // Jangan render apa-apa selama useEffect sedang memproses redirect (kalau kosong)
   if (items.length === 0) return null; 
 
@@ -115,7 +117,7 @@ const KioskCheckoutPage = () => {
           
           <div className="mt-1">
             <p className="text-gray text-[15px] md:text-xl lg:text-lg mb-0.5 md:mb-2">Nomor meja</p>
-            <p className="font-extrabold text-primary text-base md:text-2xl lg:text-xl">{tableNumber || "Meja --"}</p>
+            <p className="font-extrabold text-primary text-base md:text-2xl lg:text-xl">{tableNumber ? `Meja ${tableNo}` : "Meja --"}</p>
           </div>
         </div>
 

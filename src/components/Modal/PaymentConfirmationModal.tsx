@@ -38,7 +38,7 @@ const PaymentConfirmationModal = ({ isOpen, onClose, onConfirm }: PaymentConfirm
         <div className="flex items-center gap-4 w-[97%]">
           <button
             onClick={onClose}
-            className="flex-1 bg-[#DEDED9] text-white text-[15px] font-bold py-2.5 rounded-xs hover:bg-gray/40 transition-colors cursor-pointer"
+            className="flex-1 bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 text-[15px] font-bold py-2.5 rounded-xs transition-colors cursor-pointer"
           >
             Batal
           </button>

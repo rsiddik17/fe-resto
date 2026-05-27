@@ -4,19 +4,14 @@ import UserIcon from "../Icon/UserIcon";
 import { MoreVertical } from "lucide-react";
 import EditIcon from "../Icon/EditIcon";
 import DeleteIcon from "../Icon/DeleteIcon";
-
-export interface TableItem {
-  id: string;
-  status: "tersedia" | "terisi" | "kotor";
-  capacity: number;
-}
+import type { TableData } from "../../api/table.api";
 
 interface TableCardProps {
-  table: TableItem;
-  onClick: (table: TableItem) => void;
+  table: TableData;
+  onClick: (table: TableData) => void;
   showOptions?: boolean; // Prop penentu apakah kasir/waiter
-  onEdit?: (table: TableItem) => void;
-  onDelete?: (table: TableItem) => void;
+  onEdit?: (table: TableData) => void;
+  onDelete?: (table: TableData) => void;
 }
 
 const TableCard = ({
@@ -26,9 +21,35 @@ const TableCard = ({
   onEdit,
   onDelete,
 }: TableCardProps) => {
-  const isTersedia = table.status === "tersedia";
-  const isTerisi = table.status === "terisi";
-  const isKotor = table.status === "kotor";
+  const isTersedia = table.status === "AVAILABLE";
+  const isTerisi = table.status === "OCCUPIED";
+  const isKotor = table.status === "DIRTY";
+
+  const getStatusText = () => {
+    if (isTersedia) return "tersedia";
+    if (isTerisi) return "terisi";
+    return "kotor";
+  };
+
+  // Helper untuk membersihkan tulisan M01_i jadi M-01 (opsional jika dibutuhkan)
+  const formatTableNumber = (raw: string) => {
+    // Cari bagian angka dan akhiran (_i atau _o) mengabaikan huruf besar/kecil
+    const match = raw.match(/M(\d+)(_i|_o)?/i);
+    
+    if (match) {
+      const num = match[1]; // Tangkap angkanya saja (contoh: "01")
+      let suffix = "";
+      
+      // Ubah akhiran menjadi teks lengkap
+      if (match[2]) {
+        suffix = match[2].toLowerCase() === "_i" ? "_indoor" : "_outdoor";
+      }
+      
+      return `${num}${suffix}`; 
+    }
+    
+    return raw; // Kembalikan string asli jika formatnya berbeda
+  };
 
   // State lokal untuk Dropdown Titik Tiga
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -43,10 +64,10 @@ const TableCard = ({
         isKotor && "bg-[#DEDED9] border-transparent opacity-80",
       )}
     >
-      <div className="flex justify-between items-start">
+      <div className="relative flex items-start w-full">
         <span
           className={cn(
-            "font-bold text-base",
+            "font-bold text-base leading-tight wrap-break-word w-full",
             isTersedia
               ? "text-lime"
               : isTerisi
@@ -54,15 +75,15 @@ const TableCard = ({
                 : "text-gray-600",
           )}
         >
-          Meja <br /> {table.id}
+          Meja <br /> {formatTableNumber(table.table_number)}
         </span>
 
-        <div className="flex items-center">
+        <div className="absolute -top-1.5 right-0 flex items-start">
           {/* Badge Status */}
           <span
             className={cn(
               "px-2 py-0.5 rounded-full text-[7.5px] mt-2 font-bold uppercase",
-              showOptions && "-mt-px ml-2 mr-0.5",
+              showOptions && "ml-2",
               isTersedia
                 ? "bg-lime text-white"
                 : isTerisi
@@ -70,11 +91,11 @@ const TableCard = ({
                   : "bg-[#73736C] px-3 text-white",
             )}
           >
-            {table.status}
+            {getStatusText()}
           </span>
 
           {showOptions && (
-            <div className="relative flex items-center -translate-y-px">
+            <div className="relative flex items-center translate-x-1 translate-y-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -109,7 +130,7 @@ const TableCard = ({
                       }}
                       className="px-3 py-2.5 flex gap-2 items-center text-xs font-medium transition-colors text-left relative z-10 border border-b-gray-300 cursor-pointer"
                     >
-                      <EditIcon className="w-4 h-4"/>
+                      <EditIcon className="w-4 h-4" />
                       Edit
                     </button>
                     <button
@@ -120,7 +141,7 @@ const TableCard = ({
                       }}
                       className="px-3 py-2.5 flex gap-2 items-center text-xs font-medium text-red-500 transition-colors text-left relative z-10 cursor-pointer"
                     >
-                      <DeleteIcon className="w-4 h-4"/>
+                      <DeleteIcon className="w-4 h-4" />
                       Hapus
                     </button>
                   </div>

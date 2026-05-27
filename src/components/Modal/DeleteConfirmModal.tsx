@@ -35,14 +35,14 @@ const DeleteConfirmModal = ({ onClose, onConfirm }: DeleteConfirmModalProps) => 
           <Button 
             onClick={onClose}
             // Kita override warnanya jadi abu-abu karena di Button.tsx belum ada variant abu-abu
-            className="flex-1 max-w-35 md:max-w-41.75 lg:max-w-30 py-2 md:py-2.5 lg:py-1.5 font-normal text-[15px] md:text-lg lg:text-base bg-[#D9D9D9] hover:bg-[#D9D9D9] text-black"
+            className="flex-1 max-w-35 md:max-w-41.75 lg:max-w-30 py-2 md:py-2.5 lg:py-1.5 font-normal text-[15px] md:text-lg lg:text-base bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50"
           >
             Batal
           </Button>
           
           <Button 
             onClick={onConfirm}
-            className="flex-1 max-w-35 md:max-w-41.75 lg:max-w-30 py-2 md:py-2.5 lg:py-1.5 font-normal text-[15px] md:text-lg lg:text-base bg-[#FC1111] hover:bg-[#FC1111] text-white"
+            className="flex-1 max-w-35 md:max-w-41.75 lg:max-w-30 py-2 md:py-2.5 lg:py-1.5 font-normal text-[15px] md:text-lg lg:text-base bg-[#FC1111] hover:bg-[#ec0c0c] text-white"
           >
             Ya, Hapus
           </Button>

@@ -56,6 +56,8 @@ const MobilePaymentPage = () => {
     }
   };
 
+  const tableNo = tableNumber?.match(/\d+/)?.[0];
+
   if (items.length === 0 && !isExpired) return null;
 
   return (
@@ -82,7 +84,7 @@ const MobilePaymentPage = () => {
             <div className="flex justify-between text-[13.5px] md:text-base">
               <span className="text-gray-500">Nomor meja</span>
               <span className="font-bold text-primary">
-                {tableNumber || "Meja --"}
+                {tableNumber ? `Meja ${tableNo}` : "Meja --"}
               </span>
             </div>
             <div className="flex justify-between text-[13.5px] md:text-base">

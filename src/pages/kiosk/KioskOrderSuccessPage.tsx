@@ -39,6 +39,8 @@ const KioskOrderSuccessPage = () => {
     navigate("/kiosk/home");
   };
 
+  const tableNo = tableNumber?.match(/\d+/)?.[0];
+
   // Hindari render error jika orderData kosong (saat redirect)
   if (!orderData) return null;
 
@@ -64,7 +66,7 @@ const KioskOrderSuccessPage = () => {
           <div className="flex flex-col gap-2">
             <div className="flex justify-between text-base md:text-xl lg:text-lg">
               <span className="text-gray">Nomor meja</span>
-              <span className="font-bold text-primary">{tableNumber || "Meja --"}</span>
+              <span className="font-bold text-primary">{tableNumber ? `Meja ${tableNo}` : "Meja --"}</span>
             </div>
             <div className="flex justify-between text-base md:text-xl lg:text-lg">
               <span className="text-gray">ID Pesanan</span>

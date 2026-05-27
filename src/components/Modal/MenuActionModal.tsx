@@ -53,14 +53,14 @@ const MenuActionModal = ({ isOpen, type, menuName, onClose, onConfirm }: MenuAct
         <div className="flex justify-center w-full gap-10">
           <Button 
             onClick={onClose}
-            className="flex-1 max-w-30 py-2 font-normal text-[13px] bg-[#D9D9D9] hover:bg-gray/50 text-black rounded-xs transition-colors"
+            className="flex-1 max-w-30 py-2 font-normal text-[13px] md:text-[13px] lg:text-[13px] bg-[#D9D9D9] hover:bg-gray/50 text-black rounded-xs transition-colors"
           >
             Batal
           </Button>
           
           <Button 
             onClick={onConfirm}
-            className={`flex-1 max-w-30 py-2 font-normal text-[13px] text-white rounded-xs transition-colors ${
+            className={`flex-1 max-w-30 py-2 font-normal text-[13px] md:text-[13px] lg:text-[13px] text-white rounded-xs transition-colors ${
               isDelete ? 'bg-[#FC1111] hover:bg-red-600' : 'bg-primary hover:bg-[#5a0b64]'
             }`}
           >

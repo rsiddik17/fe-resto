@@ -5,17 +5,11 @@ import Loading from "../../components/Loading/Loading";
 import Button from "../../components/ui/Button";
 
 // Import API & Store
-import { tableAPI } from "../../api/table.api";
+import { tableAPI, type TableData } from "../../api/table.api";
 import { authAPI } from "../../api/auth.api";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useCartStore } from "../../store/useCartStore";
 
-interface TableData {
-  id: number;
-  table_number: string;
-  capacity: number;
-  status: "AVAILABLE" | "OCCUPIED";
-}
 
 const MobileTableInfoPage = () => {
   const navigate = useNavigate();
@@ -30,16 +24,14 @@ const MobileTableInfoPage = () => {
     sub?: string;
   } | null>(null);
 
-  // 2. Cegah error TypeScript dan format angkanya jadi M-XX
-  const rawNumber = tableId?.replace(/\D/g, "") || "00"; // Fallback ke "00" jika undefined
-  const formattedTableId = `M-${rawNumber.padStart(2, "0")}`;
+  const parsedTableId = parseInt(tableId || "0", 10);
 
   useEffect(() => {
     const validateTable = async () => {
       try {
         setIsLoading(true);
 
-        const loginPayload = { tableId: parseInt(rawNumber, 10) };
+        const loginPayload = { tableId: parsedTableId };
         const loginResponse = await authAPI.guestLogin(loginPayload);
 
         if (loginResponse.success && loginResponse.data?.token) {
@@ -55,15 +47,13 @@ const MobileTableInfoPage = () => {
         const tables: TableData[] = response.data;
 
         // Cari meja yang sesuai dengan hasil scan QR
-        const foundTable = tables.find(
-          (t) => t.table_number === formattedTableId,
-        );
+        const foundTable = tables.find((t) => t.id === parsedTableId);
 
         if (foundTable) {
           if (foundTable.status === "OCCUPIED") {
             setErrorMsg({
               main: "Meja Sedang Digunakan",
-              sub: `Maaf, meja nomor ${formattedTableId} saat ini sedang digunakan. Silakan pindah ke meja yang kosong dan scan ulang QR Code.`,
+              sub: `Maaf, meja nomor ${foundTable.table_number} saat ini sedang digunakan. Silakan pindah ke meja yang kosong dan scan ulang QR Code.`,
             });
           } else {
             // Jika meja tersedia, masukkan ke state
@@ -73,7 +63,7 @@ const MobileTableInfoPage = () => {
           // Jika meja tidak ditemukan di database
           setErrorMsg({
             main: "Meja Tidak Ditemukan",
-            sub: `Meja dengan nomor ${formattedTableId} tidak terdaftar di sistem. Pastikan Anda men-scan QR Code yang valid.`,
+            sub: `Meja tidak terdaftar di sistem. Pastikan Anda men-scan QR Code yang valid.`,
           });
         }
       } catch (err: any) {
@@ -92,10 +82,16 @@ const MobileTableInfoPage = () => {
       }
     };
 
-    if (rawNumber !== "00") {
+    if (parsedTableId > 0) {
       validateTable();
+    } else {
+      setIsLoading(false);
+      setErrorMsg({
+        main: "URL Tidak Valid",
+        sub: "ID meja tidak ditemukan dalam URL. Pastikan Anda men-scan QR Code dengan benar.",
+      });
     }
-  }, [formattedTableId, rawNumber, setAuth]);
+  }, [parsedTableId, setAuth]);
 
   const handleLanjut = () => {
     if (tableData) {

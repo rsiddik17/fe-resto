@@ -1,38 +1,32 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Plus, Search } from "lucide-react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
-import TableCard, { type TableItem } from "../../components/Card/TableCard";
+import TableCard from "../../components/Card/TableCard";
 import ChangeTableStatusModal from "../../components/Modal/ChangeTableStatusModal";
 import TableFilterTabs from "../../components/Table/TableFilterTabs";
 import TableDetailModal from "../../components/Modal/TableDetailModal"; // <-- Import Modal Reusable
 import TableActionConfirmModal from "../../components/Modal/TableActionConfirmModal";
 import Loading from "../../components/Loading/Loading";
 import Toast from "../../components/Toast/Toast";
+import { useProfile } from "../../hooks/useProfile";
+
+import { tableAPI, type TableData } from "../../api/table.api";
 
 type TableType = "semua" | "tersedia" | "terisi" | "kotor";
 
-// --- MOCK DATA MEJA (24 Meja) ---
-const MOCK_TABLES: TableItem[] = Array.from({ length: 24 }).map((_, i) => {
-  const id = String(i + 1).padStart(2, "0");
-  let status: TableItem["status"] = "tersedia";
-  if ([2, 7, 8, 9, 16, 17, 23, 24].includes(i + 1)) status = "terisi";
-  if ([4, 5, 6, 14, 15, 19, 20, 22].includes(i + 1)) status = "kotor";
-  const capacity = [2, 4, 6, 8, 10, 12][Math.floor(Math.random() * 6)];
-
-  return { id, status, capacity };
-});
-
 const CashierTableManagementPage = () => {
+  const { firstName, roleName } = useProfile();
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState<TableType>("semua");
 
-  // State untuk data meja
-  const [tables, setTables] = useState<TableItem[]>(MOCK_TABLES);
+  // State untuk data meja dari API
+  const [tables, setTables] = useState<TableData[]>([]);
+  const [isFetching, setIsFetching] = useState(true);
 
   // State Modal Ubah Status
-  const [selectedTable, setSelectedTable] = useState<TableItem | null>(null);
+  const [selectedTable, setSelectedTable] = useState<TableData | null>(null);
 
   // State Modal Reusable (Add/Edit/Detail)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -40,20 +34,24 @@ const CashierTableManagementPage = () => {
     "add" | "edit" | "detail"
   >("detail");
   const [selectedDetailTable, setSelectedDetailTable] =
-    useState<TableItem | null>(null);
+    useState<TableData | null>(null);
 
   // --- STATE MODAL KONFIRMASI (TERPUSAT) ---
   const [confirmConfig, setConfirmConfig] = useState<{
     isOpen: boolean;
     actionType: "save" | "delete";
-    payload?: any; 
+    payload?: any;
   }>({ isOpen: false, actionType: "save" });
 
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
 
   // --- STATE TOAST ---
-  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: "success" | "error";
+  }>({
     show: false,
     message: "",
     type: "success",
@@ -64,24 +62,78 @@ const CashierTableManagementPage = () => {
     setTimeout(() => setToast({ show: false, message: "", type }), 4000);
   };
 
+  // 1. HIT API MENGAMBIL DATA MEJA
+  const fetchTables = async () => {
+    try {
+      setIsFetching(true);
+      const response = await tableAPI.getAllTables();
+      if (response.success && response.data) {
+        const sorted = response.data.sort(
+          (a: TableData, b: TableData) => a.id - b.id,
+        );
+        setTables(sorted);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data meja:", error);
+      triggerToast("Gagal memuat data meja", "error");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTables();
+  }, []);
+
   // Logika Filter dan Search
   const filteredTables = useMemo(() => {
     return tables.filter((table) => {
-      const matchFilter = filter === "semua" ? true : table.status === filter;
-      const matchSearch = table.id.includes(searchQuery);
+      let matchFilter = true;
+      if (filter === "tersedia") matchFilter = table.status === "AVAILABLE";
+      if (filter === "terisi") matchFilter = table.status === "OCCUPIED";
+      if (filter === "kotor") matchFilter = table.status === "DIRTY";
+
+      const matchSearch = table.table_number
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
       return matchFilter && matchSearch;
     });
   }, [tables, filter, searchQuery]);
 
   // Handle Ubah Status
-  const handleStatusChange = (newStatus: TableItem["status"]) => {
-    if (selectedTable) {
-      setTables((prev) =>
-        prev.map((t) =>
-          t.id === selectedTable.id ? { ...t, status: newStatus } : t,
-        ),
-      );
-      setSelectedTable(null);
+  const handleStatusChange = async (
+    newStatusText: "tersedia" | "terisi" | "kotor",
+  ) => {
+    if (!selectedTable) return;
+
+    let backendStatus: "AVAILABLE" | "OCCUPIED" | "DIRTY" = "AVAILABLE";
+    if (newStatusText === "terisi") backendStatus = "OCCUPIED";
+    if (newStatusText === "kotor") backendStatus = "DIRTY";
+
+    const currentTableId = selectedTable.id;
+
+    // Optimistic Update
+    setTables((prev) =>
+      prev.map((t) =>
+        t.id === currentTableId ? { ...t, status: backendStatus } : t,
+      ),
+    );
+    setSelectedTable(null);
+
+    try {
+      const response = await tableAPI.updateTable(currentTableId, {
+        status: backendStatus,
+      });
+      if (response.success) {
+        triggerToast("Status meja berhasil diubah!", "success");
+      } else {
+        triggerToast("Gagal mengubah status", "error");
+        fetchTables(); // Revert data jika gagal
+      }
+    } catch (error) {
+      console.error("Gagal update status meja:", error);
+      triggerToast("Terjadi kesalahan jaringan", "error");
+      fetchTables();
     }
   };
 
@@ -96,17 +148,48 @@ const CashierTableManagementPage = () => {
   };
 
   // 1. TRIGGER KETIKA TOMBOL SIMPAN DI MODAL DETAIL DIKLIK
-  const handleTriggerSave = (data: { id: string; capacity: number }) => {
-    setConfirmConfig({ isOpen: true, actionType: "save", payload: data });
+  const handleTriggerSave = async (data: {
+    table_number: string;
+    capacity: number;
+  }) => {
+    if (detailModalMode === "add") {
+      setLoadingMessage("Menambahkan meja...");
+      setIsLoading(true);
+
+      try {
+        await tableAPI.createTable({
+          table_number: data.table_number,
+          capacity: data.capacity,
+          status: "AVAILABLE",
+        });
+        triggerToast(
+          `Meja ${data.table_number} berhasil ditambahkan!`,
+          "success",
+        );
+        setIsDetailModalOpen(false);
+        await fetchTables();
+      } catch (error: any) {
+        console.error("Gagal tambah meja:", error);
+        const errMsg =
+          error.response?.data?.message || "Gagal menambahkan meja";
+        triggerToast(errMsg, "error");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    // Jika mode "edit" (Ubah Meja), tampilkan modal konfirmasi terlebih dahulu
+    else if (detailModalMode === "edit") {
+      setConfirmConfig({ isOpen: true, actionType: "save", payload: data });
+    }
   };
 
   // 2. TRIGGER KETIKA TOMBOL HAPUS DI KARTU MEJA DIKLIK
-  const handleTriggerDelete = (table: TableItem) => {
+  const handleTriggerDelete = (table: TableData) => {
     setConfirmConfig({ isOpen: true, actionType: "delete", payload: table });
   };
 
   // 3. FUNGSI EKSEKUSI FINAL (Dijalankan saat user klik "Ya, Simpan" / "Ya, Hapus")
-  const executeAction = () => {
+  const executeAction = async () => {
     // 1. Tutup modal konfirmasi dulu biar rapi
     setConfirmConfig({ ...confirmConfig, isOpen: false });
 
@@ -114,69 +197,66 @@ const CashierTableManagementPage = () => {
     if (confirmConfig.actionType === "delete") {
       setLoadingMessage("Menghapus meja...");
     } else if (confirmConfig.actionType === "save") {
-      if (detailModalMode === "add") {
-        setLoadingMessage("Menambahkan meja...");
-      } else {
-        setLoadingMessage("Menyimpan perubahan...");
-      }
+      setLoadingMessage("Menyimpan perubahan...");
     }
 
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
       if (confirmConfig.actionType === "delete") {
-        // Logic Hapus
-        const tableToDelete = confirmConfig.payload as TableItem;
-        setTables(tables.filter((t) => t.id !== tableToDelete.id));
-        triggerToast(`Meja ${tableToDelete.id} berhasil dihapus!`, "success");
-      } else if (confirmConfig.actionType === "save") {
-        // Logic Simpan
+        const tableToDelete = confirmConfig.payload as TableData;
+        await tableAPI.deleteTable(tableToDelete.id);
+        triggerToast(
+          `Meja ${tableToDelete.table_number} berhasil dihapus!`,
+          "success",
+        );
+      } else if (
+        confirmConfig.actionType === "save" &&
+        detailModalMode === "edit" &&
+        selectedDetailTable
+      ) {
         const dataToSave = confirmConfig.payload as {
-          id: string;
+          table_number: string;
           capacity: number;
         };
-        if (detailModalMode === "add") {
-          setTables([
-            ...tables,
-            {
-              id: dataToSave.id,
-              capacity: dataToSave.capacity,
-              status: "tersedia",
-            },
-          ]);
-          triggerToast(`Meja ${dataToSave.id} berhasil ditambahkan!`, "success");
-        } else if (detailModalMode === "edit" && selectedDetailTable) {
-          setTables((prev) =>
-            prev.map((t) =>
-              t.id === selectedDetailTable.id
-                ? { ...t, id: dataToSave.id, capacity: dataToSave.capacity }
-                : t,
-            ),
-          );
-          triggerToast(`Perubahan meja ${dataToSave.id} berhasil disimpan!`, "success");
-        }
-        setIsDetailModalOpen(false); // Tutup form detail setelah disave
-      }
 
-      // Tutup modal konfirmasi
+        await tableAPI.updateTable(selectedDetailTable.id, {
+          table_number: dataToSave.table_number,
+          capacity: dataToSave.capacity,
+        });
+        triggerToast(
+          `Perubahan meja ${dataToSave.table_number} berhasil disimpan!`,
+          "success",
+        );
+      }
+      setIsDetailModalOpen(false);
+
+      // Ambil ulang data segar dari backend setelah sukses update/delete/create
+      await fetchTables();
+    } catch (error: any) {
+      console.error("Gagal mengeksekusi aksi:", error);
+      const errMsg =
+        error.response?.data?.message || "Terjadi kesalahan sistem";
+      triggerToast(errMsg, "error");
+    } finally {
       setIsLoading(false);
-    }, 1000); // Waktu loading 1 detik
+    }
   };
 
   return (
     <div className="flex flex-col min-h-screen">
       {/* 1. HEADER (Disesuaikan Kasir) */}
-      <div className="pt-7.5 pl-8 pr-6 shrink-0">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0 shrink-0">
         <DashboardHeader
           title="Manajemen Meja"
           subtitle="Pantau dan ubah meja restoran secara langsung"
-          userName="Rina" // <-- Kasir
-          roleName="Kasir" // <-- Kasir
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
       {/* 2. MAIN CONTENT */}
-      <div className="pt-0 pb-4 px-8 flex flex-col flex-1">
+      <div className="pt-1 lg:pt-1 pb-4 lg:pb-4 px-4 lg:px-8 flex flex-col flex-1">
         {/* Search Bar & Tambah Meja */}
         <div className="flex flex-col md:flex-row items-center gap-4 mb-3 shrink-0">
           <div className="relative w-full md:w-112.5">
@@ -200,7 +280,7 @@ const CashierTableManagementPage = () => {
               setSelectedDetailTable(null);
               setIsDetailModalOpen(true);
             }}
-            className="w-full flex gap-0.5 items-center md:w-auto bg-primary text-sm text-white font-bold py-2 px-4.5 rounded-sm shadow-sm hover:bg-primary-hover"
+            className="w-full flex gap-0.5 items-center md:w-auto bg-primary text-sm md:text-[13px] lg:text-[13px] text-white font-bold py-2 px-4.5 rounded-sm shadow-sm hover:bg-primary-hover"
           >
             <Plus size={15} strokeWidth={2.5} /> Tambah Meja
           </Button>
@@ -212,7 +292,11 @@ const CashierTableManagementPage = () => {
 
           {/* Grid Area (Scrollable) */}
           <div className="flex-1 overflow-y-auto custom-scrollbar">
-            {filteredTables.length > 0 ? (
+            {isFetching ? (
+              <div className="flex flex-col items-center justify-center h-48 text-primary">
+                <span className="text-sm font-bold">Memuat meja...</span>
+              </div>
+            ) : filteredTables.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-3.5 gap-y-3.75">
                 {filteredTables.map((table) => (
                   <TableCard
@@ -230,7 +314,7 @@ const CashierTableManagementPage = () => {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-48 text-gray-400 text-sm">
+              <div className="flex flex-col items-center justify-center h-48 text-gray-400 text-[15px]">
                 Tidak ada meja yang cocok.
               </div>
             )}
@@ -244,7 +328,7 @@ const CashierTableManagementPage = () => {
         onClose={() => setSelectedTable(null)}
         table={selectedTable}
         onStatusChange={handleStatusChange}
-        onViewDetail={handleOpenDetailFromStatus} // <-- Tidak redirect lagi, tapi buka modal detail
+        onViewDetail={handleOpenDetailFromStatus}
       />
 
       {/* MODAL ADD / EDIT / DETAIL REUSABLE */}

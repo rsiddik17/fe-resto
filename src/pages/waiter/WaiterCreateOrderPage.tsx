@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import Button from "../../components/ui/Button";
 import CategoryTabs from "../../components/Filter/CategoryFilterTabs";
@@ -10,12 +10,12 @@ import { useMenus } from "../../hooks/useMenus";
 import WarningIcon from "../../components/Icon/WarningIcon";
 import { Search } from "lucide-react";
 import Input from "../../components/ui/Input";
-import { useAuthStore } from "../../store/useAuthStore";
-import { profileAPI } from "../../api/profile.api";
+import { useProfile } from "../../hooks/useProfile";
+
 
 const WaiterCreateOrderPage = () => {
   const navigate = useNavigate();
-  const { user, setUser } = useAuthStore();
+  const { firstName, roleName } = useProfile();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const { data: menus = [], isLoading, isError, refetch } = useMenus();
@@ -36,25 +36,6 @@ const WaiterCreateOrderPage = () => {
     return matchCategory && matchSearch;
   });
 
-  useEffect(() => {
-    if (!user) {
-      const fetchProfile = async () => {
-        try {
-          const response = await profileAPI.getStaffProfile();
-          if (response.success && response.data) {
-            setUser(response.data);
-          }
-        } catch (error) {
-          console.error("Gagal mengambil data profil:", error);
-        }
-      };
-      fetchProfile();
-    }
-  }, [user, setUser]);
-
-  // Ekstrak nama depan untuk header
-  const firstName = user?.fullname ? user.fullname.split(" ")[0] : "Memuat...";
-  const roleName = user?.role === "WAITER" ? "Pelayan" : "Pelayan";
 
   return (
     <div className="flex flex-col h-full overflow-hidden">

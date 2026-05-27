@@ -92,6 +92,8 @@ const MobileCheckoutPage = () => {
     }
   };
 
+  const tableNo = tableNumber?.match(/\d+/)?.[0];
+
   if (items.length === 0) return null;
 
   return (
@@ -112,7 +114,7 @@ const MobileCheckoutPage = () => {
 
           <div className="mt-1 md:text-lg">
             <p className="text-gray-500">Nomor meja</p>
-            <p className="font-bold text-primary">{tableNumber || "Meja --"}</p>
+            <p className="font-bold text-primary">{tableNumber ? `Meja ${tableNo}` : "Meja --"}</p>
           </div>
         </div>
 

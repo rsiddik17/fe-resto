@@ -44,7 +44,7 @@ const EditStockModal = ({ isOpen, onClose, onSave, menu, isLoading = false }: Ed
               value={stockValue}
               onChange={(e) => setStockValue(e.target.value)}
               disabled={isLoading}
-              className="w-full bg-[#DEDED9] text-primary text-[20px] font-bold text-center py-2.5 rounded-sm outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-70"
+              className="w-full bg-[#FFFFFF] border-[1.5px] border-primary text-primary text-[20px] font-bold text-center py-2.5 rounded-sm outline-none focus:ring-1 focus:ring-primary disabled:opacity-70"
             />
           </div>
 
@@ -52,14 +52,14 @@ const EditStockModal = ({ isOpen, onClose, onSave, menu, isLoading = false }: Ed
             <Button 
               onClick={onClose} 
               disabled={isLoading}
-              className="flex-1 py-2.5 bg-[#DEDED9] hover:bg-gray/40 text-white text-[13px] font-bold rounded-xs disabled:opacity-70"
+              className="flex-1 py-2.5 bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 text-[13px] md:text-[13px] lg:text-[13px] font-bold rounded-xs disabled:opacity-70"
             >
               Batal
             </Button>
             <Button 
               onClick={() => onSave(Number(stockValue))} 
               disabled={isLoading}
-              className="flex-1 py-2.5 bg-primary hover:bg-primary-hover text-white text-[13px] font-bold rounded-xs disabled:opacity-70"
+              className="flex-1 py-2.5 bg-primary hover:bg-primary-hover text-white text-[13px] md:text-[13px] lg:text-[13px] font-bold rounded-xs disabled:opacity-70"
             >
               {isLoading ? "Menyimpan..." : "Simpan"}
             </Button>

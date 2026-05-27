@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import DashboardHeader from "../../components/Header/DashboardHeader";
-import { useState } from "react"; 
+import { useState } from "react";
 
 // Zod & RHF
 import { z } from "zod";
@@ -16,15 +16,16 @@ import Toast from "../../components/Toast/Toast";
 
 // API
 import { menuAPI } from "../../api/menu.api"; // Sesuaikan path import ini jika berbeda
+import { useProfile } from "../../hooks/useProfile";
 
-// 1. BUAT SCHEMA VALIDASI ZOD 
+// 1. BUAT SCHEMA VALIDASI ZOD
 const menuSchema = z.object({
   name: z.string().min(1, "Nama menu wajib diisi!"),
   description: z.string().min(1, "Deskripsi wajib diisi!"),
   category: z.string().min(1, "Kategori wajib dipilih!"),
   price: z.string().min(1, "Harga wajib diisi!"),
   stock: z.string().min(1, "Stok wajib diisi!"),
-  image: z.instanceof(File, { message: "Foto menu wajib diunggah!" }), 
+  image: z.instanceof(File, { message: "Foto menu wajib diunggah!" }),
 });
 
 type MenuFormValues = z.infer<typeof menuSchema>;
@@ -33,7 +34,11 @@ const CashierAddMenuPage = () => {
   const navigate = useNavigate();
 
   // --- STATE TOAST ---
-  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: "success" | "error";
+  }>({
     show: false,
     message: "",
     type: "error",
@@ -41,9 +46,12 @@ const CashierAddMenuPage = () => {
 
   const triggerToast = (message: string, type: "success" | "error") => {
     setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type: "error" }), 4000);
+    setTimeout(
+      () => setToast({ show: false, message: "", type: "error" }),
+      4000,
+    );
   };
-  
+
   // 2. SETUP REACT HOOK FORM
   const {
     register,
@@ -57,15 +65,16 @@ const CashierAddMenuPage = () => {
       name: "",
       description: "",
       category: "",
-      price: "", 
-      stock: "", 
+      price: "",
+      stock: "",
       image: undefined,
     },
   });
 
   // Ambil data gambar dari state form (untuk preview)
   const imageFile = watch("image") as File | undefined;
-  const previewImage = imageFile instanceof File ? URL.createObjectURL(imageFile) : null;
+  const previewImage =
+    imageFile instanceof File ? URL.createObjectURL(imageFile) : null;
 
   // 3. HANDLE GAMBAR
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,66 +89,69 @@ const CashierAddMenuPage = () => {
     try {
       // BIKIN FORM DATA KARENA ADA FILE UPLOAD!
       const formData = new FormData();
-      
+
       // Masukkan teks ke dalam FormData
       formData.append("name", data.name);
       formData.append("description", data.description);
       formData.append("category", data.category); // Pastikan valuenya "FOOD" atau "DRINK"
-      formData.append("price", data.price); 
+      formData.append("price", data.price);
       formData.append("stock", data.stock);
       formData.append("image_path", data.image);
 
       console.log("Mengirim data ke API...");
-      
+
       // Tembak API Add Menu
       await menuAPI.createMenu(formData);
 
       // Jika berhasil
       triggerToast("Menu baru berhasil ditambahkan!", "success");
       setTimeout(() => navigate("/cashier/management-menu-stock"), 1500);
-      
     } catch (error: any) {
       console.error("🚨 DETAIL ERROR DARI BACKEND:", error.response?.data);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || "Terjadi kesalahan server backend";
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Terjadi kesalahan server backend";
       triggerToast(`Gagal: ${errorMsg}`, "error");
     }
   };
 
+  const { firstName, roleName } = useProfile();
+
   return (
     <>
       <Loading show={isSubmitting} message="Menyimpan menu baru..." />
-      <div className="pt-7.5 pl-8 pr-6 shrink-0 z-10">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0 shrink-0 z-10">
         <DashboardHeader
           title="Manajemen Menu & Stok"
           subtitle="Kelola daftar menu serta ketersediaan stok"
-          userName="Rina"
-          roleName="Kasir"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
-      <div className="flex-1 px-8 pb-10 pt-2">
+      <div className="flex-1 px-4 lg:px-8 pb-6 lg:pb-10 pt-2 lg:pt-2">
         <FormMenuLayout title="Tambah Menu" onBack={() => navigate(-1)}>
-          
-          <form onSubmit={handleSubmit(handleSaveMenu)} className="flex flex-col lg:flex-row gap-8 lg:gap-6">
-            
+          <form
+            onSubmit={handleSubmit(handleSaveMenu)}
+            className="flex flex-col lg:flex-row gap-0 lg:gap-6 mt-1"
+          >
             <div className="w-full lg:w-90 shrink-0">
-              <FormMenuImage 
-                previewUrl={previewImage} 
-                onChange={handleImageChange} 
+              <FormMenuImage
+                previewUrl={previewImage}
+                onChange={handleImageChange}
                 readonly={false}
-                error={errors.image?.message as string} 
+                error={errors.image?.message as string}
               />
             </div>
 
-            <FormMenuInput 
+            <FormMenuInput
               register={register}
               errors={errors}
               onCancel={() => navigate(-1)}
-              isDetailMode={false} 
+              isDetailMode={false}
             />
-
           </form>
-
         </FormMenuLayout>
       </div>
       <Toast show={toast.show} message={toast.message} type={toast.type} />
