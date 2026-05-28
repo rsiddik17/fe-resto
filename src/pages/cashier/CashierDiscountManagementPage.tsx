@@ -15,7 +15,6 @@ import Toast from "../../components/Toast/Toast";
 import { useProfile } from "../../hooks/useProfile";
 import { discountAPI } from "../../api/discount.api";
 
-
 // --- HELPER: YYYY-MM-DD to DD MMM ---
 // Mengubah "2026-05-15" menjadi "15 Mei"
 const formatDateToIndonesian = (dateString: string) => {
@@ -23,7 +22,20 @@ const formatDateToIndonesian = (dateString: string) => {
   const cleanDate = dateString.split("T")[0]; // Tangani format ISO (cth: 2026-05-24T00:00:00.000Z)
   const [, monthStr, day] = cleanDate.split("-");
   const monthIndex = parseInt(monthStr, 10) - 1;
-  const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Ags",
+    "Sep",
+    "Okt",
+    "Nov",
+    "Des",
+  ];
   return `${parseInt(day, 10)} ${months[monthIndex]}`;
 };
 
@@ -40,7 +52,11 @@ const determineDiscountStatus = (endDateString: string) => {
   today.setHours(0, 0, 0, 0);
 
   const endParts = cleanDate.split("-");
-  const endDate = new Date(Number(endParts[0]), Number(endParts[1]) - 1, Number(endParts[2]));
+  const endDate = new Date(
+    Number(endParts[0]),
+    Number(endParts[1]) - 1,
+    Number(endParts[2]),
+  );
 
   return endDate >= today ? "AKTIF" : "HABIS";
 };
@@ -91,19 +107,21 @@ const CashierDiscountManagementPage = () => {
     try {
       setIsFetching(true);
       const response = await discountAPI.getAllDiscounts();
-      
+
       if (response.data) {
         // Mapping data Backend ke format Tabel UI
-        const formattedDiscounts: DiscountItem[] = response.data.map((d: any) => ({
-          id: d.id,
-          name: d.discount_name,
-          code: d.discount_code,
-          minPurchase: Number(d.min_purches),
-          discount: Number(d.value),
-          date: formatDateRange(d.start_date, d.end_date),
-          status: determineDiscountStatus(d.end_date), // Asumsikan status dari tanggal
-        }));
-        
+        const formattedDiscounts: DiscountItem[] = response.data.map(
+          (d: any) => ({
+            id: d.id,
+            name: d.discount_name,
+            code: d.discount_code,
+            minPurchase: Number(d.min_purches),
+            discount: Number(d.value),
+            date: formatDateRange(d.start_date, d.end_date),
+            status: determineDiscountStatus(d.end_date), // Asumsikan status dari tanggal
+          }),
+        );
+
         setDiscounts(formattedDiscounts);
       }
     } catch (error) {
@@ -152,15 +170,15 @@ const CashierDiscountManagementPage = () => {
       // JIKA ADD: Langsung tembak API tanpa lewat modal konfirmasi
       setLoadingMessage("Menambahkan diskon baru...");
       setIsLoading(true);
-      
+
       try {
         await discountAPI.createDiscount({
           discount_code: data.code.toUpperCase(),
           discount_name: data.name,
           value: Number(data.discountAmount),
           min_purches: Number(data.minPurchase),
-          start_date: data.startDate, 
-          end_date: data.endDate
+          start_date: data.startDate,
+          end_date: data.endDate,
         });
 
         triggerToast(`Promo "${data.name}" berhasil ditambahkan!`, "success");
@@ -168,7 +186,10 @@ const CashierDiscountManagementPage = () => {
         fetchDiscounts(); // Refresh data
       } catch (error: any) {
         console.error("Gagal membuat diskon:", error);
-        triggerToast(error.response?.data?.message || "Gagal membuat diskon", "error");
+        triggerToast(
+          error.response?.data?.message || "Gagal membuat diskon",
+          "error",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -201,29 +222,37 @@ const CashierDiscountManagementPage = () => {
       if (confirmConfig.actionType === "delete") {
         const itemToDelete = confirmConfig.payload as DiscountItem;
         await discountAPI.deleteDiscount(itemToDelete.id);
-        
-        triggerToast(`Promo "${itemToDelete.name}" berhasil dihapus!`, "success");
-      } 
-      else if (confirmConfig.actionType === "save" && selectedDiscount) {
+
+        triggerToast(
+          `Promo "${itemToDelete.name}" berhasil dihapus!`,
+          "success",
+        );
+      } else if (confirmConfig.actionType === "save" && selectedDiscount) {
         const formData = confirmConfig.payload as DiscountFormData;
-        
+
         await discountAPI.updateDiscount(selectedDiscount.id, {
           discount_code: formData.code.toUpperCase(),
           discount_name: formData.name,
           value: Number(formData.discountAmount),
           min_purches: Number(formData.minPurchase),
           start_date: formData.startDate,
-          end_date: formData.endDate
+          end_date: formData.endDate,
         });
 
-        triggerToast(`Perubahan promo "${formData.name}" berhasil disimpan!`, "success");
+        triggerToast(
+          `Perubahan promo "${formData.name}" berhasil disimpan!`,
+          "success",
+        );
         setIsDetailModalOpen(false);
       }
 
       fetchDiscounts(); // Refresh data
     } catch (error: any) {
       console.error("Gagal mengeksekusi aksi:", error);
-      triggerToast(error.response?.data?.message || "Terjadi kesalahan", "error");
+      triggerToast(
+        error.response?.data?.message || "Terjadi kesalahan",
+        "error",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -276,12 +305,18 @@ const CashierDiscountManagementPage = () => {
 
         {/* 3. TABLE CONTAINER */}
         <div className="bg-white rounded-sm shadow-sm border border-gray-100 mb-8">
-          <DiscountTable
-            discounts={filteredDiscounts}
-            onDetail={handleOpenDetail}
-            onEdit={handleOpenEdit}
-            onDelete={handleTriggerDelete}
-          />
+          {isFetching ? (
+            <div className="flex flex-col items-center justify-center h-64 text-primary absolute inset-0 bg-white/60 backdrop-blur-[2px] z-20">
+              <span className="text-sm font-bold">Memuat promo diskon...</span>
+            </div>
+          ) : (
+            <DiscountTable
+              discounts={filteredDiscounts}
+              onDetail={handleOpenDetail}
+              onEdit={handleOpenEdit}
+              onDelete={handleTriggerDelete}
+            />
+          )}
         </div>
       </div>
 

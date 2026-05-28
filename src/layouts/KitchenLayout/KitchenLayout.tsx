@@ -3,16 +3,14 @@ import Sidebar, { type SidebarItem } from "../../components/Sidebar/Sidebar";
 import { useAuthStore } from "../../store/useAuthStore";
 // Asumsi kamu punya icon ini, kalau beda silakan disesuaikan
 import OrderListIcon from "../../components/Icon/OrderListIcon"; 
-import StockIcon from "../../components/Icon/StockIcon"; 
-import { MenuIcon } from "lucide-react";
 import AllMenuIcon from "../../components/Icon/AllMenuIcon";
 
 const KitchenLayout = () => {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/");
   };
 

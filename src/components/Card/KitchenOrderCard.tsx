@@ -12,6 +12,7 @@ export interface OrderItem {
 
 export interface OrderDetail {
   id: string;
+  rawId: string;
   type: OrderType;
   table?: string;
   time: string;

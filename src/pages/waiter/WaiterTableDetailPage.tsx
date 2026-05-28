@@ -2,14 +2,14 @@ import { useNavigate, useLocation } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import TableIcon from "../../components/Icon/TableIcon"; // Pastikan path benar
-import { type TableItem } from "../../components/Card/TableCard";
+import type { TableData } from "../../api/table.api";
 
 const WaiterTableDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
   // Tangkap data meja yang dikirim dari halaman sebelumnya
-  const table = location.state?.table as TableItem;
+  const table = location.state?.table as TableData;
 
   // Fallback jika diakses tanpa data
   if (!table) {

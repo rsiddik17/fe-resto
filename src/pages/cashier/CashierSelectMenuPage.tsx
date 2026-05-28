@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { Search } from "lucide-react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import Button from "../../components/ui/Button";
@@ -15,32 +15,36 @@ import DeleteConfirmModal from "../../components/Modal/DeleteConfirmModal";
 import { useMenus } from "../../hooks/useMenus";
 import WarningIcon from "../../components/Icon/WarningIcon";
 import { useProfile } from "../../hooks/useProfile";
+import { orderAPI, type CreateOrderPayload } from "../../api/order.api";
 
 const CashierSelectMenuPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Tangkap nomor meja dari halaman Pilih Meja, fallback "Meja 10"
-  const tableNumber = location.state?.tableNumber
-    ? `Meja ${location.state.tableNumber}`
-    : "Meja 10";
-
+  const { firstName, roleName } = useProfile();
   const { data: menus = [], isLoading, isError, refetch } = useMenus();
 
   // Zustand Store
-  const { items, getTotalPrice, addToCart, updateQty, removeItem, updateNote } =
+  const { items, getTotalPrice, addToCart, updateQty, removeItem, updateNote, tableId, tableNumber } =
     useCartStore();
   const subTotal = getTotalPrice();
+
+  const formatTableNumber = (raw: string) => {
+    const num = raw.replace(/\D/g, "");
+    return num || raw;
+  };
+  const displayTableNumber = tableNumber ? `Meja ${formatTableNumber(tableNumber)}` : "Tanpa Meja";
 
   // State Halaman
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<
     "semua" | "makanan" | "minuman"
   >("semua");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // State Modals
   const [isDiscountOpen, setIsDiscountOpen] = useState(false);
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [discountId, setDiscountId] = useState<number | null>(null);
+
   const [isNoteOpen, setIsNoteOpen] = useState(false);
   const [selectedCartItemId, setSelectedCartItemId] = useState<string | null>(
     null,
@@ -57,17 +61,48 @@ const CashierSelectMenuPage = () => {
     return matchCategory && matchSearch;
   });
 
-  const handleConfirmOrder = () => {
-    if (items.length === 0) return; // Proteksi ganda
+  const handleConfirmOrder = async () => {
+    if (items.length === 0) return;
 
-    // PERBAIKAN: Arahkan ke rute payment milik Kasir
-    navigate("/cashier/order-list/create-order/payment-order", {
-      state: {
-        tableNumber: location.state?.tableNumber || "10",
-        discountAmount: discountAmount,
-        orderId: `#${Math.floor(100000000 + Math.random() * 900000000)}`, // Mock Order ID
-      },
-    });
+    try {
+      setIsSubmitting(true);
+
+      const payload: CreateOrderPayload = {
+        source: "CASHIER", // <-- Perbedaan utama dengan Waiter
+        table_id: tableId, 
+        order_items: items.map((item) => ({
+          menu_id: item.id,
+          quantity: item.qty,
+          notes: item.notes || "Tidak ada",
+        })),
+      };
+
+      if (discountId) {
+        payload.discount_id = discountId;
+      }
+
+      const response = await orderAPI.createOrder(payload);
+
+      if (response.success) {
+        const generatedOrderId = response.data?.order_id || response.data?.id || "ORDER-SUCCESS";
+
+        // Arahkan ke rute payment Kasir
+        navigate("/cashier/order-list/create-order/payment-order", {
+          state: {
+            tableNumber: displayTableNumber,
+            discountAmount: discountAmount,
+            orderId: generatedOrderId,
+          },
+        });
+      } else {
+        alert(response.message || "Gagal membuat pesanan");
+      }
+    } catch (error) {
+      console.error("Gagal buat pesanan:", error);
+      alert("Terjadi kesalahan jaringan saat membuat pesanan.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleConfirmDelete = () => {
@@ -77,7 +112,6 @@ const CashierSelectMenuPage = () => {
     }
   };
 
-  const { firstName, roleName } = useProfile();
 
   return (
     <>
@@ -194,7 +228,7 @@ const CashierSelectMenuPage = () => {
             <div className="flex justify-between items-center shrink-0 border-b border-gray-100 mb-1">
               <h2 className="font-bold text-[19px]">Pesanan</h2>
               <span className="font-bold text-primary text-[14px] px-3 py-1 rounded-md">
-                {tableNumber}
+                {displayTableNumber}
               </span>
             </div>
 
@@ -224,7 +258,10 @@ const CashierSelectMenuPage = () => {
                       subTotal={subTotal}
                       discountAmount={discountAmount}
                       onAddDiscount={() => setIsDiscountOpen(true)}
-                      onRemoveDiscount={() => setDiscountAmount(0)}
+                      onRemoveDiscount={() => {
+                        setDiscountAmount(0);
+                        setDiscountId(null);
+                      }}
                     />
                   </div>
                 )}
@@ -234,10 +271,10 @@ const CashierSelectMenuPage = () => {
             <div className="shrink-0 flex justify-center border-t border-gray-100">
               <Button
                 onClick={handleConfirmOrder}
-                disabled={items.length === 0}
+                disabled={items.length === 0 || isSubmitting}
                 className="w-full max-w-80 py-2 text-[14px] md:text-[14px] lg:text-[14px] font-bold rounded-lg shadow-sm disabled:bg-gray/50 disabled:cursor-not-allowed transition-all"
               >
-                Konfirmasi Pesanan
+                {isSubmitting ? "Memproses..." : "Konfirmasi Pesanan"}
               </Button>
             </div>
           </div>
@@ -248,8 +285,9 @@ const CashierSelectMenuPage = () => {
       {isDiscountOpen && (
         <DiscountModal
           onClose={() => setIsDiscountOpen(false)}
-          onApply={(amount) => {
+          onApply={(amount, id) => {
             setDiscountAmount(amount);
+            setDiscountId(id);
             setIsDiscountOpen(false);
           }}
           subTotal={subTotal}
