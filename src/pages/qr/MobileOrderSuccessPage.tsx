@@ -9,11 +9,13 @@ import OrderSummary from "../../components/OrderSummary/OrderSummary";
 import SuccessIcon from "../../components/Icon/SuccessIcon";
 
 import { useCartStore } from "../../store/useCartStore";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const MobileOrderSuccessPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { items, clearCart, tableNumber } = useCartStore();
+  const { logout } = useAuthStore();
 
   const orderData = location.state;
   const [status, setStatus] = useState<"PENDING" | "CONFIRMED">("PENDING");
@@ -36,9 +38,10 @@ const MobileOrderSuccessPage = () => {
     return () => clearTimeout(timer);
   }, [orderData, items.length, navigate, tableNumber]);
 
-  const handleSelesai = () => {
+  const handleSelesai = async () => {
     const rawNumber = tableNumber?.replace(/\D/g, "");
     clearCart(); // Kosongkan keranjang
+    await logout();
     if (rawNumber) {
       navigate(`/qr/${rawNumber}`, { replace: true });
     }

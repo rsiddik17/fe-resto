@@ -101,8 +101,8 @@ const MobileTableInfoPage = () => {
     }
   };
 
-  const handleCancel = () => {
-    logout();
+  const handleCancel = async () => {
+    await logout();
     navigate("/");
   };
 

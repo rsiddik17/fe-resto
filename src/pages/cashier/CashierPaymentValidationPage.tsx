@@ -10,6 +10,10 @@ import Toast from "../../components/Toast/Toast";
 import { useCartStore } from "../../store/useCartStore";
 import { useProfile } from "../../hooks/useProfile";
 
+// Import API
+import { orderAPI } from "../../api/order.api";
+import Loading from "../../components/Loading/Loading";
+
 const CashierPaymentValidationPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,6 +25,7 @@ const CashierPaymentValidationPage = () => {
   const [selectedBank, setSelectedBank] = useState<string>("");
   const [otherBankName, setOtherBankName] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // --- STATE TOAST ---
   const [toast, setToast] = useState<{
@@ -38,19 +43,55 @@ const CashierPaymentValidationPage = () => {
     setTimeout(() => setToast({ show: false, message: "", type }), 4000);
   };
 
-  const handleConfirmValidation = () => {
-    setIsModalOpen(false);
-    clearCart();
-    // GANTI ALERT DENGAN TOAST HIJAU
-    triggerToast("Pembayaran berhasil divalidasi!", "success");
+  const handleConfirmValidation = async () => {
+    if (!passedOrder?.id) {
+      triggerToast("ID Pesanan tidak valid", "error");
+      return;
+    }
 
-    // Beri jeda 1.5 detik agar Toast terlihat sebelum pindah halaman
-    setTimeout(() => {
-      navigate("/cashier/order-list");
-    }, 1500);
+    // Tentukan nama bank final
+    const finalBankName = selectedBank === "Lainnya" ? otherBankName : selectedBank;
+
+    try {
+      setIsSubmitting(true);
+      
+      // 1. Panggil API Validasi
+      const response = await orderAPI.validatePayment(passedOrder.id, finalBankName);
+      
+      if (response.success) {
+        setIsModalOpen(false);
+        clearCart();
+        
+        triggerToast("Pembayaran berhasil divalidasi!", "success");
+
+        // 2. Beri jeda agar Toast terlihat, lalu arahkan ke Order List
+        setTimeout(() => {
+          navigate("/cashier/order-list");
+        }, 2000);
+      } else {
+        triggerToast(response.message || "Gagal memvalidasi", "error");
+        setIsModalOpen(false);
+      }
+
+    } catch (error: any) {
+      console.error("Error validasi pembayaran:", error);
+      triggerToast(error.response?.data?.message || "Gagal memvalidasi pembayaran", "error");
+      setIsModalOpen(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const { firstName, roleName } = useProfile();
+
+  if (!passedOrder) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-gray-500">
+        <p>Data pesanan tidak ditemukan.</p>
+        <button onClick={() => navigate(-1)} className="mt-4 text-primary underline">Kembali</button>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -129,12 +170,13 @@ const CashierPaymentValidationPage = () => {
                     onClick={() => setIsModalOpen(true)}
                     // Disabled jika belum pilih bank
                     disabled={
+                      isSubmitting ||
                       !selectedBank ||
                       (selectedBank === "Lainnya" && !otherBankName)
                     }
                     className="flex-1 bg-primary w-full text-white font-bold text-sm md:text-sm lg:text-sm py-3 rounded-sm hover:bg-primary-hover transition-colors cursor-pointer disabled:cursor-not-allowed"
                   >
-                    Pembayaran Diterima
+                    {isSubmitting ? "Memproses..." : "Pembayaran Diterima"}
                   </button>
                 </div>
               </div>
@@ -150,6 +192,7 @@ const CashierPaymentValidationPage = () => {
       />
 
       <Toast show={toast.show} message={toast.message} type={toast.type} />
+      <Loading show={isSubmitting} message="Memvalidasi..." />
     </>
   );
 };

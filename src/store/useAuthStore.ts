@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { authAPI } from "../api/auth.api";
 
 // Definisikan semua role yang ada (kecuali QR karena dia temporary guest)
 export type UserRole = "ADMIN" | "CASHIER" | "WAITER" | "KIOSK_SYSTEM" | "KITCHEN" | "CUSTOMER" | "GUEST" | null;
@@ -18,7 +19,7 @@ interface AuthState {
   user: UserProfile | null;
   setAuth: (token: string, role: UserRole) => void;
   setUser: (userData: UserProfile) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -36,9 +37,16 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user: userData });
   },
   
-  logout: () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    set({ token: null, role: null, user: null });
+  logout: async () => {
+    try {
+      await authAPI.logout(); // Hit API ke backend
+    } catch (error) {
+      console.error("Gagal logout dari server:", error);
+    } finally {
+      // Pastikan data lokal selalu dihapus meskipun API error/token expired
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      set({ token: null, role: null, user: null });
+    }
   },
 }));

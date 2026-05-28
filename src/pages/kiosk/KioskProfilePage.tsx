@@ -51,8 +51,8 @@ const KioskProfilePage = () => {
     return role || "-";
   };
 
-  const handleLogout = () => {
-    if (logout) logout();
+  const handleLogout = async () => {
+    if (logout) await logout();
     navigate("/");
   };
 

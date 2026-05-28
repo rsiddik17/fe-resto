@@ -19,13 +19,30 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
 const CashierPaymentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { firstName, roleName } = useProfile();
 
   const [isExpiredOpen, setIsExpiredOpen] = useState(false);
 
+  const formatTableNumber = (raw?: string) => {
+    if (!raw) return "Tanpa Meja";
+    if (raw.toLowerCase().includes("meja") || raw.toLowerCase().includes("tanpa")) {
+      return raw; 
+    }
+    const match = raw.match(/M(\d+)(_i|_o)?/i);
+    if (match) {
+      const num = match[1];
+      let suffix = "";
+      if (match[2]) {
+        suffix = match[2].toLowerCase() === "_i" ? "_indoor" : "_outdoor";
+      }
+      return `Meja ${num}${suffix}`;
+    }
+    return `Meja ${raw}`;
+  };
+
   // Ambil state dari halaman sebelumnya, fallback default
-  const tableNumber = location.state?.tableNumber
-    ? `Meja ${location.state.tableNumber}`
-    : "Meja 10";
+  const tableNumber = formatTableNumber(location.state?.tableNumber);
+
   const orderId = location.state?.orderId || "UNKNOWN";
   const discountAmount = location.state?.discountAmount || 0;
 
@@ -33,6 +50,7 @@ const CashierPaymentPage = () => {
   const { items, getTotalPrice } = useCartStore();
   const subTotal = getTotalPrice();
   const taxRate = 10;
+
   const { adminFee, taxAmount, finalPayment } = useOrderPayment(
     orderId,
     subTotal,
@@ -48,7 +66,7 @@ const CashierPaymentPage = () => {
         minute: "2-digit",
       }),
       title: tableNumber,
-      leftBadges: [{ text: "QR", colorClass: "bg-[#1AE91D]" }], // Anggap sumbernya QR
+      leftBadges: [{ text: "Kasir", colorClass: "bg-[#F35B28]" }],
       items: items.map((item) => ({
         name: item.name,
         qty: item.qty,
@@ -63,7 +81,6 @@ const CashierPaymentPage = () => {
     });
   };
 
-  const { firstName, roleName } = useProfile();
 
   return (
     <>
@@ -88,7 +105,7 @@ const CashierPaymentPage = () => {
               </div>
               <div className="flex justify-between items-center text-[14px]">
                 <span className="text-black/50">ID Pesanan</span>
-                <span className="font-bold text-primary">{orderId}</span>
+                <span className="font-bold text-primary">#{orderId}</span>
               </div>
             </div>
 

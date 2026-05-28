@@ -29,13 +29,17 @@ const IncomingOrderTable = ({ orders }: IncomingOrderTableProps) => {
   const getMethodColor = (method: string) => {
     switch (method) {
       case "QR":
+      case "QR_SCAN":
         return "bg-[#1AE91D]"; // Hijau
       case "KIOSK":
         return "bg-[#2196F3]"; // Biru
       case "ONLINE":
         return "bg-[#AD4EFA]"; // Ungu
       case "KASIR":
+      case "CASHIER":
         return "bg-[#F35B28]"; // Orange
+      case "WAITER":
+        return "bg-[#F35B28]";
       default:
         return "bg-gray-500";
     }
@@ -55,7 +59,7 @@ const IncomingOrderTable = ({ orders }: IncomingOrderTableProps) => {
       </div>
 
       {/* Area Tabel */}
-      <div className="w-full overflow-x-auto custom-scrollbar">
+      <div className="w-full overflow-auto custom-scrollbar">
         <table className="w-full text-left border-collapse min-w-150">
           <thead>
             <tr className="bg-[#EFEEEE] border-gray-100 text-[#73736C] text-[12.5px] md:text-[12.5px] uppercase">
