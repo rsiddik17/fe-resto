@@ -1,19 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { FileText, FileSpreadsheet } from "lucide-react";
+// import { FileText, FileSpreadsheet } from "lucide-react";
 import AdminSidebar from "../../components/AdminComponents/AdminSidebar";
 import AdminHeader from "../../components/AdminComponents/AdminHeader";
 import FilterMingguan from "../../components/AdminComponents/FilterMingguan";
 import TabelPesananMingguan from "../../components/AdminComponents/TabelPesananMingguan";
 import TabelPendapatanMingguan from "../../components/AdminComponents/TabelPendapatanMingguan";
-import LaporanTableMenuMingguan from "../../components/AdminComponents/LaporanTableMenuMingguan";
 import ReportIcon from "../../components/Icon/ReportIcon";
-import {
-  eksporKePDFPesananMingguan,
-  eksporKeExcelPesananMingguan,
-  eksporKePDFPendapatanMingguan,
-  eksporKeExcelPendapatanMingguan,
-} from "../../components/AdminComponents/ExportUtilsMingguan";
+import TabelMenuMingguan from "../../components/AdminComponents/TabelMenuMingguan";
 
 // DATA DUMMY MINGGUAN
 const DATA_PESANAN_MINGGUAN = [
@@ -295,101 +289,30 @@ const LaporanMingguanPage = () => {
               <div className="space-y-12">
                 {/* LAPORAN PESANAN */}
                 {(activeTab === "Semua" || activeTab === "Pesanan") && (
-                  <div className="space-y-4">
-                    <div className="flex items-end justify-between flex-wrap gap-3">
-                      <div className="space-y-1">
-                        <h4 className="text-[17px] font-extrabold text-black tracking-tight">
-                          Laporan Total Pesanan
-                        </h4>
-                        <p className="text-[12px] text-gray-400 font-medium">
-                          Periode: {periodeText}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() =>
-                            eksporKePDFPesananMingguan(
-                              sortedPesanan,
-                              periodeText,
-                            )
-                          }
-                          className="bg-primary text-white font-bold text-[12.5px] px-5 py-2 rounded-xs flex items-center gap-1.5 cursor-pointer shadow-md"
-                        >
-                          <FileText size={12} /> Ekspor PDF
-                        </button>
-                        <button
-                          onClick={() =>
-                            eksporKeExcelPesananMingguan(
-                              sortedPesanan,
-                              periodeText,
-                            )
-                          }
-                          className="bg-primary text-white font-bold text-[12.5px] px-5 py-2 rounded-xs flex items-center gap-1.5 cursor-pointer shadow-md"
-                        >
-                          <FileSpreadsheet size={12} /> Ekspor Excel
-                        </button>
-                      </div>
-                    </div>
-                    <TabelPesananMingguan
-                      data={DATA_PESANAN_MINGGUAN}
-                      onSortChange={(newSortedData) =>
-                        setSortedPesanan(newSortedData)
-                      }
-                    />
-                  </div>
+                  <TabelPesananMingguan
+                    data={DATA_PESANAN_MINGGUAN}
+                    periode={periodeText}
+                    enablePagination={true}
+                    itemsPerPage={10}
+                  />
                 )}
 
                 {/* LAPORAN PENDAPATAN */}
                 {(activeTab === "Semua" || activeTab === "Pendapatan") && (
-                  <div className="space-y-4">
-                    <div className="flex items-end justify-between flex-wrap gap-3">
-                      <div className="space-y-1">
-                        <h4 className="text-[17px] font-extrabold text-black tracking-tight">
-                          Laporan Total Pendapatan
-                        </h4>
-                        <p className="text-[12px] text-gray-400 font-medium">
-                          Periode: {periodeText}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() =>
-                            eksporKePDFPendapatanMingguan(
-                              sortedPendapatan,
-                              periodeText,
-                            )
-                          }
-                          className="bg-primary text-white font-bold text-[12.5px] px-5 py-2 rounded-xs flex items-center gap-1.5 cursor-pointer shadow-md"
-                        >
-                          <FileText size={12} /> Ekspor PDF
-                        </button>
-                        <button
-                          onClick={() =>
-                            eksporKeExcelPendapatanMingguan(
-                              sortedPendapatan,
-                              periodeText,
-                            )
-                          }
-                          className="bg-primary text-white font-bold text-[12.5px] px-5 py-2 rounded-xs flex items-center gap-1.5 cursor-pointer shadow-md"
-                        >
-                          <FileSpreadsheet size={12} /> Ekspor Excel
-                        </button>
-                      </div>
-                    </div>
-                    <TabelPendapatanMingguan
-                      data={DATA_PENDAPATAN_MINGGUAN}
-                      onSortChange={(newSortedData) =>
-                        setSortedPendapatan(newSortedData)
-                      }
-                    />
-                  </div>
+                  <TabelPendapatanMingguan
+                    data={DATA_PENDAPATAN_MINGGUAN}
+                    periode={periodeText}
+                    enablePagination={true}
+                    itemsPerPage={10}
+                  />
                 )}
-
                 {/* LAPORAN MENU */}
                 {(activeTab === "Semua" || activeTab === "Menu") && (
-                  <LaporanTableMenuMingguan
+                  <TabelMenuMingguan
                     data={DATA_MENU_MINGGUAN}
                     periode={periodeText}
+                    enablePagination={true}
+                    itemsPerPage={10}
                   />
                 )}
               </div>

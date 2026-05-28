@@ -40,24 +40,22 @@ const AdminDashboardPage = () => {
   const { data: menuList, isLoading } = useMenus();
   const [startDate, setStartDate] = useState("2026-04-10");
   const [endDate, setEndDate] = useState("2026-04-16");
-  const [currentData] = useState(MOCK_DATA_SOURCE["2026-04-10_2026-04-16"]);
+  const [currentData, setCurrentData] = useState(
+    MOCK_DATA_SOURCE["2026-04-10_2026-04-16"],
+  );
 
-  const startDateRef = useRef<HTMLInputElement>(null);
-  const endDateRef = useRef<HTMLInputElement>(null);
+  const startDateRef = useRef(null);
+  const endDateRef = useRef(null);
+
   const handleUpdateFilter = () => {
-    // FIX: Format disamakan menggunakan underscore "_" agar sesuai dengan properti MOCK_DATA_SOURCE
     const formatKey = `${startDate}_${endDate}`;
-
     if (formatKey in MOCK_DATA_SOURCE) {
-      setCurrentData(
-        MOCK_DATA_SOURCE[formatKey as keyof typeof MOCK_DATA_SOURCE],
-      );
+      setCurrentData(MOCK_DATA_SOURCE[formatKey]);
     } else {
-      setCurrentData(MOCK_DATA_SOURCE["default"]);
+      setCurrentData(MOCK_DATA_SOURCE["2026-04-10_2026-04-16"]);
     }
   };
 
-  // Daftar menu yang diinginkan
   const targetMenuNames = [
     "es teler",
     "mie ayam bakso",
@@ -65,49 +63,51 @@ const AdminDashboardPage = () => {
     "nasi goreng kambing",
     "sate ayam",
   ];
-  // Angka statis sesuai desain referensi Anda
   const angkaStatik = ["150", "120", "108", "100", "98"];
 
-  const filteredMenus = menuList
-    ?.filter((menu) =>
-      targetMenuNames.some((target) =>
-        menu.name.toLowerCase().includes(target),
-      ),
-    )
-    .sort(
-      (a, b) =>
-        targetMenuNames.indexOf(
-          targetMenuNames.find((t) => a.name.toLowerCase().includes(t))!,
-        ) -
-        targetMenuNames.indexOf(
-          targetMenuNames.find((t) => b.name.toLowerCase().includes(t))!,
+  const filteredMenus =
+    menuList
+      ?.filter((menu) =>
+        targetMenuNames.some((target) =>
+          menu.name.toLowerCase().includes(target),
         ),
-    );
+      )
+      .sort((a, b) => {
+        const indexA = targetMenuNames.findIndex((t) =>
+          a.name.toLowerCase().includes(t),
+        );
+        const indexB = targetMenuNames.findIndex((t) =>
+          b.name.toLowerCase().includes(t),
+        );
+        return indexA - indexB;
+      }) || [];
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F3F4F6]">
       <AdminSidebar onLogout={() => console.log("Admin Logout")} />
 
-      <main className="flex-1 flex flex-col h-full min-w-0 overflow-y-auto p-5 md:p-6">
-        <AdminHeader
-          title="Dashboard Admin"
-          adminName="Citra"
-          roleName="Admin Role"
-        />
+      <main className="flex-1 flex flex-col h-full min-w-0 overflow-y-auto p-4 md:p-6">
+        <div className="w-full">
+          <AdminHeader
+            title="Dashboard Admin"
+            adminName="Citra"
+            roleName="Admin Role"
+          />
+        </div>
 
         <div className="space-y-5 w-full max-w-300 mx-auto">
-          {/* BAR FILTER */}
-          <div className="bg-white rounded-xs p-2.5 px-4 shadow-md border border-gray-100 flex flex-wrap items-center gap-4 w-fit">
-            <div className="flex items-center gap-3">
-              <span className="text-[13px] text-gray-500 font-medium whitespace-nowrap">
+          {/* BAR FILTER - DESKTOP */}
+          <div className="hidden md:flex bg-white rounded-xs p-2.5 px-3 md:px-4 shadow-md border border-gray-100 flex-wrap items-center gap-3 md:gap-4 w-full md:w-fit">
+            <div className="flex items-center gap-2 flex-1 md:flex-none">
+              <span className="text-[11px] md:text-[13px] text-gray-500 font-medium">
                 Start Date
               </span>
               <div
-                className="bg-white rounded-xs border border-gray-200 px-3 py-1.5 shadow-md flex items-center gap-2 cursor-pointer hover:border-gray-300 transition-colors"
+                className="bg-white rounded-xs border border-gray-200 px-2 md:px-3 py-1.5 shadow-md flex items-center gap-1 md:gap-2 flex-1 md:flex-none cursor-pointer"
                 onClick={() => startDateRef.current?.showPicker()}
               >
-                <Calendar size={14} className="text-gray-400" />
-                <span className="text-[13px] text-gray-700 font-medium">
+                <Calendar size={12} className="text-gray-400" />
+                <span className="text-[11px] md:text-[13px] text-gray-700 font-medium">
                   {startDate.split("-").reverse().join("/")}
                 </span>
                 <input
@@ -120,16 +120,16 @@ const AdminDashboardPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className="text-[13px] text-gray-500 font-medium whitespace-nowrap">
+            <div className="flex items-center gap-2 flex-1 md:flex-none">
+              <span className="text-[11px] md:text-[13px] text-gray-500 font-medium">
                 End Date
               </span>
               <div
-                className="bg-white rounded-xs border border-gray-200 px-3 py-1.5  flex items-center shadow-md gap-2 cursor-pointer hover:border-gray-300 transition-colors"
+                className="bg-white rounded-xs border border-gray-200 px-2 md:px-3 py-1.5 shadow-md flex items-center gap-1 md:gap-2 flex-1 md:flex-none cursor-pointer"
                 onClick={() => endDateRef.current?.showPicker()}
               >
-                <Calendar size={14} className="text-gray-400" />
-                <span className="text-[13px] text-gray-700 font-medium">
+                <Calendar size={12} className="text-gray-400" />
+                <span className="text-[11px] md:text-[13px] text-gray-700 font-medium">
                   {endDate.split("-").reverse().join("/")}
                 </span>
                 <input
@@ -144,15 +144,70 @@ const AdminDashboardPage = () => {
 
             <button
               onClick={handleUpdateFilter}
-              className="bg-primary hover:bg-primary/90 text-white font-bold text-[13px] px-5 py-1.5 rounded-xs shadow-md shadow-purple-900/20 flex items-center gap-1.5 transition-all cursor-pointer"
+              className="bg-primary hover:bg-primary/90 text-white font-bold text-[11px] md:text-[13px] px-3 md:px-5 py-1.5 rounded-xs shadow-md flex items-center gap-1"
             >
               <SlidersHorizontal size={13} strokeWidth={2.5} />
               Perbarui
             </button>
           </div>
 
+          {/* BAR FILTER - MOBILE */}
+          <div className="block md:hidden bg-white rounded-xs p-4 shadow-md border border-gray-100 space-y-4">
+            <div className="flex flex-row gap-3">
+              <div className="flex-1">
+                <span className="text-[11px] text-gray-500 font-medium block mb-1">
+                  Start Date
+                </span>
+                <div
+                  onClick={() => startDateRef.current?.showPicker()}
+                  className="bg-white rounded-xs border border-gray-200 px-3 py-2 flex items-center gap-2 cursor-pointer hover:border-primary transition-colors"
+                >
+                  <Calendar size={14} className="text-gray-400 shrink-0" />
+                  <span className="text-[13px] text-gray-700 font-medium flex-1 truncate">
+                    {startDate.split("-").reverse().join("/")}
+                  </span>
+                  <input
+                    type="date"
+                    ref={startDateRef}
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="hidden"
+                  />
+                </div>
+              </div>
+              <div className="flex-1">
+                <span className="text-[11px] text-gray-500 font-medium block mb-1 roun">
+                  End Date
+                </span>
+                <div
+                  onClick={() => endDateRef.current?.showPicker()}
+                  className="bg-white rounded-xs border border-gray-200 px-3 py-2 flex items-center gap-2 cursor-pointer hover:border-primary transition-colors"
+                >
+                  <Calendar size={14} className="text-gray-400 shrink-0" />
+                  <span className="text-[13px] text-gray-700 font-medium flex-1 truncate">
+                    {endDate.split("-").reverse().join("/")}
+                  </span>
+                  <input
+                    type="date"
+                    ref={endDateRef}
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="hidden"
+                  />
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={handleUpdateFilter}
+              className="w-full bg-primary hover:bg-primary/90 text-white font-semibold text-[13px] px-4 py-2.5 rounded-xs shadow-md flex items-center justify-center gap-2 transition-all"
+            >
+              <SlidersHorizontal size={14} strokeWidth={2.5} />
+              Perbarui
+            </button>
+          </div>
+
           {/* STAT CARDS */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-5">
             <AdminStatCard
               title="Total Pesanan"
               value={currentData.totalPesanan}
@@ -166,7 +221,7 @@ const AdminDashboardPage = () => {
           </div>
 
           {/* DIAGRAM */}
-          <div className="flex flex-col lg:flex-row gap-5">
+          <div className="flex flex-col lg:flex-row gap-3 md:gap-5">
             <DashboardChart
               title="Grafik Total Pesanan"
               data={currentData.pesanan}
@@ -181,15 +236,17 @@ const AdminDashboardPage = () => {
             />
           </div>
 
-          {/* TABEL MENU SERING DIPESAN - UKURAN LEBIH BESAR */}
+          {/* TABEL MENU */}
           <section className="bg-white rounded-xs shadow-sm border border-gray-100 overflow-hidden w-full">
-            <div className="bg-primary py-3 px-5">
-              <h2 className="font-bold text-white text-[15px]">
+            <div className="bg-primary py-2 md:py-3 px-3 md:px-5">
+              <h2 className="font-bold text-white text-[13px] md:text-[15px]">
                 Menu Sering Dipesan
               </h2>
             </div>
-            <div className="overflow-x-auto w-full">
-              <table className="w-full text-left border-collapse">
+
+            {/* TABEL VIEW - DESKTOP */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-125">
                 <thead>
                   <tr className="border-b-2 border-gray-200 bg-gray-50">
                     <th className="py-3 text-center w-12 text-[14px] font-bold text-black">
@@ -214,12 +271,12 @@ const AdminDashboardPage = () => {
                     <tr>
                       <td
                         colSpan={5}
-                        className="py-8 text-center text-gray-400 text-[13px]"
+                        className="py-8 text-center text-gray-400"
                       >
                         Memuat data...
                       </td>
                     </tr>
-                  ) : filteredMenus && filteredMenus.length > 0 ? (
+                  ) : filteredMenus.length > 0 ? (
                     filteredMenus.map((menu, index) => (
                       <tr
                         key={menu.id}
@@ -234,10 +291,6 @@ const AdminDashboardPage = () => {
                               src={menu.image}
                               alt={menu.name}
                               className="w-10 h-10 object-cover rounded-full border border-gray-200"
-                              onError={(e) => {
-                                e.currentTarget.src =
-                                  "https://placehold.co/100x100?text=Food";
-                              }}
                             />
                             <span className="text-black font-medium text-[14px]">
                               {menu.name}
@@ -259,7 +312,7 @@ const AdminDashboardPage = () => {
                     <tr>
                       <td
                         colSpan={5}
-                        className="py-8 text-center text-gray-400 text-[13px]"
+                        className="py-8 text-center text-gray-400"
                       >
                         Menu tidak ditemukan.
                       </td>
@@ -267,6 +320,50 @@ const AdminDashboardPage = () => {
                   )}
                 </tbody>
               </table>
+            </div>
+
+            {/* CARD VIEW - MOBILE */}
+            <div className="block md:hidden p-3 space-y-3">
+              {isLoading ? (
+                <div className="text-center py-8 text-gray-400 text-sm">
+                  Memuat data...
+                </div>
+              ) : filteredMenus.length > 0 ? (
+                filteredMenus.map((menu, index) => (
+                  <div
+                    key={menu.id}
+                    className="bg-white rounded-lg border border-gray-100 p-3 shadow-sm"
+                  >
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={menu.image}
+                        alt={menu.name}
+                        className="w-12 h-12 object-cover rounded-full border border-gray-200"
+                      />
+                      <div className="flex-1">
+                        <h3 className="font-bold text-gray-800 text-sm">
+                          {menu.name}
+                        </h3>
+                        <p className="text-xs text-gray-500 capitalize">
+                          {menu.category}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-primary text-sm">
+                          Rp{menu.price.toLocaleString()}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          ⭐ {angkaStatik[index] || menu.stock} Terjual
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-400 text-sm">
+                  Menu tidak ditemukan.
+                </div>
+              )}
             </div>
           </section>
         </div>

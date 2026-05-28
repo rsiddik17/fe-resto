@@ -65,7 +65,7 @@ const MapSection = () => {
   return (
     <div className="space-y-6">
       {/* INPUT ALAMAT LENGKAP */}
-      <div className="space-y-2 text-left relative">
+      <div className="space-y-2 text-left relative flex flex-col">
         <label className="text-black font-bold text-sm">Alamat Lengkap</label>
         <textarea
           value={searchQuery}
@@ -73,13 +73,13 @@ const MapSection = () => {
             setSearchQuery(e.target.value);
             setShowDropdown(true);
           }}
-          className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl h-24 text-sm font-medium focus:border-primary outline-none resize-none"
+          className="w-full p-4 bg-white border-[1.5px] border-primary rounded-xs h-24 text-sm font-medium outline-none resize-none disabled:bg-gray-50 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary"
           placeholder="Ketik alamat, misal: Puri Nirwana 3, Cibinong"
         />
 
         {/* DROPDOWN SARAN ALAMAT */}
         {showDropdown && suggestions.length > 0 && (
-          <ul className="absolute left-0 right-0 bg-white border border-gray-100 rounded-xl mt-1 shadow-xl z-[9999] max-h-60 overflow-y-auto divide-y divide-gray-50">
+          <ul className="absolute left-0 right-0 bg-white border border-gray-100 rounded-xl mt-1 shadow-xl z-9999 max-h-60 overflow-y-auto divide-y divide-gray-50">
             {suggestions.map((item, index) => (
               <li
                 key={index}
@@ -116,7 +116,7 @@ const MapSection = () => {
           <label className="text-black font-bold text-sm">Latitude</label>
           <input
             disabled
-            className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl font-medium text-gray-500 outline-none"
+            className="w-full p-4 bg-white border-[1.5px] border-primary  rounded-xs font-medium text-gray-500 resize-none outline-none disabled:bg-gray-50 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary"
             value={position.lat}
           />
         </div>
@@ -124,7 +124,7 @@ const MapSection = () => {
           <label className="text-black font-bold text-sm">Longitude</label>
           <input
             disabled
-            className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl font-medium text-gray-500 outline-none"
+            className="w-full p-4 bg-white border-[1.5px] border-primary rounded-xs font-medium text-gray-500 outline-none disabled:bg-gray-50 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary"
             value={position.lng}
           />
         </div>

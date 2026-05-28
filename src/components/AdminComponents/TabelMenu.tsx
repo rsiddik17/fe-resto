@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+  eksporKePDFMenu,
+  eksporKeExcelMenu,
+} from "../AdminComponents/ExportUtils";
+import ExportIcon from "../Icon/ExportIcon";
+import SortIcon from "../Icon/SortIcon";
 
 interface Menu {
   id: number;
@@ -14,172 +15,346 @@ interface Menu {
   total: number;
 }
 
-interface TabelMenuProps {
-  onSortChange?: (sortedData: Menu[]) => void;
-}
-
-const DATA_MENU_LENGKAP: Menu[] = [
-  { id: 1, nama: "Es Teler", harga: 20000, kategori: "Minuman", total: 56 },
-  { id: 2, nama: "Mie Ayam Bakso", harga: 30000, kategori: "Makanan", total: 54 },
-  { id: 3, nama: "Ayam Penyet", harga: 40000, kategori: "Makanan", total: 54 },
-  { id: 4, nama: "Nasi Goreng Kambing", harga: 40000, kategori: "Makanan", total: 44 },
-  { id: 5, nama: "Sate Ayam", harga: 40000, kategori: "Makanan", total: 43 },
-  { id: 6, nama: "Sop Iga", harga: 50000, kategori: "Makanan", total: 42 },
-  { id: 7, nama: "Lychee Tea", harga: 20000, kategori: "Minuman", total: 41 },
-  { id: 8, nama: "Gado-gado", harga: 30000, kategori: "Makanan", total: 39 },
-  { id: 9, nama: "Matcha Latte", harga: 30000, kategori: "Minuman", total: 38 },
-  { id: 10, nama: "Lemon Tea", harga: 20000, kategori: "Minuman", total: 37 },
-  { id: 11, nama: "Bakso Urat", harga: 30000, kategori: "Makanan", total: 36 },
-  { id: 12, nama: "Le Mineral", harga: 5000, kategori: "Minuman", total: 34 },
-  { id: 13, nama: "Jus Alpukat", harga: 20000, kategori: "Minuman", total: 32 },
-  { id: 14, nama: "Dimsum", harga: 30000, kategori: "Makanan", total: 31 },
-  { id: 15, nama: "Jus Mangga", harga: 20000, kategori: "Minuman", total: 30 },
-  { id: 16, nama: "Nasi Bakar", harga: 30000, kategori: "Makanan", total: 28 },
-  { id: 17, nama: "Nasi Goreng", harga: 30000, kategori: "Makanan", total: 26 },
-  { id: 18, nama: "Es Jeruk", harga: 20000, kategori: "Minuman", total: 22 },
-  { id: 19, nama: "Soto Ayam", harga: 40000, kategori: "Makanan", total: 21 },
-  { id: 20, nama: "Nasi Liwet", harga: 30000, kategori: "Makanan", total: 20 },
-  { id: 21, nama: "Kopi Susu", harga: 20000, kategori: "Minuman", total: 19 },
-  { id: 22, nama: "Nasi Goreng Udang", harga: 40000, kategori: "Makanan", total: 18 },
-  { id: 23, nama: "Nasi Kuning", harga: 30000, kategori: "Makanan", total: 18 },
-  { id: 24, nama: "Milkshake Stroberi", harga: 20000, kategori: "Minuman", total: 17 },
-  { id: 25, nama: "Nasi Kebuli", harga: 50000, kategori: "Makanan", total: 17 },
-  { id: 26, nama: "Cireng Bumbu Rujak", harga: 20000, kategori: "Makanan", total: 16 },
-  { id: 27, nama: "Roti Bakar Cokelat", harga: 20000, kategori: "Makanan", total: 15 },
-  { id: 28, nama: "Es Kelapa Muda", harga: 20000, kategori: "Minuman", total: 14 },
-  { id: 29, nama: "Pempek", harga: 40000, kategori: "Makanan", total: 12 },
-  { id: 30, nama: "Jus Stroberi", harga: 20000, kategori: "Minuman", total: 10 },
-  { id: 31, nama: "Kwetiau Goreng", harga: 30000, kategori: "Makanan", total: 9 },
-  { id: 32, nama: "Capcay", harga: 30000, kategori: "Makanan", total: 8 },
-  { id: 33, nama: "Jus Jambu", harga: 20000, kategori: "Minuman", total: 5 },
-  { id: 34, nama: "Nasi Putih", harga: 10000, kategori: "Makanan", total: 3 },
-  { id: 35, nama: "Es Kuwut", harga: 20000, kategori: "Minuman", total: 2 },
-  { id: 36, nama: "Es Cincau", harga: 20000, kategori: "Minuman", total: 0 },
-];
-
-export default function TableMenu({ onSortChange }: TabelMenuProps) {
+export default function TableMenu({
+  data,
+  periode,
+}: {
+  data: Menu[];
+  periode: string;
+}) {
   const [menuPerPage, setMenuPerPage] = useState(10);
   const [isDropdownPageOpen, setIsDropdownPageOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortField, setSortField] = useState<"nama" | "harga" | "kategori" | "total" | "">("");
+  const [sortField, setSortField] = useState<
+    "nama" | "harga" | "kategori" | "total" | ""
+  >("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownPageOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const sortedData = [...data].sort((a: any, b: any) => {
+    if (!sortField) return 0;
+    const valA = a[sortField];
+    const valB = b[sortField];
+    if (sortField === "nama" || sortField === "kategori") {
+      return sortOrder === "asc"
+        ? valA.localeCompare(valB)
+        : valB.localeCompare(valA);
+    }
+    return sortOrder === "asc" ? valA - valB : valB - valA;
+  });
 
   const handleSort = (field: "nama" | "harga" | "kategori" | "total") => {
     const order = sortField === field && sortOrder === "asc" ? "desc" : "asc";
     setSortField(field);
     setSortOrder(order);
+    setCurrentPage(1);
   };
 
-  const sortedData = [...DATA_MENU_LENGKAP].sort((a, b) => {
-    if (!sortField) return 0;
-    if (sortField === "nama" || sortField === "kategori") {
-      return sortOrder === "asc" ? a[sortField].localeCompare(b[sortField]) : b[sortField].localeCompare(a[sortField]);
-    }
-    return sortOrder === "asc" ? a[sortField] - b[sortField] : b[sortField] - a[sortField];
-  });
-
-  useEffect(() => {
-    if (onSortChange) onSortChange(sortedData);
-  }, [sortedData, onSortChange]);
-
-  const totalPages = Math.ceil(sortedData.length / menuPerPage);
-  const indexOfLastItem = currentPage * menuPerPage;
-  const indexOfFirstItem = indexOfLastItem - menuPerPage;
-  const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem);
-
   const renderSortIcon = (field: "nama" | "harga" | "kategori" | "total") => (
-    <div className="flex flex-col text-gray-400">
-      <ChevronUp size={11} className={sortField === field && sortOrder === "asc" ? "text-primary" : ""} />
-      <ChevronDown size={11} className={sortField === field && sortOrder === "desc" ? "text-primary" : ""} />
-    </div>
+    <SortIcon
+      isActiveAsc={sortField === field && sortOrder === "asc"}
+      isActiveDesc={sortField === field && sortOrder === "desc"}
+    />
   );
 
+  const totalPages = Math.ceil(sortedData.length / menuPerPage);
+  const currentItems = sortedData.slice(
+    (currentPage - 1) * menuPerPage,
+    currentPage * menuPerPage,
+  );
+  const startCount = (currentPage - 1) * menuPerPage + 1;
+  const endCount = Math.min(currentPage * menuPerPage, sortedData.length);
+
   return (
-    <div className="flex flex-col">
-      {/* TABEL - Overflow hanya di sini agar responsif */}
-      <div className="border border-b-0 border-gray-150 rounded-t-xs bg-white overflow-x-auto">
-        <table className="w-full min-w-175 text-left text-[12.5px]">
-          <thead className="bg-gray-100 text-gray-500 font-bold uppercase text-[11px]">
-            <tr>
-              <th className="py-2.5 text-center w-14">NO</th>
-              <th className="py-2.5 px-4 cursor-pointer select-none" onClick={() => handleSort("nama")}>
-                <div className="flex items-center gap-1">NAMA MENU {renderSortIcon("nama")}</div>
-              </th>
-              <th className="py-2.5 px-4 cursor-pointer select-none" onClick={() => handleSort("harga")}>
-                <div className="flex items-center gap-1">HARGA {renderSortIcon("harga")}</div>
-              </th>
-              <th className="py-2.5 px-4 cursor-pointer select-none" onClick={() => handleSort("kategori")}>
-                <div className="flex items-center gap-1">KATEGORI {renderSortIcon("kategori")}</div>
-              </th>
-              <th className="py-2.5 px-4 cursor-pointer select-none" onClick={() => handleSort("total")}>
-                <div className="flex items-center gap-1">TOTAL TERJUAL {renderSortIcon("total")}</div>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="font-medium text-gray-800 bg-white">
-            {currentItems.map((item, index) => (
-              <tr key={item.id} className="border-b border-gray-150 last:border-b-0 hover:bg-gray-50/30 transition-colors">
-                <td className="py-2.5 text-center text-gray-400 font-bold">{indexOfFirstItem + index + 1}</td>
-                <td className="py-2.5 px-4 font-semibold text-black">{item.nama}</td>
-                <td className="py-2.5 px-4">Rp {item.harga.toLocaleString("id-ID")}</td>
-                <td className="py-2.5 px-4 text-gray-600">{item.kategori}</td>
-                <td className="py-2.5 px-4 text-black">{item.total}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="space-y-4">
+      {/* HEADER: Judul & Ekspor - Responsif */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div className="space-y-1">
+          <h4 className="text-[17px] font-extrabold text-black">
+            Laporan Menu
+          </h4>
+          <p className="text-[12px] text-gray-400 font-medium">
+            Periode: {periode}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => eksporKePDFMenu(sortedData, periode)}
+            className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90"
+          >
+            <ExportIcon size={10} /> Ekspor PDF
+          </button>
+          <button
+            onClick={() => eksporKeExcelMenu(sortedData, periode)}
+            className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90"
+          >
+            <ExportIcon size={10} /> Ekspor Excel
+          </button>
+        </div>
       </div>
 
-      {/* PAGINATION - Di luar overflow-x-auto agar dropdown tidak terpotong */}
-      <div className="border border-gray-150 rounded-b-xs bg-white">
-        <div className="flex flex-wrap items-center justify-between py-3.5 px-4 gap-4">
-          <div className="flex items-center gap-2 text-[12.5px] font-bold text-gray-400">
-            <span>Tampilkan</span>
-            <div className="relative" ref={dropdownRef}>
-              <button type="button" onClick={() => setIsDropdownPageOpen(!isDropdownPageOpen)}
-                className="bg-white border border-purple-900/30 rounded-xs px-3 py-1 text-black font-extrabold flex items-center gap-1 text-[12px] shadow-2xs h-7">
-                {menuPerPage} Menu
-                <ChevronDown size={13} className={`transition-transform duration-200 ${isDropdownPageOpen ? "rotate-180" : ""}`} />
-              </button>
-              {isDropdownPageOpen && (
-                <div className="absolute left-0 top-full mt-1 w-28 bg-white border border-gray-200 rounded-xs shadow-xl p-1 z-50">
-                  {[10, 15, 20].map((num) => (
-                    <button key={num} type="button" onClick={() => { setMenuPerPage(num); setIsDropdownPageOpen(false); setCurrentPage(1); }}
-                      className={`w-full text-left px-3 py-1.5 text-[12px] font-bold rounded-xs transition-colors ${menuPerPage === num ? "bg-purple-50 text-primary" : "text-gray-700 hover:bg-gray-100"}`}>
-                      {num} Menu
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-            <span>Menampilkan {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, sortedData.length)} dari {sortedData.length} menu</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 text-[12px] font-bold">
-            <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} disabled={currentPage === 1} className="w-7 h-7 flex items-center justify-center bg-white border border-gray-300 rounded-xs text-gray-500 disabled:opacity-30">
-              <ChevronLeft size={14} />
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button key={page} onClick={() => setCurrentPage(page)} className={`w-7 h-7 flex items-center justify-center border rounded-xs font-bold transition-all ${currentPage === page ? "border-primary text-primary bg-white" : "border-gray-300 text-gray-500 hover:border-gray-400 bg-white"}`}>
-                {page}
+      {/* ========== SORTING MOBILE (Tombol Chip) ========== */}
+      <div className="md:hidden">
+        <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+          <span className="text-xs font-bold text-black-500 block mb-2">
+            Urutkan berdasarkan:
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { key: "nama", label: "Nama Menu" },
+              { key: "harga", label: "Harga" },
+              { key: "kategori", label: "Kategori" },
+              { key: "total", label: "Total Terjual" },
+            ].map((option) => (
+              <button
+                key={option.key}
+                onClick={() => handleSort(option.key as any)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  sortField === option.key
+                    ? "bg-primary text-white shadow-sm"
+                    : "bg-gray-200 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {option.label}
+                {sortField === option.key && (
+                  <span className="ml-1">
+                    {sortOrder === "asc" ? "↑" : "↓"}
+                  </span>
+                )}
               </button>
             ))}
-            <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages} className="w-7 h-7 flex items-center justify-center bg-white border border-gray-300 rounded-xs text-gray-500 disabled:opacity-30">
-              <ChevronRight size={14} />
-            </button>
           </div>
         </div>
+      </div>
+
+      {/* ========== DESKTOP TABLE ========== */}
+      <div className="hidden md:block border border-gray-150 rounded-xs bg-white overflow-visible">
+        <div className="overflow-x-auto">
+          <table className="w-full table-fixed text-left text-[12.5px] border-collapse">
+            <thead className="bg-gray-200 text-gray-500 font-bold uppercase text-[11px]">
+              <tr>
+                <th className="py-3 px-6 w-16">NO</th>
+                {[
+                  { l: "NAMA MENU", f: "nama" },
+                  { l: "HARGA", f: "harga" },
+                  { l: "KATEGORI", f: "kategori" },
+                  { l: "TOTAL TERJUAL", f: "total" },
+                ].map((c) => (
+                  <th
+                    key={c.f}
+                    className="py-3 px-4 cursor-pointer hover:bg-gray-200"
+                    onClick={() => handleSort(c.f as any)}
+                  >
+                    <div className="flex items-center gap-1">
+                      {c.l} {renderSortIcon(c.f as any)}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="font-medium text-black-800">
+              {currentItems.map((item, index) => (
+                <tr
+                  key={item.id}
+                  className="border-b border-gray-100 hover:bg-gray-50"
+                >
+                  <td className="py-4 px-6 text-gray-400 font-bold">
+                    {(currentPage - 1) * menuPerPage + index + 1}
+                  </td>
+                  <td className="py-4 px-4 text-black truncate">{item.nama}</td>
+                  <td className="py-4 px-4">
+                    Rp {item.harga.toLocaleString("id-ID")}
+                  </td>
+                  <td className="py-4 px-4 truncate">{item.kategori}</td>
+                  <td className="py-4 px-4 font-bold text-black">
+                    {item.total}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* PAGINATION DESKTOP */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between py-3 px-4 border-t border-gray-150 bg-white">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
+                <span>Tampilkan</span>
+                <div className="relative z-50" ref={dropdownRef}>
+                  <button
+                    onClick={() => setIsDropdownPageOpen(!isDropdownPageOpen)}
+                    className="border border-gray-300 rounded px-2 py-1 flex items-center gap-2 hover:bg-primary-50 text-gray-800"
+                  >
+                    {menuPerPage} Menu{" "}
+                    <ChevronDown
+                      size={12}
+                      className={`transition-transform duration-200 ${isDropdownPageOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                  {isDropdownPageOpen && (
+                    <div className="absolute left-0 top-full mt-1 w-24 bg-white border text-primary border-gray-200 rounded shadow-lg z-50">
+                      {[10, 15, 20].map((n) => (
+                        <button
+                          key={n}
+                          onClick={() => {
+                            setMenuPerPage(n);
+                            setCurrentPage(1);
+                            setIsDropdownPageOpen(false);
+                          }}
+                          className="block w-full px-3 py-2 text-left hover:bg-gray-100 text-[12px] font-bold"
+                        >
+                          {n} Menu
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <span className="text-[12px] font-bold text-gray-400">
+                Menampilkan {startCount}-{endCount} dari {sortedData.length}{" "}
+                menu
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1 text-[12px] font-bold">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+                className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30"
+              >
+                <ChevronLeft size={14} />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setCurrentPage(p)}
+                  className={`w-7 h-7 rounded border ${currentPage === p ? "bg-white text-primary border-primary" : "border-gray-200"}`}
+                >
+                  {p}
+                </button>
+              ))}
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => p + 1)}
+                className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30"
+              >
+                <ChevronRight size={14} />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ========== MOBILE CARD VIEW ========== */}
+      <div className="md:hidden space-y-3">
+        {currentItems.map((item, index) => (
+          <div
+            key={item.id}
+            className="bg-white rounded-lg border border-gray-100 p-3 shadow-sm"
+          >
+            <div className="flex justify-between items-start mb-2">
+              <span className="text-[10px] text-black-400 font-medium">
+                #{(currentPage - 1) * menuPerPage + index + 1}
+              </span>
+            </div>
+            <p className="font-semibold text-gray-800 text-sm">{item.nama}</p>
+            <div className="mt-2 space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-black-400">Harga</span>
+                <span className="font-medium text-black-800">
+                  Rp {item.harga.toLocaleString("id-ID")}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-black-400">Kategori</span>
+                <span className="font-medium text-black-800">
+                  {item.kategori}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-black-400">Total Terjual</span>
+                <span className="font-bold text-primary">{item.total}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* PAGINATION MOBILE */}
+        {totalPages > 1 && (
+          <div className="flex flex-col gap-2 pt-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-[11px] font-bold text-gray-500">
+                <span>Tampilkan</span>
+                <div className="relative z-50" ref={dropdownRef}>
+                  <button
+                    onClick={() => setIsDropdownPageOpen(!isDropdownPageOpen)}
+                    className="border border-gray-300 rounded px-2 py-0.5 flex items-center gap-1 hover:bg-primary-50 text-[11px] text-gray-800"
+                  >
+                    {menuPerPage} Menu{" "}
+                    <ChevronDown
+                      size={10}
+                      className={`transition-transform duration-200 ${isDropdownPageOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                  {isDropdownPageOpen && (
+                    <div className="absolute left-0 bottom-full mb-1 w-20 bg-white border border-gray-200 rounded shadow-lg ">
+                      {[10, 15, 20].map((n) => (
+                        <button
+                          key={n}
+                          onClick={() => {
+                            setMenuPerPage(n);
+                            setCurrentPage(1);
+                            setIsDropdownPageOpen(false);
+                          }}
+                          className="block w-full px-2 py-1.5 text-left hover:bg-gray-100 text-[11px] font-bold"
+                        >
+                          {n} Menu
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <span className="text-[10px] font-bold text-gray-400">
+                {startCount}-{endCount} dari {sortedData.length}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-center gap-1">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+                className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30"
+              >
+                <ChevronLeft size={14} />
+              </button>
+              <span className="text-[11px] font-bold text-gray-600 px-2">
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => p + 1)}
+                className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30"
+              >
+                <ChevronRight size={14} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

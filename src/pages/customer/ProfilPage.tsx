@@ -57,7 +57,7 @@ const ProfilePage = () => {
       <main className="max-w-7xl mx-auto px-6 md:px-12 py-6 space-y-6">
         {/* BANNER USER */}
         <div className="bg-[#F3E8F3] rounded-[20px] p-8 mb-8 relative flex flex-col md:flex-row items-center gap-8 border border-primary/5 shadow-sm text-center md:text-left">
-          <div className="w-24 h-24 bg-[#B197B1] rounded-full flex items-center justify-center text-white text-4xl font-black font-poppins">
+          <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center text-white text-4xl font-black font-poppins">
             WH
           </div>
           <div className="flex-1 min-w-0">
@@ -98,7 +98,7 @@ const ProfilePage = () => {
                 setActiveTab("Profil");
                 setIsEditingProfile(false);
               }}
-              className={`pb-4 text-lg  transition-all font-poppins ${activeTab === "Profil" || activeTab === "Sandi" ? "text-primary border-b-4 border-primary" : "text-gray-400"}`}
+              className={`pb-4 text-lg  transition-all font-poppins ${activeTab === "Profil" || activeTab === "Sandi" ? "text-primary border-b-4 border-primary" : "text-black"}`}
             >
               Profile Saya
             </button>
@@ -107,7 +107,7 @@ const ProfilePage = () => {
                 setActiveTab("Alamat");
                 setAddressView("list");
               }}
-              className={`pb-4 text-lg  transition-all font-poppins ${activeTab === "Alamat" ? "text-primary border-b-4 border-primary" : "text-gray-400"}`}
+              className={`pb-4 text-lg  transition-all font-poppins ${activeTab === "Alamat" ? "text-primary border-b-4 border-primary" : "text-black"}`}
             >
               Alamat
             </button>
@@ -119,21 +119,21 @@ const ProfilePage = () => {
                 <h3 className="text-lg font-black text-black mb-8 font-poppins">
                   {isEditingProfile ? "Edit Data Diri" : "Data Diri"}
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 font-poppins">
-                  <div className="space-y-2">
-                    <label className="text-black font-bold text-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 font-poppins ">
+                  <div className="space-y-3 flex flex-col ">
+                    <label className="text-black font-bold text-[16px] ">
                       Nama Lengkap
                     </label>
                     <input
                       disabled={!isEditingProfile}
-                      className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium outline-none text-gray-700 disabled:text-black"
+                      className="w-full p-4 bg-white border-[1.5px] border-primary rounded-xs font-medium outline-none text-black disabled:text-black disabled:bg-gray-50 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       defaultValue="Wawan Hermawan"
                     />
                   </div>
 
                   {/* DI SINI BAGIAN YANG DIGANTI KE CUSTOM DROPDOWN (100% AMAN DI MOBILE) */}
-                  <div className="space-y-2 relative">
-                    <label className="text-black font-bold text-sm">
+                  <div className="space-y-3 flex flex-col">
+                    <label className="text-black font-bold text-[16px] ">
                       Jenis Kelamin
                     </label>
                     <div className="relative w-full">
@@ -141,12 +141,12 @@ const ProfilePage = () => {
                         type="button"
                         disabled={!isEditingProfile}
                         onClick={() => setIsOpenJk(!isOpenJk)}
-                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium text-left outline-none text-gray-700 disabled:text-black text-sm flex justify-between items-center h-13.5]"
+                        className="w-full p-4 bg-white border-[1.5px] border-primary rounded-xs font-medium text-left outline-none text-black disabled:text-black disabled:bg-gray-50 text-sm flex justify-between items-center transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       >
                         <span>{gender}</span>
                         {isEditingProfile && (
                           <ChevronDown
-                            className={`text-primary transition-transform duration-200 ${isOpenJk ? "rotate-180" : ""}`}
+                            className={`text-black transition-transform duration-200 ${isOpenJk ? "rotate-180" : ""}`}
                             size={20}
                           />
                         )}
@@ -160,7 +160,7 @@ const ProfilePage = () => {
                             onClick={() => setIsOpenJk(false)}
                           />
 
-                          <ul className="absolute left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xs shadow-xl z-50 overflow-hidden divide-y divide-gray-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                          <ul className="absolute left-0 right-0 mt-1 bg-white border border-primary-100 rounded-xs shadow-xl z-50 overflow-hidden divide-y divide-gray-50 animate-in fade-in slide-in-from-top-1 duration-150">
                             {["Laki-laki", "Perempuan"].map((option) => (
                               <li
                                 key={option}
@@ -170,8 +170,8 @@ const ProfilePage = () => {
                                 }}
                                 className={`p-4 text-sm cursor-pointer transition-colors text-left hover:bg-primary/5 ${
                                   gender === option
-                                    ? "text-primary font-bold bg-primary/5"
-                                    : "text-gray-700"
+                                    ? "text-black font-bold bg-primary/5"
+                                    : "text-black"
                                 }`}
                               >
                                 {option}
@@ -183,20 +183,20 @@ const ProfilePage = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-black font-bold text-sm">
+                  <div className="space-y-3 flex flex-col">
+                    <label className="text-black font-bold text-[16px] ">
                       No Telepon
                     </label>
                     <input
                       disabled={!isEditingProfile}
-                      className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium outline-none text-gray-700 disabled:text-black"
+                      className="w-full p-4 bg-white border-[1.5px] border-primary rounded-xs font-medium outline-none text-black disabled:text-black disabled:bg-gray-50 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       defaultValue="+62 114 0986 7821"
                     />
                   </div>
 
                   {/* Tanggal Lahir */}
-                  <div className="space-y-2">
-                    <label className="text-black font-bold text-sm">
+                  <div className="space-y-3 flex flex-col">
+                    <label className="text-black font-bold text-[16px] ">
                       Tanggal Lahir
                     </label>
                     <div className="relative">
@@ -206,7 +206,7 @@ const ProfilePage = () => {
                         disabled={!isEditingProfile}
                         dateFormat="dd/MM/yyyy"
                         onKeyDown={(e) => e.preventDefault()}
-                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xs font-medium pl-14 outline-none text-gray-700 disabled:text-black caret-transparent cursor-pointer"
+                        className="w-full p-4 bg-white border-[1.5px] border-primary rounded-xs font-medium pl-14 outline-none text-black disabled:text-black disabled:bg-gray-50 caret-transparent cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       />
                       <Calendar
                         className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -221,7 +221,7 @@ const ProfilePage = () => {
                     <div className="flex gap-4">
                       <button
                         onClick={() => setIsEditingProfile(false)}
-                        className="px-10 py-3 bg-gray-200 text-gray-600 font-bold rounded-xs active:scale-95 transition-transform text-sm"
+                        className="px-10 py-3 bg-white border-[1.5px] border-primary font-bold rounded-xs active:scale-95 transition-transform text-sm"
                       >
                         Batal
                       </button>
@@ -254,9 +254,11 @@ const ProfilePage = () => {
                       </h3>
                       <button
                         onClick={() => setAddressView("form")}
-                        className="bg-primary text-white px-6 py-2.5 rounded-xs font-bold text-sm flex items-center gap-2 shadow-lg"
+                        className="bg-primary text-white px-3 sm:px-6 py-2.5 rounded-xs font-bold text-xs sm:text-sm flex items-center gap-1 sm:gap-2 shadow-lg"
                       >
-                        <Plus size={18} /> Tambah Alamat
+                        <Plus size={16} className="sm:w-4.5 sm:h-4.5" />
+                        <span className="hidden sm:inline">Tambah Alamat</span>
+                        <span className="sm:hidden">Tambah</span>
                       </button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -323,7 +325,7 @@ const ProfilePage = () => {
                           </button>
                           <button
                             onClick={() => toggleModal("deleteAddress", true)}
-                            className="text-gray-300 font-bold text-sm hover:text-red-500 transition-colors"
+                            className="text-black font-bold text-sm hover:text-red-500 transition-colors"
                           >
                             Hapus
                           </button>
@@ -349,7 +351,7 @@ const ProfilePage = () => {
                     <div className="flex justify-end gap-4 pt-6">
                       <button
                         onClick={() => setAddressView("list")}
-                        className="px-10 py-3 bg-gray-200 text-gray-600 font-bold rounded-xs"
+                        className="px-10 py-3 bg-white border-[1.5px] border-primary font-bold rounded-xs active:scale-95 transition-transform text-sm"
                       >
                         Batal
                       </button>

@@ -7,7 +7,7 @@ import LaporanTableMenu from "../../components/AdminComponents/LaporanTableMenu"
 import LaporanTablePendapatan from "../../components/AdminComponents/LaporanTablePendapatan";
 import LaporanTablePesanan from "../../components/AdminComponents/LaporanTablePesanan";
 import ReportIcon from "../../components/Icon/ReportIcon";
-
+import "react-datepicker/dist/react-datepicker.css";
 // DATA (sama seperti sebelumnya)
 const DATA_PESANAN_AWAL = [
   { id: 1, tanggal: "05 Apr 2026", total: 135, selesai: 133, cancel: 2 },
@@ -128,6 +128,16 @@ const DATA_MENU_AWAL = [
   { id: 36, nama: "Es Cincau", harga: 20000, kategori: "Minuman", total: 0 },
 ];
 
+const getDaysInMonth = (year: number, month: number) => {
+  // bulan di JS dimulai dari 0 (Januari) hingga 11 (Desember)
+  return new Date(year, month + 1, 0).getDate();
+};
+
+const getFirstDayOfMonth = (year: number, month: number) => {
+  // Mendapatkan indeks hari (0=Minggu, 1=Senin, ..., 6=Sabtu)
+  return new Date(year, month, 1).getDay();
+};
+
 const LIST_BULAN = [
   "Januari",
   "Februari",
@@ -163,7 +173,8 @@ const LaporanPage = () => {
   const [showLaporan, setShowLaporan] = useState(false);
   const [bulanMulaiIdx, setBulanMulaiIdx] = useState(2);
   const [bulanSelesaiIdx, setBulanSelesaiIdx] = useState(3);
-
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [sortPesanan, setSortPesanan] = useState<any>({
     field: "",
     order: "asc",
@@ -212,6 +223,51 @@ const LaporanPage = () => {
 
   const periodeText = `${tanggalMulai} ${LIST_BULAN[bulanMulaiIdx]} - ${tanggalSelesai} ${LIST_BULAN[bulanSelesaiIdx]} 2026`;
 
+  // FUNGSI INI ADALAH KOMPONEN KALENDER RAPI YANG BISA KAMU PAKAI
+  const renderCalendar = (
+    bulanIdx: number,
+    selectedDate: number,
+    setTanggal: (tgl: number) => void,
+    handlePrev: () => void,
+    handleNext: () => void,
+  ) => (
+    <div className="bg-white-50/70 border border-gray-200 rounded-2xl p-4 w-full sm:w-64 h-[260px] flex flex-col">
+      <div className="flex items-center justify-between font-extrabold text-[13px] text-black mb-3">
+        <ChevronLeft
+          size={14}
+          className="cursor-pointer hover:text-black"
+          onClick={handlePrev}
+        />
+        <span>{LIST_BULAN[bulanIdx]} 2026</span>
+        <ChevronRight
+          size={14}
+          className="cursor-pointer hover:text-black"
+          onClick={handleNext}
+        />
+      </div>
+      <div className="grid grid-cols-7 gap-1 text-[11px] font-bold text-gray-400 mb-1 text-center">
+        {["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"].map((d) => (
+          <span key={d}>{d}</span>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-1 text-[11px] font-bold text-gray-800">
+        {Array.from({ length: getFirstDayOfMonth(2026, bulanIdx) }).map(
+          (_, i) => (
+            <div key={`empty-${i}`} />
+          ),
+        )}
+        {Array.from({ length: getDaysInMonth(2026, bulanIdx) }, (_, i) => (
+          <button
+            key={i + 1}
+            onClick={() => setTanggal(i + 1)}
+            className={`py-1 rounded-lg text-center ${selectedDate === i + 1 ? "bg-primary text-white font-bold" : "hover:bg-gray-200/50"}`}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F3F4F6]">
       <AdminSidebar onLogout={() => console.log("Admin Logout")} />
@@ -221,7 +277,6 @@ const LaporanPage = () => {
           title="Laporan"
           subtitle="Kelola dan lihat laporan harian, mingguan, atau bulanan"
         />
-
         <div className="w-full max-w-6xl mx-auto mt-4 space-y-6">
           {/* ========== KOTAK PUTIH 1: FILTER ========== */}
           <div className="bg-white rounded-[20px] border border-gray-150 p-6 space-y-6 overflow-visible">
@@ -252,7 +307,7 @@ const LaporanPage = () => {
                   }`}
                 >
                   <span>Total</span>
-                  <span >Pesanan</span>
+                  <span>Pesanan</span>
                 </button>
 
                 <button
@@ -264,7 +319,7 @@ const LaporanPage = () => {
                   }`}
                 >
                   <span>Laporan</span>
-                  <span >Pendapatan</span>
+                  <span>Pendapatan</span>
                 </button>
 
                 <button
@@ -307,86 +362,30 @@ const LaporanPage = () => {
             <div className="flex flex-col sm:flex-row gap-6 items-start">
               {/* Tanggal Mulai */}
               <div className="space-y-1 w-full sm:w-auto">
-                <span className="text-[11.5px] text-gray-400 font-bold block">
+                <span className="text-[11.5px] text-black-400 font-bold block">
                   Tanggal Mulai
                 </span>
-                <div className="bg-gray-50/70 border border-gray-200 rounded-2xl p-4 w-full sm:w-64">
-                  <div className="flex items-center justify-between font-extrabold text-[13px] text-black mb-3">
-                    <ChevronLeft
-                      size={14}
-                      className="text-gray-400 cursor-pointer hover:text-black"
-                      onClick={handlePrevBulanMulai}
-                    />
-                    <span>{LIST_BULAN[bulanMulaiIdx]} 2026</span>
-                    <ChevronRight
-                      size={14}
-                      className="text-gray-400 cursor-pointer hover:text-black"
-                      onClick={handleNextBulanMulai}
-                    />
-                  </div>
-                  <div className="grid grid-cols-7 gap-1 text-[11px] font-bold text-gray-400 mb-1">
-                    {["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"].map(
-                      (d) => (
-                        <span key={d} className="text-center">
-                          {d}
-                        </span>
-                      ),
-                    )}
-                  </div>
-                  <div className="grid grid-cols-7 gap-1 text-[11px] font-bold text-gray-800">
-                    {Array.from({ length: 31 }, (_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setTanggalMulai(i + 1)}
-                        className={`py-1 rounded-lg text-center transition-all cursor-pointer ${tanggalMulai === i + 1 ? "bg-primary text-white font-bold" : "hover:bg-gray-200/50"}`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                {renderCalendar(
+                  bulanMulaiIdx,
+                  tanggalMulai,
+                  setTanggalMulai,
+                  handlePrevBulanMulai,
+                  handleNextBulanMulai,
+                )}
               </div>
 
               {/* Tanggal Selesai */}
               <div className="space-y-1 w-full sm:w-auto">
-                <span className="text-[11.5px] text-gray-400 font-bold block">
+                <span className="text-[11.5px] text-black-400 font-bold block">
                   Tanggal Selesai
                 </span>
-                <div className="bg-gray-50/70 border border-gray-200 rounded-2xl p-4 w-full sm:w-64">
-                  <div className="flex items-center justify-between font-extrabold text-[13px] text-black mb-3">
-                    <ChevronLeft
-                      size={14}
-                      className="text-gray-400 cursor-pointer hover:text-black"
-                      onClick={handlePrevBulanSelesai}
-                    />
-                    <span>{LIST_BULAN[bulanSelesaiIdx]} 2026</span>
-                    <ChevronRight
-                      size={14}
-                      className="text-gray-400 cursor-pointer hover:text-black"
-                      onClick={handleNextBulanSelesai}
-                    />
-                  </div>
-                  <div className="grid grid-cols-7 gap-1 text-[11px] font-bold text-gray-400 mb-1">
-                    {["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"].map(
-                      (d) => (
-                        <span key={d} className="text-center">
-                          {d}
-                        </span>
-                      ),
-                    )}
-                  </div>
-                  <div className="grid grid-cols-7 gap-1 text-[11px] font-bold text-gray-800">
-                    {Array.from({ length: 30 }, (_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setTanggalSelesai(i + 1)}
-                        className={`py-1 rounded-lg text-center transition-all cursor-pointer ${tanggalSelesai === i + 1 ? "bg-primary text-white font-bold" : "hover:bg-gray-200/50"}`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                {renderCalendar(
+                  bulanSelesaiIdx,
+                  tanggalSelesai,
+                  setTanggalSelesai,
+                  handlePrevBulanSelesai,
+                  handleNextBulanSelesai,
+                )}
               </div>
             </div>
 
@@ -418,18 +417,23 @@ const LaporanPage = () => {
                   <LaporanTablePesanan
                     data={pesananSorted}
                     periode={periodeText}
+                    //  enablePagination={true} 
+                    //   itemsPerPage={10}
                   />
                 )}
                 {(activeTab === "Semua" || activeTab === "Pendapatan") && (
                   <LaporanTablePendapatan
                     data={pendapatanSorted}
                     periode={periodeText}
+                    //  enablePagination={true} 
+                    //   itemsPerPage={10}
                   />
                 )}
                 {(activeTab === "Semua" || activeTab === "Menu") && (
                   <LaporanTableMenu
                     data={DATA_MENU_AWAL}
                     periode={periodeText}
+                    //  enablePagination={true} 
                   />
                 )}
               </div>

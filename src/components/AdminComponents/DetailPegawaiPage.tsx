@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import AdminSidebar from "../../components/AdminComponents/AdminSidebar";
 import AdminHeader from "../../components/AdminComponents/AdminHeader";
 
+
 // Data Dummy awal untuk pencarian kecocokan ID Pegawai
 const DATA_PEGAWAI_SOURCE = [
   { id: 1, nama: "Rina Lusiana", email: "kasiritsresto@gmail.com", noTelepon: "081409807898", jenisKelamin: "Perempuan", role: "Kasir", password: "kasiritsresto18" },
@@ -18,6 +19,8 @@ const DATA_PEGAWAI_SOURCE = [
 const DetailPegawaiPage = () => {
   const { id } = useParams(); // Mengambil ID dari parameter URL browser
   const navigate = useNavigate();
+  // Taruh di dalam komponen, setelah semua useState
+
 
   // Mencari data pegawai yang cocok berdasarkan parameter ID URL
   const pegawai = DATA_PEGAWAI_SOURCE.find((p) => p.id === Number(id)) || DATA_PEGAWAI_SOURCE[1]; // Fallback ke Mile Putri jika ID tidak ketemu

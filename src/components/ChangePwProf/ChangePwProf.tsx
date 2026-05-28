@@ -10,20 +10,15 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 1. State untuk menampung value teks password
   const [password, setPassword] = useState({ old: "", new: "", confirm: "" });
-
-  // 2. State untuk menyimpan pesan error
   const [errors, setErrors] = useState({ old: "", new: "", confirm: "" });
 
-  // 3. Fungsi validasi saat form di-submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const newErrors = { old: "", new: "", confirm: "" };
     let isValid = true;
 
-    // Perbaikan Cek password lama (Wajib diisi & Minimal 8 karakter)
     if (!password.old) {
       newErrors.old = "Kata sandi lama wajib diisi";
       isValid = false;
@@ -32,7 +27,6 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
       isValid = false;
     }
 
-    // Cek password baru (minimal 8 karakter)
     if (!password.new) {
       newErrors.new = "Kata sandi baru wajib diisi";
       isValid = false;
@@ -41,42 +35,48 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
       isValid = false;
     }
 
-    // Cek konfirmasi password (wajib sama dengan password baru)
     if (!password.confirm) {
       newErrors.confirm = "Konfirmasi kata sandi wajib diisi";
       isValid = false;
     } else if (password.new !== password.confirm) {
-      newErrors.confirm = "Konfirmasi kata sandi tidak cocok dengan kata sandi baru!";
+      newErrors.confirm =
+        "Konfirmasi kata sandi tidak cocok dengan kata sandi baru!";
       isValid = false;
     }
 
     setErrors(newErrors);
 
-    // Jika semua validasi lolos, munculkan modal konfirmasi
     if (isValid) {
       setIsModalOpen(true);
     }
   };
 
-  // Array konfigurasi field agar mapping code bersih
   const fields = [
-    { id: "old" as const, label: "Kata Sandi Lama", placeholder: "Masukkan kata sandi lama" },
-    { id: "new" as const, label: "Kata Sandi Baru", placeholder: "Masukkan kata sandi baru" },
-    { id: "confirm" as const, label: "Konfirmasi Kata Sandi Baru", placeholder: "Masukkan kembali kata sandi baru" },
+    {
+      id: "old" as const,
+      label: "Kata Sandi Lama",
+      placeholder: "Masukkan kata sandi lama",
+    },
+    {
+      id: "new" as const,
+      label: "Kata Sandi Baru",
+      placeholder: "Masukkan kata sandi baru",
+    },
+    {
+      id: "confirm" as const,
+      label: "Konfirmasi Kata Sandi Baru",
+      placeholder: "Masukkan kembali kata sandi baru",
+    },
   ];
 
   return (
     <div className="w-full font-poppins text-left">
-      {/* Judul Tab "Ubah Kata Sandi" agar persis seperti di screenshot desain kamu */}
       <h3 className="text-xl font-black text-black mb-8">Ubah Kata Sandi</h3>
 
-      {/* FORM di-set w-full penuh agar container tombol di bawah bisa rata kanan mentok */}
       <form onSubmit={handleSubmit} className="space-y-6 w-full">
-        
-        {/* KELOMPOK INPUT: Di sini kita kunci max-w-xl agar field-nya tidak melar ke kanan */}
         <div className="space-y-6 max-w-xl">
           {fields.map((item) => (
-            <div key={item.id} className="space-y-2 flex flex-col">
+            <div key={item.id} className="space-y-3 flex flex-col">
               <label className="text-black font-bold text-[16px]">
                 {item.label}*
               </label>
@@ -91,16 +91,24 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
                       setErrors((err) => ({ ...err, [item.id]: "" }));
                     }
                   }}
-                  className={`w-full p-4 bg-gray-50 border rounded-xs font-medium outline-none text-sm pr-12 transition-colors ${
-                    errors[item.id] ? "border-red-500 focus:border-red-500" : "border-gray-100 focus:border-primary/30"
+                  className={`w-full p-4 bg-white border-[1.5px] rounded-xs font-medium outline-none text-sm pr-12 transition-all duration-200 ${
+                    errors[item.id]
+                      ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                      : "border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
                   }`}
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword((p) => ({ ...p, [item.id]: !p[item.id] }))}
+                  onClick={() =>
+                    setShowPassword((p) => ({ ...p, [item.id]: !p[item.id] }))
+                  }
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  {showPassword[item.id] ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPassword[item.id] ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
                 </button>
               </div>
               {errors[item.id] && (
@@ -111,15 +119,13 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
             </div>
           ))}
         </div>
-        
-        {/* CONTAINER TOMBOL: Bebas dari max-w-xl, menggunakan w-full & justify-end 
-            Sekarang posisinya otomatis bergeser rata kanan mengisi ruang kosong seperti desain!
-        */}
-        <div className="w-full flex justify-end gap-4 pt-12">
+
+        {/* Ubah container tombol menjadi seperti ini */}
+        <div className="flex justify-end gap-4 pt-12">
           <button
             type="button"
             onClick={onCancel}
-            className="px-10 py-3 bg-gray-200 text-gray-600 font-bold rounded-xs active:scale-95 transition-transform text-sm"
+            className="px-10 py-3 bg-white border-[1.5px] border-primary text-primary font-bold  rounded-xs active:scale-95 transition-transform text-sm"
           >
             Batal
           </button>
@@ -132,7 +138,6 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
         </div>
       </form>
 
-      {/* Modal konfirmasi */}
       <ConfirSandi
         isOpen={isModalOpen}
         title="Perbarui Kata Sandi?"
@@ -141,7 +146,7 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
         onConfirm={() => {
           setIsModalOpen(false);
           setPassword({ old: "", new: "", confirm: "" });
-          onCancel(); 
+          onCancel();
         }}
       />
     </div>

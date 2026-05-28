@@ -8,15 +8,21 @@ interface DeleteConfirmationModalProps {
   description: string; // Deskripsi dinamis
 }
 
+
+
 const DeleteConfirmationModal = ({ 
+  
   isOpen, 
   onClose, 
   onConfirm, 
   title, 
   description 
+  
 }: DeleteConfirmationModalProps) => {
   
   if (!isOpen) return null;
+
+  
 
   return (
     <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/10 backdrop-blur-[2px] p-4 animate-in fade-in duration-200">

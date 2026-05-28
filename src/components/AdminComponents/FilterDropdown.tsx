@@ -6,9 +6,10 @@ interface FilterDropdownProps {
   selectedOption: string;
   options: string[];
   onSelect: (option: string) => void;
+  className?: string;
 }
 
-const FilterDropdown = ({ label, selectedOption, options, onSelect }: FilterDropdownProps) => {
+const FilterDropdown = ({ label, selectedOption, options, onSelect,  }: FilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

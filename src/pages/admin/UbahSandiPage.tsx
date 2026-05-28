@@ -103,7 +103,7 @@ const UbahSandiPage = () => {
               <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
                 <button
                   type="button" onClick={() => navigate("/admin/manajemen-pegawai")}
-                  className="px-6 py-2.5 text-[13.5px] font-bold text-gray-500 hover:text-black rounded-xs border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="px-6 py-2.5 text-[13.5px] font-bold text-black-500 rounded-xs border border-primary hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Batal
                 </button>

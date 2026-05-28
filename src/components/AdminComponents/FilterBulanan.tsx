@@ -71,7 +71,7 @@ export default function FilterBulanan({ onFilterChange }: FilterBulananProps) {
           </button>
           
           {isBulanOpen && (
-            <div className="absolute left-0 top-full mt-1 w-56 bg-white border border-gray-200 rounded-xs shadow-lg z-[100] p-3">
+            <div className="absolute left-0 top-full mt-1 w-56 bg-white border border-gray-200 rounded-xs shadow-lg z-100 p-3">
               {/* Daftar bulan + Pilih Semua - LANGSUNG NYATU, TANPA GARIS */}
               <div className="flex flex-col gap-2 max-h-60 overflow-y-auto">
                 {LIST_BULAN.map((bulan) => (

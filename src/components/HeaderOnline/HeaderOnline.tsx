@@ -133,17 +133,31 @@ const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
       {isOnline && isMenuOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black/30 z-[-1] md:hidden"
+            className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-sm"
             onClick={() => setIsMenuOpen(false)}
           />
-          <div className="absolute top-full left-0 w-full bg-white border-b border-gray-100 p-5 flex flex-col gap-4 md:hidden shadow-2xl animate-in slide-in-from-top duration-300">
+          <div className="fixed top-0 right-0 h-full w-[80%] max-w-xs bg-white shadow-2xl z-50 p-6 flex flex-col gap-6 md:hidden animate-in slide-in-from-right duration-300">
+            <div className="flex justify-between items-center mb-4">
+              <span className="font-bold text-xl text-primary">Menu</span>
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="p-2 rounded-full bg-gray-100"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
             {onlineMenuItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 onClick={() => setIsMenuOpen(false)}
                 className={({ isActive }) =>
-                  `text-lg font-bold py-3 px-4 rounded-xl ${isActive ? "bg-secondary text-primary" : "text-gray-600 active:bg-gray-50"}`
+                  `text-lg font-bold py-4 px-5 rounded-2xl flex items-center gap-3 transition-all ${
+                    isActive
+                      ? "bg-primary text-white"
+                      : "text-gray-700 bg-gray-50"
+                  }`
                 }
               >
                 {item.name}
