@@ -6,7 +6,6 @@ import {
   type ClipboardEvent,
   type KeyboardEvent,
 } from "react";
-import { useNavigate } from "react-router";
 import { isAxiosError } from "axios";
 import { authAPI } from "../api/auth.api";
 
@@ -14,8 +13,7 @@ const OTP_LENGTH = 6;
 const OTP_EXPIRY_SECONDS = 119; // 01:45
 const RESEND_COOLDOWN_SECONDS = 59;
 
-export const useOtp = (email: string, type: string, onSuccess: () => void) => {
-  const navigate = useNavigate();
+export const useOtp = (email: string, type: string, onSuccess: (token?: string) => void) => {
 
   const [digits, setDigits] = useState<string[]>(() =>
     Array.from({ length: OTP_LENGTH }, () => ""),
@@ -70,14 +68,7 @@ export const useOtp = (email: string, type: string, onSuccess: () => void) => {
           responseData.data?.token ||
           responseData.token;
 
-        if (tokenDariBackend) {
-          // Tambahkan replace: true agar navigasi ini menimpa onSuccess() bawaan page
-          navigate(`/reset-password?token=${tokenDariBackend}`, {
-            replace: true,
-          });
-        } else {
-          onSuccess();
-        }
+        onSuccess(tokenDariBackend);
       } catch (error) {
         if (isAxiosError(error) && error.response) {
           console.log(
@@ -94,7 +85,7 @@ export const useOtp = (email: string, type: string, onSuccess: () => void) => {
         setIsVerifying(false);
       }
     },
-    [email, type, navigate, onSuccess],
+    [email, type, onSuccess],
   );
 
   const handleVerifyClick = () => {
@@ -144,12 +135,15 @@ export const useOtp = (email: string, type: string, onSuccess: () => void) => {
 
   const handleResend = async () => {
     if (resendSeconds > 0) return;
-
-    // 2. RESET ERROR RESEND SEBELUM MENCOBA LAGI
     setResendError(null);
 
     try {
-      await authAPI.resendOtp({ email: email });
+      // PERBAIKAN: Bedakan endpoint resend berdasarkan TYPE
+      if (type === "forgot-password") {
+        await authAPI.resendForgotPasswordOtp({ email: email });
+      } else {
+        await authAPI.resendOtp({ email: email });
+      }
 
       setResendSeconds(RESEND_COOLDOWN_SECONDS);
       setOtpExpirySeconds(OTP_EXPIRY_SECONDS);
@@ -159,16 +153,11 @@ export const useOtp = (email: string, type: string, onSuccess: () => void) => {
 
       console.log("OTP Baru berhasil dikirim ke:", email);
     } catch (error) {
-      // 3. TANGKAP ERROR DAN MASUKKAN KE STATE UI
       let errorMessage = "Gagal mengirim ulang OTP, silakan coba lagi.";
-
       if (isAxiosError(error) && error.response) {
         console.log("🔴 DETAIL ERROR RESEND:", error.response.data);
         errorMessage = error.response.data.message || errorMessage;
-      } else {
-        console.error("Gagal mengirim ulang OTP:", error);
       }
-
       setResendError(errorMessage);
     }
   };

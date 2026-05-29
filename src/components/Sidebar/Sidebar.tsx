@@ -11,6 +11,7 @@ import { type ComponentType, type SVGProps } from "react";
 import { cn } from "../../utils/utils";
 import Button from "../ui/Button";
 import LogOutIcon from "../Icon/LogOutIcon";
+import LogoutConfirmModal from "../Modal/LogoutConfirmModal";
 
 type CustomIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -29,6 +30,9 @@ interface SidebarProps {
 const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
   const location = useLocation();
 
   // Tutup sidebar otomatis di mobile jika user berpindah rute
@@ -39,6 +43,11 @@ const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
   const activeMenu = menuItems.find((item) =>
   location.pathname.includes(item.path)
 );
+
+const handleConfirmLogout = () => {
+    setIsLogoutModalOpen(false);
+    onLogout();
+  };
 
   return (
     <>
@@ -162,7 +171,7 @@ const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
         {/* Tombol Keluar */}
         <div className="mb-6 flex flex-col overflow-x-hidden">
           <Button
-            onClick={onLogout}
+            onClick={() => setIsLogoutModalOpen(true)}
             className={cn(
               "flex items-center py-2 transition-all duration-300 ease-in-out text-white/60 hover:bg-white/10 hover:text-white cursor-pointer group",
               // PERBAIKAN: Samakan dengan menu di atas
@@ -187,6 +196,12 @@ const Sidebar = ({ onLogout, menuItems }: SidebarProps) => {
           </Button>
         </div>
       </aside>
+
+      <LogoutConfirmModal 
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleConfirmLogout}
+      />
     </>
   );
 };
