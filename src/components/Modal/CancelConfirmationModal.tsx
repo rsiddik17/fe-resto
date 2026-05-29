@@ -12,7 +12,7 @@ const CancelConfirmationModal = ({ isOpen, onClose, onConfirm }: CancelConfirmat
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/3 backdrop-blur-[3px] p-4 animate-in fade-in duration-200" onClick={onClose}>
-      <div className="bg-white w-full max-w-87.5 rounded-sm shadow-sm overflow-hidden animate-in zoom-in-95 duration-200 relative p-6 pt-8 flex flex-col items-center text-center" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white w-full max-w-sm rounded-sm shadow-sm overflow-hidden animate-in zoom-in-95 duration-200 relative p-6 pt-8 flex flex-col items-center text-center" onClick={(e) => e.stopPropagation()}>
         
         {/* Tombol Close (X) di pojok kanan atas */}
         <button 

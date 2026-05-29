@@ -11,7 +11,7 @@ const PaymentConfirmationModal = ({ isOpen, onClose, onConfirm }: PaymentConfirm
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/3 backdrop-blur-[3px] p-4 animate-in fade-in duration-200" onClick={onClose}>
-      <div className="bg-white w-full max-w-87.5 rounded-sm shadow-sm overflow-hidden animate-in zoom-in-95 duration-200 relative p-6 pt-8 flex flex-col items-center text-center" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white w-full max-w-sm rounded-sm shadow-sm overflow-hidden animate-in zoom-in-95 duration-200 relative p-6 pt-8 flex flex-col items-center text-center" onClick={(e) => e.stopPropagation()}>
         
         {/* Tombol Close (X) di pojok kanan atas */}
         <button 
@@ -22,7 +22,7 @@ const PaymentConfirmationModal = ({ isOpen, onClose, onConfirm }: PaymentConfirm
         </button>
 
         {/* Ikon Centang Ungu */}
-        <div className="bg-primary w-18 h-18 rounded-full flex items-center justify-center text-white mb-6 shadow-sm">
+        <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center text-white mb-6 shadow-sm">
           <Check size={40} strokeWidth={3.5} />
         </div>
 
@@ -30,7 +30,7 @@ const PaymentConfirmationModal = ({ isOpen, onClose, onConfirm }: PaymentConfirm
         <h2 className="text-base md:text-[17.5px] font-bold mb-1.5">
           Konfirmasi Validasi Pembayaran
         </h2>
-        <p className="text-[#4A4553] text-xs md:text-[13.5px] mb-14">
+        <p className="text-[#4A4553] text-xs md:text-[13.5px] mb-10">
           Validasi pembayaran untuk pesanan ini?
         </p>
 
