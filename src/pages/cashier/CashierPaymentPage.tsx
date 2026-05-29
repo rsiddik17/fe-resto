@@ -16,29 +16,24 @@ const rupiahFormatter = new Intl.NumberFormat("id-ID", {
   minimumFractionDigits: 0,
 });
 
+const formatTableNumber = (raw?: string) => {
+  if (!raw) return "Tanpa Meja";
+  if (raw.toLowerCase().includes("meja") || raw.toLowerCase().includes("tanpa")) {
+    return raw; 
+  }
+   const match = raw.match(/\d+/);
+  if (match) {
+    return `Meja ${match[0]}`;
+  }
+  return `Meja ${raw}`;
+};
+
 const CashierPaymentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { firstName, roleName } = useProfile();
 
   const [isExpiredOpen, setIsExpiredOpen] = useState(false);
-
-  const formatTableNumber = (raw?: string) => {
-    if (!raw) return "Tanpa Meja";
-    if (raw.toLowerCase().includes("meja") || raw.toLowerCase().includes("tanpa")) {
-      return raw; 
-    }
-    const match = raw.match(/M(\d+)(_i|_o)?/i);
-    if (match) {
-      const num = match[1];
-      let suffix = "";
-      if (match[2]) {
-        suffix = match[2].toLowerCase() === "_i" ? "_indoor" : "_outdoor";
-      }
-      return `Meja ${num}${suffix}`;
-    }
-    return `Meja ${raw}`;
-  };
 
   // Ambil state dari halaman sebelumnya, fallback default
   const tableNumber = formatTableNumber(location.state?.tableNumber);
@@ -59,25 +54,8 @@ const CashierPaymentPage = () => {
   );
 
   const handleValidatePayment = () => {
-    const passedOrder = {
-      orderId: orderId,
-      time: new Date().toLocaleTimeString("id-ID", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      title: tableNumber,
-      leftBadges: [{ text: "Kasir", colorClass: "bg-[#F35B28]" }],
-      items: items.map((item) => ({
-        name: item.name,
-        qty: item.qty,
-        note: item.notes,
-        price: item.price,
-      })),
-      total: subTotal,
-    };
-
     navigate("/cashier/order-list/payment-validation", {
-      state: { dataOrder: passedOrder },
+      state: { orderId: orderId, tableNumber: tableNumber },
     });
   };
 

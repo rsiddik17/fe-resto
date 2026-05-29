@@ -1,147 +1,18 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import Button from "../../components/ui/Button";
 import StatCardCashier from "../../components/Card/StatCardCashier";
 import ReportTable, {
   type DailySaleItem,
 } from "../../components/Table/ReportTable";
-import {
-  Download,
-  FileSpreadsheet,
-  Calendar,
-  ListOrdered,
-  BadgeDollarSign,
-} from "lucide-react";
+import { Calendar, ListOrdered, BadgeDollarSign } from "lucide-react";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import Toast from "../../components/Toast/Toast";
 import ExportPdfIcon from "../../components/Icon/ExportPdfIcon";
 import { useProfile } from "../../hooks/useProfile";
-
-// --- MOCK DATA TRANSAKSI HARIAN ---
-const MOCK_DAILY_SALES: DailySaleItem[] = [
-  {
-    id: 1,
-    orderId: "26033001",
-    time: "10:00",
-    foods: "1x Nasi Goreng, 1x Roti Bakar",
-    drinks: "2x Jus Mangga",
-    bank: "BCA",
-    total: 80001,
-    date: "2026-03-30",
-  },
-  {
-    id: 2,
-    orderId: "26033002",
-    time: "10:15",
-    foods: "1x Mie Ayam Bakso, 1x Kwetiau Goreng",
-    drinks: "2x Es Teler",
-    bank: "BCA",
-    total: 85002,
-    date: "2026-03-30",
-  },
-  {
-    id: 3,
-    orderId: "26033003",
-    time: "10:27",
-    foods: "1x Nasi Goreng, 1x Nasi Bakar",
-    drinks: "2x Jus Mangga",
-    bank: "BRI",
-    total: 80001,
-    date: "2026-03-30",
-  },
-  {
-    id: 4,
-    orderId: "26033004",
-    time: "10:35",
-    foods: "1x Nasi Goreng, 1x Roti Bakar",
-    drinks: "2x Jus Mangga",
-    bank: "BCA",
-    total: 80001,
-    date: "2026-03-30",
-  },
-  {
-    id: 5,
-    orderId: "26033005",
-    time: "11:00",
-    foods: "2x Ayam Penyet",
-    drinks: "1x Es Teh",
-    bank: "Mandiri",
-    total: 50000,
-    date: "2026-03-30",
-  },
-  {
-    id: 6,
-    orderId: "26033006",
-    time: "12:30",
-    foods: "1x Sate Ayam",
-    drinks: "1x Jeruk Panas",
-    bank: "BCA",
-    total: 45000,
-    date: "2026-03-31",
-  },
-  {
-    id: 7,
-    orderId: "26033007",
-    time: "13:00",
-    foods: "2x Nasi Bakar",
-    drinks: "2x Es Teh",
-    bank: "BRI",
-    total: 60000,
-    date: "2026-03-30",
-  },
-  {
-    id: 8,
-    orderId: "26033008",
-    time: "13:45",
-    foods: "1x Bakso Urat",
-    drinks: "1x Lychee Tea",
-    bank: "BCA",
-    total: 35000,
-    date: "2026-03-30",
-  },
-  {
-    id: 9,
-    orderId: "26033009",
-    time: "14:10",
-    foods: "3x Nasi Goreng",
-    drinks: "3x Lemon Tea",
-    bank: "Mandiri",
-    total: 120000,
-    date: "2026-03-30",
-  },
-  {
-    id: 10,
-    orderId: "26033010",
-    time: "15:00",
-    foods: "1x Kwetiau Goreng",
-    drinks: "1x Es Teler",
-    bank: "BCA",
-    total: 40000,
-    date: "2026-03-30",
-  },
-  {
-    id: 11,
-    orderId: "26033011",
-    time: "16:20",
-    foods: "2x Mie Ayam Bakso",
-    drinks: "2x Jus Alpukat",
-    bank: "BCA",
-    total: 90000,
-    date: "2026-03-30",
-  },
-  {
-    id: 12,
-    orderId: "26033012",
-    time: "17:30",
-    foods: "1x Roti Bakar",
-    drinks: "1x Kopi Hitam",
-    bank: "BNI",
-    total: 30000,
-    date: "2026-03-30",
-  },
-];
+import { orderAPI } from "../../api/order.api";
 
 const formatRupiah = (value: number) => {
   return new Intl.NumberFormat("id-ID", {
@@ -155,9 +26,21 @@ type SortKey = "orderId" | "time" | "foods" | "drinks" | "bank" | "total";
 type SortDirection = "asc" | "desc";
 
 const CashierReportPage = () => {
+  const { firstName, roleName } = useProfile();
+
   // --- STATE ---
-  const [selectedDate, setSelectedDate] = useState("2026-03-30");
+  const today = new Date().toISOString().split("T")[0];
+  const [selectedDate, setSelectedDate] = useState(today);
   const dateInputRef = useRef<HTMLInputElement>(null);
+
+  // STATE DATA API
+  const [salesData, setSalesData] = useState<DailySaleItem[]>([]);
+  const [summaryData, setSummaryData] = useState({
+    totalOrder: 0,
+    totalSales: 0,
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
   const [toast, setToast] = useState<{ show: boolean; message: string }>({
     show: false,
     message: "",
@@ -174,15 +57,73 @@ const CashierReportPage = () => {
     setTimeout(() => setToast({ show: false, message: "" }), 4000);
   };
 
-  // --- LOGIC 1: FILTER BY DATE ---
-  const dateFilteredSales = useMemo(() => {
-    if (!selectedDate) return MOCK_DAILY_SALES;
-    return MOCK_DAILY_SALES.filter((sale) => sale.date === selectedDate);
+  // --- 1. FETCH DATA API LAPORAN ---
+  const fetchReportData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await orderAPI.getReportOrders(selectedDate);
+      
+      if (response.success && response.data) {
+        // Ambil summary dari backend
+        setSummaryData({
+          totalOrder: response.data.summary?.totalOrder || 0,
+          totalSales: response.data.summary?.totalSales || 0,
+        });
+
+        // Map transaksi ke format UI (DailySaleItem)
+        const mappedTransactions: DailySaleItem[] = response.data.transactions.map((t: any) => {
+          // Bentuk string Makanan ("1x Nasi Goreng, 2x Sate")
+          const foodsString = t.order_items?.foods
+            ?.map((f: any) => `${f.quantity}x ${f.name}`)
+            .join(", ") || "";
+
+          // Bentuk string Minuman ("2x Jus Mangga")
+          const drinksString = t.order_items?.drinks
+            ?.map((d: any) => `${d.quantity}x ${d.name}`)
+            .join(", ") || "";
+
+          // Ambil jam ("14:30")
+          const timeString = new Date(t.create_at).toLocaleTimeString("id-ID", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          return {
+            id: t.order_id,
+            orderId: `#${t.order_id}`,
+            time: timeString,
+            foods: foodsString,
+            drinks: drinksString,
+            bank: t.payment_method || "-",
+            total: Number(t.grand_total_amount || 0),
+            date: selectedDate, 
+          };
+        });
+
+        setSalesData(mappedTransactions);
+      } else {
+        setSalesData([]);
+        setSummaryData({ totalOrder: 0, totalSales: 0 });
+      }
+    } catch (error) {
+      console.error("Gagal menarik data laporan:", error);
+      triggerToast("Gagal memuat laporan. Silakan coba lagi.");
+      setSalesData([]);
+      setSummaryData({ totalOrder: 0, totalSales: 0 });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Jalankan fetch tiap kali selectedDate berubah
+  useEffect(() => {
+    fetchReportData();
   }, [selectedDate]);
 
-  // --- LOGIC 2: SORTING TINGKAT PAGE ---
+
+  // --- 2. LOGIC SORTING TINGKAT PAGE ---
   const sortedSales = useMemo(() => {
-    const sortableItems = [...dateFilteredSales];
+    const sortableItems = [...salesData];
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -195,14 +136,7 @@ const CashierReportPage = () => {
       });
     }
     return sortableItems;
-  }, [dateFilteredSales, sortConfig]);
-
-  // --- KALKULASI SUMMARY CARD ---
-  const totalSummaryPesanan = dateFilteredSales.length;
-  const totalSummaryPendapatan = dateFilteredSales.reduce(
-    (acc, curr) => acc + curr.total,
-    0,
-  );
+  }, [salesData, sortConfig]);
 
   // --- HANDLER SORTING KLIK ---
   const handleSort = (key: SortKey) => {
@@ -289,8 +223,6 @@ const CashierReportPage = () => {
     XLSX.writeFile(wb, `Laporan_Harian_${selectedDate || "Semua"}.xlsx`);
   };
 
-  const { firstName, roleName } = useProfile();
-
   return (
     <>
       <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0 shrink-0">
@@ -332,12 +264,12 @@ const CashierReportPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6 w-full lg:max-w-4xl">
           <StatCardCashier
             title="Total Pesanan"
-            value={totalSummaryPesanan.toLocaleString("id-ID")}
+            value={summaryData.totalOrder.toLocaleString("id-ID")}
             Icon={ListOrdered}
           />
           <StatCardCashier
             title="Total Pemasukan"
-            value={formatRupiah(totalSummaryPendapatan)}
+            value={formatRupiah(summaryData.totalSales)}
             Icon={BadgeDollarSign}
           />
         </div>
@@ -368,6 +300,7 @@ const CashierReportPage = () => {
           data={sortedSales}
           sortConfig={sortConfig}
           onSort={handleSort}
+          isLoading={isLoading}
         />
       </div>
 

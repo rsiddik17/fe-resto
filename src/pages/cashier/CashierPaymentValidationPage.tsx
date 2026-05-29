@@ -1,31 +1,62 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import PaymentConfirmationModal from "../../components/Modal/PaymentConfirmationModal";
+import CancelConfirmationModal from "../../components/Modal/CancelConfirmationModal";
 import PaymentBankSelector from "../../components/PaymentBankSelector/PaymentBankSelector";
 import PaymentOrderDetailCard from "../../components/Card/PaymentOrderDetailCard"; // <--- Import Card Baru
 import InfoIcon from "../../components/Icon/InfoIcon";
 import Toast from "../../components/Toast/Toast";
 import { useCartStore } from "../../store/useCartStore";
 import { useProfile } from "../../hooks/useProfile";
-
-// Import API
 import { orderAPI } from "../../api/order.api";
 import Loading from "../../components/Loading/Loading";
+
+// --- HELPER FORMATTER ---
+const formatTime = (isoString: string) => {
+  if (!isoString) return "--:--";
+  return new Date(isoString).toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const formatTableNumber = (raw?: string) => {
+  if (!raw) return "Takeaway";
+  if (
+    raw.toLowerCase().includes("takeaway") ||
+    raw.toLowerCase().includes("tanpa")
+  ) {
+    return "Takeaway";
+  }
+  const match = raw.match(/\d+/);
+  if (match) {
+    return `Meja ${match[0]}`;
+  }
+  return `Meja ${raw}`;
+};
 
 const CashierPaymentValidationPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const passedOrder = location.state?.dataOrder;
-
   const { clearCart } = useCartStore();
+  const { firstName, roleName } = useProfile();
+
+  const rawOrderIdFromState = location.state?.dataOrder?.id || location.state?.orderId;
+  const fallbackTableName = location.state?.tableNumber || location.state?.dataOrder?.title || "Takeaway";
+
+  // --- STATE DATA ORDER ---
+  const [orderData, setOrderData] = useState<any>(null);
+  const [isFetchingOrder, setIsFetchingOrder] = useState(true);
 
   // State
   const [selectedBank, setSelectedBank] = useState<string>("");
   const [otherBankName, setOtherBankName] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   // --- STATE TOAST ---
   const [toast, setToast] = useState<{
@@ -43,31 +74,73 @@ const CashierPaymentValidationPage = () => {
     setTimeout(() => setToast({ show: false, message: "", type }), 4000);
   };
 
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      if (!rawOrderIdFromState) {
+        setIsFetchingOrder(false);
+        return;
+      }
+
+      try {
+        const response = await orderAPI.getOrderById(rawOrderIdFromState);
+
+        if (response.success && response.data) {
+          const beData = response.data;
+          
+          // Mapping data ke format yang dibutuhkan PaymentOrderDetailCard
+          const mappedOrder = {
+            orderId: beData.order_id,
+            time: formatTime(beData.timeStamp),
+            title: beData.table_number 
+                    ? formatTableNumber(beData.table_number) 
+                    : fallbackTableName,
+            leftBadges: [{ text: beData.source }],
+            items: beData.items?.map((item: any) => ({
+              name: item.menu_name || "Item",
+              qty: item.quantity,
+              note: item.notes,
+              price: item.sub_total,
+            })) || [],
+            total: Number(beData.payments?.grand_total_amount || 0),
+          };
+
+          setOrderData(mappedOrder);
+        }
+      } catch (error) {
+        console.error("Gagal menarik data pesanan:", error);
+        triggerToast("Gagal memuat detail pesanan", "error");
+      } finally {
+        setIsFetchingOrder(false);
+      }
+    };
+
+    fetchOrderDetails();
+  }, [rawOrderIdFromState]);
+
+
+  // --- HANDLE VALIDASI PEMBAYARAN ---
   const handleConfirmValidation = async () => {
-    if (!passedOrder?.id) {
-      triggerToast("ID Pesanan tidak valid", "error");
-      return;
-    }
+    if (!orderData?.orderId) return;
 
     // Tentukan nama bank final
     const finalBankName = selectedBank === "Lainnya" ? otherBankName : selectedBank;
 
     try {
+      setLoadingMessage("Memvalidasi pembayaran...");
       setIsSubmitting(true);
       
       // 1. Panggil API Validasi
-      const response = await orderAPI.validatePayment(passedOrder.id, finalBankName);
+      const response = await orderAPI.validatePayment(orderData.orderId, finalBankName);
       
       if (response.success) {
         setIsModalOpen(false);
         clearCart();
-        
         triggerToast("Pembayaran berhasil divalidasi!", "success");
 
         // 2. Beri jeda agar Toast terlihat, lalu arahkan ke Order List
         setTimeout(() => {
           navigate("/cashier/order-list");
-        }, 2000);
+        }, 1500);
       } else {
         triggerToast(response.message || "Gagal memvalidasi", "error");
         setIsModalOpen(false);
@@ -82,13 +155,39 @@ const CashierPaymentValidationPage = () => {
     }
   };
 
-  const { firstName, roleName } = useProfile();
+  const handleConfirmCancelOrder = async () => {
+    if (!orderData?.orderId) return;
 
-  if (!passedOrder) {
+    try {
+      setLoadingMessage("Membatalkan pesanan...");
+      setIsSubmitting(true);
+      setIsCancelModalOpen(false);
+
+      const response = await orderAPI.cancelOrder(orderData.orderId);
+      console.log(response);
+
+      if (response.success) {
+        clearCart();
+        triggerToast("Pesanan berhasil dibatalkan!", "success");
+
+        setTimeout(() => {
+          navigate("/cashier/order-list");
+        }, 1500);
+      } else {
+        triggerToast("Gagal membatalkan pesanan", "error");
+      }
+    } catch (error: any) {
+      console.error("Error cancel order:", error);
+      triggerToast(error.response?.data?.message || "Gagal membatalkan pesanan", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isFetchingOrder) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-gray-500">
-        <p>Data pesanan tidak ditemukan.</p>
-        <button onClick={() => navigate(-1)} className="mt-4 text-primary underline">Kembali</button>
+      <div className="flex flex-col items-center justify-center min-h-screen text-primary">
+        <span className="font-bold">Memuat Detail Pesanan...</span>
       </div>
     );
   }
@@ -130,7 +229,7 @@ const CashierPaymentValidationPage = () => {
             {/* === KOLOM KIRI: COMPONENT CARD DETAIL ORDER === */}
             <div className="w-full lg:w-[50%] flex flex-col">
               {/* Panggil komponen di sini. Bersih banget! */}
-              <PaymentOrderDetailCard passedOrder={passedOrder} />
+              <PaymentOrderDetailCard passedOrder={orderData} />
             </div>
 
             {/* === KOLOM KANAN: BANK & AKSI === */}
@@ -161,7 +260,8 @@ const CashierPaymentValidationPage = () => {
 
                 <div className="flex flex-col md:flex-row items-center gap-3 w-full">
                   <button
-                    onClick={() => navigate(-1)}
+                    onClick={() => setIsCancelModalOpen(true)}
+                    disabled={isSubmitting}
                     className="flex-[0.9] bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 w-full font-bold text-sm md:text-sm lg:text-sm py-3 rounded-sm transition-colors cursor-pointer"
                   >
                     Batalkan Pesanan
@@ -191,8 +291,14 @@ const CashierPaymentValidationPage = () => {
         onConfirm={handleConfirmValidation}
       />
 
+      <CancelConfirmationModal
+        isOpen={isCancelModalOpen}
+        onClose={() => setIsCancelModalOpen(false)}
+        onConfirm={handleConfirmCancelOrder}
+      />
+
       <Toast show={toast.show} message={toast.message} type={toast.type} />
-      <Loading show={isSubmitting} message="Memvalidasi..." />
+      <Loading show={isSubmitting} message={loadingMessage} />
     </>
   );
 };

@@ -101,8 +101,8 @@ const DashboardHeader = ({
     // Panggil saat komponen dirender pertama kali
     fetchNotifications();
 
-    // Opsional: Lakukan polling setiap 15 detik untuk mendapat notif baru secara real-time
-    const intervalId = setInterval(fetchNotifications, 15000);
+    // Opsional: Lakukan polling setiap 5 detik untuk mendapat notif baru secara real-time
+    const intervalId = setInterval(fetchNotifications, 5000);
     return () => clearInterval(intervalId);
   }, [roleName]);
 
