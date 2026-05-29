@@ -19,6 +19,7 @@ export interface BadgeInfo {
 
 interface CashierOrderCardProps {
   orderId: string;
+  rawOrderId: string;
   time: string;
   title?: string; // Untuk tulisan "Meja 02" (Jika ada)
   leftBadges: BadgeInfo[]; // Badge di kiri (ONLINE, Delivery, KIOSK)
@@ -27,11 +28,12 @@ interface CashierOrderCardProps {
   total: number;
   isAwaitingValidation?: boolean; // Menampilkan tombol "Validasi Pembayaran"
   onViewDetail: () => void;
-  onValidate?: () => void;
+  onValidate?: (rawId: string) => void;
 }
 
 const CashierOrderCard = ({
   orderId,
+  rawOrderId,
   time,
   title,
   leftBadges,
@@ -166,7 +168,7 @@ const CashierOrderCard = ({
             {/* Hanya Muncul Jika Filter = Menunggu Validasi */}
             {isAwaitingValidation && (
               <button
-                onClick={onValidate}
+                onClick={() => onValidate && onValidate(rawOrderId)}
                 className="flex-1/5 bg-primary text-white font-bold text-[13px] md:text-[15px] py-2.5 rounded-sm hover:bg-[#5a0b64] transition-colors shadow-sm cursor-pointer"
               >
                 Validasi Pembayaran

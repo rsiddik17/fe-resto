@@ -168,7 +168,6 @@ const WaiterTableManagementPage = () => {
           <div className="flex-1 overflow-y-auto custom-scrollbar">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center h-48 text-primary">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-2"></div>
                 <span className="text-sm font-bold">Memuat meja...</span>
               </div>
             ) : filteredTables.length > 0 ? (

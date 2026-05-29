@@ -1,5 +1,5 @@
 export interface DailySaleItem {
-  id: number;
+  id: string;
   orderId: string;
   time: string;
   foods: string;
@@ -16,6 +16,7 @@ interface ReportTableProps {
   data: DailySaleItem[];
   sortConfig: { key: SortKey; direction: SortDirection } | null;
   onSort: (key: SortKey) => void;
+  isLoading?: boolean;
 }
 
 const formatRupiah = (value: number) => {
@@ -55,7 +56,7 @@ const SortIcon = ({ activeDirection }: { activeDirection: "asc" | "desc" | null 
   );
 };
 
-const ReportTable = ({ data, sortConfig, onSort }: ReportTableProps) => {
+const ReportTable = ({ data, sortConfig, onSort, isLoading = false }: ReportTableProps) => {
   
   const getDirection = (key: SortKey) => {
     return sortConfig?.key === key ? sortConfig.direction : null;
@@ -65,6 +66,13 @@ const ReportTable = ({ data, sortConfig, onSort }: ReportTableProps) => {
     <div className="mb-6">
       {/* Container Tabel dengan Max Height untuk batas ~10 Baris (Tinggi 1 baris ~55px) */}
       <div className="bg-white rounded-sm shadow-sm overflow-hidden border border-gray-200">
+
+        {isLoading && (
+          <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center text-primary">
+            <span className="font-bold text-sm">Memuat data laporan...</span>
+          </div>
+        )}
+
         <div className="overflow-x-auto overflow-y-auto custom-scrollbar max-h-150">
           <table className="w-full text-left border-collapse min-w-200">
             {/* STICKY HEADER agar saat di-scroll ke bawah, header tidak hilang */}

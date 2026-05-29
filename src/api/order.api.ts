@@ -20,9 +20,9 @@ export const orderAPI = {
   },
 
   // PATCH /order/:id/validate-payment
-  validatePayment: async (orderId: string, paymentMethod: string) => {
+  validatePayment: async (orderId: string, bankName: string) => {
     const response = await axiosInstance.patch(`/order/${orderId}/validate-payment`, {
-      payment_method: paymentMethod
+      bank_name: bankName
     });
     return response.data;
   },

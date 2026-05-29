@@ -36,7 +36,7 @@ const getBadgeColor = (type: string) => {
     case "COMPLETED":
     case "SELESAI":
       return "bg-[#90EB00]"; // Hijau
-    case "CANCELLED":
+    case "CANCELED":
     case "DIBATALKAN":
       return "bg-[#73736C]"; // Abu-abu
     case "DELIVERY":
@@ -73,16 +73,9 @@ const formatTableNumber = (raw?: string) => {
   ) {
     return "Takeaway";
   }
-  const match = raw.match(/M(\d+)(_i|_o)?/i);
+  const match = raw.match(/\d+/);
   if (match) {
-    const num = match[1];
-    const suffix =
-      match[2]?.toLowerCase() === "_i"
-        ? "_indoor"
-        : match[2]?.toLowerCase() === "_o"
-          ? "_outdoor"
-          : "";
-    return `Meja ${num}${suffix}`;
+    return `Meja ${match[0]}`;
   }
   return `Meja ${raw}`;
 };
@@ -110,7 +103,7 @@ const CashierOrderListPage = () => {
       } else if (activeFilter === "Selesai") {
         statusesToFetch = ["COMPLETED"];
       } else if (activeFilter === "Dibatalkan") {
-        statusesToFetch = ["CANCELLED"];
+        statusesToFetch = ["CANCELED"];
       } else if (activeFilter === "Sedang diproses") {
         // Tab ini butuh 3 status sekaligus (Masak, Dapur sedang masak, Siap Saji)
         statusesToFetch = ["VALIDATED", "COOKING", "READY"];
@@ -251,6 +244,7 @@ const CashierOrderListPage = () => {
               <CashierOrderCard
                 key={order.id}
                 orderId={order.orderId}
+                rawOrderId={order.id}
                 time={order.time}
                 title={order.title}
                 leftBadges={order.leftBadges}
@@ -259,11 +253,7 @@ const CashierOrderListPage = () => {
                 total={order.total}
                 isAwaitingValidation={activeFilter === "Menunggu Validasi"}
                 onViewDetail={() => handleOpenDetail(order)}
-                onValidate={() =>
-                  navigate(`/cashier/order-list/payment-validation`, {
-                    state: { dataOrder: order },
-                  })
-                }
+                onValidate={() => navigate(`/cashier/order-list/payment-validation`, { state: { orderId: order.id, tableNumber: order.title } })}
               />
             ))
           ) : (

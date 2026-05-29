@@ -30,16 +30,9 @@ const formatTableNumber = (raw?: string) => {
   ) {
     return "Takeaway";
   }
-  const match = raw.match(/M(\d+)(_i|_o)?/i);
+ const match = raw.match(/\d+/);
   if (match) {
-    const num = match[1];
-    const suffix =
-      match[2]?.toLowerCase() === "_i"
-        ? "_indoor"
-        : match[2]?.toLowerCase() === "_o"
-          ? "_outdoor"
-          : "";
-    return `Meja ${num}${suffix}`;
+    return `Meja ${match[0]}`;
   }
   return `Meja ${raw}`;
 };
