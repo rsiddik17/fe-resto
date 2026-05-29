@@ -13,7 +13,7 @@ function formatMmSs(totalSeconds: number) {
 }
 
 interface FormOtpProps {
-  onSuccess: () => void;
+  onSuccess: (token?: string) => void;
 }
 
 const FormOtp = ({ onSuccess }: FormOtpProps) => {
