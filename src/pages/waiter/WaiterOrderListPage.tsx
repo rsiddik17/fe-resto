@@ -8,135 +8,173 @@ import WaiterOrderListCard, {
 import OrderDetailModal from "../../components/Modal/OrderDetailModal";
 import ConfirmFinishModal from "../../components/Modal/ConfirmFinishModal";
 import { cn } from "../../utils/utils";
-import { useNavigate } from "react-router";
-import { useAuthStore } from "../../store/useAuthStore";
-import { profileAPI } from "../../api/profile.api";
+import { useProfile } from "../../hooks/useProfile";
+import { orderAPI } from "../../api/order.api";
+import Toast from "../../components/Toast/Toast";
+import Loading from "../../components/Loading/Loading";
 
-// --- MOCK DATA SEMENTARA ---
-// Nanti ini diganti dengan data asli dari Backend menggunakan React Query
-const MOCK_ORDERS = [
-  {
-    orderId: "#260401123",
-    tableName: "Meja 12",
-    time: "20:10",
-    status: "DIMASAK" as OrderStatus,
-    totalPrice: 132123,
-    items: [
-      { name: "Ayam Penyet", qty: 1, note: "Tidak ada" },
-      { name: "Matcha Latte", qty: 2, note: "1 Less Sugar" },
-      { name: "Es Teler", qty: 1, note: "Tidak ada" },
-    ],
-  },
-  {
-    orderId: "#260401122",
-    tableName: "Meja 02",
-    time: "20:00",
-    status: "DIMASAK" as OrderStatus,
-    totalPrice: 110122,
-    items: [
-      { name: "Ayam Penyet", qty: 1, note: "Pedes bang" },
-      { name: "Matcha Latte", qty: 2, note: "Normal" },
-    ],
-  },
-  {
-    orderId: "#260402211",
-    tableName: "Meja 03",
-    time: "21:00",
-    status: "DIMASAK" as OrderStatus,
-    totalPrice: 110111,
-    items: [
-      { name: "Ayam", qty: 1, note: "Pedes bang" },
-      { name: "Matcha Choco", qty: 2, note: "Normal" },
-    ],
-  },
-  {
-    orderId: "#260402222",
-    tableName: "Meja 04",
-    time: "21:00",
-    status: "DIMASAK" as OrderStatus,
-    totalPrice: 110111,
-    items: [
-      { name: "Ayam", qty: 1, note: "Asin bang" },
-      { name: "Choco", qty: 2, note: "Normal" },
-    ],
-  },
-  {
-    orderId: "#260401120",
-    tableName: "Meja 09",
-    time: "19:50",
-    status: "SIAP" as OrderStatus,
-    totalPrice: 99120,
-    items: [
-      { name: "Nasi Goreng", qty: 1, note: "Gak pake sayur" },
-      { name: "Lychee Tea", qty: 2, note: "Es dipisah" },
-      { name: "Sate Ayam", qty: 1, note: "Bumbu kacang banyak" },
-    ],
-  },
-  {
-    orderId: "#260401121",
-    tableName: "Meja 11",
-    time: "20:00",
-    status: "SIAP" as OrderStatus,
-    totalPrice: 110121,
-    items: [
-      { name: "Soto Ayam", qty: 1, note: "Tidak ada" },
-      { name: "Lemon Tea", qty: 2, note: "Tidak ada" },
-      { name: "Tahu Isi", qty: 3, note: "Minta cabe rawit" },
-    ],
-  },
-];
+// --- HELPER FORMATTER ---
+const formatTime = (isoString: string) => {
+  if (!isoString) return "--:--";
+  return new Date(isoString).toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const formatTableNumber = (raw?: string) => {
+  if (!raw) return "Takeaway";
+  if (
+    raw.toLowerCase().includes("takeaway") ||
+    raw.toLowerCase().includes("tanpa")
+  ) {
+    return "Takeaway";
+  }
+ const match = raw.match(/\d+/);
+  if (match) {
+    return `Meja ${match[0]}`;
+  }
+  return `Meja ${raw}`;
+};
 
 const WaiterOrderListPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<OrderStatus>("DIMASAK");
-  const navigate = useNavigate();
-  const { user, setUser } = useAuthStore();
+
+  const { firstName, roleName } = useProfile();
+
+  // STATE DATA API
+  const [ordersList, setOrdersList] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // State untuk Modal
-  const [selectedOrder, setSelectedOrder] = useState<
-    (typeof MOCK_ORDERS)[0] | null
-  >(null);
+  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
 
   // STATE BARU UNTUK MENAMPUNG ID PESANAN YANG AKAN DISELESAIKAN
-  const [orderToFinish, setOrderToFinish] = useState<string | null>(null);
+  const [orderToFinish, setOrderToFinish] = useState<string | null>(
+    null,
+  );
+
+  // STATES TOAST
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: "success" | "error";
+  }>({
+    show: false,
+    message: "",
+    type: "success",
+  });
+
+  const triggerToast = (message: string, type: "success" | "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type }), 4000);
+  };
+
+  // --- 1. FETCH DATA DARI API ---
+  const fetchOrders = async () => {
+    try {
+      // Tentukan status mana yang ditarik berdasarkan Tab
+      let statusesToFetch: string[] = [];
+      if (activeTab === "DIMASAK") {
+        statusesToFetch = ["VALIDATED", "COOKING"];
+      } else if (activeTab === "SIAP") {
+        statusesToFetch = ["READY"];
+      }
+
+      // Hit API secara paralel untuk mencegah Error 400
+      const responses = await Promise.all(
+        statusesToFetch.map((status) =>
+          orderAPI
+            .getOrdersByStatus(status)
+            .catch(() => ({ success: false, data: [] })),
+        ),
+      );
+
+      // Gabungkan data dari semua respons yang sukses
+      let combinedData: any[] = [];
+      responses.forEach((res) => {
+        if (res.success && res.data) {
+          combinedData = [...combinedData, ...res.data];
+        }
+      });
+
+      if (combinedData.length > 0) {
+        const mappedOrders = combinedData.map((o: any) => {
+          const mappedItems =
+            o.items?.map((i: any) => ({
+              qty: i.quantity,
+              name: i.menu_name,
+              note: i.notes === "Tidak ada" ? "" : i.notes,
+            })) || [];
+
+          return {
+            rawId: o.order_id,
+            orderId: `#${o.order_id}`,
+            tableName: formatTableNumber(o.table_number),
+            time: formatTime(o.timeStamp),
+            status: activeTab, // Tampilkan sesuai nama Tab
+            totalPrice: Number(o.grand_total_amount || 0),
+            items: mappedItems,
+          };
+        });
+
+        // Urutkan waktu ascending agar yang paling lama dipesan muncul di atas
+        mappedOrders.sort((a, b) => a.time.localeCompare(b.time));
+        setOrdersList(mappedOrders);
+      } else {
+        setOrdersList([]);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data pesanan:", error);
+      setOrdersList([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Polling Real-time setiap 5 detik, trigger juga jika tab berubah
+  useEffect(() => {
+    setIsLoading(true);
+    fetchOrders();
+    const interval = setInterval(fetchOrders, 5000);
+    return () => clearInterval(interval);
+  }, [activeTab]);
 
   // Filter Data berdasarkan Search (Meja) dan Tab Status
   const filteredOrders = useMemo(() => {
-    return MOCK_ORDERS.filter((order) => {
-      const matchStatus = order.status === activeTab;
-      const matchSearch = order.tableName
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      return matchStatus && matchSearch;
-    });
-  }, [searchQuery, activeTab]);
+    return ordersList.filter((order) =>
+      order.tableName.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [searchQuery, ordersList]);
 
-  const handleConfirmFinish = () => {
-    navigate("/waiter/dashboard");
+  const handleConfirmFinish = async () => {
+    if (!orderToFinish) return;
 
-    // Tutup modal
-    setOrderToFinish(null);
-  };
+    try {
+      setIsSubmitting(true);
 
-  useEffect(() => {
-    if (!user) {
-      const fetchProfile = async () => {
-        try {
-          const response = await profileAPI.getStaffProfile();
-          if (response.success && response.data) {
-            setUser(response.data);
-          }
-        } catch (error) {
-          console.error("Gagal mengambil data profil:", error);
-        }
-      };
-      fetchProfile();
+      // Hit API PATCH /order/:id/completed
+      const response = await orderAPI.setOrderCompleted(orderToFinish);
+
+      if (response.success) {
+        triggerToast("Pesanan berhasil diselesaikan!", "success");
+        fetchOrders(); // Tarik data terbaru untuk menghilangkan kartu dari daftar
+      } else {
+        triggerToast("Gagal menyelesaikan pesanan", "error");
+      }
+    } catch (error: any) {
+      console.error("Error validasi:", error);
+      triggerToast(
+        error.response?.data?.message || "Terjadi kesalahan jaringan",
+        "error",
+      );
+    } finally {
+      setIsSubmitting(false);
+      setOrderToFinish(null); // Tutup modal
     }
-  }, [user, setUser]);
-
-  // Ekstrak nama depan untuk header
-  const firstName = user?.fullname ? user.fullname.split(" ")[0] : "Memuat...";
-  const roleName = user?.role === "WAITER" ? "Pelayan" : "Pelayan";
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -195,11 +233,17 @@ const WaiterOrderListPage = () => {
 
         {/* 4. GRID KARTU (Scrollable area) */}
         <div className="flex-1 pb-4 pr-1 lg:mr-16">
-          {filteredOrders.length > 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center h-48 text-primary">
+              <span className="font-bold text-[14px]">
+                Memuat data pesanan...
+              </span>
+            </div>
+          ) : filteredOrders.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredOrders.map((order) => (
                 <WaiterOrderListCard
-                  key={order.orderId}
+                  key={order.rawId}
                   orderId={order.orderId}
                   tableName={order.tableName}
                   time={order.time}
@@ -207,7 +251,7 @@ const WaiterOrderListPage = () => {
                   items={order.items}
                   totalPrice={order.totalPrice}
                   onViewDetail={() => setSelectedOrder(order)}
-                  onFinish={() => setOrderToFinish(order.orderId)}
+                  onFinish={() => setOrderToFinish(order.rawId)}
                 />
               ))}
             </div>
@@ -237,6 +281,9 @@ const WaiterOrderListPage = () => {
         onClose={() => setOrderToFinish(null)}
         onConfirm={handleConfirmFinish}
       />
+
+      <Loading show={isSubmitting} message="Menyelesaikan pesanan..." />
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </div>
   );
 };

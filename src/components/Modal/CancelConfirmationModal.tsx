@@ -1,12 +1,13 @@
-import { Check, X } from "lucide-react";
+import { X } from "lucide-react";
+import WarningIcon from "../Icon/WarningIcon";
 
-interface PaymentConfirmationModalProps {
+interface CancelConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-const PaymentConfirmationModal = ({ isOpen, onClose, onConfirm }: PaymentConfirmationModalProps) => {
+const CancelConfirmationModal = ({ isOpen, onClose, onConfirm }: CancelConfirmationModalProps) => {
   if (!isOpen) return null;
 
   return (
@@ -21,17 +22,15 @@ const PaymentConfirmationModal = ({ isOpen, onClose, onConfirm }: PaymentConfirm
           <X size={16} strokeWidth={3} />
         </button>
 
-        {/* Ikon Centang Ungu */}
-        <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center text-white mb-6 shadow-sm">
-          <Check size={40} strokeWidth={3.5} />
-        </div>
+        {/* Ikon Warning Merah */}
+          <WarningIcon strokeWidth={2.5} className="w-10 h-10 text-red-500 mb-4" />
 
         {/* Teks Konfirmasi */}
-        <h2 className="text-base md:text-[17.5px] font-bold mb-1.5">
-          Konfirmasi Validasi Pembayaran
+        <h2 className="text-base md:text-[17.5px] font-bold mb-1.5 text-red-600">
+          Batalkan Pesanan?
         </h2>
-        <p className="text-[#4A4553] text-xs md:text-[13.5px] mb-10">
-          Validasi pembayaran untuk pesanan ini?
+        <p className="text-[#4A4553] text-xs md:text-[13.5px] mb-10 leading-relaxed">
+          Tindakan ini tidak dapat diurungkan dan <br/>pesanan akan masuk ke riwayat pembatalan.
         </p>
 
         {/* Tombol Aksi */}
@@ -40,13 +39,13 @@ const PaymentConfirmationModal = ({ isOpen, onClose, onConfirm }: PaymentConfirm
             onClick={onClose}
             className="flex-1 bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 text-sm font-bold py-2.5 rounded-xs transition-colors cursor-pointer"
           >
-            Batal
+            Tutup
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 bg-primary text-white text-sm font-bold py-2.5 rounded-xs hover:bg-[#5a0b64] transition-colors shadow-sm cursor-pointer"
+            className="flex-1 bg-red-500 text-white text-sm font-bold py-2.5 rounded-xs hover:bg-red-600 transition-colors shadow-sm cursor-pointer"
           >
-            Validasi
+            Ya, Batalkan
           </button>
         </div>
 
@@ -55,4 +54,4 @@ const PaymentConfirmationModal = ({ isOpen, onClose, onConfirm }: PaymentConfirm
   );
 };
 
-export default PaymentConfirmationModal;
+export default CancelConfirmationModal;

@@ -29,13 +29,17 @@ const IncomingOrderTable = ({ orders }: IncomingOrderTableProps) => {
   const getMethodColor = (method: string) => {
     switch (method) {
       case "QR":
+      case "QR_SCAN":
         return "bg-[#1AE91D]"; // Hijau
       case "KIOSK":
         return "bg-[#2196F3]"; // Biru
       case "ONLINE":
         return "bg-[#AD4EFA]"; // Ungu
       case "KASIR":
+      case "CASHIER":
         return "bg-[#F35B28]"; // Orange
+      case "WAITER":
+        return "bg-[#F35B28]";
       default:
         return "bg-gray-500";
     }
@@ -44,21 +48,21 @@ const IncomingOrderTable = ({ orders }: IncomingOrderTableProps) => {
   return (
     <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
       {/* Header Tabel */}
-      <div className="flex justify-between items-center pl-7 pr-6 py-4 shrink-0">
+      <div className="flex justify-between items-center p-4 md:pl-7 md:pr-6 md:py-4 shrink-0">
         <h3 className="font-bold text-[17px]">Pesanan Masuk</h3>
         <button
           onClick={() => navigate("/cashier/order-list")}
-          className="flex items-center text-primary text-[13px] font-normal hover:underline cursor-pointer"
+          className="flex items-center text-primary text-sm md:text-[13px] font-normal hover:underline cursor-pointer"
         >
           Lihat semua <ChevronRight size={20} className="ml-0.5" />
         </button>
       </div>
 
       {/* Area Tabel */}
-      <div className="w-full overflow-x-auto custom-scrollbar">
+      <div className="w-full overflow-auto custom-scrollbar">
         <table className="w-full text-left border-collapse min-w-150">
           <thead>
-            <tr className="bg-[#EFEEEE] border-gray-100 text-[#73736C] text-[11px] md:text-[12.5px] uppercase">
+            <tr className="bg-[#EFEEEE] border-gray-100 text-[#73736C] text-[12.5px] md:text-[12.5px] uppercase">
               <th className="py-2.5 pl-7 pr-1 font-bold tracking-wider w-[16%]">ORDER ID</th>
               <th className="py-2.5 px-4 font-bold tracking-wider w-[24%]">MENU</th>
               <th className="py-2.5 px-4 font-bold tracking-wider w-[10%]">MEJA</th>
@@ -71,7 +75,7 @@ const IncomingOrderTable = ({ orders }: IncomingOrderTableProps) => {
             {orders.map((order) => (
               <tr
                 key={order.id}
-                className="border-b border-gray-300 hover:bg-gray-50/50 text-[11px] md:text-[13px] transition-colors"
+                className="border-b border-gray-300 hover:bg-gray-50/50 text-[12.5px] md:text-[13px] transition-colors"
               >
                 <td className="pt-0.5 pb-4 pl-7 pr-5 font-bold">{order.id}</td>
                 <td className="pt-1.75 pb-4 pl-4">

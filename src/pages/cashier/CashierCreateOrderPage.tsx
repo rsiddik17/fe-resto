@@ -10,6 +10,7 @@ import { useMenus } from "../../hooks/useMenus";
 import WarningIcon from "../../components/Icon/WarningIcon";
 import { Search } from "lucide-react"; // <-- Import icon search
 import Input from "../../components/ui/Input";
+import { useProfile } from "../../hooks/useProfile";
 
 const CashierCreateOrderPage = () => {
   const navigate = useNavigate();
@@ -27,25 +28,30 @@ const CashierCreateOrderPage = () => {
   // === FITUR BARU: LOGIKA FILTER GABUNGAN (KATEGORI + SEARCH) ===
   const filteredMenu = menus.filter((item) => {
     // Cek kecocokan kategori
-    const matchCategory = activeCategory === "semua" ? true : item.category === activeCategory;
+    const matchCategory =
+      activeCategory === "semua" ? true : item.category === activeCategory;
     // Cek kecocokan teks pencarian (case-insensitive)
-    const matchSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-    
+    const matchSearch = item.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
     return matchCategory && matchSearch;
   });
 
+ const { firstName, roleName } = useProfile();
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="pt-7.5 pl-8 pr-6">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0">
         <DashboardHeader
           title="Buat Pesanan"
           subtitle="Mulai pesanan baru untuk pelanggan"
-          userName="Rina" // <-- Disesuaikan untuk Kasir
-          roleName="Kasir" // <-- Disesuaikan untuk Kasir
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
-      <div className="pt-0 pb-0 px-8 flex flex-col flex-1 min-h-0">
+      <div className="pt-1 lg:pt-1 pb-0 lg:pb-0 px-4 lg:px-8 flex flex-col flex-1 min-h-0">
         {/* 2. TOMBOL BUAT PESANAN */}
         <div className="mb-4">
           <Button
@@ -60,19 +66,18 @@ const CashierCreateOrderPage = () => {
 
         {/* 3. KONTEN PUTIH UTAMA */}
         <div className="bg-white rounded-t-md shadow-sm border border-gray-100 p-4 md:p-6 flex-1 overflow-y-auto min-h-0 custom-scrollbar flex flex-col">
-          
           {/* === FITUR BARU: SEARCH BAR (Sesuai Gambar Desain) === */}
           <div className="relative mb-5 w-full lg:w-md">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="text-black/50 w-4.5 h-4.5" />
-              </div>
-              <Input
-                type="text"
-                placeholder="Cari menu pesanan"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 py-2 text-[14.5px] border-gray-200 shadow-sm placeholder:text-black/50"
-              />
+              <Search className="text-black/50 w-4.5 h-4.5" />
+            </div>
+            <Input
+              type="text"
+              placeholder="Cari menu pesanan"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 py-2 text-[14.5px] border-gray-200 shadow-sm placeholder:text-black/50"
+            />
           </div>
 
           {/* Tab Kategori */}
@@ -141,7 +146,7 @@ const CashierCreateOrderPage = () => {
         onSelectTable={() => {
           setIsCreateModalOpen(false);
           // Navigasi disesuaikan ke path kasir
-          navigate("/cashier/order-list/create-order/select-table"); 
+          navigate("/cashier/order-list/create-order/select-table");
         }}
       />
     </div>

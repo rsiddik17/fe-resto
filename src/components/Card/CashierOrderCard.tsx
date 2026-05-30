@@ -19,6 +19,7 @@ export interface BadgeInfo {
 
 interface CashierOrderCardProps {
   orderId: string;
+  rawOrderId: string;
   time: string;
   title?: string; // Untuk tulisan "Meja 02" (Jika ada)
   leftBadges: BadgeInfo[]; // Badge di kiri (ONLINE, Delivery, KIOSK)
@@ -27,11 +28,12 @@ interface CashierOrderCardProps {
   total: number;
   isAwaitingValidation?: boolean; // Menampilkan tombol "Validasi Pembayaran"
   onViewDetail: () => void;
-  onValidate?: () => void;
+  onValidate?: (rawId: string) => void;
 }
 
 const CashierOrderCard = ({
   orderId,
+  rawOrderId,
   time,
   title,
   leftBadges,
@@ -136,7 +138,7 @@ const CashierOrderCard = ({
             </div>
           ))}
           {remainingItemsCount > 0 && (
-            <div className="text-primary text-[11px] md:text-[12px] mt-0.5">
+            <div className="text-primary text-[12px] md:text-[12px] mt-0.5">
               +{remainingItemsCount} item lainnya
             </div>
           )}
@@ -156,7 +158,7 @@ const CashierOrderCard = ({
             <button
               onClick={onViewDetail}
               className={cn(
-                "border-2 border-primary text-primary font-bold text-sm md:text-[15px] py-2.25 rounded-sm hover:bg-primary/5 transition-colors cursor-pointer",
+                "border-2 border-primary text-primary font-bold text-[13px] md:text-[15px] py-2.25 rounded-sm hover:bg-primary/5 transition-colors cursor-pointer",
                 isAwaitingValidation ? "flex-1" : "px-8 md:px-10",
               )}
             >
@@ -166,8 +168,8 @@ const CashierOrderCard = ({
             {/* Hanya Muncul Jika Filter = Menunggu Validasi */}
             {isAwaitingValidation && (
               <button
-                onClick={onValidate}
-                className="flex-1/5 bg-primary text-white font-bold text-sm md:text-[15px] py-2.5 rounded-sm hover:bg-[#5a0b64] transition-colors shadow-sm cursor-pointer"
+                onClick={() => onValidate && onValidate(rawOrderId)}
+                className="flex-1/5 bg-primary text-white font-bold text-[13px] md:text-[15px] py-2.5 rounded-sm hover:bg-[#5a0b64] transition-colors shadow-sm cursor-pointer"
               >
                 Validasi Pembayaran
               </button>

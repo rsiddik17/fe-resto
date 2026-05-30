@@ -40,6 +40,8 @@ const MobileCartPage = () => {
     }
   };
 
+  const tableNo = tableNumber?.match(/\d+/)?.[0];
+
   return (
     <div className="min-h-screen bg-secondary/25 pb-4 relative flex flex-col">
       <Header />
@@ -53,7 +55,7 @@ const MobileCartPage = () => {
           >
             <ArrowLeft size={22} strokeWidth={2.5} /> Keranjang
           </button>
-          <p className="text-gray-500 text-[15px] md:text-xl lg:text[17px] ml-0">{tableNumber || "Meja --"}</p>
+          <p className="text-gray-500 text-[15px] md:text-xl lg:text[17px] ml-0">{tableNumber ? `Meja ${tableNo}` : "Meja --"}</p>
         </div>
 
         {items.length > 0 ? (

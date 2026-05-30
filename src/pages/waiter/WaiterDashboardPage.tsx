@@ -13,36 +13,86 @@ import ProcessingIcon from "../../components/Icon/ProcessingIcon";
 import DeliveryIcon from "../../components/Icon/DeliveryIcon";
 import AddOrderIcon from "../../components/Icon/AddOrderIcon";
 import StatCardCashier from "../../components/Card/StatCardCashier";
+import { useProfile } from "../../hooks/useProfile";
+import { tableAPI, type TableData } from "../../api/table.api";
+import { useEffect, useState } from "react";
+import { orderAPI } from "../../api/order.api";
 
-import { useAuthStore } from "../../store/useAuthStore";
-import { profileAPI } from "../../api/profile.api";
-import { useEffect } from "react";
+const formatTableNumber = (raw?: string) => {
+  if (!raw) return "Takeaway";
+  if (
+    raw.toLowerCase().includes("takeaway") ||
+    raw.toLowerCase().includes("tanpa")
+  ) {
+    return "Takeaway";
+  }
+  const match = raw.match(/M(\d+)/i);
+  if (match) return `Meja ${match[1]}`;
+  return `Meja ${raw}`;
+};
+
+// --- HELPER FORMATTER WAKTU ---
+const formatTime = (isoString: string) => {
+  if (!isoString) return "--:--";
+  return new Date(isoString).toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
 const WaiterDashboardPage = () => {
   const navigate = useNavigate();
+  const { firstName, roleName } = useProfile();
 
-  const { user, setUser } = useAuthStore();
+  // STATE UNTUK STATISTIK MEJA
+  const [totalTables, setTotalTables] = useState<number>(0);
+  const [occupiedTables, setOccupiedTables] = useState<number>(0);
 
-  // HIT API JIKA DATA USER BELUM ADA DI ZUSTAND
-  useEffect(() => {
-    if (!user) {
-      const fetchProfile = async () => {
-        try {
-          const response = await profileAPI.getStaffProfile();
-          if (response.success && response.data) {
-            setUser(response.data);
-          }
-        } catch (error) {
-          console.error("Gagal mengambil data profil:", error);
-        }
-      };
-      fetchProfile();
+  const [cookingOrders, setCookingOrders] = useState<any[]>([]);
+  const [readyOrders, setReadyOrders] = useState<any[]>([]);
+
+  // FUNGSI FETCH SEMUA DATA DASHBOARD
+  const fetchDashboardData = async () => {
+    try {
+      // 1. Hit API Meja
+      const tableRes = await tableAPI.getAllTables();
+      if (tableRes.success && tableRes.data) {
+        const tables: TableData[] = tableRes.data;
+        setTotalTables(tables.length);
+        setOccupiedTables(tables.filter((t) => t.status === "OCCUPIED").length);
+      }
+
+      // 2. Hit API Order Paralel (Kirim Status Spesifik agar tidak error 400)
+      const [valRes, cookRes, readyRes] = await Promise.all([
+        orderAPI.getOrdersByStatus("VALIDATED").catch(() => ({ success: false, data: [] })),
+        orderAPI.getOrdersByStatus("COOKING").catch(() => ({ success: false, data: [] })),
+        orderAPI.getOrdersByStatus("READY").catch(() => ({ success: false, data: [] })),
+      ]);
+
+      // Gabungkan VALIDATED dan COOKING untuk tab Sedang Diproses
+      const processOrders = [
+        ...(valRes.success && valRes.data ? valRes.data : []),
+        ...(cookRes.success && cookRes.data ? cookRes.data : [])
+      ];
+
+      // READY untuk Pesanan Siap Saji
+      const doneOrders = readyRes.success && readyRes.data ? readyRes.data : [];
+
+      setCookingOrders(processOrders);
+      setReadyOrders(doneOrders);
+
+    } catch (error) {
+      console.error("Gagal mengambil data dashboard:", error);
     }
-  }, [user, setUser]);
+  };
 
-  // Ekstrak nama depan untuk header
-  const firstName = user?.fullname ? user.fullname.split(" ")[0] : "Memuat...";
-  const roleName = user?.role === "WAITER" ? "Pelayan" : "Pelayan";
+  useEffect(() => {
+    fetchDashboardData();
+
+    // Polling setiap 5 detik agar data selalu ter-update secara Realtime
+    const intervalId = setInterval(fetchDashboardData, 5000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <>
@@ -61,19 +111,22 @@ const WaiterDashboardPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-5">
           <StatCardCashier
             title="Sedang Diproses"
-            value="7"
+            value={cookingOrders.length.toString()}
             Icon={ProcessingIcon}
           />
           <StatCardCashier
             title="Pesanan Harus Antar"
-            value="10"
+            value={readyOrders.length.toString()}
             Icon={DeliveryIcon}
           />
           <StatCardCashier
             title="Meja Terisi"
             value={
               <>
-                20<span className="text-gray/75 text-2xl font-bold">/25</span>
+                {occupiedTables}
+                <span className="text-gray/75 text-2xl font-bold">
+                  /{totalTables}
+                </span>
               </>
             }
             Icon={TableManagementIcon}
@@ -103,20 +156,30 @@ const WaiterDashboardPage = () => {
               </div>
 
               {/* Grid Kartu Siap Saji */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <ReadyOrderCard
-                  orderId="26040299"
-                  tableName="Meja 07"
-                  time="12:07"
-                  items={["1x Ayam Penyet", "2x Matcha Latte", "1x Es Teler"]}
-                />
-                <ReadyOrderCard
-                  orderId="26040298"
-                  tableName="Meja 12"
-                  time="11:59"
-                  items={["1x Ayam Penyet", "2x Lychee Tea"]}
-                />
-              </div>
+              {readyOrders.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {readyOrders.map((order) => {
+                    const mappedItems =
+                      order.items?.map(
+                        (i: any) => `${i.quantity}x ${i.menu_name}`,
+                      ) || [];
+
+                    return (
+                      <ReadyOrderCard
+                        key={order.order_id}
+                        orderId={order.order_id}
+                        tableName={formatTableNumber(order.table_number)}
+                        time={formatTime(order.timeStamp)}
+                        items={mappedItems}
+                      />
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-8 bg-white border border-gray-100 border-dashed rounded-md text-gray-400 text-sm">
+                  Tidak ada pesanan siap antar.
+                </div>
+              )}
             </div>
 
             {/* --- SECTION: PESANAN DIPROSES --- */}
@@ -140,23 +203,29 @@ const WaiterDashboardPage = () => {
               </div>
 
               {/* List Pesanan Diproses (Tumpuk bawah) */}
-              <div className="flex flex-col gap-3">
-                <ProcessingOrderCard
-                  orderId="26040297"
-                  tableName="Meja 06"
-                  itemsString="1x Es Teler, 2x Ayam Penyet, 1x Bakso Urat"
-                />
-                <ProcessingOrderCard
-                  orderId="26040296"
-                  tableName="Meja 01"
-                  itemsString="1x Lemon Tea, 1x Bakso Urat"
-                />
-                <ProcessingOrderCard
-                  orderId="26040295"
-                  tableName="Meja 04"
-                  itemsString="2x Es Teler, 3x Bakso Urat"
-                />
-              </div>
+              {cookingOrders.length > 0 ? (
+                <div className="flex flex-col gap-3">
+                  {cookingOrders.map((order) => {
+                    const itemsString =
+                      order.items
+                        ?.map((i: any) => `${i.quantity}x ${i.menu_name}`)
+                        .join(", ") || "Tidak ada item";
+
+                    return (
+                      <ProcessingOrderCard
+                        key={order.order_id}
+                        orderId={order.order_id}
+                        tableName={formatTableNumber(order.table_number)}
+                        itemsString={itemsString}
+                      />
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-6 bg-white border border-gray-100 border-dashed rounded-md text-gray-400 text-sm">
+                  Tidak ada pesanan yang sedang dimasak.
+                </div>
+              )}
             </div>
           </div>
 
@@ -165,7 +234,7 @@ const WaiterDashboardPage = () => {
             <Button
               variant="outline"
               onClick={() => navigate("/waiter/create-order")}
-              className="w-full bg-white border-2 border-white text-primary font-bold text-[17px] lg:text-[17.5px] py-2.5 rounded-md shadow-sm hover:border-primary/20 transition-all flex justify-center items-center gap-2"
+              className="w-full bg-white border-2 border-white text-primary font-bold text-[17px] lg:text-[17.5px] py-2.5 rounded-md shadow-sm hover:bg-gray-50 transition-all flex justify-center items-center gap-2"
             >
               <AddOrderIcon className="bg-primary text-white rounded-full w-6.5 h-6.5" />{" "}
               Buat Pesanan

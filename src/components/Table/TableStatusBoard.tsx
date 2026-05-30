@@ -1,22 +1,42 @@
+import { useEffect, useState } from "react";
 import { cn } from "../../utils/utils";
-
-// Mock Data Meja
-const mockTables = [
-  { id: "M-01", status: "terisi" },
-  { id: "M-02", status: "tersedia" },
-  { id: "M-03", status: "kotor" },
-  { id: "M-04", status: "terisi" },
-  { id: "M-05", status: "kotor" },
-  { id: "M-06", status: "terisi" },
-  { id: "M-07", status: "terisi" },
-  { id: "M-08", status: "terisi" },
-  { id: "M-09", status: "tersedia" },
-  { id: "M-10", status: "kotor" },
-  { id: "M-11", status: "tersedia" },
-  { id: "M-12", status: "kotor" },
-];
+import { tableAPI, type TableData } from "../../api/table.api";
 
 const TableStatusBoard = () => {
+  const [tables, setTables] = useState<TableData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTables = async () => {
+      try {
+        const response = await tableAPI.getAllTables();
+        if (response.success && response.data) {
+          // Sort meja berdasarkan ID atau nomor agar berurutan
+          const sortedTables = response.data.sort(
+            (a: TableData, b: TableData) => a.id - b.id,
+          );
+          setTables(sortedTables);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil status meja:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTables();
+
+    // Polling tiap 15 detik agar status meja di dashboard kasir/pelayan selalu update otomatis
+    const interval = setInterval(fetchTables, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fungsi untuk mengekstrak angka "M01_i" menjadi "M-01"
+  const formatTableNumber = (rawNumber: string) => {
+    const num = rawNumber.replace(/\D/g, ""); // Ambil angkanya saja
+    return num ? `M-${num}` : rawNumber; // Jika bukan format angka, kembalikan teks aslinya
+  };
+
   return (
     <div className="bg-white w-full rounded-md shadow-sm border border-secondary px-4 py-5 overflow-hidden">
       <h3 className="font-bold text-lg mb-2.5">Status Meja</h3>
@@ -38,22 +58,29 @@ const TableStatusBoard = () => {
       </div>
 
       {/* Grid Meja */}
-      <div className="grid grid-cols-4 gap-3">
-        {mockTables.map((table) => (
-          <div
-            key={table.id}
-            className={cn(
-              "aspect-square p-px rounded-sm text-center flex items-center justify-center text-base md:text-xl lg:text-base",
-              table.status === "terisi" && "bg-primary text-white",
-              table.status === "kotor" && "bg-[#D9D9D9] text-white",
-              table.status === "tersedia" &&
-                "bg-white border-2 border-lime text-lime",
-            )}
-          >
-            {table.id}
-          </div>
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-6">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-4 gap-3">
+          {tables.map((table) => (
+            <div
+              key={table.id}
+              className={cn(
+                "aspect-square p-px rounded-sm text-center flex items-center justify-center text-base md:text-xl lg:text-base",
+                table.status === "OCCUPIED" && "bg-primary text-white",
+                table.status === "DIRTY" && "bg-[#D9D9D9] text-white",
+                table.status === "AVAILABLE" &&
+                  "bg-white border-2 border-lime text-lime",
+              )}
+              title={`Kapasitas: ${table.capacity} Orang`}
+            >
+              {formatTableNumber(table.table_number)}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

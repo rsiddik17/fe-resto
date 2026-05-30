@@ -3,6 +3,7 @@ import Input from "../ui/Input";
 import Button from "../ui/Button";
 import { cn } from "../../utils/utils";
 import { type UseFormRegister, type FieldErrors } from "react-hook-form";
+import { useEffect, useRef } from "react";
 
 export interface MenuFormInputsProps {
   register: UseFormRegister<any>;
@@ -24,8 +25,27 @@ const FormMenuInput = ({
     "w-full text-[13.5px] rounded-sm outline-none py-2.5 px-4 border border-transparent placeholder:text-black/50",
     isDetailMode 
       ? "bg-[#D9D9D9]/60 cursor-default text-black" // Mode Detail: Warna sama, kursor mati, font agak tebal
-      : "bg-[#D9D9D9]/50 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary" // Mode Edit/Tambah: Bisa di-focus
+      : "bg-[#FFFFFF]/50 border-[1.5px] border-primary focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary" // Mode Edit/Tambah: Bisa di-focus
   );
+
+  // === FITUR AUTO RESIZE TEXTAREA ===
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  
+  // Pisahkan ref dan onChange dari register bawaan RHF
+  const { ref: rhfRef, onChange: rhfOnChange, ...restDesc } = register("description");
+
+  // Fungsi untuk menyesuaikan tinggi
+  const adjustHeight = (el: HTMLTextAreaElement) => {
+    el.style.height = "auto"; // Reset dulu
+    el.style.height = `${el.scrollHeight}px`; // Set sesuai tinggi konten
+  };
+
+  // Gunakan useEffect agar saat data API masuk (reset dipanggil parent), kotaknya otomatis melar
+  useEffect(() => {
+    if (textareaRef.current) {
+      adjustHeight(textareaRef.current);
+    }
+  });
 
   return (
     <div className="flex-1 flex flex-col gap-3 mt-7">
@@ -56,7 +76,15 @@ const FormMenuInput = ({
             inputClass, 
             errors.description && "border-red-500 focus:border-red-500 focus:ring-red-500"
           )}
-          {...register("description")}
+          {...restDesc}
+          ref={(e) => {
+            rhfRef(e); // Berikan ref ke React Hook Form
+            textareaRef.current = e; // Berikan ref ke local state kita
+          }}
+          onChange={(e) => {
+            adjustHeight(e.target); // Melar saat diketik user
+            rhfOnChange(e); // Tetap jalankan fungsi bawaan RHF
+          }}
         />
         {errors.description && <span className="text-red-500 text-[12px] mt-1 block">{errors.description.message as string}</span>}
       </div>
@@ -128,13 +156,13 @@ const FormMenuInput = ({
           <Button 
             type="button" 
             onClick={onCancel}
-            className="flex-1 bg-primary/25 hover:bg-primary/20 text-primary font-bold py-2.5 rounded-sm text-sm transition-colors"
+            className="flex-1 bg-primary/25 hover:bg-primary/20 text-primary font-bold py-2.5 rounded-sm text-sm md:text-sm lg:text-sm transition-colors"
           >
             Batal
           </Button>
           <Button 
             type="submit" 
-            className="flex-1/5 bg-primary hover:bg-primary-hover text-white font-bold py-2.5 rounded-sm text-sm shadow-sm transition-colors"
+            className="flex-1/5 bg-primary hover:bg-primary-hover text-white font-bold py-2.5 rounded-sm text-sm md:text-sm lg:text-sm shadow-sm transition-colors"
           >
             Simpan Menu
           </Button>

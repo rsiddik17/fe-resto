@@ -9,11 +9,13 @@ import OrderSummary from "../../components/OrderSummary/OrderSummary";
 import SuccessIcon from "../../components/Icon/SuccessIcon";
 
 import { useCartStore } from "../../store/useCartStore";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const MobileOrderSuccessPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { items, clearCart, tableNumber } = useCartStore();
+  const { logout } = useAuthStore();
 
   const orderData = location.state;
   const [status, setStatus] = useState<"PENDING" | "CONFIRMED">("PENDING");
@@ -36,13 +38,16 @@ const MobileOrderSuccessPage = () => {
     return () => clearTimeout(timer);
   }, [orderData, items.length, navigate, tableNumber]);
 
-  const handleSelesai = () => {
+  const handleSelesai = async () => {
     const rawNumber = tableNumber?.replace(/\D/g, "");
     clearCart(); // Kosongkan keranjang
+    await logout();
     if (rawNumber) {
       navigate(`/qr/${rawNumber}`, { replace: true });
     }
   };
+
+  const tableNo = tableNumber?.match(/\d+/)?.[0];
 
   if (!orderData) return null;
 
@@ -69,7 +74,7 @@ const MobileOrderSuccessPage = () => {
             <div className="flex justify-between text-sm md:text-base">
               <span className="text-gray-500">Nomor meja</span>
               <span className="font-bold text-primary">
-                {tableNumber || "Meja --"}
+                {tableNumber ? `Meja ${tableNo}` : "Meja --"}
               </span>
             </div>
             <div className="flex justify-between text-sm md:text-base">

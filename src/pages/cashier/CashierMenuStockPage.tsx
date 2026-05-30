@@ -14,6 +14,7 @@ import { Plus } from "lucide-react";
 
 // API
 import { menuAPI } from "../../api/menu.api";
+import { useProfile } from "../../hooks/useProfile";
 
 const CashierMenuStockPage = () => {
   const navigate = useNavigate();
@@ -31,14 +32,18 @@ const CashierMenuStockPage = () => {
 
   // State Modal Hapus
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false) 
+  const [isDeleting, setIsDeleting] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState<{
     id: string;
     name: string;
   } | null>(null);
 
   // --- STATE TOAST ---
-  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: "success" | "error";
+  }>({
     show: false,
     message: "",
     type: "error",
@@ -46,7 +51,10 @@ const CashierMenuStockPage = () => {
 
   const triggerToast = (message: string, type: "success" | "error") => {
     setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type: "error" }), 4000);
+    setTimeout(
+      () => setToast({ show: false, message: "", type: "error" }),
+      4000,
+    );
   };
 
   // LOGIC FILTERING
@@ -111,10 +119,12 @@ const CashierMenuStockPage = () => {
       } else {
         window.location.reload(); // Fallback jika tidak ada fungsi refetch
       }
-
     } catch (error: any) {
       console.error("Gagal menghapus menu:", error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || "Terjadi kesalahan server saat menghapus";
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Terjadi kesalahan server saat menghapus";
       triggerToast(`Gagal: ${errorMsg}`, "error");
     } finally {
       setIsDeleting(false);
@@ -123,25 +133,27 @@ const CashierMenuStockPage = () => {
     }
   };
 
+  const { firstName, roleName } = useProfile();
+
   return (
     <>
-      <div className="pt-7.5 pl-8 pr-6">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0">
         <DashboardHeader
           title="Manajemen Menu & Stok"
           subtitle="Kelola daftar menu serta ketersediaan stok"
-          userName="Rina"
-          roleName="Kasir"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
-      <div className="pt-0 pb-6 px-8">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="bg-white border border-gray-100 text-primary px-6 py-2 rounded-xs shadow-sm text-[13px]">
+      <div className="pt-1 lg:pt-1 pb-6 lg:pb-6 px-4 lg:px-8">
+        <div className="flex flex-col md:flex-row items-center gap-3 mb-4">
+          <div className="bg-white w-full md:w-fit border border-gray-100 text-primary px-6 py-2.5 md:py-2 rounded-xs shadow-sm text-sm md:text-[13px]">
             Total Menu: {menus.length}
           </div>
           <Button
             onClick={() => navigate("/cashier/management-menu-stock/add-menu")}
-            className="bg-primary flex gap-0.5 items-center hover:bg-[#5a0b64] text-white font-semibold px-4 py-2 rounded-xs shadow-sm text-[13px]"
+            className="bg-primary w-full md:w-fit flex gap-0.5 items-center hover:bg-[#5a0b64] text-white font-semibold px-4 py-2.5 md:py-2 rounded-xs shadow-sm text-sm md:text-[13px] lg:text-[13px]"
           >
             <Plus size={15} strokeWidth={2.5} /> Tambah Menu
           </Button>

@@ -54,6 +54,7 @@ const KioskCartPage = () => {
     }
   };
 
+  const tableNo = tableNumber?.match(/\d+/)?.[0];
 
   return (
     <div className="min-h-screen bg-secondary/25 pb-8 relative flex flex-col">
@@ -68,7 +69,7 @@ const KioskCartPage = () => {
           >
             <ArrowLeft className="w-4.5 h-4.5 md:w-6 md:h-6" size={24} strokeWidth={3} /> Keranjang
           </button>
-          {items.length > 0 && <p className="text-gray text-base md:text-2xl lg:text-xl ml-1">{tableNumber || "Meja --"}</p>}
+          {items.length > 0 && <p className="text-gray text-base md:text-2xl lg:text-xl ml-1">{tableNumber ? `Meja ${tableNo}` : "Meja --"}</p>}
           {/* Nanti ini bisa dinamis dari state */}
         </div>
 

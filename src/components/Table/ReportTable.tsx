@@ -1,13 +1,22 @@
-interface Column {
-  header: string;
-  accessor: string;
-  isCurrency?: boolean; // Penanda kalau kolom ini butuh format Rupiah
+export interface DailySaleItem {
+  id: string;
+  orderId: string;
+  time: string;
+  foods: string;
+  drinks: string;
+  bank: string;
+  total: number;
+  date: string;
 }
 
+type SortKey = "orderId" | "time" | "foods" | "drinks" | "bank" | "total";
+type SortDirection = "asc" | "desc";
+
 interface ReportTableProps {
-  title: string;
-  columns: Column[];
-  data: any[];
+  data: DailySaleItem[];
+  sortConfig: { key: SortKey; direction: SortDirection } | null;
+  onSort: (key: SortKey) => void;
+  isLoading?: boolean;
 }
 
 const formatRupiah = (value: number) => {
@@ -18,40 +27,141 @@ const formatRupiah = (value: number) => {
   }).format(value);
 };
 
-const ReportTable = ({ title, columns, data }: ReportTableProps) => {
+// --- KOMPONEN SVG CUSTOM UNTUK SORTING ---
+const SortIcon = ({ activeDirection }: { activeDirection: "asc" | "desc" | null }) => {
+  const isAsc = activeDirection === "asc";
+  const isDesc = activeDirection === "desc";
+
+  return (
+    <div className="inline-flex flex-col items-center justify-center ml-1.5 -translate-y-0.5">
+      <svg width="13" height="17" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Segitiga Atas (ASC) */}
+        <path 
+          d="M5 2L9 7H1L5 2Z" 
+          fill={isAsc ? "#000000" : "transparent"} 
+          stroke={isAsc ? "#000000" : "#9CA3AF"} 
+          strokeWidth="1.5" 
+          strokeLinejoin="round"
+        />
+        {/* Segitiga Bawah (DESC) */}
+        <path 
+          d="M5 14L1 9H9L5 14Z" 
+          fill={isDesc ? "#000000" : "transparent"} 
+          stroke={isDesc ? "#000000" : "#9CA3AF"} 
+          strokeWidth="1.5" 
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  );
+};
+
+const ReportTable = ({ data, sortConfig, onSort, isLoading = false }: ReportTableProps) => {
+  
+  const getDirection = (key: SortKey) => {
+    return sortConfig?.key === key ? sortConfig.direction : null;
+  };
+
   return (
     <div className="mb-6">
-      {/* Judul Tabel */}
-      <h3 className="text-[22px] font-bold mb-3">{title}</h3>
-      
-      {/* Container Tabel */}
-      <div className="bg-white rounded-sm shadow-sm overflow-hidden">
-        <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse min-w-175">
-            <thead className="bg-[#D9D9D9] text-black/50">
+      {/* Container Tabel dengan Max Height untuk batas ~10 Baris (Tinggi 1 baris ~55px) */}
+      <div className="bg-white rounded-sm shadow-sm overflow-hidden border border-gray-200">
+
+        {isLoading && (
+          <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center text-primary">
+            <span className="font-bold text-sm">Memuat data laporan...</span>
+          </div>
+        )}
+
+        <div className="overflow-x-auto overflow-y-auto custom-scrollbar max-h-150">
+          <table className="w-full text-left border-collapse min-w-200">
+            {/* STICKY HEADER agar saat di-scroll ke bawah, header tidak hilang */}
+            <thead className="bg-[#D9D9D9] text-black/50 text-[12.5px] uppercase sticky top-0 z-10 shadow-sm">
               <tr>
-                {columns.map((col, idx) => (
-                  <th key={idx} className="py-2.5 px-8 text-sm font-bold uppercase tracking-wider">
-                    {col.header}
-                  </th>
-                ))}
+                <th rowSpan={2} className="px-4 py-1 font-bold text-center w-12 border-r border-white">
+                  NO
+                </th>
+                <th 
+                  rowSpan={2} 
+                  onClick={() => onSort("orderId")}
+                  className="px-4 py-1 font-bold border-r border-white cursor-pointer hover:bg-black/5 transition-colors select-none whitespace-nowrap"
+                >
+                  <div className="flex items-center">
+                    ID PESANAN <SortIcon activeDirection={getDirection("orderId")}  />
+                  </div>
+                </th>
+                <th 
+                  rowSpan={2} 
+                  onClick={() => onSort("time")}
+                  className="px-4 py-1 font-bold border-r border-white cursor-pointer hover:bg-black/5 transition-colors select-none whitespace-nowrap"
+                >
+                  <div className="flex items-center">
+                    JAM PEMESANAN <SortIcon activeDirection={getDirection("time")} />
+                  </div>
+                </th>
+                <th colSpan={2} className="px-4 py-1 font-bold text-center border-b border-r border-white">
+                  PESANAN
+                </th>
+                <th 
+                  rowSpan={2} 
+                  onClick={() => onSort("bank")}
+                  className="px-4 py-1 font-bold border-r border-white cursor-pointer hover:bg-black/5 transition-colors select-none whitespace-nowrap"
+                >
+                  <div className="flex items-center">
+                    NAMA BANK <SortIcon activeDirection={getDirection("bank")} />
+                  </div>
+                </th>
+                <th 
+                  rowSpan={2} 
+                  onClick={() => onSort("total")}
+                  className="px-4 py-1 font-bold cursor-pointer hover:bg-black/5 transition-colors select-none whitespace-nowrap"
+                >
+                  <div className="flex items-center">
+                    TOTAL <SortIcon activeDirection={getDirection("total")} />
+                  </div>
+                </th>
+              </tr>
+              <tr className="bg-[#D9D9D9]">
+                <th 
+                  onClick={() => onSort("foods")}
+                  className="px-4 py-1.25 font-bold border-r border-white cursor-pointer hover:bg-black/5 transition-colors select-none whitespace-nowrap"
+                >
+                  <div className="flex items-center">
+                    MAKANAN <SortIcon activeDirection={getDirection("foods")} />
+                  </div>
+                </th>
+                <th 
+                  onClick={() => onSort("drinks")}
+                  className="px-4 py-1.25 font-bold border-r border-white cursor-pointer hover:bg-black/5 transition-colors select-none whitespace-nowrap"
+                >
+                  <div className="flex items-center">
+                    MINUMAN <SortIcon activeDirection={getDirection("drinks")} />
+                  </div>
+                </th>
               </tr>
             </thead>
+            
             <tbody className="text-[13.5px] text-black">
               {data.length > 0 ? (
-                data.map((row, rowIndex) => (
-                  <tr key={rowIndex} className="border-b-[1.5px] border-[#DEDED9] hover:bg-gray-50 transition-colors">
-                    {columns.map((col, colIndex) => (
-                      <td key={colIndex} className="py-4 px-8">
-                        {col.isCurrency ? formatRupiah(row[col.accessor]) : row[col.accessor]}
-                      </td>
-                    ))}
+                data.map((row, index) => (
+                  <tr key={row.id} className="border-b-[1.5px] border-[#DEDED9] hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 text-center">{index + 1}</td>
+                    <td className="px-4 py-3 font-medium">{row.orderId}</td>
+                    <td className="px-4 py-3">{row.time}</td>
+                    <td className="px-4 py-3 max-w-50 leading-relaxed">
+                      {row.foods ? row.foods.split(',').map((item, i) => <div key={i}>{item.trim()}</div>) : "-"}
+                    </td>
+                    <td className="px-4 py-3 max-w-50 leading-relaxed">
+                      {row.drinks ? row.drinks.split(',').map((item, i) => <div key={i}>{item.trim()}</div>) : "-"}
+                    </td>
+                    <td className="px-4 py-3">{row.bank}</td>
+                    <td className="px-4 py-3 font-medium whitespace-nowrap">{formatRupiah(row.total)}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={columns.length} className="text-center py-8 text-gray-400">
-                    Tidak ada data laporan ditemukan.
+                  <td colSpan={7} className="text-center py-10 text-gray-400 font-medium">
+                    Tidak ada data penjualan untuk tanggal ini.
                   </td>
                 </tr>
               )}

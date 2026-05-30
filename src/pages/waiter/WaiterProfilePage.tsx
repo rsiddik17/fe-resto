@@ -2,34 +2,11 @@ import ProfileHeader from "../../components/Header/ProfileHeader";
 import ProfileAvatar from "../../components/Profile/ProfileAvatar";
 import ProfileDetailsCard from "../../components/Profile/ProfileDetailsCard";
 import AccountStatusBar from "../../components/Profile/ProfileStatusBar";
-import { useAuthStore } from "../../store/useAuthStore";
-import { profileAPI } from "../../api/profile.api";
-import { useEffect, useState } from "react";
+import { useProfile } from "../../hooks/useProfile";
+
 
 const WaiterProfilePage = () => {
-  const { user, setUser } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(true);
-
-  // 1. HIT API SAAT HALAMAN DIMUAT
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setIsLoading(true);
-        const response = await profileAPI.getStaffProfile();
-
-        if (response.success && response.data) {
-          // Simpan data dari API ke Zustand agar bisa dipakai di tempat lain (seperti Header)
-          setUser(response.data);
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data profil:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, [setUser]);
+ const { user, isLoading } = useProfile();
 
   const formatRole = (role?: string) => {
     if (role === "WAITER") return "Pelayan";

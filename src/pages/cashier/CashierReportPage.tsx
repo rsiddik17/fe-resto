@@ -1,315 +1,307 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import DashboardHeader from "../../components/Header/DashboardHeader";
-import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
-import ReportSummaryCard from "../../components/Card/ReportSummaryCard";
-import ReportTable from "../../components/Table/ReportTable";
-import { Search, Download, FileSpreadsheet, Filter, ListOrdered, BadgeDollarSign, Calendar } from "lucide-react";
+import StatCardCashier from "../../components/Card/StatCardCashier";
+import ReportTable, {
+  type DailySaleItem,
+} from "../../components/Table/ReportTable";
+import { Calendar, ListOrdered, BadgeDollarSign } from "lucide-react";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import Toast from "../../components/Toast/Toast";
-
-// --- MOCK DATA LAPORAN ---
-const MOCK_REPORTS = [
-  { id: 1, date: "05 Apr 2026", totalOrders: 135, completed: 130, canceled: 2, revenue: 3009876, isoDate: "2026-04-05" },
-  { id: 2, date: "04 Apr 2026", totalOrders: 151, completed: 150, canceled: 1, revenue: 5987000, isoDate: "2026-04-04" },
-  { id: 3, date: "03 Apr 2026", totalOrders: 155, completed: 155, canceled: 0, revenue: 6507984, isoDate: "2026-04-03" },
-  { id: 4, date: "02 Apr 2026", totalOrders: 135, completed: 135, canceled: 0, revenue: 4876234, isoDate: "2026-04-02" },
-  { id: 5, date: "01 Apr 2026", totalOrders: 144, completed: 143, canceled: 1, revenue: 5001100, isoDate: "2026-04-01" },
-  { id: 6, date: "31 Mar 2026", totalOrders: 155, completed: 155, canceled: 0, revenue: 6654000, isoDate: "2026-03-31" },
-  { id: 7, date: "30 Mar 2026", totalOrders: 162, completed: 162, canceled: 0, revenue: 7875000, isoDate: "2026-03-30" },
-];
+import ExportPdfIcon from "../../components/Icon/ExportPdfIcon";
+import { useProfile } from "../../hooks/useProfile";
+import { orderAPI } from "../../api/order.api";
 
 const formatRupiah = (value: number) => {
-  return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(value);
 };
 
+type SortKey = "orderId" | "time" | "foods" | "drinks" | "bank" | "total";
+type SortDirection = "asc" | "desc";
+
 const CashierReportPage = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const { firstName, roleName } = useProfile();
 
-  // --- PERBAIKAN: Buat ref untuk memicu kalender secara paksa ---
-  const startDateRef = useRef<HTMLInputElement>(null);
-  const endDateRef = useRef<HTMLInputElement>(null);
+  // --- STATE ---
+  const today = new Date().toISOString().split("T")[0];
+  const [selectedDate, setSelectedDate] = useState(today);
+  const dateInputRef = useRef<HTMLInputElement>(null);
 
-  const [toast, setToast] = useState<{ show: boolean; message: string }>({ show: false, message: "" });
+  // STATE DATA API
+  const [salesData, setSalesData] = useState<DailySaleItem[]>([]);
+  const [summaryData, setSummaryData] = useState({
+    totalOrder: 0,
+    totalSales: 0,
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [toast, setToast] = useState<{ show: boolean; message: string }>({
+    show: false,
+    message: "",
+  });
+
+  // State Sorting (Default null, ketika diklik baru ASC)
+  const [sortConfig, setSortConfig] = useState<{
+    key: SortKey;
+    direction: SortDirection;
+  } | null>(null);
 
   const triggerToast = (message: string) => {
     setToast({ show: true, message });
-    setTimeout(() => {
-      setToast({ show: false, message: "" });
-    }, 4000); 
+    setTimeout(() => setToast({ show: false, message: "" }), 4000);
   };
 
-  // --- PERBAIKAN LOGIC FILTER 1: KHUSUS TANGGAL (Untuk Summary Card) ---
-  const dateFilteredReports = useMemo(() => {
-    return MOCK_REPORTS.filter((report) => {
-      let matchDate = true;
-      if (startDate && endDate) {
-        matchDate = report.isoDate >= startDate && report.isoDate <= endDate;
-      } else if (startDate) {
-        matchDate = report.isoDate >= startDate;
-      } else if (endDate) {
-        matchDate = report.isoDate <= endDate;
+  // --- 1. FETCH DATA API LAPORAN ---
+  const fetchReportData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await orderAPI.getReportOrders(selectedDate);
+      
+      if (response.success && response.data) {
+        // Ambil summary dari backend
+        setSummaryData({
+          totalOrder: response.data.summary?.totalOrder || 0,
+          totalSales: response.data.summary?.totalSales || 0,
+        });
+
+        // Map transaksi ke format UI (DailySaleItem)
+        const mappedTransactions: DailySaleItem[] = response.data.transactions.map((t: any) => {
+          // Bentuk string Makanan ("1x Nasi Goreng, 2x Sate")
+          const foodsString = t.order_items?.foods
+            ?.map((f: any) => `${f.quantity}x ${f.name}`)
+            .join(", ") || "";
+
+          // Bentuk string Minuman ("2x Jus Mangga")
+          const drinksString = t.order_items?.drinks
+            ?.map((d: any) => `${d.quantity}x ${d.name}`)
+            .join(", ") || "";
+
+          // Ambil jam ("14:30")
+          const timeString = new Date(t.create_at).toLocaleTimeString("id-ID", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          return {
+            id: t.order_id,
+            orderId: `#${t.order_id}`,
+            time: timeString,
+            foods: foodsString,
+            drinks: drinksString,
+            bank: t.payment_method || "-",
+            total: Number(t.grand_total_amount || 0),
+            date: selectedDate, 
+          };
+        });
+
+        setSalesData(mappedTransactions);
+      } else {
+        setSalesData([]);
+        setSummaryData({ totalOrder: 0, totalSales: 0 });
       }
-      return matchDate;
-    });
-  }, [startDate, endDate]);
-
-  // --- PERBAIKAN LOGIC FILTER 2: TANGGAL + SEARCH (Untuk Table) ---
-  const tableFilteredReports = useMemo(() => {
-    return dateFilteredReports.filter((report) => {
-      return report.date.toLowerCase().includes(searchQuery.toLowerCase());
-    });
-  }, [searchQuery, dateFilteredReports]);
-
-  // --- KALKULASI SUMMARY CARD (Sekarang pakai dateFilteredReports, BUKAN yang ada search-nya) ---
-  const totalSummaryPesanan = dateFilteredReports.reduce((acc, curr) => acc + curr.totalOrders, 0);
-  const totalSummaryPendapatan = dateFilteredReports.reduce((acc, curr) => acc + curr.revenue, 0);
-
-  // --- KONFIGURASI KOLOM TABEL (Bisa dipakai ulang) ---
-  const orderColumns = [
-    { header: "Tanggal", accessor: "date" },
-    { header: "Total Pesanan", accessor: "totalOrders" },
-    { header: "Pesanan Selesai", accessor: "completed" },
-    { header: "Pesanan Cancel", accessor: "canceled" },
-  ];
-
-  const revenueColumns = [
-    { header: "Tanggal", accessor: "date" },
-    { header: "Total Pesanan", accessor: "totalOrders" },
-    { header: "Total Pendapatan", accessor: "revenue", isCurrency: true },
-  ];
-
-  // --- HANDLER EXPORT ---
-  const handleExportPDF = () => {
-    if (tableFilteredReports.length === 0) {
-      triggerToast("Tidak ada data untuk diekspor!");
-      return;
+    } catch (error) {
+      console.error("Gagal menarik data laporan:", error);
+      triggerToast("Gagal memuat laporan. Silakan coba lagi.");
+      setSalesData([]);
+      setSummaryData({ totalOrder: 0, totalSales: 0 });
+    } finally {
+      setIsLoading(false);
     }
-
-    const doc = new jsPDF('p', 'mm', 'a4');
-    
-    // Judul Dokumen
-    doc.setFontSize(16);
-    doc.text("Laporan Kasir IT'S Resto", 14, 15);
-    
-    // Rentang Tanggal (Opsional, biar laporannya jelas)
-    doc.setFontSize(10);
-    const dateText = (startDate || endDate) 
-      ? `Periode: ${startDate || "-"} s/d ${endDate || "-"}`
-      : "Periode: Semua Waktu";
-    doc.text(dateText, 14, 22);
-
-    // --- Tabel 1: Laporan Pesanan ---
-    doc.setFontSize(12);
-    doc.text("Laporan Total Pesanan", 14, 32);
-    
-    autoTable(doc, {
-      startY: 36,
-      head: [["Tanggal", "Total Pesanan", "Pesanan Selesai", "Pesanan Cancel"]],
-      body: tableFilteredReports.map((row) => [
-        row.date,
-        row.totalOrders,
-        row.completed,
-        row.canceled,
-      ]),
-      headStyles: { fillColor: [121, 36, 142] }, // Warna ungu primary IT'S Resto
-    });
-
-    // --- Tabel 2: Laporan Pendapatan ---
-    // Mengambil titik akhir koordinat Y dari tabel pertama agar tabel kedua tidak numpuk
-    const finalY = (doc as any).lastAutoTable.finalY || 40; 
-    
-    doc.text("Laporan Total Pendapatan", 14, finalY + 12);
-    
-    autoTable(doc, {
-      startY: finalY + 16,
-      head: [["Tanggal", "Total Pesanan", "Total Pendapatan"]],
-      body: tableFilteredReports.map((row) => [
-        row.date,
-        row.totalOrders,
-        formatRupiah(row.revenue), // Pakai format rupiah untuk PDF biar cantik
-      ]),
-      headStyles: { fillColor: [121, 36, 142] },
-    });
-
-    // Download File
-    doc.save("Laporan_Kasir_ITS_Resto.pdf");
   };
 
-  const handleExportExcel = () => {
-    if (tableFilteredReports.length === 0) {
+  // Jalankan fetch tiap kali selectedDate berubah
+  useEffect(() => {
+    fetchReportData();
+  }, [selectedDate]);
+
+
+  // --- 2. LOGIC SORTING TINGKAT PAGE ---
+  const sortedSales = useMemo(() => {
+    const sortableItems = [...salesData];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === "asc" ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === "asc" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [salesData, sortConfig]);
+
+  // --- HANDLER SORTING KLIK ---
+  const handleSort = (key: SortKey) => {
+    let direction: SortDirection = "asc"; // Default kalau baru di-klik
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "asc"
+    ) {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // --- HANDLER EXPORT PDF ---
+  const handleExportPDF = () => {
+    if (sortedSales.length === 0) {
       triggerToast("Tidak ada data untuk diekspor!");
       return;
     }
 
-    // Buat Workbook Excel Baru
+    const doc = new jsPDF("l", "mm", "a4"); // Landscape karena nested header cukup memakan ruang horizontal
+    doc.setFontSize(16);
+    doc.text("Laporan Penjualan Harian IT'S Resto", 14, 15);
+
+    doc.setFontSize(11);
+    doc.text(
+      `Tanggal: ${selectedDate ? selectedDate.split("-").reverse().join("/") : "Semua"}`,
+      14,
+      22,
+    );
+
+    autoTable(doc, {
+      startY: 28,
+      head: [
+        [
+          { content: "NO", rowSpan: 2, styles: { halign: "center" } },
+          { content: "ID PESANAN", rowSpan: 2 },
+          { content: "JAM PEMESANAN", rowSpan: 2 },
+          { content: "PESANAN", colSpan: 2, styles: { halign: "center" } },
+          { content: "NAMA BANK", rowSpan: 2 },
+          { content: "TOTAL", rowSpan: 2 },
+        ],
+        ["MAKANAN", "MINUMAN"],
+      ],
+      // Ekspor array yang sudah di-Sort
+      body: sortedSales.map((row, index) => [
+        index + 1,
+        row.orderId,
+        row.time,
+        row.foods,
+        row.drinks,
+        row.bank,
+        formatRupiah(row.total),
+      ]),
+      headStyles: { fillColor: [121, 36, 142], textColor: 255 },
+      theme: "grid",
+      styles: { fontSize: 9 },
+    });
+
+    doc.save(`Laporan_Harian_${selectedDate || "Semua"}.pdf`);
+  };
+
+  // --- HANDLER EXPORT EXCEL ---
+  const handleExportExcel = () => {
+    if (sortedSales.length === 0) {
+      triggerToast("Tidak ada data untuk diekspor!");
+      return;
+    }
+
     const wb = XLSX.utils.book_new();
-
-    // --- Sheet 1: Laporan Pesanan ---
-    const pesananData = tableFilteredReports.map((row) => ({
-      "Tanggal": row.date,
-      "Total Pesanan": row.totalOrders,
-      "Pesanan Selesai": row.completed,
-      "Pesanan Cancel": row.canceled,
+    const excelData = sortedSales.map((row, index) => ({
+      NO: index + 1,
+      "ID PESANAN": row.orderId,
+      "JAM PEMESANAN": row.time,
+      MAKANAN: row.foods,
+      MINUMAN: row.drinks,
+      "NAMA BANK": row.bank,
+      TOTAL: row.total,
     }));
-    const wsPesanan = XLSX.utils.json_to_sheet(pesananData);
-    XLSX.utils.book_append_sheet(wb, wsPesanan, "Pesanan");
 
-    // --- Sheet 2: Laporan Pendapatan ---
-    const pendapatanData = tableFilteredReports.map((row) => ({
-      "Tanggal": row.date,
-      "Total Pesanan": row.totalOrders,
-      "Total Pendapatan": row.revenue, // Biarkan angka murni agar bisa di-Sum di Excel
-    }));
-    const wsPendapatan = XLSX.utils.json_to_sheet(pendapatanData);
-    XLSX.utils.book_append_sheet(wb, wsPendapatan, "Pendapatan");
-
-    // Download File
-    XLSX.writeFile(wb, "Laporan_Kasir_ITS_Resto.xlsx");
+    const ws = XLSX.utils.json_to_sheet(excelData);
+    XLSX.utils.book_append_sheet(wb, ws, "Laporan Harian");
+    XLSX.writeFile(wb, `Laporan_Harian_${selectedDate || "Semua"}.xlsx`);
   };
 
   return (
     <>
-      {/* 1. HEADER */}
-      <div className="pt-7.5 pl-8 pr-6 shrink-0">
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0 shrink-0">
         <DashboardHeader
           title="Laporan"
           subtitle="Pantau laporan pendapatan dan pesanan"
-          userName="Rina"
-          roleName="Kasir"
+          userName={firstName}
+          roleName={roleName}
         />
       </div>
 
-      {/* 2. MAIN CONTENT */}
-      <div className="pt-0 pb-6 px-8 flex flex-col flex-1">
-        
-        {/* --- ACTION BAR (Search & Export) --- */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-4">
-          <div className="relative w-full lg:w-140">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-black/50" />
-            </div>
-            <Input
-              type="text"
-              className="w-full pl-11 pr-4 py-2.5 text-[14px] rounded-sm border-gray-200 focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-black/50 shadow-sm"
-              placeholder="Cari laporan"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+      <div className="pt-1 lg:pt-1 pb-6 lg:pb-6 px-4 lg:px-8 flex flex-col flex-1">
+        {/* --- START DATE FILTER --- */}
+        <div className="mb-5">
+          <label className="block text-[14.5px] font-medium text-black mb-2">
+            Start Date
+          </label>
+          <div
+            className="bg-white border border-gray-200 rounded-md px-4 py-2 w-fit shadow-sm flex items-center gap-3 cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={() => dateInputRef.current?.showPicker()}
+          >
+            <Calendar className="w-5 h-5 text-black" strokeWidth={2} />
+            <span className="text-[14.5px] font-medium text-black min-w-25">
+              {selectedDate
+                ? selectedDate.split("-").reverse().join("/")
+                : "Pilih Tanggal"}
+            </span>
+            <input
+              type="date"
+              ref={dateInputRef}
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="sr-only"
             />
-          </div>
-
-          <div className="flex items-center gap-3 w-full lg:w-auto">
-            <Button onClick={handleExportPDF} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-primary text-white font-bold py-2.5 px-5 rounded-sm shadow-sm hover:bg-primary-hover text-sm">
-              <Download size={16} strokeWidth={2.5} /> Unduh Laporan
-            </Button>
-            <Button onClick={handleExportExcel} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-primary text-white font-bold py-2.5 px-5 rounded-sm shadow-sm hover:bg-primary-hover text-sm">
-              <FileSpreadsheet size={16} strokeWidth={2.5} /> Ekspor Excel
-            </Button>
-          </div>
-        </div>
-
-        {/* --- FILTER BAR --- */}
-        <div className="mb-4">
-          <div className="inline-flex flex-wrap items-center gap-3 bg-[#D9D9D9] px-1.5 py-1.25 rounded-sm">
-            
-            {/* Start Date */}
-            <div className="flex items-center gap-2.5 pl-1.5">
-              <span className="text-sm text-black/50">Start Date</span>
-              {/* PERBAIKAN: Tambahkan onClick untuk trigger showPicker() */}
-              <div 
-                className="bg-white rounded-sm px-3 py-2 shadow-sm flex items-center gap-2 cursor-pointer"
-                onClick={() => startDateRef.current?.showPicker()}
-              >
-                {/* Ikon di Kiri */}
-                <Calendar className="w-4 h-4 text-black/50" strokeWidth={2.5} />
-                
-                {/* Teks Tanggal Custom */}
-                <span className="text-sm text-black/50">
-                  {startDate ? startDate.split('-').reverse().join('/') : "dd/mm/yyyy"}
-                </span>
-
-                {/* Input Asli (Sembunyikan 100% dengan sr-only) */}
-                <input 
-                  type="date" 
-                  ref={startDateRef}
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="sr-only"
-                />
-              </div>
-            </div>
-
-            {/* End Date */}
-            <div className="flex items-center gap-2.5">
-              <span className="text-sm text-black/50">End Date</span>
-              {/* PERBAIKAN: Tambahkan onClick untuk trigger showPicker() */}
-              <div 
-                className="bg-white rounded-sm px-3 py-2 shadow-sm flex items-center gap-2 cursor-pointer"
-                onClick={() => endDateRef.current?.showPicker()}
-              >
-                {/* Ikon di Kiri */}
-                <Calendar className="w-4 h-4 text-black/50" strokeWidth={2.5} />
-                
-                {/* Teks Tanggal Custom */}
-                <span className="text-sm text-black/50">
-                  {endDate ? endDate.split('-').reverse().join('/') : "dd/mm/yyyy"}
-                </span>
-
-                {/* Input Asli (Sembunyikan 100% dengan sr-only) */}
-                <input 
-                  type="date" 
-                  ref={endDateRef}
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="sr-only"
-                />
-              </div>
-            </div>
-
-            <Button className="flex items-center gap-2 bg-primary text-white font-bold py-2 px-8 rounded-sm shadow-sm hover:bg-primary-hover text-[13.5px]">
-              <Filter size={16} strokeWidth={2.5} /> Filter
-            </Button>
-          </div>
-        </div>
-
-        {/* --- TAB HARIAN --- */}
-        <div className="mb-6">
-          <div className="inline-block bg-white border border-gray-200 px-6 py-2 rounded-sm text-[13.5px] text-black cursor-pointer">
-            Harian
           </div>
         </div>
 
         {/* --- SUMMARY CARDS --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
-          <ReportSummaryCard 
-            title="Total Pesanan" 
-            value={totalSummaryPesanan.toLocaleString("id-ID")} 
-            icon={<ListOrdered size={28} strokeWidth={2.5} />} 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6 w-full lg:max-w-4xl">
+          <StatCardCashier
+            title="Total Pesanan"
+            value={summaryData.totalOrder.toLocaleString("id-ID")}
+            Icon={ListOrdered}
           />
-          <ReportSummaryCard 
-            title="Total Pemasukan" 
-            value={formatRupiah(totalSummaryPendapatan)} 
-            icon={<BadgeDollarSign size={28} strokeWidth={2.5} />} 
+          <StatCardCashier
+            title="Total Pemasukan"
+            value={formatRupiah(summaryData.totalSales)}
+            Icon={BadgeDollarSign}
           />
         </div>
 
-        {/* --- TABLES --- */}
-        <ReportTable 
-          title="Laporan Total Pesanan" 
-          columns={orderColumns} 
-          data={tableFilteredReports} 
-        />
-        
-        <ReportTable 
-          title="Laporan Total Pendapatan" 
-          columns={revenueColumns} 
-          data={tableFilteredReports} 
-        />
+        {/* --- SECTION TITLE & EXPORT BUTTONS --- */}
+        <h2 className="text-xl md:text-[22px] font-bold mb-4">
+          Laporan Penjualan Harian
+        </h2>
+        <div className="flex flex-col lg:flex-row justify-end items-start lg:items-center gap-4 mb-4">
+          <div className="flex items-center gap-3 w-full lg:w-auto">
+            <Button
+              onClick={handleExportPDF}
+              className="flex-1 lg:flex-none flex items-center justify-center gap-1 bg-primary text-white font-semibold py-2.25 px-6 rounded-sm shadow-sm hover:bg-primary-hover text-[13.5px] md:text-[14px] lg:text-[14px]"
+            >
+              <ExportPdfIcon className="w-6 h-6 text-white" /> Ekspor PDF
+            </Button>
+            <Button
+              onClick={handleExportExcel}
+              className="flex-1 lg:flex-none flex items-center justify-center gap-1 bg-primary text-white font-semibold py-2.25 px-6 rounded-sm shadow-sm hover:bg-primary-hover text-[13.5px] md:text-[14px] lg:text-[14px]"
+            >
+              <ExportPdfIcon className="w-6 h-6 text-white" /> Ekspor Excel
+            </Button>
+          </div>
+        </div>
 
+        {/* --- CUSTOM NESTED TABLE --- */}
+        <ReportTable
+          data={sortedSales}
+          sortConfig={sortConfig}
+          onSort={handleSort}
+          isLoading={isLoading}
+        />
       </div>
 
       <Toast show={toast.show} message={toast.message} />

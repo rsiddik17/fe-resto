@@ -45,7 +45,7 @@ const NotificationModal = ({
     >
       <div
         // Ukuran Fixed sesuai instruksi: w = 503px, h = 612px
-        className="bg-white rounded-md mx-4 md:mx-0 p-4.5 shadow-sm flex flex-col relative animate-in zoom-in-95 duration-200 w-100 h-126.5 md:w-100 md:h-121"
+        className="bg-white rounded-md mx-4 md:mx-0 px-2.5 py-4.5 md:p-4 shadow-sm flex flex-col relative animate-in zoom-in-95 duration-200 w-100 h-121"
         onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup saat area dalam diklik
       >
         {/* Header Modal - 18px Semibold */}

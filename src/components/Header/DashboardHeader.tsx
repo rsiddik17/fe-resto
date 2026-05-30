@@ -13,7 +13,7 @@ interface DashboardHeaderProps {
   title: string;
   subtitle?: string;
   userName?: string;
-  roleName?: string; 
+  roleName?: string;
   showBack?: boolean;
   onBack?: () => void;
 }
@@ -40,37 +40,56 @@ const DashboardHeader = ({
 
         if (response.success && response.data) {
           // Mapping data dari backend ke format UI
-          const formattedNotifs: NotificationItem[] = response.data.map((item: any) => {
-            const timeString = new Date(item.created_at).toLocaleTimeString(
+          const formattedNotifs: NotificationItem[] = response.data.map(
+            (item: any) => {
+              const timeString = new Date(item.created_at).toLocaleTimeString(
                 "id-ID",
                 {
                   hour: "2-digit",
                   minute: "2-digit",
-                }
+                },
               );
-            
-            let notifTitle = item.tittle;
-            if (!notifTitle) {
-                 const role = roleName?.toLowerCase();
-                 if (role === "kasir" || role === "cashier") {
-                   notifTitle = "Pesanan Masuk";
-                 } else {
-                   notifTitle = "Pesanan Siap Antar"; // Default untuk Waiter/Kitchen
-                 }
+
+              let notifTitle = item.title;
+              if (!notifTitle) {
+                const role = roleName?.toLowerCase();
+                if (role === "kasir" || role === "cashier") {
+                  notifTitle = "Validasi Pembayaran";
+                } else if (role === "dapur" || role === "kitchen") {
+                  notifTitle = "Pesanan Masuk";
+                } else {
+                  notifTitle = "Pesanan Siap Diantar"; // Default untuk Waiter/Kitchen
+                }
               }
 
-            return {
+              return {
                 id: item.id,
                 title: notifTitle, // Menambahkan Title dinamis
-                table: item.table_number
-                  ? `Meja ${item.table_number}`
-                  : "Pemberitahuan",
+                table: (() => {
+                  if (!item.table_number) return "Pemberitahuan";
+
+                  // Cek apakah string mengandung kata takeaway atau tanpa meja
+                  const isTakeaway =
+                    item.table_number.toLowerCase().includes("takeaway") ||
+                    item.table_number.toLowerCase().includes("tanpa");
+
+                  if (isTakeaway) {
+                    return item.table_number;
+                  } else {
+                    // Ekstrak hanya angka (contoh: "M01_i" -> "01")
+                    const numOnly = item.table_number.replace(/\D/g, "");
+                    return numOnly
+                      ? `Meja ${numOnly}`
+                      : `Meja ${item.table_number}`;
+                  }
+                })(),
                 time: timeString,
                 orderId: item.order_id ? `#${item.order_id}` : "-",
                 items: item.message,
                 isRead: item.is_read,
               };
-          });
+            },
+          );
 
           setNotifs(formattedNotifs);
         }
@@ -82,8 +101,8 @@ const DashboardHeader = ({
     // Panggil saat komponen dirender pertama kali
     fetchNotifications();
 
-    // Opsional: Lakukan polling setiap 15 detik untuk mendapat notif baru secara real-time
-    const intervalId = setInterval(fetchNotifications, 15000);
+    // Opsional: Lakukan polling setiap 5 detik untuk mendapat notif baru secara real-time
+    const intervalId = setInterval(fetchNotifications, 5000);
     return () => clearInterval(intervalId);
   }, [roleName]);
 
@@ -115,8 +134,8 @@ const DashboardHeader = ({
   const handleProfileClick = () => {
     // Tambahkan logika pengecekan untuk Dapur
     const role = roleName?.toLowerCase();
-    if (role === "cashier") navigate("/cashier/profile");
-    else if (role === "kitchen") navigate("/kitchen/profile");
+    if (role === "kasir") navigate("/cashier/profile");
+    else if (role === "dapur") navigate("/kitchen/profile");
     else navigate("/waiter/profile");
   };
 

@@ -12,7 +12,7 @@ const FormMenuImage = ({ previewUrl, onChange, readonly = false, error }: MenuIm
     <div className="flex flex-col w-full h-full">
       <h3 className="text-sm text-black mb-2">Foto Menu</h3>
       
-      <label className={`relative flex flex-col items-center justify-center w-full aspect-square md:aspect-auto md:h-80 rounded-sm overflow-hidden border transition-colors ${readonly ? 'cursor-default bg-gray-100 border-transparent' : 'cursor-pointer bg-[#D9D9D9] hover:bg-[#D9D9D9]/80'} ${error ? 'border-red-500' : 'border-transparent'}`}>
+      <label className={`relative flex flex-col items-center justify-center w-full aspect-square md:aspect-auto md:h-80 rounded-sm overflow-hidden border transition-colors ${readonly ? 'cursor-default bg-gray-100 border-transparent' : 'cursor-pointer bg-[#D9D9D9]/25 hover:bg-[#D9D9D9]/50'} ${error ? 'border-red-500' : 'border-transparent'}`}>
         
         {!readonly && (
           <input 

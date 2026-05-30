@@ -19,19 +19,22 @@ const VerifyOtpPage = () => {
     </p>
   );
 
-  const handleOtpSuccess = () => {
+  const handleOtpSuccess = (token?: string) => {
     if (type === "register") {
-      // Jika dari daftar, kembali ke login
-      navigate("/"); 
+      // Jika registrasi, setelah verifikasi berhasil kembali ke login
+      navigate("/", { replace: true });
+    } else if (type === "forgot-password" && token) {
+      // Jika dari lupa sandi, teruskan ke reset-password dengan JWT Token di URL
+      navigate(`/reset-password?token=${token}`, { replace: true });
     } else {
-      // Jika dari lupa password, ke buat password baru
-      navigate(`/reset-password?email=${encodeURIComponent(email)}`);
+      // Fallback
+      navigate("/");
     }
   };
 
   return (
     <AuthLayouts title="Masukan Kode OTP" description={description}>
-      <FormOtp onSuccess={handleOtpSuccess}/>
+      <FormOtp onSuccess={handleOtpSuccess} />
     </AuthLayouts>
   );
 };

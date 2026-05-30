@@ -38,13 +38,13 @@ const OrderActionConfirmModal = ({ isOpen, onClose, onConfirm, orderId, actionTy
         <div className="flex gap-3 px-5 mb-1">
           <Button 
             onClick={onClose} 
-            className="flex-1 py-2.5 bg-[#DEDED9] hover:bg-gray/40 text-white text-[13px] font-bold rounded-xs"
+            className="flex-1 py-2.5 bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 text-[13px] md:text-[13px] lg:text-[13px] font-bold rounded-xs"
           >
             Batal
           </Button>
           <Button 
             onClick={onConfirm} 
-            className="flex-1 py-2.5 bg-primary hover:bg-primary-hover text-white text-[13px] font-bold rounded-xs"
+            className="flex-1 py-2.5 bg-primary hover:bg-primary-hover text-white text-[13px] md:text-[13px] lg:text-[13px] font-bold rounded-xs"
           >
             {confirmText}
           </Button>

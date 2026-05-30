@@ -13,6 +13,7 @@ import Toast from "../../components/Toast/Toast"; // <-- TAMBAHAN IMPORT TOAST
 
 // IMPORT API
 import { menuAPI } from "../../api/menu.api";
+import { useProfile } from "../../hooks/useProfile";
 
 const KitchenMenuStockPage = () => {
   const { data: menus = [], isLoading, isError, refetch } = useMenus();
@@ -34,7 +35,11 @@ const KitchenMenuStockPage = () => {
   const [successMessage, setSuccessMessage] = useState("");
 
   // --- STATE TOAST ---
-  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: "success" | "error";
+  }>({
     show: false,
     message: "",
     type: "error",
@@ -47,22 +52,35 @@ const KitchenMenuStockPage = () => {
 
   const filteredMenus = useMemo(() => {
     return menus.filter((menu) => {
-      const menuStatus = menu.stock !== undefined && menu.stock <= 0 ? "Habis" : "Tersedia";
-      const matchStatus = statusFilter === "Semua" || menuStatus === statusFilter;
-      const matchCategory = categoryFilter === "Semua" || menu.category.toLowerCase() === categoryFilter.toLowerCase();
-      const matchSearch = menu.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const menuStatus =
+        menu.stock !== undefined && menu.stock <= 0 ? "Habis" : "Tersedia";
+      const matchStatus =
+        statusFilter === "Semua" || menuStatus === statusFilter;
+      const matchCategory =
+        categoryFilter === "Semua" ||
+        menu.category.toLowerCase() === categoryFilter.toLowerCase();
+      const matchSearch = menu.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
       return matchStatus && matchCategory && matchSearch;
     });
   }, [menus, statusFilter, categoryFilter, searchQuery]);
 
-  useEffect(() => { setCurrentPage(1); }, [searchQuery, statusFilter, categoryFilter]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, categoryFilter]);
 
   const totalItems = filteredMenus.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-  useEffect(() => { if (currentPage > totalPages) setCurrentPage(totalPages); }, [totalPages, currentPage]);
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [totalPages, currentPage]);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentMenus = filteredMenus.slice(startIndex, startIndex + itemsPerPage);
+  const currentMenus = filteredMenus.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   const handleTriggerEdit = (menu: MenuItemData) => {
     setSelectedMenu(menu);
@@ -75,36 +93,45 @@ const KitchenMenuStockPage = () => {
 
     try {
       setIsSavingEdit(true);
-      
+
       const formData = new FormData();
       formData.append("name", selectedMenu.name);
-      formData.append("stock", String(newStock)); 
+      formData.append("stock", String(newStock));
 
       await menuAPI.updateMenu(selectedMenu.id, formData);
 
       if (refetch) refetch();
 
       setIsEditModalOpen(false);
-      
+
       // Buka modal sukses besar (sesuai desain Figma)
       setSuccessMessage(`${selectedMenu.name} berhasil diperbarui`);
       setIsSuccessModalOpen(true);
-
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || "Terjadi kesalahan saat mengupdate stok.";
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Terjadi kesalahan saat mengupdate stok.";
       triggerToast(`Gagal: ${errorMsg}`, "error");
     } finally {
       setIsSavingEdit(false);
     }
   };
 
+  const { firstName, roleName } = useProfile();
+
   return (
     <>
-      <div className="pt-7.5 pl-8 pr-6">
-        <DashboardHeader title="Manajemen Menu & Stok" subtitle="Kelola daftar menu serta ketersediaan stok" userName="Mile" roleName="Dapur" />
+      <div className="pt-16 lg:pt-7 lg:pl-8 lg:pr-6 mx-4 lg:mx-0">
+        <DashboardHeader
+          title="Manajemen Menu & Stok"
+          subtitle="Kelola daftar menu serta ketersediaan stok"
+          userName={firstName}
+          roleName={roleName}
+        />
       </div>
 
-      <div className="pt-0 pb-6 px-8">
+      <div className="pt-1 lg:pt-1 pb-6 lg:pb-6 px-4 lg:px-8">
         <div className="flex items-center gap-3 mb-4">
           <div className="bg-white border border-gray-100 text-primary px-6 py-2 rounded-xs shadow-sm text-[13px]">
             Total Menu: {menus.length}
@@ -112,33 +139,54 @@ const KitchenMenuStockPage = () => {
         </div>
 
         <div className="mb-3">
-          <MenuFilterBar searchQuery={searchQuery} onSearchChange={setSearchQuery} statusFilter={statusFilter} onStatusChange={setStatusFilter} categoryFilter={categoryFilter} onCategoryChange={setCategoryFilter} />
+          <MenuFilterBar
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            statusFilter={statusFilter}
+            onStatusChange={setStatusFilter}
+            categoryFilter={categoryFilter}
+            onCategoryChange={setCategoryFilter}
+          />
         </div>
 
         <div className="rounded-sm shadow-sm mb-4">
-          <KitchenMenuTable menus={currentMenus} isLoading={isLoading} isError={isError} onTriggerEdit={handleTriggerEdit} />
+          <KitchenMenuTable
+            menus={currentMenus}
+            isLoading={isLoading}
+            isError={isError}
+            onTriggerEdit={handleTriggerEdit}
+          />
         </div>
 
         <div className="flex items-center gap-1.5">
-          <TablePagination totalItems={totalItems} itemsPerPage={itemsPerPage} currentPage={currentPage} onPageChange={setCurrentPage} />
+          <TablePagination
+            totalItems={totalItems}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
 
       {/* RENDER MODAL EDIT */}
-      <EditStockModal 
-        isOpen={isEditModalOpen} 
-        onClose={() => setIsEditModalOpen(false)} 
-        onSave={handleSaveStock} 
-        menu={selectedMenu ? { name: selectedMenu.name, stock: selectedMenu.stock || 0 } : null} 
+      <EditStockModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSave={handleSaveStock}
+        menu={
+          selectedMenu
+            ? { name: selectedMenu.name, stock: selectedMenu.stock || 0 }
+            : null
+        }
         isLoading={isSavingEdit}
       />
 
       {/* RENDER MODAL SUCCESS (Besar di tengah) */}
-      <SuccessActionModal 
-        isOpen={isSuccessModalOpen} 
-        onClose={() => setIsSuccessModalOpen(false)} 
-        title="Stok menu berhasil diedit!" 
-        message={successMessage} 
+      <SuccessActionModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+        title="Stok menu berhasil diedit!"
+        message={successMessage}
       />
 
       {/* RENDER TOAST (Pojok kanan atas, hanya muncul kalau error/kebutuhan lain) */}
