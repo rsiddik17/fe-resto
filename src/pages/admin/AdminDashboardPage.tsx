@@ -3,6 +3,8 @@ import AdminSidebar from "../../components/AdminComponents/AdminSidebar";
 import AdminHeader from "../../components/AdminComponents/AdminHeader";
 import AdminStatCard from "../../components/AdminComponents/AdminStatCard";
 import DashboardChart from "../../components/AdminComponents/DashboardChart";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useMenus } from "../../hooks/useMenus";
 import {
   ClipboardList,
@@ -46,6 +48,8 @@ const AdminDashboardPage = () => {
 
   const startDateRef = useRef(null);
   const endDateRef = useRef(null);
+  
+
 
   const handleUpdateFilter = () => {
     const formatKey = `${startDate}_${endDate}`;
@@ -102,44 +106,26 @@ const AdminDashboardPage = () => {
               <span className="text-[11px] md:text-[13px] text-gray-500 font-medium">
                 Start Date
               </span>
-              <div
-                className="bg-white rounded-xs border border-gray-200 px-2 md:px-3 py-1.5 shadow-md flex items-center gap-1 md:gap-2 flex-1 md:flex-none cursor-pointer"
-                onClick={() => startDateRef.current?.showPicker()}
-              >
-                <Calendar size={12} className="text-gray-400" />
-                <span className="text-[11px] md:text-[13px] text-gray-700 font-medium">
-                  {startDate.split("-").reverse().join("/")}
-                </span>
-                <input
-                  type="date"
-                  ref={startDateRef}
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="sr-only"
-                />
-              </div>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="bg-white rounded-xs border border-gray-200 px-2 md:px-3 py-1.5 shadow-md text-[11px] md:text-[13px] text-gray-700 font-medium cursor-pointer"
+                style={{ minWidth: "130px" }}
+              />
             </div>
 
             <div className="flex items-center gap-2 flex-1 md:flex-none">
               <span className="text-[11px] md:text-[13px] text-gray-500 font-medium">
                 End Date
               </span>
-              <div
-                className="bg-white rounded-xs border border-gray-200 px-2 md:px-3 py-1.5 shadow-md flex items-center gap-1 md:gap-2 flex-1 md:flex-none cursor-pointer"
-                onClick={() => endDateRef.current?.showPicker()}
-              >
-                <Calendar size={12} className="text-gray-400" />
-                <span className="text-[11px] md:text-[13px] text-gray-700 font-medium">
-                  {endDate.split("-").reverse().join("/")}
-                </span>
-                <input
-                  type="date"
-                  ref={endDateRef}
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="sr-only"
-                />
-              </div>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="bg-white rounded-xs border border-gray-200 px-2 md:px-3 py-1.5 shadow-md text-[11px] md:text-[13px] text-gray-700 font-medium cursor-pointer"
+                style={{ minWidth: "130px" }}
+              />
             </div>
 
             <button

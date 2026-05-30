@@ -29,6 +29,7 @@ const DeleteConfirmationModal = ({
       {/* Container utama dengan rounded-xs sesuai request-mu */}
       <div className="bg-white rounded-xs p-8 max-w-sm w-full text-center shadow-2xl animate-in zoom-in duration-200">
         
+        
         {/* Icon Warning dengan warna red-600 */}
         <div className="flex justify-center mb-4">
           <WarningIcon size={40} className="text-red-600" />
@@ -48,7 +49,7 @@ const DeleteConfirmationModal = ({
           {/* Tombol Batal[cite: 6] */}
           <button
             onClick={onClose}
-            className="flex-1 py-3 px-4 bg-gray-200 text-gray-700 rounded-xs hover:bg-gray-300 transition-colors font-bold"
+            className="flex-1  bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 text-sm md:text-sm lg:text-sm  py-2.5 rounded-xs transition-colors cursor-pointer"
           >
             Batal
           </button>
@@ -56,7 +57,7 @@ const DeleteConfirmationModal = ({
           {/* Tombol Konfirmasi Hapus dengan warna red-600[cite: 6] */}
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 px-4 bg-red-600 text-white rounded-xs hover:bg-red-700 transition-colors font-bold shadow-lg shadow-red-200"
+            className="flex-1 py-3 px-4 bg-red-600 text-white rounded-xs hover:bg-red-700 transition-colors  "
           >
             Ya, Hapus
           </button>

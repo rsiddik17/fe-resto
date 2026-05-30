@@ -119,7 +119,7 @@ export default function TabelPesananBulanan({
       {/* DESKTOP TABLE */}
       <div className="hidden md:block border border-gray-150 rounded-xs overflow-hidden bg-white">
         <div className="w-full overflow-x-auto">
-          <table className="w-full min-w-[600px] text-left text-[12.5px]">
+          <table className="w-full min-w-125 text-left text-[12.5px]">
             <thead className="bg-gray-100 text-gray-500 font-bold uppercase text-[11px]">
               <tr>
                 <th className="py-3 text-center w-14">NO</th>

@@ -42,7 +42,7 @@ const DeleteConfirmationModal = ({
           {/* Tombol Batal[cite: 6] */}
           <button
             onClick={onClose}
-            className="flex-1 py-3 px-4 bg-gray-200 text-gray-700 rounded-xs hover:bg-gray-300 transition-colors font-bold"
+            className="flex-1 py-3 px-4 bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 rounded-xs"
           >
             Batal
           </button>
@@ -50,7 +50,7 @@ const DeleteConfirmationModal = ({
           {/* Tombol Konfirmasi Hapus dengan warna red-600[cite: 6] */}
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 px-4 bg-red-600 text-white rounded-xs hover:bg-red-700 transition-colors font-bold shadow-lg shadow-red-200"
+            className="flex-1 py-3 px-4 bg-red-600 text-white rounded-xs hover:bg-red-700 transition-colors  "
           >
             Ya, Hapus
           </button>

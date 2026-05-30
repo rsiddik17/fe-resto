@@ -27,13 +27,13 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }: LogoutModalProps) => {
         <div className="flex gap-4">
           <button 
             onClick={onClose} 
-            className="flex-1 py-3 bg-[#E5E7EB] text-gray-500 font-bold rounded-xs hover:bg-gray-200 transition-all active:scale-95"
+            className="flex-1  bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 text-sm md:text-sm lg:text-sm  py-2.5 rounded-xs transition-colors cursor-pointer"
           >
             Batal
           </button>
           <button 
             onClick={onConfirm} 
-            className="flex-1 py-3 bg-primary text-white font-bold rounded-xs shadow-lg shadow-primary/20 transition-all active:scale-95"
+            className="flex-1 bg-primary text-white text-sm md:text-sm lg:text-sm py-2.5 rounded-xs hover:bg-primary-hover transition-colors shadow-sm cursor-pointer"
           >
             Keluar
           </button>

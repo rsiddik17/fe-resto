@@ -125,7 +125,7 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
           <button
             type="button"
             onClick={onCancel}
-            className="px-10 py-3 bg-white border-[1.5px] border-primary text-primary font-bold  rounded-xs active:scale-95 transition-transform text-sm"
+            className="px-10 py-3 bg-white border-[1.5px] border-primary text-black font-bold  rounded-xs active:scale-95 transition-transform text-sm"
           >
             Batal
           </button>

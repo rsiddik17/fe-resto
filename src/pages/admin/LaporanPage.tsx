@@ -231,7 +231,7 @@ const LaporanPage = () => {
     handlePrev: () => void,
     handleNext: () => void,
   ) => (
-    <div className="bg-white-50/70 border border-gray-200 rounded-2xl p-4 w-full sm:w-64 h-[260px] flex flex-col">
+    <div className="bg-white-50/70 border border-gray-200 rounded-2xl p-4 w-full sm:w-64 h-65 flex flex-col">
       <div className="flex items-center justify-between font-extrabold text-[13px] text-black mb-3">
         <ChevronLeft
           size={14}

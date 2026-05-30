@@ -63,7 +63,7 @@ const UbahSandiPage = () => {
                 <div className="relative w-full">
                   <input
                     type={showLama ? "text" : "password"} required placeholder="Min 8 karakter" value={sandiLama} onChange={(e) => setSandiLama(e.target.value)}
-                    className="w-full bg-[#F3F4F6]/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
+                    className="w-full bg-white/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
                   />
                   <button type="button" onClick={() => setShowLama(!showLama)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer">
                     {showLama ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -77,7 +77,7 @@ const UbahSandiPage = () => {
                 <div className="relative w-full">
                   <input
                     type={showBaru ? "text" : "password"} required placeholder="Min 8 karakter" value={sandiBaru} onChange={(e) => setSandiBaru(e.target.value)}
-                    className="w-full bg-[#F3F4F6]/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
+                    className="w-full bg-white/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
                   />
                   <button type="button" onClick={() => setShowBaru(!showBaru)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer">
                     {showBaru ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -91,7 +91,7 @@ const UbahSandiPage = () => {
                 <div className="relative w-full">
                   <input
                     type={showKonfirmasi ? "text" : "password"} required placeholder="Konfirmasi Kata Sandi" value={konfirmasiSandi} onChange={(e) => setKonfirmasiSandi(e.target.value)}
-                    className="w-full bg-[#F3F4F6]/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
+                    className="w-full bg-white/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
                   />
                   <button type="button" onClick={() => setShowKonfirmasi(!showKonfirmasi)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer">
                     {showKonfirmasi ? <EyeOff size={16} /> : <Eye size={16} />}
