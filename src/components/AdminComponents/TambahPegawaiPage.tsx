@@ -175,13 +175,13 @@ const TambahPegawaiPage = () => {
                 <button
                   type="button"
                   onClick={() => navigate("/admin/manajemen-pegawai")}
-                  className="w-full sm:w-auto px-5 py-2.5 text-[13.5px] font-semibold text-black rounded-xs border border-primary order-2 sm:order-1"
+                  className="w-full sm:w-auto px-5 py-2.5 text-[13.5px] font-bold text-black rounded-xs border border-primary order-2 sm:order-1"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="w-full sm:w-auto px-5 py-2.5 text-[13.5px] font-semibold bg-primary hover:bg-primary/90 text-white rounded-xs transition shadow-md cursor-pointer order-1 sm:order-2"
+                  className="w-full sm:w-auto px-5 py-2.5 text-[13.5px] font-bold bg-primary hover:bg-primary/90 text-white rounded-xs transition shadow-md cursor-pointer order-1 sm:order-2"
                 >
                   Simpan User
                 </button>
