@@ -3,8 +3,8 @@ import { useNavigate } from "react-router";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import AdminSidebar from "../../components/AdminComponents/AdminSidebar";
 import AdminHeader from "../../components/AdminComponents/AdminHeader";
-import SelectDropdown from "../AdminComponents/SelectDropDown";
-
+import SelectDropdown from "../AdminComponents/SelectDropdown";
+import { staffAPI } from "../../api/staff.api"; // Pastikan path-nya benar
 const TambahPegawaiPage = () => {
   const navigate = useNavigate();
   const [nama, setNama] = useState("");
@@ -14,16 +14,60 @@ const TambahPegawaiPage = () => {
   const [jenisKelamin, setJenisKelamin] = useState("");
   const [role, setRole] = useState("Pilih Role");
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<{
+    password?: string;
+    noTelepon?: string;
+  }>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (role === "Pilih Role") {
       alert("Silakan pilih Role Akses terlebih dahulu!");
       return;
     }
-    // Logika simpan data ke database / state management
-    console.log({ nama, noTelepon, jenisKelamin, role, email, password });
-    navigate("/admin/manajemen-pegawai");
+
+    const roleMapping: { [key: string]: string } = {
+      Kasir: "CASHIER",
+      Dapur: "KITCHEN",
+      Pelayan: "WAITER",
+      Kiosk: "KIOSK_SYSTEM",
+      "Admin Role": "ADMIN",
+    };
+
+    const newErrors: { password?: string; noTelepon?: string } = {};
+
+    if (password.length < 8) {
+      newErrors.password = "Password minimal harus 8 karakter";
+    }
+    if (noTelepon.length < 10) {
+      newErrors.noTelepon = "Nomor telepon minimal 10 digit";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return; // Berhenti di sini, tidak lanjut ke API
+    }
+    setErrors({});
+
+    const payload = {
+      email: email,
+      password: password,
+      fullname: nama,
+      role: roleMapping[role] || role,
+      gender: jenisKelamin === "Laki-Laki" ? "MALE" : "FEMALE",
+      phone_number: noTelepon,
+    };
+
+    try {
+      await staffAPI.createStaff(payload);
+     
+      navigate("/admin/manajemen-pegawai", {
+        state: { showSuccessToast: true, refresh: true },
+      });
+    } catch (error) {
+      console.error("Gagal menambah pegawai:", error);
+      alert("Gagal menambahkan pegawai. Cek koneksi atau data input!");
+    }
   };
 
   return (
@@ -73,12 +117,20 @@ const TambahPegawaiPage = () => {
                     required
                     placeholder="08xxxxxx"
                     value={noTelepon}
-                    onChange={(e) => setNoTelepon(e.target.value)}
+                    onChange={(e) => {
+                      setNoTelepon(e.target.value);
+                      if (errors.noTelepon)
+                        setErrors({ ...errors, noTelepon: "" });
+                    }}
                     className="w-full bg-white/60 border border-gray-200 rounded-xs px-4 py-3 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
                   />
                 </div>
               </div>
-
+              {errors.noTelepon && (
+                <p className="text-red-500 text-[10px] font-bold mt-1">
+                  {errors.noTelepon}
+                </p>
+              )}
               {/* Baris 2: Jenis Kelamin & Role Akses */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-2">
@@ -156,9 +208,18 @@ const TambahPegawaiPage = () => {
                     required
                     placeholder="Masukkan kata sandi"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (errors.password)
+                        setErrors({ ...errors, password: "" }); // Hilangkan error saat user mengetik
+                    }}
                     className="w-full bg-white/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
                   />
+                  {errors.password && (
+                    <p className="text-red-500 text-[10px] font-bold mt-1">
+                      {errors.password}
+                    </p>
+                  )}
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}

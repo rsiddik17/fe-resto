@@ -1,22 +1,72 @@
 import UserIconSingle from "../Icon/UserIconSingle";
 import { useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import { staffAPI } from "../../api/staff.api";
+
 interface AdminHeaderProps {
   title?: string;
   subtitle?: string;
-  adminName?: string;
-  roleName?: string;
+  
+}
+
+interface ProfileData {
+  fullname: string;
+  role: string;
 }
 
 const AdminHeader = ({
   title = "Dashboard Admin",
   subtitle = "Pantau data sistem dan aktivitas pengguna",
-  adminName = "Citra",
-  roleName = "Admin Role",
 }: AdminHeaderProps) => {
   const navigate = useNavigate();
-  const handleProfileClick = () => {
-    navigate("/admin/profil"); // 👈 ARAHKAN KE HALAMAN PROFIL
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await staffAPI.getProfile();
+        const profileData = response.data || response;
+        setProfile({
+          fullname: profileData.fullname || "Admin",
+          role: profileData.role || "ADMIN",
+        });
+      } catch (error) {
+        console.error("Gagal ambil profil:", error);
+        // Fallback jika gagal
+        setProfile({ fullname: "Admin", role: "ADMIN" });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  // Mapping role ke tampilan yang lebih rapi
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case "ADMIN":
+        return "Admin Role";
+      case "CASHIER":
+        return "Kasir";
+      case "KITCHEN":
+        return "Dapur";
+      case "WAITER":
+        return "Pelayan";
+      case "KIOSK_SYSTEM":
+        return "Kiosk Sistem";
+      default:
+        return role || "Admin Role";
+    }
   };
+
+  const handleProfileClick = () => {
+    navigate("/admin/profil");
+  };
+
+  // Ambil nama depan untuk ditampilkan
+  const displayName = profile?.fullname?.split(" ")[0] || "Admin";
+  const displayRole = getRoleLabel(profile?.role || "ADMIN");
   return (
     <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
       {/* Bagian Kiri: Judul & Subjudul */}
@@ -32,9 +82,13 @@ const AdminHeader = ({
         onClick={handleProfileClick} // 👈 TAMBAHKAN ONCLICK
         className="flex items-center gap-2 bg-white border border-gray-200 rounded-[18px] pl-4 pr-1.5 py-1.5 shadow-sm w-full md:w-auto justify-between md:justify-end cursor-pointer hover:bg-gray-50 transition-colors"
       >
-        <span className="text-[13px] md:text-[14px]  text-gray-700">
-          {adminName}/{roleName}
-        </span>
+        {loading ? (
+          <span className="text-[13px] text-gray-500">Loading...</span>
+        ) : (
+          <span className="text-[13px] md:text-[14px] text-gray-700">
+            {displayName}/{displayRole}
+          </span>
+        )}
         <div className="w-8 h-8 md:w-8.5 md:h-8.5 bg-primary rounded-full flex items-center justify-center shadow-sm shrink-0">
           <UserIconSingle className="text-white w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={2.5} />
         </div>

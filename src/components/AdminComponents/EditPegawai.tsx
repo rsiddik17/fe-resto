@@ -1,77 +1,27 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useLocation } from "react-router";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import AdminSidebar from "../../components/AdminComponents/AdminSidebar";
 import AdminHeader from "../../components/AdminComponents/AdminHeader";
 import ConfirAlamat from "../ConfirmationModal/ConfirmationModal";
-import SelectDropdown from "../AdminComponents/SelectDropDown";
-// Data master disinkronkan untuk dicocokkan berdasarkan ID URL
-const DATA_PEGAWAI_MASTER = [
-  {
-    id: 1,
-    nama: "Rina Lusiana",
-    email: "kasiritsresto@gmail.com",
-    noTelepon: "081409807898",
-    role: "Kasir",
-  },
-  {
-    id: 2,
-    nama: "Mile Putri",
-    email: "dapuritsresto@gmail.com",
-    noTelepon: "081460877839",
-    role: "Dapur",
-  },
-  {
-    id: 3,
-    nama: "KiosK Its Resto",
-    email: "kiosksistem@gmail.com",
-    noTelepon: "081460877839",
-    role: "Kiosk Sistem",
-  },
-  {
-    id: 4,
-    nama: "Mila Dewita",
-    email: "pelayanitsresto@gmail.com",
-    noTelepon: "081432145678",
-    role: "Pelayan",
-  },
-  {
-    id: 5,
-    nama: "Roni Julian",
-    email: "kasiritsresto@gmail.com",
-    noTelepon: "081478654760",
-    role: "Kasir",
-  },
-  {
-    id: 6,
-    nama: "Mike Febrian",
-    email: "dapuritsresto@gmail.com",
-    noTelepon: "081489087657",
-    role: "Dapur",
-  },
-  {
-    id: 7,
-    nama: "Putra Pratama",
-    email: "pelayanitsresto@gmail.com",
-    noTelepon: "081400876754",
-    role: "Pelayan",
-  },
-  {
-    id: 8,
-    nama: "Citra Sania",
-    email: "adminitsresto@gmail.com",
-    noTelepon: "081456876723",
-    role: "Admin Role",
-  },
-];
+import SelectDropdown from "../AdminComponents/SelectDropdown";
+import { staffAPI } from "../../api/staff.api";
+
+const ROLE_MAPPING: { [key: string]: string } = {
+  Kasir: "CASHIER",
+  Dapur: "KITCHEN",
+  Pelayan: "WAITER",
+  Kiosk: "KIOSK_SYSTEM",
+  "Kiosk Sistem": "KIOSK_SYSTEM",
+  "Admin Role": "ADMIN",
+};
 
 const EditPegawaiPage = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // ✅ Menangkap ID orang yang mau diedit dari rute url browser
+  const { id } = useParams();
+  const location = useLocation();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-
-  // Taruh di dalam komponen, setelah semua useState
-
+  // const [loading] = useState(true);
   // Form State dinamis
   const [nama, setNama] = useState("");
   const [noTelepon, setNoTelepon] = useState("");
@@ -81,27 +31,60 @@ const EditPegawaiPage = () => {
   const [password, setPassword] = useState("itresto12345");
   const [showPassword, setShowPassword] = useState(false);
 
-  // ✅ Otomatis cari dan set data form sesuai ID pegawai saat halaman dibuka
   useEffect(() => {
-    if (id) {
-      const target = DATA_PEGAWAI_MASTER.find((p) => p.id === parseInt(id));
-      if (target) {
-        setNama(target.nama);
-        setNoTelepon(target.noTelepon);
-        setRole(target.role === "Kiosk Sistem" ? "Kiosk" : target.role);
-        setEmail(target.email);
+    // Ambil data dari location.state
+    const pegawaiData = location.state?.pegawaiData;
+    if (pegawaiData) {
+      // Isi form dengan data dari state
+      setNama(pegawaiData.nama || "");
+      setEmail(pegawaiData.email || "");
+      setNoTelepon(pegawaiData.noTelepon || "");
+      setRole(pegawaiData.role || "Dapur");
+      setJenisKelamin(pegawaiData.jenisKelamin || "Perempuan");
+    } else {
+      // Fallback: coba ambil dari localStorage (untuk mobile yang mungkin masih pakai)
+      const storedData = localStorage.getItem("editPegawaiData");
+      if (storedData) {
+        const data = JSON.parse(storedData);
+        setNama(data.nama || "");
+        setEmail(data.email || "");
+        setNoTelepon(data.noTelepon || "");
+        setRole(data.role || "Dapur");
+        setJenisKelamin(data.jenisKelamin || "Perempuan");
+        // Hapus setelah diambil
+        localStorage.removeItem("editPegawaiData");
+      } else {
+        alert("Data pegawai tidak ditemukan! Kembali ke halaman sebelumnya.");
+        navigate("/admin/manajemen-pegawai");
       }
     }
-  }, [id]);
-
-  const handleTriggerConfirm = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsConfirmOpen(true);
+  }, [location, navigate, id]);
+  const getMappedRole = (roleLabel: string): string => {
+    return ROLE_MAPPING[roleLabel] || "WAITER";
   };
 
-  const handleFinalSave = () => {
-    setIsConfirmOpen(false);
-    navigate("/admin/manajemen-pegawai");
+  const handleFinalSave = async () => {
+    try {
+      const payload = {
+        fullname: nama,
+        email: email,
+        phone_number: noTelepon,
+        role: getMappedRole(role),
+        gender: jenisKelamin === "Laki-Laki" ? "MALE" : "FEMALE",
+      };
+
+      await staffAPI.updateStaff(id!, payload);
+
+      navigate("/admin/manajemen-pegawai", {
+        state: { showSuccessToast: true },
+      });
+    } catch (error: any) {
+      console.error("Error update:", error.response?.data);
+      alert(
+        "Gagal update: " +
+          (error.response?.data?.message || "Terjadi kesalahan"),
+      );
+    }
   };
 
   return (
@@ -125,7 +108,10 @@ const EditPegawaiPage = () => {
 
           <div className="bg-white rounded-[20px] shadow-xs border border-gray-150 p-6 md:p-8">
             <form
-              onSubmit={handleTriggerConfirm}
+              onSubmit={(e) => {
+                e.preventDefault();
+                setIsConfirmOpen(true);
+              }}
               className="space-y-6 max-w-4xl"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -185,9 +171,7 @@ const EditPegawaiPage = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[11.5px] font-extrabold text-black uppercase tracking-wider">
-                 
-                  </label>
+                  <label className="text-[11.5px] font-extrabold text-black uppercase tracking-wider"></label>
                   <SelectDropdown
                     label="Role Akses"
                     value={role}

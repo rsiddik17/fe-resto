@@ -1,36 +1,55 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminSidebar from "../../components/AdminComponents/AdminSidebar";
 import AdminHeader from "../../components/AdminComponents/AdminHeader";
 import SortIcon from "../../components/Icon/SortIcon";
+import { customerAPI } from "../../api/customer.api";
 
 interface Pelanggan {
-  id: number;
-  nama: string;
+  id: string; 
+  nama: string; 
   email: string;
-  noTelepon: string;
-  tanggalLahir: string;
-  jenisKelamin: string;
-  status: string;
+  noTelepon: string; 
+  tanggalLahir: string; 
+  jenisKelamin: string; 
+  status: string; 
   alamat: string;
 }
 
-const DATA_PELANGGAN_AWAL: Pelanggan[] = [
-  { id: 1, nama: "Wawan Hermawan", email: "wawanhrmwn@gmail.com", noTelepon: "0814 0986 7821", tanggalLahir: "03/04/2002", jenisKelamin: "Laki-Laki", status: "Aktif", alamat: "Kota Bogor, Jawa Barat" },
-  { id: 2, nama: "Mayla Zunaina", email: "maylaznn@gmail.com", noTelepon: "0812 9165 8921", tanggalLahir: "01/02/2005", jenisKelamin: "Perempuan", status: "Aktif", alamat: "Kota Bogor, Jawa Barat" },
-  { id: 3, nama: "Martha Lena", email: "marthalena@gmail.com", noTelepon: "0813 0906 5615", tanggalLahir: "03/04/2002", jenisKelamin: "Perempuan", status: "Aktif", alamat: "Kota Bandung, Jawa Barat" },
-  { id: 4, nama: "Dea Alisa", email: "deaalisa@gmail.com", noTelepon: "0814 9284 8767", tanggalLahir: "12/04/2003", jenisKelamin: "Perempuan", status: "Aktif", alamat: "Kota Bekasi, Jawa Barat" },
-  { id: 5, nama: "Amalia Nur", email: "nurlia@gmail.com", noTelepon: "0812 6765 1786", tanggalLahir: "13/05/2002", jenisKelamin: "Perempuan", status: "Aktif", alamat: "Kota Bogor, Jawa Barat" },
-  { id: 6, nama: "Istiazah", email: "zahtia@gmail.com", noTelepon: "0877 2354 7817", tanggalLahir: "11/04/2003", jenisKelamin: "Perempuan", status: "Aktif", alamat: "Kota Depok, Jawa Barat" },
-  { id: 7, nama: "Reza Tama", email: "tama124@gmail.com", noTelepon: "0813 0696 7020", tanggalLahir: "10/06/2006", jenisKelamin: "Laki-Laki", status: "Non Aktif", alamat: "Kota Cimahi, Jawa Barat" },
-  { id: 8, nama: "Aldi Muhamad", email: "muhamad1@gmail.com", noTelepon: "0814 1254 7165", tanggalLahir: "25/04/2002", jenisKelamin: "Laki-Laki", status: "Aktif", alamat: "Kota Bogor, Jawa Barat" },
-  { id: 9, nama: "Rehan Putra", email: "putrarhn@gmail.com", noTelepon: "0831 8645 7854", tanggalLahir: "27/05/2007", jenisKelamin: "Laki-Laki", status: "Non Aktif", alamat: "Kota Bogor, Jawa Barat" },
-  { id: 10, nama: "Galang Putra", email: "galang23@gmail.com", noTelepon: "0814 4321 7865", tanggalLahir: "18/09/2005", jenisKelamin: "Laki-Laki", status: "Aktif", alamat: "Kota Bekasi, Jawa Barat" },
-];
-
 const DaftarPelangganPage = () => {
-  const [pelangganList, setPelangganList] = useState<Pelanggan[]>(DATA_PELANGGAN_AWAL);
+  const [pelangganList, setPelangganList] = useState<Pelanggan[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentSortKey, setCurrentSortKey] = useState<keyof Pelanggan>("nama");
   const [isAscending, setIsAscending] = useState<boolean>(true);
+
+ useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await customerAPI.getAllCustomers();
+        
+        // Pastikan response.data ada isinya
+        if (response && response.data) {
+          const dataMapping = response.data.map((c: any) => ({
+            id: c.id,
+            nama: c.fullname,
+            email: c.email,
+            noTelepon: c.phone_number,
+            tanggalLahir: "-", // Data belum ada di API
+            jenisKelamin: c.gender || "Belum Diatur",
+            status: c.is_validated ? "Aktif" : "Non Aktif",
+            alamat: "-", // Data belum ada di API
+          }));
+          
+          setPelangganList(dataMapping);
+        }
+      } catch (error) {
+        console.error("Gagal ambil data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleSort = (key: keyof Pelanggan) => {
     if (key === "id") return;
@@ -60,6 +79,8 @@ const DaftarPelangganPage = () => {
       />
     </div>
   );
+
+  if (loading) return <div>Memuat data...</div>;
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F3F4F6]">
