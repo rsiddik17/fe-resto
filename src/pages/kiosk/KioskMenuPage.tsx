@@ -11,12 +11,12 @@ import { useNavigate } from "react-router";
 import Button from "../../components/ui/Button";
 import WarningIcon from "../../components/Icon/WarningIcon";
 import { useMenus } from "../../hooks/useMenus";
-import { useAuthStore } from "../../store/useAuthStore";
+// import { useAuthStore } from "../../store/useAuthStore";
 import { useProfile } from "../../hooks/useProfile";
 
 const KioskMenuPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  // const { user } = useAuthStore();
   const { firstName } = useProfile();
 
   const { data: menus = [], isLoading, isError, refetch } = useMenus();
