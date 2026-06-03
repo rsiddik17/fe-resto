@@ -156,7 +156,7 @@ const FormMenuInput = ({
           <Button 
             type="button" 
             onClick={onCancel}
-            className="flex-1 bg-primary/25 hover:bg-primary/20 text-primary font-bold py-2.5 rounded-sm text-sm md:text-sm lg:text-sm transition-colors"
+            className="flex-1 bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 font-bold py-2.5 rounded-sm text-sm md:text-sm lg:text-sm transition-colors"
           >
             Batal
           </Button>

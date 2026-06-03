@@ -2,27 +2,27 @@ import { Check } from "lucide-react";
 import { cn } from "../../utils/utils";
 import WarningIcon from "../Icon/WarningIcon";
 
-interface TableActionConfirmModalProps {
+interface OrderActionConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  actionType: "save" | "delete"; // <-- Prop penentu mode modal
+  actionType: "save" | "delete";
 }
 
-const TableActionConfirmModal = ({
+const OrderEditActionConfirmModal = ({
   isOpen,
   onClose,
   onConfirm,
   actionType,
-}: TableActionConfirmModalProps) => {
+}: OrderActionConfirmModalProps) => {
   if (!isOpen) return null;
 
-  const isSave = actionType === "save";
+  const isDelete = actionType === "delete";
 
   return (
-    // z-[60] agar modal ini selalu tampil paling depan (di atas modal detail)
+    // z-[100] dipertahankan agar selalu di atas modal lain jika tumpang tindih
     <div
-      className="fixed inset-0 z-60 flex items-center justify-center bg-black/3 backdrop-blur-[3px] p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/3 backdrop-blur-[3px] p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
@@ -30,7 +30,7 @@ const TableActionConfirmModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Ikon Dinamis */}
-        {isSave ? (
+        {!isDelete ? (
           <div className="bg-primary w-14 h-14 rounded-full flex items-center justify-center text-white mb-3 shadow-sm">
             <Check size={36} strokeWidth={3.5} />
           </div>
@@ -44,16 +44,17 @@ const TableActionConfirmModal = ({
         <h2
           className={cn(
             "text-lg font-bold mb-2.5",
-            isSave ? "text-black" : "text-red-500"
+            !isDelete ? "text-black" : "text-red-500"
           )}
         >
-          {isSave ? "Simpan Perubahan?" : "Hapus Meja?"}
+          {isDelete ? "Hapus Item?" : "Simpan Perubahan?"}
         </h2>
 
-        {/* Teks Dinamis */}
-        <p className="text-[13.5px] leading-relaxed mb-12 px-2">
-          Apakah anda yakin ingin {isSave ? "mengubah data" : "menghapus"} <br /> meja
-          ? Tindakan ini tidak dapat dibatalkan
+        {/* Teks Dinamis (Isi dipertahankan) */}
+        <p className="text-[13.5px] leading-relaxed mb-12 px-2 text-black/80">
+          {isDelete
+            ? "Apakah anda yakin ingin menghapus item ini? Tindakan ini tidak dapat dibatalkan"
+            : "Perubahan pada pesanan akan disimpan dan rincian pesanan pelanggan akan diperbarui"}
         </p>
 
         {/* Tombol Aksi Dinamis */}
@@ -67,13 +68,13 @@ const TableActionConfirmModal = ({
           <button
             onClick={onConfirm}
             className={cn(
-              "flex-1 text-white text-sm py-2 rounded-xs transition-colors cursor-pointer",
-              isSave
+              "flex-1 text-white text-sm py-2 rounded-xs transition-colors cursor-pointer shadow-sm",
+              !isDelete
                 ? "bg-primary hover:bg-primary-hover"
                 : "bg-red-500 hover:bg-red-600"
             )}
           >
-            {isSave ? "Ya, Simpan" : "Ya, Hapus"}
+            {isDelete ? "Ya, Hapus" : "Ya, Simpan"}
           </button>
         </div>
       </div>
@@ -81,4 +82,4 @@ const TableActionConfirmModal = ({
   );
 };
 
-export default TableActionConfirmModal;
+export default OrderEditActionConfirmModal;

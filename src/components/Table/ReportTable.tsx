@@ -17,6 +17,9 @@ interface ReportTableProps {
   sortConfig: { key: SortKey; direction: SortDirection } | null;
   onSort: (key: SortKey) => void;
   isLoading?: boolean;
+  totalFoodsQty: number;
+  totalDrinksQty: number;
+  totalAmount: number;
 }
 
 const formatRupiah = (value: number) => {
@@ -56,7 +59,7 @@ const SortIcon = ({ activeDirection }: { activeDirection: "asc" | "desc" | null 
   );
 };
 
-const ReportTable = ({ data, sortConfig, onSort, isLoading = false }: ReportTableProps) => {
+const ReportTable = ({ data, sortConfig, onSort, isLoading = false, totalFoodsQty, totalDrinksQty, totalAmount }: ReportTableProps) => {
   
   const getDirection = (key: SortKey) => {
     return sortConfig?.key === key ? sortConfig.direction : null;
@@ -65,10 +68,10 @@ const ReportTable = ({ data, sortConfig, onSort, isLoading = false }: ReportTabl
   return (
     <div className="mb-6">
       {/* Container Tabel dengan Max Height untuk batas ~10 Baris (Tinggi 1 baris ~55px) */}
-      <div className="bg-white rounded-sm shadow-sm overflow-hidden border border-gray-200">
+      <div className="bg-white rounded-sm shadow-sm overflow-hidden border border-gray-200 relative">
 
         {isLoading && (
-          <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center text-primary">
+          <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-[3px] flex flex-col items-center justify-center text-primary">
             <span className="font-bold text-sm">Memuat data laporan...</span>
           </div>
         )}
@@ -166,6 +169,28 @@ const ReportTable = ({ data, sortConfig, onSort, isLoading = false }: ReportTabl
                 </tr>
               )}
             </tbody>
+
+            {data.length > 0 && (
+              <tfoot className="bg-[#EFEEEE] border-t-2 border-[#DEDED9] text-[13px] font-semibold sticky bottom-0 z-10 shadow-sm">
+                <tr>
+                  <td colSpan={3} className="px-4 py-3 text-right uppercase tracking-wider">TOTAL TERJUAL & PENDAPATAN:</td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-col">
+                      <span>{totalFoodsQty} Item</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-col">
+                      <span>{totalDrinksQty} Item</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3"></td>
+                  <td className="px-4 py-3 text-sm whitespace-nowrap">
+                    {formatRupiah(totalAmount)}
+                  </td>
+                </tr>
+              </tfoot>
+            )}
           </table>
         </div>
       </div>

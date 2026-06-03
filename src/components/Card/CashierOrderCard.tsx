@@ -29,6 +29,7 @@ interface CashierOrderCardProps {
   isAwaitingValidation?: boolean; // Menampilkan tombol "Validasi Pembayaran"
   onViewDetail: () => void;
   onValidate?: (rawId: string) => void;
+  onEdit?: (rawId: string) => void;
 }
 
 const CashierOrderCard = ({
@@ -43,6 +44,7 @@ const CashierOrderCard = ({
   isAwaitingValidation = false,
   onViewDetail,
   onValidate,
+  onEdit,
 }: CashierOrderCardProps) => {
   // Ambil maksimal 2 item untuk ditampilkan di card
   const displayedItems = items.slice(0, 2);
@@ -73,12 +75,12 @@ const CashierOrderCard = ({
             ) : null}
 
             {leftBadges.length > 0 && (
-              <div className="flex flex-col items-start gap-3.5 mb-1">
+              <div className="flex flex-col items-start gap-3.5 mb-1 text-center">
                 {leftBadges.map((badge, idx) => (
                   <span
                     key={idx}
                     className={cn(
-                      "text-white text-center w-18 px-3.5 py-0.75 rounded-full text-[10px] md:text-[10.5px] font-bold",
+                      "text-white text-center w-18 px-1.5 py-0.75 rounded-full text-[10px] md:text-[10.5px] font-bold",
                       badge.colorClass,
                     )}
                   >
@@ -114,6 +116,15 @@ const CashierOrderCard = ({
               >
                 {statusBadge.text}
               </span>
+            )}
+
+            {onEdit && (
+              <button
+                onClick={() => onEdit(rawOrderId)}
+                className="px-3.5 py-1 text-[11px] md:text-[11.5px] font-bold text-primary border-[1.5px] border-primary rounded-full hover:bg-primary hover:text-white transition-colors cursor-pointer"
+              >
+                Edit Pesanan
+              </button>
             )}
           </div>
         </div>

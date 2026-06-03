@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import TableInfoCard from "../../components/Card/TableInfoCard";
 import Loading from "../../components/Loading/Loading";
 import Button from "../../components/ui/Button";
 
-import { tableAPI, type TableData } from "../../api/table.api";
+import { tableAPI } from "../../api/table.api";
 import { useCartStore } from "../../store/useCartStore";
+import { isAxiosError } from "axios";
 
 const KioskTableInfoPage = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const guestsParam = searchParams.get("guests");
+  const location = useLocation();
+  const guestsParam = location.state?.guests;
 
   const { setTableInfo } = useCartStore();
 
@@ -23,8 +24,14 @@ const KioskTableInfoPage = () => {
     sub?: string;
   } | null>(null);
 
+  const hasFetched = useRef(false);
+
   useEffect(() => {
     const fetchAndAssignTable = async () => {
+      // Jika sudah pernah nge-fetch, langsung BERHENTI! (Mencegah double hit React Strict Mode)
+      if (hasFetched.current) return;
+      hasFetched.current = true;
+
       // Validasi jumlah tamu
       const guestCount = parseInt(guestsParam || "0", 10);
 
@@ -36,48 +43,33 @@ const KioskTableInfoPage = () => {
 
       try {
         setIsLoading(true);
-        // Hit API
-        const response = await tableAPI.getAllTables();
-        const tables: TableData[] = response.data;
+        
+        // 1. Tembak API Auto Assign dari Backend
+        const response = await tableAPI.autoAssignTable({ guest: guestCount });
 
-        // 1. Filter semua meja yang statusnya AVAILABLE
-        const availableTables = tables.filter((t) => t.status === "AVAILABLE");
+        if (response.success && response.data) {
+          const { table_number, table_id } = response.data;
 
-        // 2. CARI MEJA: Syaratnya kapasitasnya >= jumlah tamu
-        // Urutkan dari kapasitas terkecil yang muat
-        const suitableTable = availableTables
-          .filter((t) => t.capacity >= guestCount)
-          .sort((a, b) => a.capacity - b.capacity)[0];
-
-        if (suitableTable) {
-          setTableNumber(suitableTable.table_number);
-          setTableId(suitableTable.id);
-        } else {
-          // LOGIKA BARU: Jika meja tidak cukup, cek apakah masih ada meja kosong lain
-          if (availableTables.length > 0) {
-            // Cari kapasitas terbesar dari meja yang tersisa
-            const maxCapacity = Math.max(
-              ...availableTables.map((t) => t.capacity),
-            );
-
-            setErrorMsg({
-              main: `Maaf, tidak ada meja kosong yang muat untuk ${guestCount} orang.`,
-              sub: `Kapasitas meja terbesar yang tersedia saat ini maksimal untuk ${maxCapacity} orang. Silakan ulangi masukkan jumlah tamu atau kembali nanti.`,
-            });
-          } else {
-            // Jika availableTables.length === 0, berarti full house
-            setErrorMsg({
-              main: "Maaf, saat ini semua meja sedang penuh.",
-              sub: "Silakan tunggu beberapa saat lagi hingga ada pelanggan yang selesai.",
-            });
-          }
+          setTableNumber(table_number);
+          setTableId(table_id);
         }
-      } catch (err) {
-        console.error("Gagal mengambil data meja:", err);
-        setErrorMsg({
-          main: "Terjadi kesalahan jaringan.",
-          sub: "Gagal terhubung ke server. Silakan coba lagi.",
-        });
+      } catch (err: any) {
+        console.error("Gagal auto-assign meja:", err);
+        
+        // Tangkap pesan error spesifik dari backend (FULL_HOUSE atau NO_SUITABLE_TABLE)
+        if (isAxiosError(err) && err.response) {
+           const backendMessage = err.response.data.message;
+
+           setErrorMsg({
+             main: "Ups! Meja Tidak Tersedia",
+             sub: backendMessage || "Maaf, saat ini tidak ada meja yang bisa digunakan.",
+           });
+        } else {
+           setErrorMsg({
+             main: "Terjadi kesalahan jaringan.",
+             sub: "Gagal terhubung ke server. Silakan coba lagi.",
+           });
+        }
       } finally {
         setIsLoading(false);
       }
@@ -85,6 +77,22 @@ const KioskTableInfoPage = () => {
 
     fetchAndAssignTable();
   }, [guestsParam]);
+
+  const handleCancel = async () => {
+    if (tableId) {
+      try {
+        setIsLoading(true);
+        await tableAPI.updateTable(tableId, { status: "AVAILABLE" });
+      } catch (error) {
+        console.error("Gagal merilis meja:", error);
+      } finally {
+        setIsLoading(false);
+        navigate("/kiosk/home");
+      }
+    } else {
+      navigate("/kiosk/home");
+    }
+  };
 
   return (
     <div className="w-full min-h-screen flex flex-col bg-linear-to-b from-primary/0 to-primary/15 relative overflow-y-auto">
@@ -126,7 +134,7 @@ const KioskTableInfoPage = () => {
                setTableInfo(tableId, tableNumber);
                navigate(`/kiosk/menu`);
             }}
-            onBatal={() => navigate(`/kiosk/home`)}
+            onBatal={handleCancel}
             isKioskMode={true}
           />
         )}

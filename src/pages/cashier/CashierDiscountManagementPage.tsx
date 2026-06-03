@@ -304,7 +304,7 @@ const CashierDiscountManagementPage = () => {
         </div>
 
         {/* 3. TABLE CONTAINER */}
-        <div className="bg-white rounded-sm shadow-sm border border-gray-100 mb-8">
+        <div className="bg-white rounded-sm shadow-sm border border-gray-100 mb-8 relative">
           {isFetching ? (
             <div className="flex flex-col items-center justify-center h-64 text-primary absolute inset-0 bg-white/60 backdrop-blur-[2px] z-20">
               <span className="text-sm font-bold">Memuat promo diskon...</span>
