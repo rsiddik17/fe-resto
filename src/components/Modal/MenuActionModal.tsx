@@ -53,7 +53,7 @@ const MenuActionModal = ({ isOpen, type, menuName, onClose, onConfirm }: MenuAct
         <div className="flex justify-center w-full gap-10">
           <Button 
             onClick={onClose}
-            className="flex-1 max-w-30 py-2 font-normal text-[13px] md:text-[13px] lg:text-[13px] bg-[#D9D9D9] hover:bg-gray/50 text-black rounded-xs transition-colors"
+            className="flex-1 max-w-30 py-2 font-normal text-[13px] md:text-[13px] lg:text-[13px] bg-[#FFFFFF] hover:bg-black/5 border-[1.5px] border-gray/50 text-black rounded-xs transition-colors shadow-none"
           >
             Batal
           </Button>
