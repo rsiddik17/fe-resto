@@ -38,7 +38,16 @@ const MobileTableInfoPage = () => {
     sub?: string;
   } | null>(null);
 
-  const parsedTableId = parseInt(tableId || "0", 10);
+  let parsedTableId = 0;
+  try {
+    if (tableId) {
+      const decodedString = atob(tableId);
+      parsedTableId = parseInt(decodedString, 10);
+    }
+  } catch (error) {
+    parsedTableId = 0;
+    console.error(error);
+  }
 
   useEffect(() => {
     const validateTable = async () => {
