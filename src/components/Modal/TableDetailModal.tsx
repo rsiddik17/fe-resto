@@ -80,7 +80,7 @@ const TableDetailModal = ({
         : "Detail Meja";
 
   const qrValue = table?.id
-    ? `${window.location.origin}${import.meta.env.BASE_URL}qr/${table.id}`
+    ? `${window.location.origin}${import.meta.env.BASE_URL}qr/${btoa(table.id.toString())}`
     : "TIDAK_ADA_DATA";
 
   // Fungsi yang dipanggil saat form valid dan disubmit
