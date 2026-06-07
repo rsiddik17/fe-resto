@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Button from "../ui/Button";
+// import Button from "../ui/Button";
 import { X, FileText } from "lucide-react";
 
 
@@ -40,26 +40,26 @@ const EditNoteModalOnline = ({ item, onClose, onSave }: EditNoteModalProps) => {
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Tidak ada"
-              className="w-full pl-11 pr-4 py-2 bg-[#F3F4F6] rounded-xs outline-none border-2 border-transparent focus:border-primary transition-all text-gray-500 text-sm"
+              className="w-full pl-11 pr-4 py-2 bg-[#F3F4F6] rounded-xs outline-none border-2 border-transparent focus:border-primary transition-all text-black text-sm"
               autoFocus
             />
           </div>
 
           {/* Tombol dengan style yang lebih "clean" */}
           <div className="flex justify-end gap-3 ">
-            <Button 
-              variant="secondary" 
+            <button 
+              // variant="secondary" 
               onClick={onClose} 
-              className="px-7 py-2 bg-white border-[1.5px] border-primary text-primary hover:bg-primary/5 rounded-xs font-bold text-sm h-auto"
+              className="px-7 py-2 bg-[#FFFFFF] hover:bg-black/5 text-black font-normal border-[1.5px] border-gray/50 rounded-xs text-sm h-auto shadow-none! outline-none! focus:shadow-none! focus:outline-none! active:shadow-none!"
             >
               Batal
-            </Button>
-            <Button 
+            </button>
+            <button 
               onClick={() => onSave(note)} 
-              className="px-7 py-2 rounded-xs font-bold text-sm shadow-lg shadow-primary/20 h-auto"
+              className="px-7 py-2 bg-primary  text-white   rounded-xs text-sm h-auto font-normal"
             >
               Simpan
-            </Button>
+            </button>
           </div>
         </div>
       </div>

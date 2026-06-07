@@ -13,6 +13,7 @@ import { useMenus } from "../../hooks/useMenus";
 import AllMenuIcon from "../../components/Icon/AllFoodDrink";
 import Keranjang from "../../components/Icon/Keranjang";
 
+
 const steps = [
   { icon: AllMenuIcon, title: "Pilih Menu", desc: "Pilih makanan dan minuman favorit Anda dari menu yang tersedia" },
   { icon: Keranjang, title: "Tambah ke Keranjang", desc: "Pilih jumlah dan tambahkan catatan khusus jika diperlukan" },
@@ -54,18 +55,12 @@ const LandingPage = () => {
       const itemInCart = currentCart.find((c) => String(c.id) === String(item.id));
       const remainingStock = (item.stock || 0) - (itemInCart?.qty || 0);
 
-      // Bersihkan double slash (//) jika URL gambar dari backend berantakan
-      let cleanImage = item.image || "";
-      if (cleanImage.includes("localhost")) {
-        const urlParts = cleanImage.split("://");
-        if (urlParts.length === 2) {
-          cleanImage = urlParts[0] + "://" + urlParts[1].replace(/\/{2,}/g, "/");
-        }
-      }
+     
+     
 
       return { 
         ...item, 
-        image: cleanImage,
+        image: item.image,
         stock: Math.max(0, remainingStock) 
       };
     });
@@ -92,7 +87,7 @@ const LandingPage = () => {
     <div className="min-h-screen bg-secondary">
       <Header mode="online" />
       
-      <main className="max-w-7xl mx-auto px-6 md:px-12 py-6 space-y-6">
+      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-4 md:py-6 space-y-6">
         <HeroSection 
           title="Pesan Menu<br />Favoritmu" 
           subtitle="Pesan Makanan & Minuman Tanpa Ribet" 
@@ -103,9 +98,9 @@ const LandingPage = () => {
         />
 
         {/* SECTION REKOMENDASI MENU */}
-        <section className="bg-white rounded-xs shadow-sm p-6 md:p-10 mb-9">
-          <h2 className="text-2xl font-bold text-primary mb-6">Rekomendasi Menu</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+        <section className="bg-white rounded-xs shadow-sm p-4 md:p-6 lg:p-10 mb-9">
+          <h2 className="text-xl md:text-2xl font-bold text-primary mb-4 md:mb-6">Rekomendasi Menu</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
             {recommendationMenu.length > 0 ? (
               recommendationMenu.map((item) => (
                 <MenuCard key={item.id}>
@@ -207,7 +202,7 @@ const LandingPage = () => {
         <SuccessModal 
           itemName={successItemName} 
           onClose={() => setSuccessItemName(null)} 
-          onViewCart={() => navigate("/customer/keranjang")} 
+          onViewCart={() => navigate("/customer/cart")} 
           mode="online" 
         />
       )}

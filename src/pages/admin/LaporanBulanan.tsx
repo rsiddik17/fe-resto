@@ -135,9 +135,9 @@ const LaporanBulananPage = () => {
             </div>
 
             <div className="flex items-center gap-6 text-[13.5px] font-bold text-gray-500 border-b border-gray-100 pb-3">
-              <button onClick={() => navigate("/admin/laporan")} className="pb-1 cursor-pointer">Harian</button>
-              <button onClick={() => navigate("/admin/laporan/mingguan")} className="pb-1 cursor-pointer">Mingguan</button>
-              <button onClick={() => navigate("/admin/laporan/bulanan")} className="pb-1 cursor-pointer text-black border-b-[2.5px] border-primary font-extrabold">Bulanan</button>
+              <button onClick={() => navigate("/admin/report")} className="pb-1 cursor-pointer">Harian</button>
+              <button onClick={() => navigate("/admin/report/weekly")} className="pb-1 cursor-pointer">Mingguan</button>
+              <button onClick={() => navigate("/admin/report/monthly")} className="pb-1 cursor-pointer text-black border-b-[2.5px] border-primary font-extrabold">Bulanan</button>
             </div>
 
             <FilterBulanan onFilterChange={handleFilterChange} />
@@ -151,7 +151,7 @@ const LaporanBulananPage = () => {
           {showLaporan && selectedBulans.length > 0 && (
             <div className="bg-white rounded-[20px] border border-gray-150 p-6">
               <div className="flex justify-end mb-4">
-                <button onClick={() => setShowLaporan(false)} className="text-[12px] font-bold text-gray-400 hover:text-black">Tutup</button>
+                <button onClick={() => setShowLaporan(false)} className="text-[12px] font-bold text-black hover:text-black">Tutup</button>
               </div>
 
               <div className="space-y-12">

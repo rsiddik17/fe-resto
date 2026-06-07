@@ -14,6 +14,9 @@ import {
   Plus,
 } from "lucide-react";
 import DiscountModalOnline from "../../components/DiscountModalOnline/DiscountModalOnline";
+import { orderAPI } from "../../api/order.api";
+import { addressAPI } from "../../api/address.api";
+
 interface Address {
   id: string;
   detail: string;
@@ -23,34 +26,54 @@ const CheckoutPageOnline = () => {
   const navigate = useNavigate();
   const { items } = useCartStore();
 
-  // STATE MANAGEMENT
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [appliedDiscountId, setAppliedDiscountId] = useState<number | null>(
+    null,
+  );
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
   const [appliedDiscount, setAppliedDiscount] = useState(0);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
-  const [selectedAddressId, setSelectedAddressId] = useState(() => {
-    return localStorage.getItem("selected_address_id") || "1";
-  });
+  const [selectedAddressId, setSelectedAddressId] = useState<string>("");
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [loadingAddress, setLoadingAddress] = useState(true);
 
-  const [addresses, setAddresses] = useState<Address[]>(() => {
-    const saved = localStorage.getItem("user_addresses");
-    return saved
-      ? JSON.parse(saved)
-      : [
-          {
-            id: "1",
-            detail:
-              "Jl. Sholeh Iskandar No.Km.02, RT.01/RW.010, Kedungbadak, Tanah Sareal, Kota Bogor, Jawa Barat 16162",
-          },
-          {
-            id: "2",
-            detail:
-              "Gedung Sentra Sudirman Lt.12, Jl. Jenderal Sudirman, Jakarta Selatan 12190",
-          },
-        ];
-  });
-
+  // Ambil alamat dari API
   useEffect(() => {
-    localStorage.setItem("selected_address_id", selectedAddressId);
+    const fetchAddresses = async () => {
+      try {
+        setLoadingAddress(true);
+        const response = await addressAPI.getMyAddresses();
+        console.log("Response address:", response);
+        const data = response.data || response;
+        const mappedAddresses = data.map((addr: any) => ({
+          id: addr.id,
+          detail: addr.address_name,
+        }));
+        setAddresses(mappedAddresses);
+
+        // Set alamat utama (is_core_address: true) sebagai default
+        const mainAddress = data.find(
+          (addr: any) => addr.is_core_address === true,
+        );
+        if (mainAddress) {
+          setSelectedAddressId(mainAddress.id);
+        } else if (mappedAddresses.length > 0) {
+          setSelectedAddressId(mappedAddresses[0].id);
+        }
+      } catch (error) {
+        console.error("Gagal ambil alamat:", error);
+      } finally {
+        setLoadingAddress(false);
+      }
+    };
+    fetchAddresses();
+  }, []);
+
+  // Simpan selectedAddressId ke localStorage
+  useEffect(() => {
+    if (selectedAddressId) {
+      localStorage.setItem("selected_address_id", selectedAddressId);
+    }
   }, [selectedAddressId]);
 
   // LOGIC PERHITUNGAN
@@ -59,30 +82,80 @@ const CheckoutPageOnline = () => {
   // Tentukan alamat saat ini
   const currentAddress =
     addresses.find((a) => a.id === selectedAddressId) || addresses[0];
-  const adminFeeValue = 205; // Buat variabel agar mudah diatur
+  const adminFeeValue = 205;
   const safeTotalPrice = selectedItems.reduce(
     (acc, item) => acc + item.price * item.qty,
     0,
   );
-  const ppn = safeTotalPrice * 0.1;
+  const afterDiscount = safeTotalPrice - appliedDiscount;
+  const ppn = afterDiscount * 0.1;
+  const grandTotal = afterDiscount + ppn + adminFeeValue;
 
-  // UBAH BARIS INI: Pastikan grandTotal menjumlahkan adminFeeValue (205)
-  const grandTotal = safeTotalPrice + ppn - appliedDiscount + adminFeeValue;
+  const handleKonfirmasiPesanan = async () => {
+    if (selectedItems.length === 0) {
+      alert("Tidak ada item yang dipilih");
+      return;
+    }
 
-  const handleKonfirmasiPesanan = () => {
-    navigate("/customer/pembayaran", {
-      state: {
-        orderId: `ITSR-${Date.now()}`,
-        address: currentAddress.detail,
-        items: selectedItems,
-        subTotal: safeTotalPrice,
-        discountAmount: appliedDiscount,
-        adminFee: adminFeeValue,
-        finalPayment: grandTotal,
-        status: "Proses",
-      },
-    });
+    if (!selectedAddressId) {
+      alert("Silakan pilih alamat pengiriman terlebih dahulu");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      const payload: any = {
+        source: "ONLINE",
+        table_id: null,
+        address_id: selectedAddressId,
+        order_items: selectedItems.map((item) => ({
+          menu_id: item.id,
+          quantity: item.qty,
+          notes: item.notes || "",
+        })),
+      };
+
+      if (appliedDiscountId) {
+        payload.discount_id = appliedDiscountId;
+      }
+
+      console.log("Mengirim ke backend:", payload);
+      const response = await orderAPI.createOrder(payload);
+      console.log("Response backend:", response);
+
+      const backendOrderId = response.data.id;
+
+      navigate("/customer/payment", {
+        state: {
+          orderId: backendOrderId,
+          address: currentAddress?.detail || "",
+          items: selectedItems,
+          subTotal: safeTotalPrice,
+          discountAmount: appliedDiscount,
+          adminFee: adminFeeValue,
+          finalPayment: grandTotal,
+        },
+      });
+    } catch (error: any) {
+      console.error("Gagal membuat pesanan:", error);
+      alert(error.response?.data?.message || "Gagal memproses pesanan");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  // Loading state untuk alamat
+  if (loadingAddress) {
+    return (
+      <div className="min-h-screen bg-[#F3F4F6] pb-20">
+        <Header mode="online" />
+        <div className="flex items-center justify-center h-96">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F3F4F6] pb-20">
@@ -127,7 +200,7 @@ const CheckoutPageOnline = () => {
                 </p>
               </div>
               <p className="text-[12px] text-gray-400 leading-relaxed max-w-lg">
-                {currentAddress.detail}
+                {currentAddress?.detail || "Pilih alamat pengiriman"}
               </p>
             </div>
           </div>
@@ -189,28 +262,25 @@ const CheckoutPageOnline = () => {
                   <span>Rp{ppn.toLocaleString("id-ID")}</span>
                 </div>
                 {appliedDiscount > 0 && (
-                  <div className="flex justify-between items-center text-[14px] ">
+                  <div className="flex justify-between items-center text-[14px]">
                     <span>Diskon</span>
                     <span>-Rp{appliedDiscount.toLocaleString("id-ID")}</span>
                   </div>
                 )}
 
                 {appliedDiscount > 0 ? (
-                  // JIKA DISKON SUDAH ADA: Tombol berubah jadi abu-abu "Batalkan Diskon" sesuai gambar
                   <button
-                    onClick={() => setAppliedDiscount(0)} // Menghapus diskon saat diklik
+                    onClick={() => setAppliedDiscount(0)}
                     className="w-full border border-gray-300 rounded-md py-2.5 flex items-center justify-center text-slate-600 font-bold bg-white hover:bg-gray-50 transition-all text-sm md:text-base"
                   >
                     Batalkan Diskon
                   </button>
                 ) : (
-                  // JIKA BELUM ADA DISKON: Kembali ke tombol ungu asli bawaan kode kamu
                   <button
                     onClick={() => setIsDiscountModalOpen(true)}
                     className="w-full border-2 border-primary rounded-md py-2.5 flex items-center justify-center gap-2 text-primary font-bold hover:bg-primary/5 transition-all text-sm md:text-base"
                   >
-                    <Plus size={18} strokeWidth={3} />
-                    Tambah Diskon
+                    <Plus size={18} strokeWidth={3} /> Tambah Diskon
                   </button>
                 )}
 
@@ -242,9 +312,10 @@ const CheckoutPageOnline = () => {
           <div className="pt-6 flex justify-center">
             <Button
               onClick={handleKonfirmasiPesanan}
+              disabled={isSubmitting}
               className="w-full md:w-2/3 py-3 rounded-full text-white text-lg font-bold shadow-md shadow-primary/20 transition-all active:scale-95"
             >
-              Konfirmasi Pesanan
+              {isSubmitting ? "Memproses..." : "Konfirmasi Pesanan"}
             </Button>
           </div>
         </div>
@@ -263,7 +334,11 @@ const CheckoutPageOnline = () => {
         <DiscountModalOnline
           subTotal={safeTotalPrice}
           onClose={() => setIsDiscountModalOpen(false)}
-          onApply={(amount) => setAppliedDiscount(amount)}
+          onApply={(amount, discountId) => {
+            setAppliedDiscount(amount);
+            setAppliedDiscountId(discountId);
+            console.log("Discount ID yang dipakai:", discountId);
+          }}
         />
       )}
     </div>

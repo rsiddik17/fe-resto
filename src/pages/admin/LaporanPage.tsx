@@ -339,19 +339,19 @@ const LaporanPage = () => {
             {/* Rentang Waktu */}
             <div className="flex items-center gap-6 text-[13.5px] font-bold text-gray-500 border-b border-gray-100 pb-3">
               <button
-                onClick={() => navigate("/admin/laporan")}
+                onClick={() => navigate("/admin/report")}
                 className="pb-1 cursor-pointer text-black border-b-[2.5px] border-primary font-extrabold"
               >
                 Harian
               </button>
               <button
-                onClick={() => navigate("/admin/laporan/mingguan")}
+                onClick={() => navigate("/admin/report/weekly")}
                 className="pb-1 cursor-pointer"
               >
                 Mingguan
               </button>
               <button
-                onClick={() => navigate("/admin/laporan/bulanan")}
+                onClick={() => navigate("/admin/report/monthly")}
                 className="pb-1 cursor-pointer"
               >
                 Bulanan
@@ -406,7 +406,7 @@ const LaporanPage = () => {
               <div className="flex justify-end mb-4">
                 <button
                   onClick={() => setShowLaporan(false)}
-                  className="text-[12px] font-bold text-gray-400 hover:text-black"
+                  className="text-[12px] font-bold text-black hover:text-black"
                 >
                   Tutup
                 </button>

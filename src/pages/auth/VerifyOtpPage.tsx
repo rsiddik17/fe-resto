@@ -1,15 +1,22 @@
 import { Navigate, useNavigate, useSearchParams } from "react-router";
 import AuthLayouts from "../../layouts/AuthLayouts/AuthLayouts";
 import FormOtp from "../../components/Form/FormOtp";
+import { deObfuscateData } from "../../utils/crypto";
 
 const VerifyOtpPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const email = searchParams.get("email") ?? "";
-  const type = searchParams.get("type") ?? "forgot-password";
+  
+  // get email and type from url
+  const scrambledEmail = searchParams.get("_cx") ?? "";
+  const scrambledType = searchParams.get("_t") ?? "";
 
-  if (!email) {
-    return <Navigate to="/" replace />;
+  // deobfuscate email and type
+  const email = deObfuscateData(scrambledEmail);
+  const type = deObfuscateData(scrambledType);
+
+  if (!email || !email.includes("@")) {
+    return <Navigate to="/register" replace />;
   }
 
   const description = (

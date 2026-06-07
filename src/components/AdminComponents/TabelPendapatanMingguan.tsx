@@ -149,7 +149,7 @@ export default function TabelPendapatanMingguan({
                   <td className="py-3 text-center text-gray-400 font-bold">{indexOfFirstItem + index + 1}</td>
                   <td className="py-3 px-4">{item.minggu}</td>
                   <td className="py-3 px-4">{item.totalPesanan.toLocaleString("id-ID")}</td>
-                  <td className="py-3 px-4 font-bold">Rp {item.pendapatan.toLocaleString("id-ID")}</td>
+                  <td className="py-3 px-4 ">Rp {item.pendapatan.toLocaleString("id-ID")}</td>
                 </tr>
               ))}
               <tr className="bg-gray-100 font-bold text-black border-t border-gray-200">

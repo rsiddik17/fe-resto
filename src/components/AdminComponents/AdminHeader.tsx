@@ -61,7 +61,7 @@ const AdminHeader = ({
   };
 
   const handleProfileClick = () => {
-    navigate("/admin/profil");
+    navigate("/admin/profile");
   };
 
   // Ambil nama depan untuk ditampilkan

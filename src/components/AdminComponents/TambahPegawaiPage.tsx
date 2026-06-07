@@ -61,9 +61,8 @@ const TambahPegawaiPage = () => {
     try {
       await staffAPI.createStaff(payload);
      
-      navigate("/admin/manajemen-pegawai", {
-        state: { showSuccessToast: true, refresh: true },
-      });
+      navigate("/admin/employee-management")
+        
     } catch (error) {
       console.error("Gagal menambah pegawai:", error);
       alert("Gagal menambahkan pegawai. Cek koneksi atau data input!");
@@ -83,7 +82,7 @@ const TambahPegawaiPage = () => {
         <div className="w-full max-w-300 mx-auto space-y-4">
           {/* Tombol Back Navigasi */}
           <button
-            onClick={() => navigate("/admin/manajemen-pegawai")}
+            onClick={() => navigate("/admin/employee-management")}
             className="flex items-center gap-2 text-gray-800 font-extrabold text-[15px] hover:text-primary transition-colors cursor-pointer w-fit"
           >
             <ArrowLeft size={18} strokeWidth={2.5} />
@@ -235,14 +234,14 @@ const TambahPegawaiPage = () => {
               <div className="pt-4 flex flex-col sm:flex-row sm:justify-end gap-3 border-t border-gray-100">
                 <button
                   type="button"
-                  onClick={() => navigate("/admin/manajemen-pegawai")}
-                  className="w-full sm:w-auto px-5 py-2.5 text-[13.5px] font-bold text-black rounded-xs border border-primary order-2 sm:order-1"
+                  onClick={() => navigate("/admin/employee-management")}
+                  className="w-full sm:w-auto px-5 py-2.5 text-[13.5px]  text-black rounded-xs border border-gray/50 hover:bg-black/5 order-2 sm:order-1"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="w-full sm:w-auto px-5 py-2.5 text-[13.5px] font-bold bg-primary hover:bg-primary/90 text-white rounded-xs transition shadow-md cursor-pointer order-1 sm:order-2"
+                  className="w-full sm:w-auto px-5 py-2.5 text-[13.5px]  bg-primary  text-white rounded-xs transition  order-1 sm:order-2"
                 >
                   Simpan User
                 </button>

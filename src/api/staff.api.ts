@@ -23,7 +23,7 @@ export const staffAPI = {
     return response.data;
   },
 
-   deleteStaff: async (id: string) => {
+  deleteStaff: async (id: string) => {
     const response = await axiosInstance.delete(`/admin/staff/${id}`);
     return response.data;
   },
@@ -33,5 +33,19 @@ export const staffAPI = {
     return response.data;
   },
 
+  getStaffDetail: async (id: string) => {
+    const response = await axiosInstance.get(`/admin/staff/${id}`);
+    return response.data;
+  },
 
+  updateStaffPassword: async (
+    id: string,
+    payload: { old_password: string; new_password: string },
+  ) => {
+    const response = await axiosInstance.patch(
+      `/admin/update-staff-password/${id}`,
+      payload,
+    );
+    return response.data;
+  },
 };

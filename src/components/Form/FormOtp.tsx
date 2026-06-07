@@ -5,6 +5,7 @@ import Loading from "../Loading/Loading";
 import Button from "../ui/Button";
 import { useOtp } from "../../hooks/useOtp";
 import { Link, useSearchParams } from "react-router";
+import { deObfuscateData } from "../../utils/crypto";
 
 function formatMmSs(totalSeconds: number) {
   const m = Math.floor(Math.max(0, totalSeconds) / 60);
@@ -19,9 +20,14 @@ interface FormOtpProps {
 const FormOtp = ({ onSuccess }: FormOtpProps) => {
 
   const [searchParams] = useSearchParams();
-  const email = searchParams.get("email") ?? "";
 
-  const type = searchParams.get("type") ?? "";
+  // get email and type from url
+  const scrambledEmail = searchParams.get("_cx") ?? "";
+  const scrambledType = searchParams.get("_t") ?? "";
+
+  // deobfuscate email and type
+  const email = deObfuscateData(scrambledEmail);
+  const type = deObfuscateData(scrambledType);
 
   const {
     digits,

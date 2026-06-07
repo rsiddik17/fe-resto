@@ -21,7 +21,7 @@ const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
   const onlineMenuItems = [
     { name: "Beranda", path: "/customer/home" },
     { name: "Menu", path: "/customer/menu" },
-    { name: "Pesanan", path: "/customer/pesanan" },
+    { name: "Pesanan", path: "/customer/cart" },
   ];
 
   useEffect(() => {
@@ -96,7 +96,7 @@ const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
             </button>
 
             <button
-              onClick={() => navigate("/customer/keranjang")}
+              onClick={() => navigate("/customer/cart")}
               className="p-2 bg-primary text-white rounded-full relative hover:bg-primary/90 transition-all"
             >
               <Keranjang size={18} />
@@ -108,7 +108,7 @@ const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
             </button>
 
             <button
-              onClick={() => navigate("/customer/profil")}
+              onClick={() => navigate("/customer/profile")}
               className="p-2 bg-primary text-white rounded-full hover:bg-primary/90 transition-all"
             >
               <User size={18} />

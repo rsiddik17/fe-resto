@@ -4,35 +4,65 @@ import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import AdminSidebar from "../../components/AdminComponents/AdminSidebar";
 import AdminHeader from "../../components/AdminComponents/AdminHeader";
 import ConfirAlamat from "../../components/ConfirmationModal/ConfirmationModal";
+import { staffAPI } from "../../api/staff.api";
 
 const UbahSandiPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // State Input Form
-  const [sandiLama, setSandiLama] = useState("");
+  // const [sandiLama, setSandiLama] = useState("");
   const [sandiBaru, setSandiBaru] = useState("");
   const [konfirmasiSandi, setKonfirmasiSandi] = useState("");
 
   // State Mata Intip Input Password
-  const [showLama, setShowLama] = useState(false);
+  // const [showLama, setShowLama] = useState(false);
   const [showBaru, setShowBaru] = useState(false);
   const [showKonfirmasi, setShowKonfirmasi] = useState(false);
 
   const handleTriggerConfirm = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (sandiBaru.length < 8) {
+      alert("Kata sandi baru minimal 8 karakter");
+      return;
+    }
+    
     if (sandiBaru !== konfirmasiSandi) {
       alert("Konfirmasi kata sandi baru tidak cocok!");
       return;
     }
-    setIsConfirmOpen(true); // Picu pop-up konfirmasi ungu
+    
+    setIsConfirmOpen(true);
   };
 
-  const handleFinalSave = () => {
-    setIsConfirmOpen(false);
-    // Kirim state parameter toast sukses ke halaman utama
-    navigate("/admin/manajemen-pegawai", { state: { showSuccessToast: true } });
+  // ✅ Tambahkan async di sini
+  const handleFinalSave = async () => {
+    try {
+      setIsSubmitting(true);
+      
+      const payload = {
+        new_password: sandiBaru,
+        confirm_password: konfirmasiSandi,
+      };
+      
+      console.log("Mengirim ke backend:", payload);
+      const response = await staffAPI.updateStaffPassword(id!, payload);
+      console.log("Response:", response);
+      
+      setIsConfirmOpen(false);
+      navigate("/admin/employee-management", { 
+        state: { showSuccessToast: true, message: "Berhasil memperbarui kata sandi" }
+      });
+    } catch (error: any) {
+      console.error("Gagal update password:", error);
+      alert(error.response?.data?.message || "Gagal memperbarui kata sandi");
+      setIsConfirmOpen(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -44,39 +74,45 @@ const UbahSandiPage = () => {
 
         <div className="w-full max-w-300 mx-auto space-y-4">
           
-          {/* Tombol Back Navigasi */}
           <button 
-            onClick={() => navigate("/admin/manajemen-pegawai")}
+            onClick={() => navigate("/admin/employee-management")}
             className="flex items-center gap-2 text-gray-800 font-extrabold text-[15px] hover:text-primary transition-colors cursor-pointer w-fit"
           >
             <ArrowLeft size={18} strokeWidth={2.5} />
             Ubah Kata Sandi
           </button>
 
-          {/* Form Utama */}
           <div className="bg-white rounded-[20px] shadow-xs border border-gray-150 p-6 md:p-8">
             <form onSubmit={handleTriggerConfirm} className="space-y-5 max-w-xl">
               
               {/* Kata Sandi Lama */}
-              <div className="space-y-1.5 relative">
+              {/* <div className="space-y-1.5 relative">
                 <label className="text-[11.5px] font-extrabold text-black uppercase tracking-wider">Kata Sandi Lama<span className="text-red-500 ml-0.5">*</span></label>
                 <div className="relative w-full">
                   <input
-                    type={showLama ? "text" : "password"} required placeholder="Min 8 karakter" value={sandiLama} onChange={(e) => setSandiLama(e.target.value)}
+                    type={showLama ? "text" : "password"} 
+                    required 
+                    placeholder="Min 8 karakter" 
+                    value={sandiLama} 
+                    onChange={(e) => setSandiLama(e.target.value)}
                     className="w-full bg-white/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
                   />
                   <button type="button" onClick={() => setShowLama(!showLama)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer">
                     {showLama ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-              </div>
+              </div> */}
 
               {/* Kata Sandi Baru */}
               <div className="space-y-1.5 relative">
                 <label className="text-[11.5px] font-extrabold text-black uppercase tracking-wider">Kata Sandi Baru<span className="text-red-500 ml-0.5">*</span></label>
                 <div className="relative w-full">
                   <input
-                    type={showBaru ? "text" : "password"} required placeholder="Min 8 karakter" value={sandiBaru} onChange={(e) => setSandiBaru(e.target.value)}
+                    type={showBaru ? "text" : "password"} 
+                    required 
+                    placeholder="Min 8 karakter" 
+                    value={sandiBaru} 
+                    onChange={(e) => setSandiBaru(e.target.value)}
                     className="w-full bg-white/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
                   />
                   <button type="button" onClick={() => setShowBaru(!showBaru)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer">
@@ -90,7 +126,11 @@ const UbahSandiPage = () => {
                 <label className="text-[11.5px] font-extrabold text-black uppercase tracking-wider">Konfirmasi Kata Sandi Baru<span className="text-red-500 ml-0.5">*</span></label>
                 <div className="relative w-full">
                   <input
-                    type={showKonfirmasi ? "text" : "password"} required placeholder="Konfirmasi Kata Sandi" value={konfirmasiSandi} onChange={(e) => setKonfirmasiSandi(e.target.value)}
+                    type={showKonfirmasi ? "text" : "password"} 
+                    required 
+                    placeholder="Konfirmasi Kata Sandi" 
+                    value={konfirmasiSandi} 
+                    onChange={(e) => setKonfirmasiSandi(e.target.value)}
                     className="w-full bg-white/60 border border-gray-200 rounded-xs px-4 py-3 pr-12 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
                   />
                   <button type="button" onClick={() => setShowKonfirmasi(!showKonfirmasi)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer">
@@ -102,23 +142,24 @@ const UbahSandiPage = () => {
               {/* Tombol Control */}
               <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
                 <button
-                  type="button" onClick={() => navigate("/admin/manajemen-pegawai")}
-                  className="px-6 py-2.5 text-[13.5px] font-bold text-black-500 rounded-xs border border-primary hover:bg-gray-50 transition-colors cursor-pointer"
+                  type="button" 
+                  onClick={() => navigate("/admin/employee-management")}
+                  className="px-6 py-2.5 text-[13.5px] text-black rounded-xs border border-gray/50  hover:bg-black/5 transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="bg-primary hover:opacity-95 text-white font-bold text-[13.5px] px-8 py-2.5 rounded-xs transition-all shadow-md shadow-purple-900/15 cursor-pointer"
+                  disabled={isSubmitting}
+                  className="bg-primary hover:bg-primary/90 text-white text-[13.5px] px-6 py-2.5 rounded-xs "
                 >
-                  Simpan
+                  {isSubmitting ? "Memproses..." : "Simpan"}
                 </button>
               </div>
 
             </form>
           </div>
 
-          {/* MODAL DIALOG UNGU PERBAHARUI KATA SANDI (Kelola Pengguna (7).png) */}
           <ConfirAlamat 
             isOpen={isConfirmOpen}
             onCancel={() => setIsConfirmOpen(false)}

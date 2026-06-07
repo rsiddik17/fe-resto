@@ -132,7 +132,7 @@ const CartPageOnline = () => {
                           <div className="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
                             <button
                               onClick={() => handleDecrement(item)}
-                              className="w-8 h-8 flex items-center justify-center border-2 border-primary rounded-xs text-primary hover:bg-primary/5 transition-all"
+                              className="w-8 h-8 flex items-center justify-center border-2 border-primary rounded-xs text-primary transition-all"
                             >
                               <Minus size={16} strokeWidth={3} />
                             </button>
@@ -141,7 +141,7 @@ const CartPageOnline = () => {
                             </span>
                             <button
                               onClick={() => handleIncrement(item)}
-                              className="w-8 h-8 flex items-center justify-center border-2 border-primary rounded-xs text-primary hover:bg-primary hover:text-white transition-all"
+                              className="w-8 h-8 flex items-center justify-center border-2 border-primary rounded-xs text-primary   transition-all"
                             >
                               <Plus size={16} strokeWidth={3} />
                             </button>

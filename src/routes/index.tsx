@@ -35,7 +35,7 @@ import KioskPaymentPage from "../pages/kiosk/KioskPaymentPage";
 import KioskOrderSuccessPage from "../pages/kiosk/KioskOrderSuccessPage";
 import KioskProfilePage from "../pages/kiosk/KioskProfilePage";
 
-import MenuCardOnline from "../pages/customer/MenuPageOnline"
+import MenuCardOnline from "../pages/customer/MenuPageOnline";
 import CartPageOnline from "../pages/customer/CartPageOnline";
 import CheckoutPageOnline from "../pages/customer/CheckOutPageOnline";
 import PaymentPageOnline from "../pages/customer/PaymentPageOnline";
@@ -43,7 +43,6 @@ import PaymentSuccessOnline from "../pages/customer/PaymentSuccesOnline";
 import OrderTrackingPage from "../pages/customer/OrderTrackingPage";
 import OrderTrackingOnline from "../pages/customer/OrderTrackingOnline";
 import ProfilePage from "../pages/customer/ProfilPage";
-
 
 // QR Pages
 import MobileTableInfoPage from "../pages/qr/MobileTableInfoPage";
@@ -112,10 +111,8 @@ const router = createBrowserRouter(
         { path: "/verification-otp", Component: VerifyOtpPage },
       ],
     },
-    
 
     { path: "/unauthorized", Component: UnauthorizedPage },
-    
 
     // --- GUEST ROUTES ---
     { path: "/qr/:tableId", Component: MobileTableInfoPage },
@@ -132,47 +129,61 @@ const router = createBrowserRouter(
 
     { path: "/unauthorized", Component: UnauthorizedPage },
 
-  // --- PROTECTED ROUTES ---
-  {
-    element: <ProtectedRoute allowedRoles={["ADMIN"]} />,
-    children: [
-      { path: "/admin/dashboard", Component: AdminDashboardPage },
-      { path: "/admin/manajemen-pegawai", Component: ManajemenPegawaiPage },
-      { path: "/admin/manajemen-pegawai/tambah", Component: TambahPegawaiPage },
-      { path: "/admin/manajemen-pegawai/edit/:id", Component: EditPegawaiPage },
-      { path: "/admin/manajemen-pegawai/detail/:id", Component: DetailPegawaiPage },
-      { path: "/admin/manajemen-pegawai/ubah-sandi/:id", Component: UbahSandiPage },
-      { path: "/admin/daftar-pelanggan", Component: DaftarPelangganPage },
-      { path: "/admin/laporan", Component: LaporanPage },
-      { path: "/admin/laporan/mingguan", Component: LaporanMingguanPage },
-      { path: "/admin/laporan/bulanan", Component: LaporanBulananPage },
-      { path: "/admin/profil", Component: AdminProfilePage },
-    ],
-  },
-  {
-    element: <ProtectedRoute allowedRoles={["CASHIER"]} />,
-    children: [{ path: "/kasir/dashboard", Component: CashierDashboardPage }],
-  },
-  {
-    element: <ProtectedRoute allowedRoles={["WAITER"]} />,
-    children: [{ path: "/pelayan/order", Component: WaiterDashboardPage }],
-  },
- 
-  {
-    element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />, 
-    children: [
-      { path: "/customer/home", Component: CustomerHomePage },
-      { path: "/customer/menu", Component: MenuCardOnline },
-      { path: "/customer/keranjang", Component: CartPageOnline },
-      { path: "/customer/checkout", Component: CheckoutPageOnline },
-      { path: "/customer/pembayaran", Component: PaymentPageOnline },
-      { path: "/customer/pembayaran-berhasil", Component: PaymentSuccessOnline },
-      {path: "/customer/pesanan", Component: OrderTrackingPage},
-      {path: "/customer/pantau-pesanan", Component: OrderTrackingOnline},
-      {path: "/customer/profil", Component: ProfilePage}
-      
-    ],
-  },
+    // --- PROTECTED ROUTES ---
+    {
+      element: <ProtectedRoute allowedRoles={["ADMIN"]} />,
+      children: [
+        { path: "/admin/dashboard", Component: AdminDashboardPage },
+        { path: "/admin/employee-management", Component: ManajemenPegawaiPage },
+        {
+          path: "/admin/employee-management/add",
+          Component: TambahPegawaiPage,
+        },
+        {
+          path: "/admin/employee-management/edit/:id",
+          Component: EditPegawaiPage,
+        },
+        {
+          path: "/admin/employee-management/detail/:id",
+          Component: DetailPegawaiPage,
+        },
+        {
+          path: "/admin/employee-management/change-password/:id",
+          Component: UbahSandiPage,
+        },
+        { path: "/admin/customer-list", Component: DaftarPelangganPage },
+        { path: "/admin/report", Component: LaporanPage },
+        { path: "/admin/report/weekly", Component: LaporanMingguanPage },
+        { path: "/admin/report/monthly", Component: LaporanBulananPage },
+        { path: "/admin/profile", Component: AdminProfilePage },
+      ],
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["CASHIER"]} />,
+      children: [{ path: "/kasir/dashboard", Component: CashierDashboardPage }],
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["WAITER"]} />,
+      children: [{ path: "/pelayan/order", Component: WaiterDashboardPage }],
+    },
+
+    {
+      element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />,
+      children: [
+        { path: "/customer/home", Component: CustomerHomePage },
+        { path: "/customer/menu", Component: MenuCardOnline },
+        { path: "/customer/cart", Component: CartPageOnline },
+        { path: "/customer/checkout", Component: CheckoutPageOnline },
+        { path: "/customer/payment", Component: PaymentPageOnline },
+        {
+          path: "/customer/payment-success",
+          Component: PaymentSuccessOnline,
+        },
+        { path: "/customer/orders", Component: OrderTrackingPage },
+        { path: "/customer/track-order", Component: OrderTrackingOnline },
+        { path: "/customer/profile", Component: ProfilePage },
+      ],
+    },
     // --- PROTECTED ROUTES ---
 
     {
@@ -334,8 +345,6 @@ const router = createBrowserRouter(
         { path: "/kiosk/profile", Component: KioskProfilePage },
       ],
     },
-
-    
 
     // 🚨 RUTE 404 HARUS DI PALING BAWAH (Catch-All Route)
     {

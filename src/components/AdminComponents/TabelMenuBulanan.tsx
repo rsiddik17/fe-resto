@@ -29,13 +29,18 @@ export default function TabelMenuBulanan({
   const [menuPerPage, setMenuPerPage] = useState(itemsPerPage);
   const [isDropdownPageOpen, setIsDropdownPageOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortField, setSortField] = useState<"nama" | "harga" | "kategori" | "total" | "">("");
+  const [sortField, setSortField] = useState<
+    "nama" | "harga" | "kategori" | "total" | ""
+  >("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownPageOpen(false);
       }
     };
@@ -48,7 +53,9 @@ export default function TabelMenuBulanan({
     const valA = a[sortField];
     const valB = b[sortField];
     if (sortField === "nama" || sortField === "kategori") {
-      return sortOrder === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
+      return sortOrder === "asc"
+        ? valA.localeCompare(valB)
+        : valB.localeCompare(valA);
     }
     return sortOrder === "asc" ? valA - valB : valB - valA;
   });
@@ -61,11 +68,17 @@ export default function TabelMenuBulanan({
   };
 
   const renderSortIcon = (field: "nama" | "harga" | "kategori" | "total") => (
-    <SortIcon isActiveAsc={sortField === field && sortOrder === "asc"} isActiveDesc={sortField === field && sortOrder === "desc"} />
+    <SortIcon
+      isActiveAsc={sortField === field && sortOrder === "asc"}
+      isActiveDesc={sortField === field && sortOrder === "desc"}
+    />
   );
 
   const totalPages = Math.ceil(sortedData.length / menuPerPage);
-  const currentItems = sortedData.slice((currentPage - 1) * menuPerPage, currentPage * menuPerPage);
+  const currentItems = sortedData.slice(
+    (currentPage - 1) * menuPerPage,
+    currentPage * menuPerPage,
+  );
   const startCount = (currentPage - 1) * menuPerPage + 1;
   const endCount = Math.min(currentPage * menuPerPage, sortedData.length);
 
@@ -74,14 +87,24 @@ export default function TabelMenuBulanan({
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div className="space-y-1">
-          <h4 className="text-[17px] font-extrabold text-black">Laporan Menu</h4>
-          <p className="text-[12px] text-gray-400 font-medium">Periode: {periode}</p>
+          <h4 className="text-[17px] font-extrabold text-black">
+            Laporan Menu
+          </h4>
+          <p className="text-[12px] text-gray-400 font-medium">
+            Periode: {periode}
+          </p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => eksporKePDFMenuBulanan(sortedData, periode)} className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90">
+          <button
+            onClick={() => eksporKePDFMenuBulanan(sortedData, periode)}
+            className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90"
+          >
             <ExportIcon size={10} /> Ekspor PDF
           </button>
-          <button onClick={() => eksporKeExcelMenuBulanan(sortedData, periode)} className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90">
+          <button
+            onClick={() => eksporKeExcelMenuBulanan(sortedData, periode)}
+            className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90"
+          >
             <ExportIcon size={10} /> Ekspor Excel
           </button>
         </div>
@@ -90,7 +113,9 @@ export default function TabelMenuBulanan({
       {/* SORTING MOBILE */}
       <div className="md:hidden">
         <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
-          <span className="text-xs font-bold text-gray-500 block mb-2">Urutkan berdasarkan:</span>
+          <span className="text-xs font-bold text-gray-500 block mb-2">
+            Urutkan berdasarkan:
+          </span>
           <div className="flex flex-wrap gap-2">
             {[
               { key: "nama", label: "Nama Menu" },
@@ -108,7 +133,11 @@ export default function TabelMenuBulanan({
                 }`}
               >
                 {option.label}
-                {sortField === option.key && <span className="ml-1">{sortOrder === "asc" ? "↑" : "↓"}</span>}
+                {sortField === option.key && (
+                  <span className="ml-1">
+                    {sortOrder === "asc" ? "↑" : "↓"}
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -117,31 +146,46 @@ export default function TabelMenuBulanan({
 
       {/* DESKTOP TABLE */}
       <div className="hidden md:block border border-gray-150 rounded-xs bg-white overflow-visible">
-        <div className="overflow-x-auto">
-          <table className="w-full table-fixed text-left text-[12.5px] border-collapse">
+        <div className="overflow-x-auto  overflow-y-visible">
+          <table className="w-full table-fixed text-left text-[12.5px] border-collapse overflow-visible">
             <thead className="bg-gray-100 text-gray-500 font-bold uppercase text-[11px]">
               <tr>
-                <th className="py-3 px-6 w-16">NO</th>
+                <th className="py-3 px-6 w-16 rounded-tl-xs">NO</th>
                 {[
                   { l: "NAMA MENU", f: "nama" },
                   { l: "HARGA", f: "harga" },
                   { l: "KATEGORI", f: "kategori" },
                   { l: "TOTAL TERJUAL", f: "total" },
                 ].map((c) => (
-                  <th key={c.f} className="py-3 px-4 cursor-pointer hover:bg-gray-200" onClick={() => handleSort(c.f as any)}>
-                    <div className="flex items-center gap-1">{c.l} {renderSortIcon(c.f as any)}</div>
+                  <th
+                    key={c.f}
+                    className={`py-3 px-4 cursor-pointer hover:bg-gray-200 ${
+                      c.f === "total" ? "rounded-tr-xs" : "" // ← TARUH SINI
+                    }`}
+                    onClick={() => handleSort(c.f as any)}
+                  >
+                    <div className="flex items-center gap-1">
+                      {c.l} {renderSortIcon(c.f as any)}
+                    </div>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody className="font-medium text-gray-800">
               {currentItems.map((item, index) => (
-                <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-4 px-6 text-gray-400 font-bold">{(currentPage - 1) * menuPerPage + index + 1}</td>
+                <tr
+                  key={item.id}
+                  className="border-b border-gray-100 hover:bg-gray-50"
+                >
+                  <td className="py-4 px-6 text-gray-400 font-bold">
+                    {(currentPage - 1) * menuPerPage + index + 1}
+                  </td>
                   <td className="py-4 px-4 text-black truncate">{item.nama}</td>
-                  <td className="py-4 px-4">Rp {item.harga.toLocaleString("id-ID")}</td>
+                  <td className="py-4 px-4">
+                    Rp {item.harga.toLocaleString("id-ID")}
+                  </td>
                   <td className="py-4 px-4 truncate">{item.kategori}</td>
-                  <td className="py-4 px-4 font-bold text-black">{item.total}</td>
+                  <td className="py-4 px-4  text-black">{item.total}</td>
                 </tr>
               ))}
             </tbody>
@@ -150,7 +194,7 @@ export default function TabelMenuBulanan({
 
         {/* PAGINATION DESKTOP - SAMA PERSIS DENGAN HARIAN */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between py-3 px-4 border-t border-gray-150 bg-white">
+          <div className="flex items-center justify-between py-3 px-4 border-t border-gray-150 bg-white rounded-br-xs rounded-bl-xs">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
                 <span>Tampilkan</span>
@@ -185,7 +229,8 @@ export default function TabelMenuBulanan({
                 </div>
               </div>
               <span className="text-[12px] font-bold text-gray-400">
-                Menampilkan {startCount}-{endCount} dari {sortedData.length} menu
+                Menampilkan {startCount}-{endCount} dari {sortedData.length}{" "}
+                menu
               </span>
             </div>
 
@@ -221,19 +266,28 @@ export default function TabelMenuBulanan({
       {/* MOBILE CARD VIEW */}
       <div className="md:hidden space-y-3">
         {currentItems.map((item, index) => (
-          <div key={item.id} className="bg-white rounded-lg border border-gray-100 p-3 shadow-sm">
+          <div
+            key={item.id}
+            className="bg-white rounded-lg border border-gray-100 p-3 shadow-sm"
+          >
             <div className="flex justify-between items-start mb-2">
-              <span className="text-[10px] text-black-400 font-medium">#{(currentPage - 1) * menuPerPage + index + 1}</span>
+              <span className="text-[10px] text-black-400 font-medium">
+                #{(currentPage - 1) * menuPerPage + index + 1}
+              </span>
             </div>
             <p className="font-semibold text-black-800 text-sm">{item.nama}</p>
             <div className="mt-2 space-y-1 text-xs">
               <div className="flex justify-between">
                 <span className="text-black-400">Harga</span>
-                <span className="font-medium text-black-800">Rp {item.harga.toLocaleString("id-ID")}</span>
+                <span className="font-medium text-black-800">
+                  Rp {item.harga.toLocaleString("id-ID")}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-black-400">Kategori</span>
-                <span className="font-medium text-black-800">{item.kategori}</span>
+                <span className="font-medium text-black-800">
+                  {item.kategori}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-black-400">Total Terjual</span>

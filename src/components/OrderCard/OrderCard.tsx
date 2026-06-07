@@ -1,5 +1,5 @@
 import { useState } from "react"; 
-import { FileText } from "lucide-react";
+// import { FileText } from "lucide-react";
 import { useNavigate } from "react-router";
 import OrderDetailModal from "../../components/OrderDetailModal/OrderDetailModal"; 
 import AllMenuIcon from "../Icon/AllMenuIcon";
@@ -23,7 +23,7 @@ const OrderCard = ({ order, activeTab }: any) => {
                 #{order.orderId}
               </h3>
               <p className="text-gray-900 font-bold text-[12px] sm:text-sm mb-1 sm:mb-2 truncate">
-                {order.items?.map((item: any) => `${item.name} x${item.qty}`).join(", ")}
+                 {order.items?.map((item: any) => `${item.name || "?"} x${item.qty || 0}`).join(", ") || "Tidak ada item"}
               </p>
               {/* TAMPILAN BERSIH: Tidak ada tambahan label status di sini */}
               <div className="mt-1">
@@ -39,7 +39,7 @@ const OrderCard = ({ order, activeTab }: any) => {
 
           <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-between sm:self-stretch pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-50">
             <span className="text-[9px] sm:text-[11px] text-gray-400 font-medium sm:mb-2 whitespace-nowrap">
-              {order.date}
+                {order.date || new Date().toLocaleString("id-ID")}
             </span>
 
             <div className="flex items-center gap-2">
@@ -53,7 +53,7 @@ const OrderCard = ({ order, activeTab }: any) => {
               <button
                 onClick={() => {
                   if (activeTab === "Aktif") {
-                    navigate("/customer/pantau-pesanan", { state: { order } });
+                    navigate("/customer/track-order", { state: { order } });
                   } else {
                     navigate("/customer/menu");
                   }

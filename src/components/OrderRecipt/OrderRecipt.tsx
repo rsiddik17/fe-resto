@@ -3,23 +3,33 @@ import { Barcode } from '../Barcode/Barcode';
 import Button from '../ui/Button';
 import { useNavigate } from 'react-router';
 import HeaderOnline from '../HeaderOnline/HeaderOnline';
-// Import library untuk PDF saja (html2canvas dihapus karena memicu bug oklch)
 import { jsPDF } from 'jspdf';
 
 interface OrderReceiptProps {
   orderId: string;
   items: any[];
   subTotal: number;
-  ppn: number;
+  discountAmount?: number;  // ✅ TAMBAHKAN
   adminFee: number;
   totalPrice: number;
   onClose: () => void;
 }
 
-const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onClose }: OrderReceiptProps) => {
+const OrderReceipt = ({ 
+  orderId, 
+  items, 
+  subTotal, 
+  discountAmount = 0,  // ✅ TAMBAHKAN
+  adminFee, 
+  totalPrice, 
+  onClose 
+}: OrderReceiptProps) => {
   const navigate = useNavigate();
 
-  // Fungsi format rupiah agar rapat (Rp40.000)
+  // 🔥 PERBAIKAN: Hitung PPN dengan rumus backend (setelah diskon)
+  const afterDiscount = subTotal - discountAmount;
+  const ppn = afterDiscount * 0.1;
+
   const formatRupiah = (angka: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -28,7 +38,6 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
     }).format(angka || 0).replace(/\s/g, '');
   };
 
-  // Mengambil waktu transaksi saat ini
   const getCurrentDateTime = () => {
     const now = new Date();
     const date = now.toLocaleDateString('id-ID', { 
@@ -44,11 +53,9 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
     return `${date} • ${time.replace('.', ':')}`;
   };
 
-  // Fungsi Utama: Menggambar PDF secara Native dengan Catatan Dinamis & Ukuran Pas
   const downloadPDF = () => {
     try {
-      // 1. Hitung tinggi dinamis secara akurat (sekarang semua item dijamin punya baris catatan)
-      const itemRowsHeight = items.length * 10; // Dialokasikan 10mm per item karena selalu ada catatan
+      const itemRowsHeight = items.length * 10;
       const pdfHeight = 120 + itemRowsHeight;
       
       const pdf = new jsPDF({
@@ -57,10 +64,9 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
         format: [80, pdfHeight]
       });
 
-      // Set Font Default
       pdf.setFont('Helvetica', 'normal');
 
-      // 2. HEADER STRUK
+      // HEADER
       pdf.setFontSize(11);
       pdf.setFont('Helvetica', 'bold');
       pdf.text("IT'S RESTO", 40, 10, { align: 'center' });
@@ -70,12 +76,11 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
       pdf.setTextColor(120, 120, 120);
       pdf.text("TOTAL PEMBAYARAN", 40, 15, { align: 'center' });
 
-      // Garis Pembatas
       pdf.setDrawColor(220, 220, 220);
       pdf.setLineDashPattern([1, 1], 0);
       pdf.line(5, 18, 75, 18);
 
-      // 3. INFO TRANSAKSI
+      // INFO TRANSAKSI
       pdf.setTextColor(0, 0, 0);
       pdf.setFontSize(8);
       pdf.setFont('Helvetica', 'normal');
@@ -88,10 +93,9 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
       pdf.setFont('Helvetica', 'bold');
       pdf.text(getCurrentDateTime(), 75, 29, { align: 'right' });
 
-      // Garis Pembatas
       pdf.line(5, 33, 75, 33);
 
-      // 4. RINCIAN ITEM
+      // RINCIAN ITEM
       pdf.setFont('Helvetica', 'normal');
       pdf.setTextColor(120, 120, 120);
       pdf.text("RINCIAN PEMBAYARAN", 5, 38);
@@ -100,37 +104,32 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
       pdf.setTextColor(0, 0, 0);
       
       items.forEach((item) => {
-        // Nama Item & Qty
         pdf.setFont('Helvetica', 'bold');
         const itemName = `${item.name || "Produk"} x${item.qty || item.quantity || 1}`;
         pdf.text(itemName, 5, currentY);
         
-        // Harga Item
         const itemPrice = formatRupiah((item.price || 0) * (item.qty || item.quantity || 1));
         pdf.text(itemPrice, 75, currentY, { align: 'right' });
         
-        // Logika Catatan PDF: Cek jika kosong / strip
         const rawNote = item.notes ? item.notes.trim() : '';
         const displayNote = (rawNote === '' || rawNote === '-') ? 'Tidak ada catatan' : rawNote;
 
-        // Cetak tulisan catatan ke PDF
         currentY += 4;
         pdf.setFont('Helvetica', 'italic');
         pdf.setFontSize(7);
         pdf.setTextColor(150, 150, 150);
         pdf.text(`Note: ${displayNote}`, 5, currentY);
-        pdf.setFontSize(8); // Reset font size
+        pdf.setFontSize(8);
         pdf.setTextColor(0, 0, 0);
 
         currentY += 6; 
       });
 
-      // Garis Pembatas
       pdf.setLineDashPattern([1, 1], 0);
       pdf.line(5, currentY, 75, currentY);
       currentY += 5;
 
-      // 5. RINGKASAN BIAYA
+      // RINGKASAN BIAYA (PAKAI HITUNGAN BARU)
       pdf.setFont('Helvetica', 'bold');
       pdf.text("Total Pesanan", 5, currentY);
       pdf.text(formatRupiah(subTotal), 75, currentY, { align: 'right' });
@@ -138,6 +137,13 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
       currentY += 5;
       pdf.setFont('Helvetica', 'normal');
       pdf.setTextColor(100, 100, 100);
+      
+      if (discountAmount > 0) {
+        pdf.text("Diskon", 5, currentY);
+        pdf.text(`-${formatRupiah(discountAmount)}`, 75, currentY, { align: 'right' });
+        currentY += 5;
+      }
+      
       pdf.text("PPN 10%", 5, currentY);
       pdf.text(formatRupiah(ppn), 75, currentY, { align: 'right' });
 
@@ -151,7 +157,7 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
       pdf.line(5, currentY, 75, currentY);
       currentY += 6;
 
-      // 6. GRAND TOTAL
+      // GRAND TOTAL
       pdf.setTextColor(0, 0, 0);
       pdf.setFontSize(8.5);
       pdf.setFont('Helvetica', 'bold');
@@ -165,7 +171,6 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
       pdf.setTextColor(150, 150, 150);
       pdf.text("Terima kasih telah memesan!", 40, currentY, { align: 'center' });
 
-      // 7. DOWNLOAD FILE
       pdf.save(`struk-${orderId}.pdf`);
 
     } catch (error) {
@@ -175,7 +180,6 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
 
   return (
     <div className="fixed inset-0 z-999 bg-white flex flex-col h-screen w-screen overflow-hidden">
-      {/* 1. HEADER */}
       <div className="print:hidden shrink-0 bg-white border-b border-gray-100">
         <HeaderOnline mode="online" />
         <div className="px-4 md:px-8 py-2 flex items-center gap-3">
@@ -186,11 +190,9 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
         </div>
       </div>
 
-      {/* 2. AREA KONTEN (Global Scroll) */}
       <div className="flex-1 overflow-y-auto bg-white custom-scrollbar">
         <div className="flex flex-col md:flex-row min-h-full">
           
-          {/* SISI KIRI: STRUK */}
           <div className="bg-primary w-full md:w-[42%] flex flex-col items-center py-6 md:py-10 px-4 shrink-0">
             <div 
               id="receipt-to-print"
@@ -218,7 +220,6 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
 
               <div className="space-y-4 mb-6">
                 {items.map((item, idx) => {
-                  // Logika Catatan Layar: Cek jika kosong / strip
                   const rawNote = item.notes ? item.notes.trim() : '';
                   const hasNoNote = rawNote === '' || rawNote === '-';
 
@@ -229,7 +230,6 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
                           {item.name || "Produk"} x{item.qty || item.quantity || 1}
                         </span>
                         
-                        {/* Ikon selalu ada, teks berubah sesuai kondisi catatan */}
                         <div className="flex items-center gap-1 mt-1 text-gray-400">
                           <FileText size={12} className="shrink-0" />
                           <span className={`text-[10px] font-medium ${hasNoNote ? 'italic text-gray-400' : 'text-gray-500'}`}>
@@ -252,6 +252,12 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
                   <span className="font-bold">Total Pesanan</span>
                   <span className="font-bold">{formatRupiah(subTotal)}</span>
                 </div>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between items-center text-red-500">
+                    <span className="text-[11px]">Diskon</span>
+                    <span className="font-medium">-{formatRupiah(discountAmount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center text-gray-600">
                   <span className="text-[11px]">PPN 10%</span>
                   <span className="font-medium">{formatRupiah(ppn)}</span>
@@ -271,7 +277,6 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
             </div>
           </div>
 
-          {/* SISI KANAN: STATUS & TOMBOL */}
           <div className="flex-1 bg-white p-8 md:p-12 flex flex-col items-center justify-start pt-12 md:pt-24 text-center print:hidden">
             <div className="bg-primary w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center mb-5 shadow-lg text-white shrink-0">
               <Check size={32} strokeWidth={4} />
@@ -284,7 +289,7 @@ const OrderReceipt = ({ orderId, items, subTotal, ppn, adminFee, totalPrice, onC
             <div className="w-full max-w-90 flex flex-col gap-3 px-2">
               <div className="flex flex-row gap-2.5">
                 <Button 
-                  onClick={() => navigate("/customer/pesanan")} 
+                  onClick={() => navigate("/customer/orders")} 
                   className="flex-[1.4] py-3.5 rounded-full font-bold bg-primary text-white text-[11px] md:text-[13px] shadow-md transition-transform active:scale-95"
                 >
                   <span className="whitespace-nowrap">Pantau Pesanan</span>

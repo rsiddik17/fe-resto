@@ -8,9 +8,7 @@ const EmptyOrder = () => {
       {/* Ilustrasi */}
       <div className="relative w-full max-w-[320px] mb-8">
         <img 
-          src="/images/empty-illustration.png" 
-          alt="Belum ada pesanan"
-          className="w-full h-auto object-contain mx-auto"
+           src={`${import.meta.env.BASE_URL}images/pesanan-kosong.png`}
         />
       </div>
 

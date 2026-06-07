@@ -7,6 +7,7 @@ import Loading from "../Loading/Loading";
 import { useNavigate } from "react-router";
 import { isAxiosError } from "axios";
 import { authAPI } from "../../api/auth.api";
+import { obfuscateData } from "../../utils/crypto";
 
 const registerSchema = z
   .object({
@@ -55,8 +56,12 @@ const FormRegister = () => {
         confirm_password: data.confirm_password, 
       });
 
+      // obfuscate email and type
+      const encryptedEmail = obfuscateData(data.email);
+      const encryptedType = obfuscateData("register");
+
       navigate(
-        `/verification-otp?email=${encodeURIComponent(data.email)}&type=register`,
+        `/verification-otp?_cx=${encryptedEmail}&_t=${encryptedType}`,
       );
     } catch (error) {
       let errorMessage = "Gagal melakukan registrasi.";

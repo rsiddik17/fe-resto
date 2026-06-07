@@ -4,6 +4,7 @@ import { axiosInstance } from "../lib/axios";
 export interface CreateOrderPayload {
   source: "KIOSK" | "WAITER" | "CASHIER" | "ONLINE" | "QR_SCAN";
   table_id: number | null;
+  address_id?: string;  
   discount_id?: number;
   order_items: {
     menu_id: string;

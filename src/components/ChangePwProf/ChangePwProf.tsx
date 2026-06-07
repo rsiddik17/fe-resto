@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import ConfirSandi from "../ConfirmationModal/ConfirmationModal";
+import { customerAPI } from "../../api/onlinecustomer.api";
 
 const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
   const [showPassword, setShowPassword] = useState({
@@ -9,9 +10,24 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
     confirm: false,
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [password, setPassword] = useState({ old: "", new: "", confirm: "" });
   const [errors, setErrors] = useState({ old: "", new: "", confirm: "" });
+
+  // 👈 STATE UNTUK TOAST
+  const [localToast, setLocalToast] = useState({
+    show: false,
+    message: "",
+    type: "success" as "success" | "error",
+  });
+
+  const showLocalToast = (message: string, type: "success" | "error") => {
+    setLocalToast({ show: true, message, type });
+    setTimeout(
+      () => setLocalToast({ show: false, message: "", type: "success" }),
+      5000,
+    );
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +67,41 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
     }
   };
 
+  const handleConfirm = async () => {
+    try {
+      setIsSubmitting(true);
+
+      const payload = {
+        old_password: password.old,
+        new_password: password.new,
+        confirm_password: password.confirm,
+      };
+
+      console.log("Mengirim ke backend:", payload);
+      const response = await customerAPI.updatePassword(payload);
+      console.log("Response:", response);
+
+      setIsModalOpen(false);
+
+      // 👈 TAMPILKAN TOAST SUKSES
+      showLocalToast("Perubahan berhasil disimpan", "success");
+
+      setPassword({ old: "", new: "", confirm: "" });
+      setTimeout(() => {
+        onCancel(); // Kembali ke tab profil setelah toast hilang
+      }, 1500);
+    } catch (error: any) {
+      console.error("Gagal update password:", error);
+      const errorMessage =
+        error.response?.data?.message || "Gagal memperbarui kata sandi";
+
+      // 👈 TAMPILKAN TOAST ERROR
+      showLocalToast(errorMessage, "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const fields = [
     {
       id: "old" as const,
@@ -71,6 +122,15 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
 
   return (
     <div className="w-full font-poppins text-left">
+      {localToast.show && (
+        <div
+          className={`fixed top-20 left-1/2 -translate-x-1/2 md:left-auto md:right-6 z-9999 ${localToast.type === "success" ? "bg-green-500" : "bg-red-500"} text-white font-bold text-sm px-5 py-3 rounded-sm shadow-lg border ${localToast.type === "success" ? "border-green-300" : "border-red-300"} flex items-center gap-2 animate-in fade-in slide-in-from-top-8 duration-200`}
+        >
+          <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+          {localToast.message}
+        </div>
+      )}
+
       <h3 className="text-xl font-black text-black mb-8">Ubah Kata Sandi</h3>
 
       <form onSubmit={handleSubmit} className="space-y-6 w-full">
@@ -120,20 +180,20 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
           ))}
         </div>
 
-        {/* Ubah container tombol menjadi seperti ini */}
         <div className="flex justify-end gap-4 pt-12">
           <button
             type="button"
             onClick={onCancel}
-            className="px-10 py-3 bg-white border-[1.5px] border-primary text-black font-bold  rounded-xs active:scale-95 transition-transform text-sm"
+            className="px-10 py-3 bg-white border-[1.5px] border-gray/50 text-black rounded-xs active:scale-95 transition-transform text-sm"
           >
             Batal
           </button>
           <button
             type="submit"
-            className="px-10 py-3 bg-primary text-white font-bold rounded-xs shadow-lg active:scale-95 transition-all text-sm"
+            disabled={isSubmitting}
+            className="px-10 py-3 bg-primary text-white rounded-xs shadow-lg active:scale-95 transition-all text-sm disabled:opacity-50"
           >
-            Simpan
+            {isSubmitting ? "Menyimpan..." : "Simpan"}
           </button>
         </div>
       </form>
@@ -143,11 +203,7 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
         title="Perbarui Kata Sandi?"
         description="Apakah anda yakin ingin mengubah kata sandi? Tindakan ini tidak dapat dibatalkan"
         onCancel={() => setIsModalOpen(false)}
-        onConfirm={() => {
-          setIsModalOpen(false);
-          setPassword({ old: "", new: "", confirm: "" });
-          onCancel();
-        }}
+        onConfirm={handleConfirm}
       />
     </div>
   );

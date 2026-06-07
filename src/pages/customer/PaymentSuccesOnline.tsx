@@ -5,7 +5,7 @@ import Header from "../../components/HeaderOnline/HeaderOnline";
 import Button from "../../components/ui/Button";
 import OrderSummaryOnline from "../../components/OrderSummaryOnline/OrderSummaryOnline";
 import OrderReceipt from "../../components/OrderRecipt/OrderRecipt";
-
+import { orderAPI } from "../../api/order.api";
 const PaymentSuccessOnline = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -13,7 +13,7 @@ const PaymentSuccessOnline = () => {
 
   // State diubah: default-nya FALSE (berarti "Sedang Diproses" dulu)
   const [isConfirmed, setIsConfirmed] = useState(false);
-
+  const [orderDetail, setOrderDetail] = useState(null);
   // Mengambil data dari navigasi sebelumnya
   const {
     orderId = "260401205",
@@ -30,10 +30,25 @@ const PaymentSuccessOnline = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsConfirmed(true);
-    }, 3500); // 3500 ms = 3.5 detik
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const fetchOrderDetail = async () => {
+      if (orderId && orderId !== "260401205") {
+        try {
+          const response = await orderAPI.getMyOrderById(orderId);
+          const orderData = response.data || response;
+          setOrderDetail(orderData);
+        } catch (error) {
+          console.error("Gagal ambil detail pesanan:", error);
+        }
+      }
+    };
+    fetchOrderDetail();
+  }, [orderId]);
 
   return (
     <div className="min-h-screen bg-white pb-20 relative">
@@ -127,6 +142,7 @@ const PaymentSuccessOnline = () => {
 
           <OrderSummaryOnline
             subTotal={subTotal}
+            taxRate={10}
             discountAmount={discountAmount}
             adminFee={adminFee}
             hideAlertInfo={true}
@@ -135,7 +151,7 @@ const PaymentSuccessOnline = () => {
 
         <div className="flex flex-col sm:flex-row gap-3 w-full mt-10 px-4">
           <Button
-            onClick={() => navigate("/customer/pesanan")}
+            onClick={() => navigate("/customer/orders")}
             className="w-full sm:flex-1 py-4 rounded-full font-bold bg-primary text-white text-sm md:text-base"
           >
             Pantau Pesanan
@@ -154,7 +170,8 @@ const PaymentSuccessOnline = () => {
           orderId={orderId}
           items={purchasedItems}
           subTotal={subTotal}
-          ppn={subTotal * 0.1}
+          discountAmount={discountAmount}
+      
           adminFee={205}
           totalPrice={finalPayment}
           onClose={() => setShowReceipt(false)}

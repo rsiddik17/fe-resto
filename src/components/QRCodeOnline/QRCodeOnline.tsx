@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { QRCodeSVG } from "qrcode.react";
+// import { QRCodeSVG } from "qrcode.react";
 
 interface QRCodeOnlineProps {
   finalPayment: number;
@@ -25,8 +25,6 @@ const QRCodeOnline = ({ finalPayment, onExpire }: QRCodeOnlineProps) => {
   const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0");
   const seconds = String(timeLeft % 60).padStart(2, "0");
 
-  const qrisData = `00020101021126670016ID.CO.QRIS.WWW011893600...Nominal:${finalPayment}`;
-
   return (
     <div className="bg-white rounded-xl p-5 flex flex-col items-center shadow-sm text-center border border-gray-100 w-full">
       <p className="text-gray-500 text-lg mb-1">Total Pembayaran</p>
@@ -41,11 +39,10 @@ const QRCodeOnline = ({ finalPayment, onExpire }: QRCodeOnlineProps) => {
 
       {/* Box QR Code yang Responsif untuk HP */}
       <div className="bg-white p-3 border-2 border-gray-50 rounded-2xl mb-6 shadow-inner">
-        <QRCodeSVG 
-          value={qrisData} 
-          size={200} // Ukuran dasar
-          className="w-48 h-48 md:w-52 md:h-52" // Responsif lewat CSS
-          level="H" 
+       <img
+          src={`${import.meta.env.BASE_URL}images/qris-client.jpeg`}
+          alt="QRIS Pembayaran"
+          className="w-48 h-48 md:w-52 md:h-52 object-contain"
         />
       </div>
 

@@ -26,14 +26,14 @@ const AdminSidebar = ({ onLogout }: AdminSidebarProps) => {
     {
       name: "Manajemen Pegawai",
       icon: UserCogIcon,
-      path: "/admin/manajemen-pegawai",
+      path: "/admin/employee-management",
     },
     {
       name: "Daftar Pelanggan",
       icon: UserIcon,
-      path: "/admin/daftar-pelanggan",
+      path: "/admin/customer-list",
     },
-    { name: "Laporan", icon: ReportIcon, path: "/admin/laporan" },
+    { name: "Laporan", icon: ReportIcon, path: "/admin/report" },
   ];
 
   const handleLogout = () => {
@@ -117,7 +117,7 @@ const AdminSidebar = ({ onLogout }: AdminSidebarProps) => {
             // Logika aktif untuk laporan (termasuk sub-halaman mingguan/bulanan)
             const isActive =
               item.name === "Laporan"
-                ? location.pathname.includes("/admin/laporan")
+                ? location.pathname.includes("/admin/report")
                 : location.pathname === item.path;
 
             return (

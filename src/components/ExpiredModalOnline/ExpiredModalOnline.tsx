@@ -17,10 +17,10 @@ const ExpiredModalOnline = ({ onClose }: ExpiredModalOnlineProps) => {
 
   return (
     // Menggunakan kelas standar utility Tailwind tanpa library tambahan
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/10 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/10 backdrop-blur-sm p-4">
       
       {/* CARD PUTIH: Dipaksa bulat melengkung halus pakai rounded-[32px] atau rounded-3xl */}
-      <div className="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl flex flex-col items-center text-center">
+      <div className="bg-white w-full max-w-sm rounded-4xl p-8 shadow-2xl flex flex-col items-center text-center">
         
         {/* LINGKARAN IKON: Bulatan merah muda lembut bg-red-50 */}
         <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
@@ -33,7 +33,7 @@ const ExpiredModalOnline = ({ onClose }: ExpiredModalOnlineProps) => {
         </h2>
         
         {/* DESKRIPSI */}
-        <p className="text-gray-500 mb-8 leading-relaxed text-sm max-w-[280px]">
+        <p className="text-gray-500 mb-8 leading-relaxed text-sm max-w-70">
           Waktu pembayaran Anda telah berakhir. Pesanan ini telah dibatalkan otomatis oleh sistem.
         </p>
 

@@ -25,7 +25,7 @@ interface MenuCardOnlineProps {
 
 const MenuCardOnline = ({ children }: MenuCardOnlineProps) => {
   return (
-    <div className="bg-white rounded-xs px-3 py-4 shadow-sm border border-secondary/10 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow group">
+    <div className="bg-white rounded-xs p-3 shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full w-full hover:shadow-md transition-shadow group">
       {children}
     </div>
   );
@@ -43,7 +43,7 @@ const HeaderOnline = ({ image, name, stock }: HeaderProps) => {
   const isOutOfStock = stock === 0;
 
   return (
-    <div className="w-full aspect-5/4 rounded-xs bg-gray/25 relative shrink-0 overflow-hidden">
+    <div className="w-full aspect-square rounded-xs bg-gray-100 relative shrink-0 overflow-hidden">
       <img 
         src={image} 
         alt={name} 
@@ -71,7 +71,7 @@ interface BodyProps {
 
 const Body = ({ name, price, description }: BodyProps) => {
   return (
-    <div className="pt-4 pb-0 flex flex-col flex-1">
+    <div className="pt-3 pb-1 flex flex-col flex-1">
       <h3 className="font-bold text-lg text-black mb-1 line-clamp-1">{name}</h3>
       <p className="text-primary font-bold text-base mb-1">{rupiahFormatter.format(price)}</p>
       <p className="text-gray-500 text-[11px] line-clamp-2 leading-relaxed mb-4 flex-1">

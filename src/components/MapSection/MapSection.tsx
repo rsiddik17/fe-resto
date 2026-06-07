@@ -1,21 +1,26 @@
-import  { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import { useState, useEffect, useRef } from "react";
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-// Fix icon marker Leaflet agar muncul dengan benar
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+// import markerIcon from "leaflet/dist/images/marker-icon.png";
+// import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-const DefaultIcon = L.icon({
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
+// const DefaultIcon = L.icon({
+//   iconUrl: markerIcon,
+//   shadowUrl: markerShadow,
+//   iconSize: [25, 41],
+//   iconAnchor: [12, 41],
+// });
+// L.Marker.prototype.options.icon = DefaultIcon;
+
+const emptyIcon = L.divIcon({
+  className: "empty-marker",
+  html: '<div style="background: transparent; width: 0; height: 0;"></div>',
+  iconSize: [0, 0],
+  popupAnchor: [0, 0],
 });
-L.Marker.prototype.options.icon = DefaultIcon;
 
-// Komponen untuk otomatis geser kamera peta saat alamat dipilih
 const RecenterMap = ({ lat, lng }: { lat: number; lng: number }) => {
   const map = useMap();
   useEffect(() => {
@@ -24,14 +29,52 @@ const RecenterMap = ({ lat, lng }: { lat: number; lng: number }) => {
   return null;
 };
 
-const MapSection = () => {
-  const [position, setPosition] = useState({ lat: -6.510626, lng: 106.809559 });
-  const [searchQuery, setSearchQuery] = useState("");
+interface MapSectionProps {
+  initialAddress?: string;
+  initialLat?: number;
+  initialLng?: number;
+  initialTag?: "Rumah" | "Kantor";
+  onAddressChange?: (
+    address: string,
+    lat: number,
+    lng: number,
+    tag: "Rumah" | "Kantor",
+  ) => void;
+}
+
+const MapSection = ({
+  initialAddress = "",
+  initialLat = -6.510626,
+  initialLng = 106.809559,
+  initialTag = "Rumah",
+  onAddressChange,
+}: MapSectionProps) => {
+  const [position, setPosition] = useState({
+    lat: initialLat,
+    lng: initialLng,
+  });
+  const [searchQuery, setSearchQuery] = useState(initialAddress);
   const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [selectedTag, setSelectedTag] = useState<"Rumah" | "Kantor">("Rumah");
+  const [selectedTag, setSelectedTag] = useState<"Rumah" | "Kantor">(
+    initialTag,
+  );
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // Ambil data saran alamat gratis dari Nominatim OpenStreetMap
+  // Gunakan ref untuk track apakah ini render pertama kali
+  const isFirstRender = useRef(true);
+
+  // Update state ketika props berubah (mode edit)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    setPosition({ lat: initialLat, lng: initialLng });
+    setSearchQuery(initialAddress);
+    // setSelectedTag(initialTag);
+  }, [initialAddress, initialLat, initialLng]);
+
+  // Ambil data saran alamat
   useEffect(() => {
     if (searchQuery.length < 4) {
       setSuggestions([]);
@@ -41,14 +84,14 @@ const MapSection = () => {
     const delayDebounce = setTimeout(async () => {
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5&countrycodes=id`
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5&countrycodes=id`,
         );
         const data = await response.json();
         setSuggestions(data);
       } catch (error) {
         console.error("Error fetching geocoding data:", error);
       }
-    }, 500); // Debounce 500ms biar ga spam request saat ngetik
+    }, 500);
 
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
@@ -56,30 +99,49 @@ const MapSection = () => {
   const handleSelectAddress = (item: any) => {
     const lat = parseFloat(item.lat);
     const lng = parseFloat(item.lon);
-    
     setPosition({ lat, lng });
     setSearchQuery(item.display_name);
     setShowDropdown(false);
+    if (onAddressChange) {
+      onAddressChange(item.display_name, lat, lng, selectedTag);
+    }
+  };
+
+  const handleTagChange = (tag: "Rumah" | "Kantor") => {
+    setSelectedTag(tag);
+    if (onAddressChange) {
+      onAddressChange(searchQuery, position.lat, position.lng, tag);
+    }
+  };
+
+  const handleMapClick = async (lat: number, lng: number) => {
+    setPosition({ lat, lng });
+
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+      );
+      const data = await response.json();
+      const address = data.display_name || `${lat}, ${lng}`;
+      setSearchQuery(address);
+      if (onAddressChange) {
+        onAddressChange(address, lat, lng, selectedTag);
+      }
+    } catch (error) {
+      if (onAddressChange) {
+        onAddressChange(searchQuery, lat, lng, selectedTag);
+      }
+    }
   };
 
   return (
     <div className="space-y-6">
       {/* INPUT ALAMAT LENGKAP */}
-      <div className="space-y-2 text-left relative flex flex-col">
-        <label className="text-black font-bold text-sm">Alamat Lengkap</label>
-        <textarea
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setShowDropdown(true);
-          }}
-          className="w-full p-4 bg-white border-[1.5px] border-primary rounded-xs h-24 text-sm font-medium outline-none resize-none disabled:bg-gray-50 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary"
-          placeholder="Ketik alamat, misal: Puri Nirwana 3, Cibinong"
-        />
+      <div className="space-y-2 text-left relative">
+        <label className="text-black font-bold text-sm ">Alamat Lengkap</label>
 
-        {/* DROPDOWN SARAN ALAMAT */}
         {showDropdown && suggestions.length > 0 && (
-          <ul className="absolute left-0 right-0 bg-white border border-gray-100 rounded-xl mt-1 shadow-xl z-9999 max-h-60 overflow-y-auto divide-y divide-gray-50">
+          <ul className="absolute left-0 right-0 bottom-full mb-1 bg-white border border-gray-100 rounded-xl shadow-xl z-9999 max-h-60 overflow-y-auto divide-y divide-gray-50">
             {suggestions.map((item, index) => (
               <li
                 key={index}
@@ -91,32 +153,57 @@ const MapSection = () => {
             ))}
           </ul>
         )}
+
+        <textarea
+          value={searchQuery}
+          onChange={(e) => {
+            setSearchQuery(e.target.value); // ← nyimpan di lokal
+            setShowDropdown(true);
+          }}
+          onBlur={() => {
+            // ← 🔥 TAMBAHAN INI
+            if (onAddressChange && searchQuery !== initialAddress) {
+              onAddressChange(
+                searchQuery,
+                position.lat,
+                position.lng,
+                selectedTag,
+              );
+            }
+          }}
+          className="w-full p-4 mt-2 bg-white border-[1.5px] border-primary rounded-xs h-24 ..."
+          placeholder="Ketik alamat..."
+        />
       </div>
 
-      {/* VISUALISASI PETA */}
-      <div className="w-full h-80 rounded-xl overflow-hidden border border-gray-100 relative z-10">
+      {/* PETA */}
+      <div
+        className="w-full h-80 rounded-xl overflow-hidden border border-gray-100 
+      relative z-10  [&_.leaflet-marker-icon]:!hidden"
+      >
         <MapContainer
           center={[position.lat, position.lng]}
           zoom={15}
           zoomControl={false}
-          style={{ height: '100%', width: '100%' }}
+          style={{ height: "100%", width: "100%" }}
+          onClick={(e) => handleMapClick(e.latlng.lat, e.latlng.lng)}
         >
           <TileLayer
-            attribution='&copy; OpenStreetMap contributors'
+            attribution="&copy; OpenStreetMap contributors"
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Marker position={[position.lat, position.lng]} />
+          {/* <Marker position={[position.lat, position.lng]} icon={emptyIcon} /> */}
           <RecenterMap lat={position.lat} lng={position.lng} />
         </MapContainer>
       </div>
 
-      {/* INPUT LATITUDE & LONGITUDE (OTOMATIS) */}
+      {/* LATITUDE & LONGITUDE */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
         <div className="space-y-2">
           <label className="text-black font-bold text-sm">Latitude</label>
           <input
             disabled
-            className="w-full p-4 bg-white border-[1.5px] border-primary  rounded-xs font-medium text-gray-500 resize-none outline-none disabled:bg-gray-50 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full p-4 mt-2 bg-gray-100 border-[1.5px] border-gray-200 rounded-xs font-medium text-gray-500 outline-none cursor-not-allowed"
             value={position.lat}
           />
         </div>
@@ -124,7 +211,7 @@ const MapSection = () => {
           <label className="text-black font-bold text-sm">Longitude</label>
           <input
             disabled
-            className="w-full p-4 bg-white border-[1.5px] border-primary rounded-xs font-medium text-gray-500 outline-none disabled:bg-gray-50 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full p-4 mt-2 bg-gray-100 border-[1.5px] border-gray-200 rounded-xs font-medium text-gray-500 outline-none cursor-not-allowed"
             value={position.lng}
           />
         </div>
@@ -136,7 +223,7 @@ const MapSection = () => {
         <div className="flex gap-4">
           <button
             type="button"
-            onClick={() => setSelectedTag("Rumah")}
+            onClick={() => handleTagChange("Rumah")}
             className={`px-10 py-2.5 border-2 rounded-full font-bold transition-all ${
               selectedTag === "Rumah"
                 ? "border-primary text-primary bg-primary/5"
@@ -147,7 +234,7 @@ const MapSection = () => {
           </button>
           <button
             type="button"
-            onClick={() => setSelectedTag("Kantor")}
+            onClick={() => handleTagChange("Kantor")}
             className={`px-10 py-2.5 border-2 rounded-full font-bold transition-all ${
               selectedTag === "Kantor"
                 ? "border-primary text-primary bg-primary/5"

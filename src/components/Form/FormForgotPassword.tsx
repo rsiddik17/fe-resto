@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Loading from "../Loading/Loading";
 import { isAxiosError } from "axios";
 import { authAPI } from "../../api/auth.api";
+import { obfuscateData } from "../../utils/crypto";
 
 const forgorPasswordSchema = z.object({
   email: z
@@ -33,8 +34,13 @@ const FormForgotPassword = () => {
     try {
       await authAPI.forgotPassword({ email: data.email });
 
+      // obfuscate email and type
+      const encryptedEmail = obfuscateData(data.email);
+      const encryptedType = obfuscateData("forgot-password");
+
+      // navigate to verification-otp page with obfuscated email and type
       navigate(
-        `/verification-otp?email=${encodeURIComponent(data.email)}&type=forgot-password`,
+        `/verification-otp?_cx=${encryptedEmail}&_t=${encryptedType}`,
       );
     } catch (error) {
       let errorMessage = "Gagal memproses permintaan. Silakan coba lagi.";

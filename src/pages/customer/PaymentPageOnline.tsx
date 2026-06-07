@@ -9,6 +9,8 @@ import ExpiredModalFinal from "../../components/ExpiredModalFinal/ExpiredModalFi
 import Header from "../../components/HeaderOnline/HeaderOnline";
 import { useOrderStore } from "../../store/useOrderStore";
 import { useMenuStore } from "../../store/useMenuStore";
+// import { orderAPI } from "../../api/order.api";
+
 const PaymentPageOnline = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,7 +20,6 @@ const PaymentPageOnline = () => {
   const { addOrder } = useOrderStore();
   const { removeCheckedItems } = useCartStore();
 
-  // Memastikan data memiliki nilai default angka agar toLocaleString tidak error
   const {
     orderId = "260401205",
     finalPayment = 0,
@@ -28,52 +29,57 @@ const PaymentPageOnline = () => {
     address = "",
   } = location.state || {};
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = async () => {  // ← tambah async
     const selectedItems = items.filter((i) => i.checked);
 
-    // 1. Potong stok di database master
-    reduceStock(selectedItems.map((i) => ({ id: i.id, qty: i.qty })));
+    try {
+      
+      // 2. Potong stok di database master
+      // reduceStock(selectedItems.map((i) => ({ id: i.id, qty: i.qty })));
 
-    // 2. Simpan ke riwayat pesanan dengan data yang sudah "dikunci"
-    addOrder({
-      orderId,
-      address,
-      // Gunakan map agar data seperti gambar dan nama tersimpan permanen di riwayat
-      items: selectedItems.map((item) => ({
-        id: item.id,
-        name: item.name,
-        qty: item.qty,
-        price: item.price,
-        notes: item.notes,
-        image: item.image, // Sangat penting agar modal detail tidak kosong gambarnya
-      })),
-      finalPayment: Number(finalPayment),
-      status: "Proses",
-      date: new Date().toLocaleString("id-ID", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      subTotal: Number(subTotal),
-      discountAmount: Number(discountAmount),
-      adminFee: Number(adminFee),
-    });
-
-    // 3. Bersihkan keranjang dan pindah halaman
-    removeCheckedItems();
-    navigate("/customer/pembayaran-berhasil", {
-      state: {
+      // 3. Simpan ke riwayat pesanan
+      addOrder({
         orderId,
-        finalPayment,
-        subTotal,
-        discountAmount,
-        adminFee,
         address,
-        purchasedItems: selectedItems,
-      },
-    });
+        items: selectedItems.map((item) => ({
+          id: item.id,
+          name: item.name,
+          qty: item.qty,
+          price: item.price,
+          notes: item.notes,
+          image: item.image,
+        })),
+        finalPayment: Number(finalPayment),
+        status: "Proses",
+        date: new Date().toLocaleString("id-ID", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        subTotal: Number(subTotal),
+        discountAmount: Number(discountAmount),
+        adminFee: Number(adminFee),
+      });
+
+      // 4. Bersihkan keranjang dan pindah halaman
+      removeCheckedItems();
+      navigate("/customer/payment-success", {
+        state: {
+          orderId,
+          finalPayment,
+          subTotal,
+          discountAmount,
+          adminFee,
+          address,
+          purchasedItems: selectedItems,
+        },
+      });
+    } catch (error: any) {
+      console.error("Gagal validasi pembayaran:", error);
+      alert(error.response?.data?.message || "Pembayaran gagal divalidasi");
+    }
   };
 
   return (
@@ -84,7 +90,7 @@ const PaymentPageOnline = () => {
         <div className="w-full py-3 px-4 md:px-12 flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="p-1 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center"
+            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
           >
             <ArrowLeft size={22} />
           </button>
@@ -94,12 +100,10 @@ const PaymentPageOnline = () => {
 
       <main className="max-w-6xl mx-auto px-4 md:px-12 mt-6">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
+          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4 shadow-lg">
             <Check size={32} strokeWidth={4} className="text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-black">
-            Pesanan Berhasil Dibuat!
-          </h2>
+          <h2 className="text-2xl font-bold text-black">Pesanan Berhasil Dibuat!</h2>
           <p className="text-gray-400">Silakan lakukan pembayaran via QRIS</p>
         </div>
 
@@ -109,9 +113,7 @@ const PaymentPageOnline = () => {
               <span className="text-gray-400 text-sm">ID Pesanan</span>
               <span className="text-primary font-bold">#{orderId}</span>
             </div>
-
             <div className="bg-white rounded-lg shadow-sm border border-gray-100">
-              {/* Mengirim nilai default 0 agar QRCodeOnline tidak crash */}
               <QRCodeOnline
                 finalPayment={finalPayment || 0}
                 onExpire={() => setIsExpired(true)}
@@ -122,33 +124,23 @@ const PaymentPageOnline = () => {
           <div className="lg:col-span-5 flex-col">
             <div className="flex items-center gap-2 mb-4">
               <div className="bg-primary p-1.5 rounded-full text-white">
-                <FileText size={16} className="text-white" strokeWidth={2.5} />
+                <FileText size={16} strokeWidth={2.5} />
               </div>
               <h3 className="font-bold text-xl">Ringkasan Pesanan</h3>
             </div>
 
             <div className="text-gray-600 space-y-3 mb-4">
-              {" "}
-              {/* Pakai space-y-4 supaya antar menu ada jarak */}
               {items
                 .filter((item) => item.checked)
                 .map((item) => (
-                  <div
-                    key={item.cartId}
-                    className="flex justify-between items-start"
-                  >
-                    {/* Sisi Kiri: Nama dan Catatan dibungkus div flex-col */}
+                  <div key={item.cartId} className="flex justify-between items-start">
                     <div className="flex flex-col gap-1">
-                      <span className="font-medium text-black">
-                        {item.name} x{item.qty}
-                      </span>
+                      <span className="font-medium text-black">{item.name} x{item.qty}</span>
                       <div className="flex items-center gap-1.5 text-sm text-gray-400">
                         <FileText size={13} className="shrink-0 opacity-70" />
                         <span>{item.notes || "Tidak ada"}</span>
                       </div>
                     </div>
-
-                    {/* Sisi Kanan: Harga tetap di pojok kanan */}
                     <span className="font-medium text-black">
                       Rp{(item.price * item.qty).toLocaleString("id-ID")}
                     </span>

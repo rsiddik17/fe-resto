@@ -142,11 +142,11 @@ export default function TabelMenuMingguan({
 
       {/* ========== DESKTOP TABLE ========== */}
       <div className="hidden md:block border border-gray-150 rounded-xs bg-white overflow-visible">
-        <div className="overflow-x-auto">
-          <table className="w-full table-fixed text-left text-[12.5px] border-collapse">
+        <div className="overflow-x-auto overflow-y-visible">
+          <table className="w-full table-fixed text-left text-[12.5px] border-collapse overflow-visible">
             <thead className="bg-gray-200 text-gray-500 font-bold uppercase text-[11px]">
               <tr>
-                <th className="py-3 px-6 w-16">NO</th>
+                <th className="py-3 px-6 w-16 rounded-tl-xs">NO</th>
                 {[
                   { l: "NAMA MENU", f: "nama" },
                   { l: "HARGA", f: "harga" },
@@ -155,7 +155,9 @@ export default function TabelMenuMingguan({
                 ].map((c) => (
                   <th
                     key={c.f}
-                    className="py-3 px-4 cursor-pointer hover:bg-gray-200"
+                    className={`py-3 px-4 cursor-pointer hover:bg-gray-200 ${
+                      c.f === "total" ? "rounded-tr-xs" : "" // ← PAKAI c.f === "total"
+                    }`}
                     onClick={() => handleSort(c.f as any)}
                   >
                     <div className="flex items-center gap-1">
@@ -179,7 +181,7 @@ export default function TabelMenuMingguan({
                     Rp {item.harga.toLocaleString("id-ID")}
                   </td>
                   <td className="py-4 px-4 truncate">{item.kategori}</td>
-                  <td className="py-4 px-4 font-bold text-black">
+                  <td className="py-4 px-4  text-black">
                     {item.total}
                   </td>
                 </tr>
@@ -190,7 +192,7 @@ export default function TabelMenuMingguan({
 
         {/* PAGINATION DESKTOP */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between py-3 px-4 border-t border-gray-150 bg-white">
+          <div className="flex items-center justify-between py-3 px-4 border-t border-gray-150 bg-white  rounded-br-xs rounded-bl-xs">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
                 <span>Tampilkan</span>
