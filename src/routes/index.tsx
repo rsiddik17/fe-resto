@@ -98,6 +98,7 @@ import KitchenMenuStockPage from "../pages/kitchen/KitchenMenuStockPage";
 import KitchenDetailMenuPage from "../pages/kitchen/KitchenDetailMenuPage";
 
 import GuestRoute from "./GuestRoute";
+import CashierEditOrderPage from "../pages/cashier/CashierEditOrderPage";
 
 const router = createBrowserRouter(
   [
@@ -215,6 +216,10 @@ const router = createBrowserRouter(
             {
               path: "/cashier/order-list",
               Component: CashierOrderListPage,
+            },
+            {
+              path: "/cashier/order-list/edit/:id",
+              Component: CashierEditOrderPage,
             },
             {
               path: "/cashier/order-list/payment-validation",

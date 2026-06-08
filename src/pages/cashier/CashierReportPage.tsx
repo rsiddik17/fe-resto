@@ -121,6 +121,15 @@ const CashierReportPage = () => {
   }, [selectedDate]);
 
 
+  const calculateQtyFromString = (itemString: string) => {
+    if (!itemString || itemString === "-") return 0;
+    return itemString.split(",").reduce((acc, part) => {
+      const match = part.trim().match(/^(\d+)x/);
+      return acc + (match ? parseInt(match[1], 10) : 0);
+    }, 0);
+  };
+
+
   // --- 2. LOGIC SORTING TINGKAT PAGE ---
   const sortedSales = useMemo(() => {
     const sortableItems = [...salesData];
@@ -150,6 +159,19 @@ const CashierReportPage = () => {
     }
     setSortConfig({ key, direction });
   };
+
+
+  const reportTotals = useMemo(() => {
+    return sortedSales.reduce(
+      (acc, curr) => ({
+        foods: acc.foods + calculateQtyFromString(curr.foods),
+        drinks: acc.drinks + calculateQtyFromString(curr.drinks),
+        amount: acc.amount + curr.total,
+      }),
+      { foods: 0, drinks: 0, amount: 0 }
+    );
+  }, [sortedSales]);
+
 
   // --- HANDLER EXPORT PDF ---
   const handleExportPDF = () => {
@@ -192,6 +214,15 @@ const CashierReportPage = () => {
         row.bank,
         formatRupiah(row.total),
       ]),
+      foot: [
+        [
+          { content: "TOTAL TERJUAL & PENDAPATAN", colSpan: 3, styles: { halign: "right" } },
+          { content: `${reportTotals.foods} Item` },
+          { content: `${reportTotals.drinks} Item` },
+          { content: "" },
+          { content: formatRupiah(reportTotals.amount) },
+        ],
+      ],
       headStyles: { fillColor: [121, 36, 142], textColor: 255 },
       theme: "grid",
       styles: { fontSize: 9 },
@@ -217,6 +248,16 @@ const CashierReportPage = () => {
       "NAMA BANK": row.bank,
       TOTAL: row.total,
     }));
+
+    excelData.push({
+      NO: null as any,
+      "ID PESANAN": "TOTAL",
+      "JAM PEMESANAN": "",
+      MAKANAN: `${reportTotals.foods} Item`,
+      MINUMAN: `${reportTotals.drinks} Item`,
+      "NAMA BANK": "",
+      TOTAL: reportTotals.amount,
+    });
 
     const ws = XLSX.utils.json_to_sheet(excelData);
     XLSX.utils.book_append_sheet(wb, ws, "Laporan Harian");
@@ -301,6 +342,9 @@ const CashierReportPage = () => {
           sortConfig={sortConfig}
           onSort={handleSort}
           isLoading={isLoading}
+          totalFoodsQty={reportTotals.foods}
+          totalDrinksQty={reportTotals.drinks}
+          totalAmount={reportTotals.amount}
         />
       </div>
 

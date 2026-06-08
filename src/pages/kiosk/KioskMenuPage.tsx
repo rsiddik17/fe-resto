@@ -72,7 +72,7 @@ const KioskMenuPage = () => {
         userName={firstName}
       />
 
-      <main className="flex-1 flex flex-col w-full max-w-7xl mx-auto px-4 md:px-6 pt-4 md:pt-6 overflow-hidden lg:overflow-visible">
+      <main className="flex-1 flex flex-col w-full max-w-7xl lg:max-w-6xl mx-auto px-4 md:px-6 pt-4 md:pt-6 overflow-hidden lg:overflow-visible">
         {/* HERO SECTION & PENCARIAN */}
         <HeroSection
           title="Pesan Menu<br />Favoritmu"
