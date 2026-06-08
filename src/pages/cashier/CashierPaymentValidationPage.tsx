@@ -12,6 +12,7 @@ import { useCartStore } from "../../store/useCartStore";
 import { useProfile } from "../../hooks/useProfile";
 import { orderAPI } from "../../api/order.api";
 import Loading from "../../components/Loading/Loading";
+import { useReceipt, formatTimeStruk } from "../../hooks/useReceipt"; 
 
 // --- HELPER FORMATTER ---
 const formatTime = (isoString: string) => {
@@ -43,8 +44,14 @@ const CashierPaymentValidationPage = () => {
   const { clearCart } = useCartStore();
   const { firstName, roleName } = useProfile();
 
-  const rawOrderIdFromState = location.state?.dataOrder?.id || location.state?.orderId;
-  const fallbackTableName = location.state?.tableNumber || location.state?.dataOrder?.title || "Takeaway";
+  const { generateReceiptPDF } = useReceipt();
+
+  const rawOrderIdFromState =
+    location.state?.dataOrder?.id || location.state?.orderId;
+  const fallbackTableName =
+    location.state?.tableNumber ||
+    location.state?.dataOrder?.title ||
+    "Takeaway";
 
   // --- STATE DATA ORDER ---
   const [orderData, setOrderData] = useState<any>(null);
@@ -86,22 +93,27 @@ const CashierPaymentValidationPage = () => {
 
         if (response.success && response.data) {
           const beData = response.data;
-          
+
           // Mapping data ke format yang dibutuhkan PaymentOrderDetailCard
           const mappedOrder = {
             orderId: beData.order_id,
             time: formatTime(beData.timeStamp),
-            title: beData.table_number 
-                    ? formatTableNumber(beData.table_number) 
-                    : fallbackTableName,
+            receiptTime: formatTimeStruk(beData.timeStamp),
+            title: beData.table_number
+              ? formatTableNumber(beData.table_number)
+              : fallbackTableName,
             leftBadges: [{ text: beData.source }],
-            items: beData.items?.map((item: any) => ({
-              name: item.menu_name || "Item",
-              qty: item.quantity,
-              note: item.notes,
-              price: item.sub_total,
-            })) || [],
-            total: Number(beData.payments?.grand_total_amount || 0),
+            items:
+              beData.items?.map((item: any) => ({
+                name: item.menu_name || "Item",
+                qty: item.quantity,
+                note: item.notes,
+                price: item.sub_total,
+              })) || [],
+            subTotal: Number(beData.payments?.total_amount || 0),
+            tax: Number(beData.payments?.tax_amount || 0),
+            adminFee: Number(beData.payments?.unique_code || 0),
+            grandTotal: Number(beData.payments?.grand_total_amount || 0),
           };
 
           setOrderData(mappedOrder);
@@ -117,25 +129,35 @@ const CashierPaymentValidationPage = () => {
     fetchOrderDetails();
   }, [rawOrderIdFromState]);
 
-
   // --- HANDLE VALIDASI PEMBAYARAN ---
   const handleConfirmValidation = async () => {
     if (!orderData?.orderId) return;
 
     // Tentukan nama bank final
-    const finalBankName = selectedBank === "Lainnya" ? otherBankName : selectedBank;
+    const finalBankName =
+      selectedBank === "Lainnya" ? otherBankName : selectedBank;
 
     try {
       setLoadingMessage("Memvalidasi pembayaran...");
       setIsSubmitting(true);
-      
+
       // 1. Panggil API Validasi
-      const response = await orderAPI.validatePayment(orderData.orderId, finalBankName);
-      
+      const response = await orderAPI.validatePayment(
+        orderData.orderId,
+        finalBankName,
+      );
+
       if (response.success) {
         setIsModalOpen(false);
         clearCart();
         triggerToast("Pembayaran berhasil divalidasi!", "success");
+
+        // --- TRIGGER AUTO DOWNLOAD STRUK ---
+        try {
+          generateReceiptPDF(orderData);
+        } catch (pdfError) {
+          console.error("Gagal mencetak struk:", pdfError);
+        }
 
         // 2. Beri jeda agar Toast terlihat, lalu arahkan ke Order List
         setTimeout(() => {
@@ -145,10 +167,12 @@ const CashierPaymentValidationPage = () => {
         triggerToast(response.message || "Gagal memvalidasi", "error");
         setIsModalOpen(false);
       }
-
     } catch (error: any) {
       console.error("Error validasi pembayaran:", error);
-      triggerToast(error.response?.data?.message || "Gagal memvalidasi pembayaran", "error");
+      triggerToast(
+        error.response?.data?.message || "Gagal memvalidasi pembayaran",
+        "error",
+      );
       setIsModalOpen(false);
     } finally {
       setIsSubmitting(false);
@@ -178,7 +202,10 @@ const CashierPaymentValidationPage = () => {
       }
     } catch (error: any) {
       console.error("Error cancel order:", error);
-      triggerToast(error.response?.data?.message || "Gagal membatalkan pesanan", "error");
+      triggerToast(
+        error.response?.data?.message || "Gagal membatalkan pesanan",
+        "error",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -210,7 +237,7 @@ const CashierPaymentValidationPage = () => {
           {/* Tombol Kembali & Judul */}
           <div className="flex items-center gap-1 mb-2">
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/cashier/order-list")}
               className="flex items-center gap-2 text-black hover:text-primary/80 transition-colors cursor-pointer group"
             >
               <ArrowLeft

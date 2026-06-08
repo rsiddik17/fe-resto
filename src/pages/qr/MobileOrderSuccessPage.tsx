@@ -14,7 +14,7 @@ import { useAuthStore } from "../../store/useAuthStore";
 const MobileOrderSuccessPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { items, clearCart, tableNumber } = useCartStore();
+  const { items, clearCart, tableNumber, tableId } = useCartStore();
   const { logout } = useAuthStore();
 
   const orderData = location.state;
@@ -23,10 +23,8 @@ const MobileOrderSuccessPage = () => {
   useEffect(() => {
     // Proteksi: Jika tidak ada data order, kembalikan ke menu
     if (!orderData || items.length === 0) {
-      const rawNumber = tableNumber?.replace(/\D/g, "");
-      if (rawNumber) {
-        navigate(`/qr/${rawNumber}`, { replace: true });
-      }
+      const targetUrl = tableId ? `/qr/${btoa(tableId.toString())}` : "/";
+      navigate(targetUrl, { replace: true });
       return;
     }
 
@@ -36,15 +34,15 @@ const MobileOrderSuccessPage = () => {
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [orderData, items.length, navigate, tableNumber]);
+  }, [orderData, items.length, navigate, tableId]);
 
   const handleSelesai = async () => {
-    const rawNumber = tableNumber?.replace(/\D/g, "");
-    clearCart(); // Kosongkan keranjang
-    await logout();
-    if (rawNumber) {
-      navigate(`/qr/${rawNumber}`, { replace: true });
-    }
+   const targetUrl = tableId ? `/qr/${btoa(tableId.toString())}` : "/";
+
+    clearCart(); 
+    await logout(); // Logout Guest
+    
+    navigate(targetUrl, { replace: true });
   };
 
   const tableNo = tableNumber?.match(/\d+/)?.[0];
@@ -52,7 +50,6 @@ const MobileOrderSuccessPage = () => {
   if (!orderData) return null;
 
   return (
-    // pb-24 agar tombol sticky tidak menutupi ringkasan harga
     <div className="min-h-screen bg-white pb-4 relative flex flex-col">
       <Header />
 

@@ -126,7 +126,7 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
               placeholder="Catatan (opsional)"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.75 md:py-3 lg:py-2.5 bg-gray/15 border-transparent focus:bg-white focus:border-primary text-xs md:text-sm rounded-md"
+              className="w-full pl-10 pr-4 py-2.75 md:py-3 lg:py-2.5 bg-white focus:bg-white border-[1.5px] border-primary focus:border-primary text-xs md:text-sm rounded-md"
             />
           </div>
 

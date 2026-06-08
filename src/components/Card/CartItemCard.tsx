@@ -44,7 +44,7 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDeletePrompt
          <div className="order-2 md:order-1 flex-1 min-w-0 w-full">
             <Button 
               onClick={() => onEditNote(item.cartId, item.notes)}
-              className="flex items-center gap-1.5 bg-gray/15 text-gray px-3 py-1.25 md:px-4 md:py-2.5 lg:py-2 rounded-xs font-normal w-full md:w-90 lg:w-100 cursor-pointer text-left hover:bg-gray/15"
+              className="flex items-center gap-1.5 bg-white text-gray px-3 py-1.25 md:px-4 md:py-2.5 lg:py-2 rounded-xs font-normal w-full md:w-90 lg:w-100 cursor-pointer text-left border-[1.5px] border-primary/75 hover:bg-gray/5"
             >
               <NotesIcon className="shrink-0" />
               <span className="text-[13px] md:text-lg lg:text-base flex-1 truncate">

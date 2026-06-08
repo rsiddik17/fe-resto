@@ -85,7 +85,7 @@ const grandTotal =
       {/* --- ALERT INFO --- */}
       {!hideAlertInfo && (
         <AlertInfo 
-          className="mt-75 md:mt-2"
+          className="mt-10 md:mt-2"
           title="Informasi Pembayaran"
           description="Setelah konfirmasi pesanan, biaya admin akan ditambahkan."
         />

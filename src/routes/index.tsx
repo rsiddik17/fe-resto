@@ -79,7 +79,6 @@ import CashierPaymentPage from "../pages/cashier/CashierPaymentPage";
 import CashierTableManagementPage from "../pages/cashier/CashierTableManagementPage";
 import CashierDiscountManagementPage from "../pages/cashier/CashierDiscountManagementPage";
 import CashierReportPage from "../pages/cashier/CashierReportPage";
-import { Component } from "lucide-react";
 import ManajemenPegawaiPage from "../pages/admin/ManajemenPegawai";
 import TambahPegawaiPage from "../components/AdminComponents/TambahPegawaiPage";
 import EditPegawaiPage from "../components/AdminComponents/EditPegawai";
