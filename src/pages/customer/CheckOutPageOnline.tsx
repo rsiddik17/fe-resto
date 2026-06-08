@@ -82,7 +82,7 @@ const CheckoutPageOnline = () => {
   // Tentukan alamat saat ini
   const currentAddress =
     addresses.find((a) => a.id === selectedAddressId) || addresses[0];
-  const adminFeeValue = 205;
+  const adminFeeValue = 0;
   const safeTotalPrice = selectedItems.reduce(
     (acc, item) => acc + item.price * item.qty,
     0,
@@ -92,6 +92,13 @@ const CheckoutPageOnline = () => {
   const grandTotal = afterDiscount + ppn + adminFeeValue;
 
   const handleKonfirmasiPesanan = async () => {
+    console.log("=== DEBUG CHECKOUT ===");
+    console.log("selectedAddressId:", selectedAddressId);
+    console.log("List addresses:", addresses);
+    console.log("selectedItems:", selectedItems);
+    console.log("appliedDiscount:", appliedDiscount);
+    console.log("appliedDiscountId:", appliedDiscountId);
+    console.log("======================");
     if (selectedItems.length === 0) {
       alert("Tidak ada item yang dipilih");
       return;
@@ -125,16 +132,18 @@ const CheckoutPageOnline = () => {
       console.log("Response backend:", response);
 
       const backendOrderId = response.data.id;
-
+      const backendGrandTotal = response.data.grand_total_amount;
+      console.log("✅✅✅ backendGrandTotal:", backendGrandTotal);
+      console.log("✅✅✅ response.data:", response.data);
       navigate("/customer/payment", {
         state: {
           orderId: backendOrderId,
-          address: currentAddress?.detail || "",
-          items: selectedItems,
+          finalPayment: backendGrandTotal,
           subTotal: safeTotalPrice,
           discountAmount: appliedDiscount,
-          adminFee: adminFeeValue,
-          finalPayment: grandTotal,
+          adminFee: 0,
+          address: currentAddress?.detail || "",
+          purchasedItems: selectedItems,
         },
       });
     } catch (error: any) {

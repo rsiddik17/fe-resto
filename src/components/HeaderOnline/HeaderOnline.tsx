@@ -21,7 +21,7 @@ const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
   const onlineMenuItems = [
     { name: "Beranda", path: "/customer/home" },
     { name: "Menu", path: "/customer/menu" },
-    { name: "Pesanan", path: "/customer/cart" },
+    { name: "Pesanan", path: "/customer/orders" },
   ];
 
   useEffect(() => {

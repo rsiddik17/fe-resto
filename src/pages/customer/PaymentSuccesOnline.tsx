@@ -22,9 +22,12 @@ const PaymentSuccessOnline = () => {
     discountAmount = 0,
     purchasedItems = [],
   } = location.state || {};
+  console.log("🎉🎉🎉 PaymentSuccess - finalPayment:", finalPayment);
+console.log("🎉🎉🎉 PaymentSuccess - subTotal:", subTotal);
+console.log("🎉🎉🎉 PaymentSuccess - discountAmount:", discountAmount);
 
   // Biaya admin dipaksa ke 205 sesuai permintaanmu
-  const adminFee = 205;
+  const adminFee = 0;
 
   // Efek timer: dari "Diproses" berubah menjadi "Dikonfirmasi" (true) setelah 3.5 detik
   useEffect(() => {
@@ -85,7 +88,9 @@ const PaymentSuccessOnline = () => {
             <span className="text-gray-500 text-sm">Total Pembayaran</span>
             <span className="text-primary font-bold text-sm">
               Rp{finalPayment.toLocaleString("id-ID")}
+              
             </span>
+            
           </div>
         </div>
 
@@ -145,6 +150,7 @@ const PaymentSuccessOnline = () => {
             taxRate={10}
             discountAmount={discountAmount}
             adminFee={adminFee}
+            finalPayment={finalPayment} 
             hideAlertInfo={true}
           />
         </div>
@@ -171,8 +177,7 @@ const PaymentSuccessOnline = () => {
           items={purchasedItems}
           subTotal={subTotal}
           discountAmount={discountAmount}
-      
-          adminFee={205}
+          adminFee={0}
           totalPrice={finalPayment}
           onClose={() => setShowReceipt(false)}
         />

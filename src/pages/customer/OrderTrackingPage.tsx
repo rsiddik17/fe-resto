@@ -11,7 +11,7 @@ interface Order {
   items: any[];
   finalPayment: number;
   subTotal: number;
-  taxAmount: number;   
+  taxAmount: number;
   discountAmount: number;
   adminFee: number;
   status: string;
@@ -27,36 +27,23 @@ const OrderTrackingPage = () => {
   const fetchAllData = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const addressResponse = await addressAPI.getMyAddresses();
       const addresses = addressResponse.data || [];
       const addressMap: Record<string, string> = {};
-      
+
       addresses.forEach((addr: any) => {
-        addressMap[addr.id] = addr.address_name || addr.detail || "Alamat tidak tersedia";
+        addressMap[addr.id] =
+          addr.address_name || addr.detail || "Alamat tidak tersedia";
       });
       console.log("✅ Address map loaded:", addressMap);
-      
+
       const orderResponse = await orderAPI.getMyAllOrders();
       const orderList = orderResponse.data || orderResponse.orders || [];
 
-      // 🔥 PERBAIKAN: PAKAI RUMUS BACKEND (PPN setelah diskon)
+      // ✅ Versi bersih
       const mappedOrders: Order[] = orderList.map((order: any) => {
-        const subTotalNum = Number(order.total_amount || order.subTotal || 0);
-        const discountAmountNum = Number(order.discount_amount || order.discountAmount || 0);
-        const adminFeeNum = 205;
-        
-        // ✅ RUMUS BACKEND:
-        // 1. Hitung total setelah diskon dulu
-        const afterDiscount = subTotalNum - discountAmountNum;
-        
-        // 2. PPN dihitung dari nilai setelah diskon (10%)
-        const taxAmountNum = afterDiscount * 0.1;
-        
-        // 3. Total akhir = setelah diskon + PPN + admin
-        const finalPaymentNum = afterDiscount + taxAmountNum + adminFeeNum;
-
         return {
           orderId: order.id || order.orderId,
           address: addressMap[order.address_id] || "Alamat tidak tersedia",
@@ -66,11 +53,11 @@ const OrderTrackingPage = () => {
             price: Number(item.sub_total || item.price || 0),
             notes: item.notes || "",
           })),
-          subTotal: subTotalNum,
-          taxAmount: taxAmountNum,
-          discountAmount: discountAmountNum,
-          adminFee: adminFeeNum,
-          finalPayment: finalPaymentNum > 0 ? finalPaymentNum : 0,
+          subTotal: Number(order.total_amount) || 0,
+          taxAmount: Number(order.tax_amount) || 0,
+          discountAmount: Number(order.discount_amount) || 0,
+          adminFee: Number(order.admin_fee) || 0,
+          finalPayment: Number(order.grand_total_amount) || 0,
           status: (order.status || "pending").toLowerCase(),
           date: order.created_at
             ? new Date(order.created_at).toLocaleString("id-ID")
@@ -80,7 +67,6 @@ const OrderTrackingPage = () => {
 
       console.log("✅ Mapped orders with addresses:", mappedOrders);
       setOrders(mappedOrders);
-      
     } catch (err: any) {
       console.error("❌ Gagal mengambil data:", err);
       setError(err.message || "Gagal memuat data");
@@ -96,7 +82,9 @@ const OrderTrackingPage = () => {
   const filteredOrders = orders.filter((o: Order) => {
     const s = o.status.toLowerCase().trim();
     if (activeTab === "Aktif") {
-      return s === "pending" || s === "proses" || s === "dimasak" || s === "diantar";
+      return (
+        s === "pending" || s === "proses" || s === "dimasak" || s === "diantar"
+      );
     } else {
       return s === "diterima" || s === "selesai";
     }
@@ -125,7 +113,10 @@ const OrderTrackingPage = () => {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10">
           <div className="text-center py-16">
             <p className="text-red-500 mb-4">{error}</p>
-            <button onClick={fetchAllData} className="px-4 py-2 bg-primary text-white rounded-lg">
+            <button
+              onClick={fetchAllData}
+              className="px-4 py-2 bg-primary text-white rounded-lg"
+            >
               Coba Lagi
             </button>
           </div>
@@ -142,7 +133,9 @@ const OrderTrackingPage = () => {
           <button
             onClick={() => setActiveTab("Aktif")}
             className={`px-6 sm:px-10 py-2.5 rounded-xs font-bold text-[12px] sm:text-sm transition-all duration-300 ${
-              activeTab === "Aktif" ? "bg-primary text-white shadow-lg" : "bg-white text-primary border border-primary"
+              activeTab === "Aktif"
+                ? "bg-primary text-white shadow-lg"
+                : "bg-white text-primary border border-primary"
             }`}
           >
             Pesanan Aktif
@@ -150,7 +143,9 @@ const OrderTrackingPage = () => {
           <button
             onClick={() => setActiveTab("Selesai")}
             className={`px-6 sm:px-10 py-2.5 rounded-xs font-bold text-[12px] sm:text-sm transition-all duration-300 ${
-              activeTab === "Selesai" ? "bg-primary text-white shadow-lg" : "bg-white text-primary border border-primary"
+              activeTab === "Selesai"
+                ? "bg-primary text-white shadow-lg"
+                : "bg-white text-primary border border-primary"
             }`}
           >
             Pesanan Selesai
@@ -160,13 +155,25 @@ const OrderTrackingPage = () => {
         <div className="w-full">
           {filteredOrders.length === 0 ? (
             <EmptyOrder
-              title={activeTab === "Aktif" ? "Tidak ada pesanan aktif" : "Belum ada pesanan selesai"}
-              description={activeTab === "Aktif" ? "Anda belum memiliki pesanan yang sedang diproses" : "Pesanan yang sudah selesai akan muncul di sini"}
+              title={
+                activeTab === "Aktif"
+                  ? "Tidak ada pesanan aktif"
+                  : "Belum ada pesanan selesai"
+              }
+              description={
+                activeTab === "Aktif"
+                  ? "Anda belum memiliki pesanan yang sedang diproses"
+                  : "Pesanan yang sudah selesai akan muncul di sini"
+              }
             />
           ) : (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               {filteredOrders.map((order: Order) => (
-                <OrderCard key={order.orderId} order={order} activeTab={activeTab} />
+                <OrderCard
+                  key={order.orderId}
+                  order={order}
+                  activeTab={activeTab}
+                />
               ))}
             </div>
           )}

@@ -262,10 +262,10 @@ const OrderReceipt = ({
                   <span className="text-[11px]">PPN 10%</span>
                   <span className="font-medium">{formatRupiah(ppn)}</span>
                 </div>
-                <div className="flex justify-between items-center text-gray-600">
+                {/* <div className="flex justify-between items-center text-gray-600">
                   <span className="text-[11px]">Biaya Admin</span>
                   <span className="font-medium">{formatRupiah(adminFee)}</span>
-                </div>
+                </div> */}
               </div>
 
               <div className="border-t-2 border-gray-100 pt-4 mt-2">

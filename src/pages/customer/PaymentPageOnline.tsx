@@ -25,15 +25,18 @@ const PaymentPageOnline = () => {
     finalPayment = 0,
     subTotal = 0,
     discountAmount = 0,
-    adminFee = 205,
+    adminFee = 0,
     address = "",
   } = location.state || {};
+  console.log("💰💰💰 PaymentPage - finalPayment:", finalPayment);
+  console.log("💰💰💰 PaymentPage - subTotal:", subTotal);
+  console.log("💰💰💰 PaymentPage - discountAmount:", discountAmount);
 
-  const handlePaymentSuccess = async () => {  // ← tambah async
+  const handlePaymentSuccess = async () => {
+    // ← tambah async
     const selectedItems = items.filter((i) => i.checked);
 
     try {
-      
       // 2. Potong stok di database master
       // reduceStock(selectedItems.map((i) => ({ id: i.id, qty: i.qty })));
 
@@ -103,7 +106,9 @@ const PaymentPageOnline = () => {
           <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4 shadow-lg">
             <Check size={32} strokeWidth={4} className="text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-black">Pesanan Berhasil Dibuat!</h2>
+          <h2 className="text-2xl font-bold text-black">
+            Pesanan Berhasil Dibuat!
+          </h2>
           <p className="text-gray-400">Silakan lakukan pembayaran via QRIS</p>
         </div>
 
@@ -133,9 +138,14 @@ const PaymentPageOnline = () => {
               {items
                 .filter((item) => item.checked)
                 .map((item) => (
-                  <div key={item.cartId} className="flex justify-between items-start">
+                  <div
+                    key={item.cartId}
+                    className="flex justify-between items-start"
+                  >
                     <div className="flex flex-col gap-1">
-                      <span className="font-medium text-black">{item.name} x{item.qty}</span>
+                      <span className="font-medium text-black">
+                        {item.name} x{item.qty}
+                      </span>
                       <div className="flex items-center gap-1.5 text-sm text-gray-400">
                         <FileText size={13} className="shrink-0 opacity-70" />
                         <span>{item.notes || "Tidak ada"}</span>
@@ -152,6 +162,7 @@ const PaymentPageOnline = () => {
               subTotal={subTotal}
               discountAmount={discountAmount}
               adminFee={adminFee}
+              finalPayment={finalPayment}
               hideAlertInfo={true}
             />
 
