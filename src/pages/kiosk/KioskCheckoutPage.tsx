@@ -147,7 +147,7 @@ const KioskCheckoutPage = () => {
               <Button
                 onClick={() => { setDiscountAmount(0); setDiscountId(null); }}
                 variant="outline"
-                className="w-full py-1.75 md:py-2.5 rounded-md font-bold text-sm md:text-base border-2 border-gray-200 text-gray-400 hover:bg-gray-50"
+                className="w-full py-1.75 md:py-2.5 lg:py-2.25 rounded-md font-bold text-sm md:text-base border-2 border-gray-200 text-gray-400 hover:bg-gray-50"
               >
                 Batalkan Diskon
               </Button>

@@ -98,7 +98,7 @@ const MobileCheckoutPage = () => {
 
   return (
     // pb-28 agar konten paling bawah tidak tertutup oleh tombol sticky
-    <div className="min-h-screen bg-white pb-4  relative flex flex-col">
+    <div className="min-h-[90vh] bg-white pb-4  relative flex flex-col">
       <Header />
       <Loading show={isSubmitting} />
 

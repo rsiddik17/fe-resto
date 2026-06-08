@@ -134,6 +134,10 @@ const CashierDiscountManagementPage = () => {
 
   useEffect(() => {
     fetchDiscounts();
+
+    const intervalId = setInterval(fetchDiscounts, 8000);
+    
+    return () => clearInterval(intervalId);
   }, []);
 
   // Logika Filter Search

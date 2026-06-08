@@ -120,9 +120,6 @@ const WaiterCreateOrderPage = () => {
                       price={item.price}
                       description={item.description}
                     />
-                    <MenuCard.Footer
-                      onAdd={() => console.log(`Tambah: ${item.name}`)}
-                    />
                   </MenuCard>
                 ))}
               </div>
