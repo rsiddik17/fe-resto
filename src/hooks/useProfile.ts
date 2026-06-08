@@ -6,7 +6,7 @@ export const useProfile = () => {
   const { user, setUser } = useAuthStore();
   const [isLoading, setIsLoading] = useState<boolean>(!user); 
 
-  useEffect(() => {
+useEffect(() => {
     const fetchProfile = async () => {
       // Hanya hit API kalau user belum ada di Zustand
       if (!user) {

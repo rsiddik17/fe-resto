@@ -1,0 +1,51 @@
+/* Styling Custom untuk DatePicker IT'S Resto */
+
+/* Container Utama */
+.react-datepicker {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden;
+}
+
+/* Header (Bagian Bulan & Tahun) */
+.react-datepicker__header {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+  padding-top: 15px !important;
+}
+
+/* Warna Nama Hari */
+.react-datepicker__day-name {
+  color: #9ca3af !important;
+  font-weight: 700 !important;
+}
+
+/* Tanggal yang dipilih (Primary Purple) */
+.react-datepicker__day--selected, 
+.react-datepicker__day--keyboard-selected {
+  background-color: #8b5cf6 !important; /* Warna ungu IT'S Resto */
+  color: white !important;
+  border-radius: 8px !important;
+  font-weight: bold !important;
+}
+
+/* Hover Tanggal */
+.react-datepicker__day:hover {
+  background-color: #f3e8ff !important;
+  border-radius: 8px !important;
+  color: #8b5cf6 !important;
+}
+
+/* Styling Dropdown Bulan & Tahun agar gampang dipilih */
+.react-datepicker__month-read-view--selected-month,
+.react-datepicker__year-read-view--selected-year {
+  font-weight: 800 !important;
+  color: #1f2937 !important;
+}
+
+/* Fix lebar input */
+.react-datepicker-wrapper {
+  width: 100%;
+}

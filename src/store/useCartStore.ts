@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { type MenuItem } from "../components/Card/MenuCard";
+import { type MenuItem } from "../components/MenuCardOnline/MenuCardOnline";
 import { v4 as uuidv4 } from "uuid";
 
 export interface CartItem extends MenuItem {
   cartId: string; // ID unik untuk membedakan pesanan dengan catatan berbeda
   qty: number;
   notes: string;
+  checked?: boolean;
 }
 
 interface CartStore {
@@ -16,6 +17,11 @@ interface CartStore {
   setTableInfo: (id: number | null, numberString: string | null) => void;
   addToCart: (item: MenuItem, qty: number, notes: string) => void;
   getTotalItems: () => number;
+  updateNotes: (cartId: string, newNotes: string) => void;
+  toggleChecked: (cartId: string) => void;
+  toggleAllChecked: (status: boolean) => void;
+  removeCheckedItems: () => void;
+
   updateQty: (cartId: string, delta: number) => void;
   removeItem: (cartId: string) => void;
   getTotalPrice: () => number;
@@ -43,12 +49,13 @@ export const useCartStore = create<CartStore>()(
           if (existingItemIndex > -1) {
             const newItems = [...state.items];
             newItems[existingItemIndex].qty += qty;
+            newItems[existingItemIndex].checked = true;
             return { items: newItems };
           } else {
             return {
               items: [
                 ...state.items,
-                { ...item, cartId: uuidv4(), qty, notes },
+                { ...item, cartId: uuidv4(), qty, notes, checked: true },
               ],
             };
           }
@@ -56,7 +63,33 @@ export const useCartStore = create<CartStore>()(
       },
 
       getTotalItems: () => {
-        return get().items.reduce((total, item) => total + item.qty, 0);
+        return get().items.length;
+        // return get().items.reduce((total, item) => total + item.qty, 0);
+      },
+
+     
+      updateNotes: (cartId, newNotes) => {
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.cartId === cartId ? { ...item, notes: newNotes } : item,
+          ),
+        }));
+      },
+      toggleChecked: (cartId) =>
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.cartId === cartId ? { ...item, checked: !item.checked } : item,
+          ),
+        })),
+      toggleAllChecked: (status) =>
+        set((state) => ({
+          items: state.items.map((item) => ({ ...item, checked: status })),
+        })),
+      removeCheckedItems: () => {
+        set((state) => ({
+          // Kita hanya menyimpan item yang checked-nya false (belum dibayar)
+          items: state.items.filter((item) => !item.checked),
+        }));
       },
 
       updateQty: (cartId, delta) => {
@@ -94,6 +127,7 @@ export const useCartStore = create<CartStore>()(
 
       clearCart: () => set({ items: [], tableId: null, tableNumber: null }),
     }),
+
     {
       name: "its-resto-cart", // 3. NAMA KUNCI DI LOCAL STORAGE
     },

@@ -35,6 +35,15 @@ import KioskPaymentPage from "../pages/kiosk/KioskPaymentPage";
 import KioskOrderSuccessPage from "../pages/kiosk/KioskOrderSuccessPage";
 import KioskProfilePage from "../pages/kiosk/KioskProfilePage";
 
+import MenuCardOnline from "../pages/customer/MenuPageOnline";
+import CartPageOnline from "../pages/customer/CartPageOnline";
+import CheckoutPageOnline from "../pages/customer/CheckOutPageOnline";
+import PaymentPageOnline from "../pages/customer/PaymentPageOnline";
+import PaymentSuccessOnline from "../pages/customer/PaymentSuccesOnline";
+import OrderTrackingPage from "../pages/customer/OrderTrackingPage";
+import OrderTrackingOnline from "../pages/customer/OrderTrackingOnline";
+import ProfilePage from "../pages/customer/ProfilPage";
+
 // QR Pages
 import MobileTableInfoPage from "../pages/qr/MobileTableInfoPage";
 import MobileMenuPage from "../pages/qr/MobileMenuPage";
@@ -70,11 +79,24 @@ import CashierPaymentPage from "../pages/cashier/CashierPaymentPage";
 import CashierTableManagementPage from "../pages/cashier/CashierTableManagementPage";
 import CashierDiscountManagementPage from "../pages/cashier/CashierDiscountManagementPage";
 import CashierReportPage from "../pages/cashier/CashierReportPage";
+import { Component } from "lucide-react";
+import ManajemenPegawaiPage from "../pages/admin/ManajemenPegawai";
+import TambahPegawaiPage from "../components/AdminComponents/TambahPegawaiPage";
+import EditPegawaiPage from "../components/AdminComponents/EditPegawai";
+import DetailPegawaiPage from "../components/AdminComponents/DetailPegawaiPage";
+import UbahSandiPage from "../pages/admin/UbahSandiPage";
+import DaftarPelangganPage from "../pages/admin/DaftarPelanggan";
+import LaporanPage from "../pages/admin/LaporanPage";
+import LaporanMingguanPage from "../pages/admin/LaporanMingguanPage";
+import LaporanBulananPage from "../pages/admin/LaporanBulanan";
+import AdminProfilePage from "../pages/admin/AdminProfilePage";
+
 import KitchenOrderListPage from "../pages/kitchen/KitchenOrderListPage";
 import KitchenLayout from "../layouts/KitchenLayout/KitchenLayout";
 import KitchenProfilePage from "../pages/kitchen/KitchenProfilePage";
 import KitchenMenuStockPage from "../pages/kitchen/KitchenMenuStockPage";
 import KitchenDetailMenuPage from "../pages/kitchen/KitchenDetailMenuPage";
+
 import GuestRoute from "./GuestRoute";
 import CashierEditOrderPage from "../pages/cashier/CashierEditOrderPage";
 
@@ -90,10 +112,8 @@ const router = createBrowserRouter(
         { path: "/verification-otp", Component: VerifyOtpPage },
       ],
     },
-    
 
     { path: "/unauthorized", Component: UnauthorizedPage },
-    
 
     // --- GUEST ROUTES ---
     { path: "/qr/:tableId", Component: MobileTableInfoPage },
@@ -108,11 +128,64 @@ const router = createBrowserRouter(
       ],
     },
 
+    { path: "/unauthorized", Component: UnauthorizedPage },
+
     // --- PROTECTED ROUTES ---
     {
       element: <ProtectedRoute allowedRoles={["ADMIN"]} />,
-      children: [{ path: "/admin/dashboard", Component: AdminDashboardPage }],
+      children: [
+        { path: "/admin/dashboard", Component: AdminDashboardPage },
+        { path: "/admin/employee-management", Component: ManajemenPegawaiPage },
+        {
+          path: "/admin/employee-management/add",
+          Component: TambahPegawaiPage,
+        },
+        {
+          path: "/admin/employee-management/edit/:id",
+          Component: EditPegawaiPage,
+        },
+        {
+          path: "/admin/employee-management/detail/:id",
+          Component: DetailPegawaiPage,
+        },
+        {
+          path: "/admin/employee-management/change-password/:id",
+          Component: UbahSandiPage,
+        },
+        { path: "/admin/customer-list", Component: DaftarPelangganPage },
+        { path: "/admin/report", Component: LaporanPage },
+        { path: "/admin/report/weekly", Component: LaporanMingguanPage },
+        { path: "/admin/report/monthly", Component: LaporanBulananPage },
+        { path: "/admin/profile", Component: AdminProfilePage },
+      ],
     },
+    {
+      element: <ProtectedRoute allowedRoles={["CASHIER"]} />,
+      children: [{ path: "/kasir/dashboard", Component: CashierDashboardPage }],
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["WAITER"]} />,
+      children: [{ path: "/pelayan/order", Component: WaiterDashboardPage }],
+    },
+
+    {
+      element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />,
+      children: [
+        { path: "/customer/home", Component: CustomerHomePage },
+        { path: "/customer/menu", Component: MenuCardOnline },
+        { path: "/customer/cart", Component: CartPageOnline },
+        { path: "/customer/checkout", Component: CheckoutPageOnline },
+        { path: "/customer/payment", Component: PaymentPageOnline },
+        {
+          path: "/customer/payment-success",
+          Component: PaymentSuccessOnline,
+        },
+        { path: "/customer/orders", Component: OrderTrackingPage },
+        { path: "/customer/track-order", Component: OrderTrackingOnline },
+        { path: "/customer/profile", Component: ProfilePage },
+      ],
+    },
+    // --- PROTECTED ROUTES ---
 
     {
       element: <ProtectedRoute allowedRoles={["CASHIER"]} />,
@@ -276,11 +349,6 @@ const router = createBrowserRouter(
         { path: "/kiosk/order-success", Component: KioskOrderSuccessPage },
         { path: "/kiosk/profile", Component: KioskProfilePage },
       ],
-    },
-
-    {
-      element: <ProtectedRoute allowedRoles={["CUSTOMER"]} />,
-      children: [{ path: "/customer/home", Component: CustomerHomePage }],
     },
 
     // 🚨 RUTE 404 HARUS DI PALING BAWAH (Catch-All Route)
