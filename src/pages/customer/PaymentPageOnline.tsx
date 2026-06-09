@@ -10,6 +10,8 @@ import Header from "../../components/HeaderOnline/HeaderOnline";
 import { useOrderStore } from "../../store/useOrderStore";
 // import { useMenuStore } from "../../store/useMenuStore";
 // import { orderAPI } from "../../api/order.api";
+import { useOrderPayment } from "../../hooks/useOrderPayment";
+// Panggil API validatePayment sebelum ke success
 
 const PaymentPageOnline = () => {
   const navigate = useNavigate();
@@ -17,31 +19,39 @@ const PaymentPageOnline = () => {
   // const { reduceStock } = useMenuStore();
   const { items, clearCart } = useCartStore();
   const [isExpired, setIsExpired] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
   const { addOrder } = useOrderStore();
   const { removeCheckedItems } = useCartStore();
 
   const {
     orderId = "",
-    finalPayment = 0,
+    // finalPayment = 0,
     subTotal = 0,
     discountAmount = 0,
-    adminFee = 0,
+    // adminFee = 0,
     address = "",
     customerName = "Pelanggan",
   } = location.state || {};
+  const { adminFee, finalPayment } = useOrderPayment(
+    orderId,
+    subTotal,
+    discountAmount,
+    10,
+  );
   console.log(" PaymentPage - finalPayment:", finalPayment);
   console.log(" PaymentPage - subTotal:", subTotal);
   console.log(" PaymentPage - discountAmount:", discountAmount);
 
   const handlePaymentSuccess = async () => {
-    // ← tambah async
     const selectedItems = items.filter((i) => i.checked);
+    if (selectedItems.length === 0) {
+      alert("Tidak ada item yang dipilih");
+      return;
+    }
 
+    setIsValidating(true);
     try {
-      // 2. Potong stok di database master
-      // reduceStock(selectedItems.map((i) => ({ id: i.id, qty: i.qty })));
-
-      // 3. Simpan ke riwayat pesanan
+      // const validateResponse = await orderAPI.validatePayment(orderId, "QRIS");
       addOrder({
         orderId,
         address,
@@ -84,6 +94,8 @@ const PaymentPageOnline = () => {
     } catch (error: any) {
       console.error("Gagal validasi pembayaran:", error);
       alert(error.response?.data?.message || "Pembayaran gagal divalidasi");
+    } finally {
+      setIsValidating(false);
     }
   };
 
@@ -170,9 +182,10 @@ const PaymentPageOnline = () => {
 
             <Button
               onClick={handlePaymentSuccess}
+              disabled={isValidating}
               className="w-full py-3 rounded-full text-lg font-bold shadow-lg mt-8 bg-primary text-white active:scale-95 transition-all"
             >
-              Sudah Bayar
+              {isValidating ? "Memvalidasi..." : "Sudah Bayar"}
             </Button>
           </div>
         </div>

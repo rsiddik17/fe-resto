@@ -42,8 +42,12 @@ const OrderTrackingPage = () => {
       const orderResponse = await orderAPI.getMyAllOrders();
       const orderList = orderResponse.data || orderResponse.orders || [];
 
-      // ✅ Versi bersih
       const mappedOrders: Order[] = orderList.map((order: any) => {
+        const adminFeeValue =
+          Number(order.admin_fee) ||
+          Number(order.unique_code) ||
+          Number(order.payments?.unique_code) || // ← ini yang penting!
+          0;
         return {
           orderId: order.id || order.orderId,
           address: addressMap[order.address_id] || "Alamat tidak tersedia",
@@ -56,8 +60,13 @@ const OrderTrackingPage = () => {
           subTotal: Number(order.total_amount) || 0,
           taxAmount: Number(order.tax_amount) || 0,
           discountAmount: Number(order.discount_amount) || 0,
-          adminFee: Number(order.admin_fee) || 0,
-          finalPayment: Number(order.grand_total_amount) || 0,
+          adminFee: adminFeeValue,
+          finalPayment:
+            Number(order.grand_total_amount) ||
+            Number(order.payments?.grand_total_amount) ||
+            0,
+
+          // finalPayment: Number(order.grand_total_amount) || 0,
           status: (order.status || "pending").toLowerCase(),
           date: order.created_at
             ? new Date(order.created_at).toLocaleString("id-ID")
