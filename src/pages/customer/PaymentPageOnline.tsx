@@ -8,13 +8,13 @@ import OrderSummaryOnline from "../../components/OrderSummaryOnline/OrderSummary
 import ExpiredModalFinal from "../../components/ExpiredModalFinal/ExpiredModalFinal";
 import Header from "../../components/HeaderOnline/HeaderOnline";
 import { useOrderStore } from "../../store/useOrderStore";
-import { useMenuStore } from "../../store/useMenuStore";
+// import { useMenuStore } from "../../store/useMenuStore";
 // import { orderAPI } from "../../api/order.api";
 
 const PaymentPageOnline = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { reduceStock } = useMenuStore();
+  // const { reduceStock } = useMenuStore();
   const { items, clearCart } = useCartStore();
   const [isExpired, setIsExpired] = useState(false);
   const { addOrder } = useOrderStore();
@@ -28,9 +28,9 @@ const PaymentPageOnline = () => {
     adminFee = 0,
     address = "",
   } = location.state || {};
-  console.log("💰💰💰 PaymentPage - finalPayment:", finalPayment);
-  console.log("💰💰💰 PaymentPage - subTotal:", subTotal);
-  console.log("💰💰💰 PaymentPage - discountAmount:", discountAmount);
+  console.log(" PaymentPage - finalPayment:", finalPayment);
+  console.log(" PaymentPage - subTotal:", subTotal);
+  console.log(" PaymentPage - discountAmount:", discountAmount);
 
   const handlePaymentSuccess = async () => {
     // ← tambah async
@@ -53,7 +53,7 @@ const PaymentPageOnline = () => {
           image: item.image,
         })),
         finalPayment: Number(finalPayment),
-        status: "Proses",
+        status: "proses",
         date: new Date().toLocaleString("id-ID", {
           day: "2-digit",
           month: "short",
@@ -120,7 +120,7 @@ const PaymentPageOnline = () => {
             </div>
             <div className="bg-white rounded-lg shadow-sm border border-gray-100">
               <QRCodeOnline
-                finalPayment={finalPayment || 0}
+                finalPayment={Number(finalPayment) || 0}
                 onExpire={() => setIsExpired(true)}
               />
             </div>

@@ -16,7 +16,7 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }: LogoutModalProps) => {
         
         {/* Icon Logout Bulat Ungu[cite: 6] */}
         <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary/20">
-          <LogoutIcon size={32} strokeWidth={3} />
+          <LogoutIcon strokeWidth={3} className="w-8 h-8" />
         </div>
         
         <h3 className="text-xl font-black text-black mb-3">Keluar dari akun Anda?</h3>

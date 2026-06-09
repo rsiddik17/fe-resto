@@ -74,8 +74,8 @@ const DetailPegawaiPage = () => {
     }
   };
 
-  const isMale = () => pegawai?.gender === "MALE";
-  const isFemale = () => pegawai?.gender === "FEMALE";
+  // const isMale = () => pegawai?.gender === "MALE";
+  // const isFemale = () => pegawai?.gender === "FEMALE";
 
   if (loading) {
     return (

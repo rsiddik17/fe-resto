@@ -167,19 +167,19 @@ const LaporanPage = () => {
   const [activeTab, setActiveTab] = useState<
     "Semua" | "Pesanan" | "Pendapatan" | "Menu"
   >("Semua");
-  const [rentangWaktu, setRentangWaktu] = useState("Harian");
+  // const [rentangWaktu, setRentangWaktu] = useState("Harian");
   const [tanggalMulai, setTanggalMulai] = useState<number>(30);
   const [tanggalSelesai, setTanggalSelesai] = useState<number>(5);
   const [showLaporan, setShowLaporan] = useState(false);
   const [bulanMulaiIdx, setBulanMulaiIdx] = useState(2);
   const [bulanSelesaiIdx, setBulanSelesaiIdx] = useState(3);
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
-  const [sortPesanan, setSortPesanan] = useState<any>({
+  // const [startDate, setStartDate] = useState<Date | null>(new Date());
+  // const [endDate, setEndDate] = useState<Date | null>(new Date());
+  const [sortPesanan, ] = useState<any>({
     field: "",
     order: "asc",
   });
-  const [sortPendapatan, setSortPendapatan] = useState<any>({
+  const [sortPendapatan, ] = useState<any>({
     field: "",
     order: "asc",
   });
@@ -202,9 +202,10 @@ const LaporanPage = () => {
         : parseTanggalFigma(b.tanggal).getTime() -
             parseTanggalFigma(a.tanggal).getTime();
     }
+    const field = sortPesanan.field as keyof typeof a;
     return sortPesanan.order === "asc"
-      ? a[sortPesanan.field] - b[sortPesanan.field]
-      : b[sortPesanan.field] - a[sortPesanan.field];
+      ? (a[field] as number) - (b[field] as number)
+      : (b[field] as number) - (a[field] as number);
   });
 
   const pendapatanSorted = [...DATA_PENDAPATAN_AWAL].sort((a, b) => {
@@ -216,9 +217,10 @@ const LaporanPage = () => {
         : parseTanggalFigma(b.tanggal).getTime() -
             parseTanggalFigma(a.tanggal).getTime();
     }
+    const field = sortPendapatan.field as keyof typeof a;
     return sortPendapatan.order === "asc"
-      ? a[sortPendapatan.field] - b[sortPendapatan.field]
-      : b[sortPendapatan.field] - a[sortPendapatan.field];
+      ? (a[field] as number) - (b[field] as number)
+      : (b[field] as number) - (a[field] as number);
   });
 
   const periodeText = `${tanggalMulai} ${LIST_BULAN[bulanMulaiIdx]} - ${tanggalSelesai} ${LIST_BULAN[bulanSelesaiIdx]} 2026`;
@@ -394,7 +396,7 @@ const LaporanPage = () => {
               onClick={() => setShowLaporan(true)}
               className="bg-primary hover:opacity-95 text-white text-[12.5px] font-bold px-5 py-2.5 rounded-xs shadow-md cursor-pointer flex items-center gap-2"
             >
-              <ReportIcon size={16} />
+              <ReportIcon className="w-4 h-4" />
               Tampilkan Laporan
             </button>
           </div>
@@ -417,7 +419,7 @@ const LaporanPage = () => {
                   <LaporanTablePesanan
                     data={pesananSorted}
                     periode={periodeText}
-                    //  enablePagination={true} 
+                    //  enablePagination={true}
                     //   itemsPerPage={10}
                   />
                 )}
@@ -425,7 +427,7 @@ const LaporanPage = () => {
                   <LaporanTablePendapatan
                     data={pendapatanSorted}
                     periode={periodeText}
-                    //  enablePagination={true} 
+                    //  enablePagination={true}
                     //   itemsPerPage={10}
                   />
                 )}
@@ -433,7 +435,7 @@ const LaporanPage = () => {
                   <LaporanTableMenu
                     data={DATA_MENU_AWAL}
                     periode={periodeText}
-                    //  enablePagination={true} 
+                    //  enablePagination={true}
                   />
                 )}
               </div>

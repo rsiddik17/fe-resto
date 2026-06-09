@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { User, Menu, X } from "lucide-react";
 import { useCartStore } from "../../store/useCartStore";
-import { useOrderStore } from "../../store/useOrderStore"; // Tambahkan import store pesanan
+// import { useOrderStore } from "../../store/useOrderStore"; 
 import Keranjang from "../Icon/Keranjang";
 import NotificationModal from "../NotificationModal/NotificationModal";
 import NotificationIcon from "../Icon/NotificationIcon";
 
-const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
+const HeaderOnline = ({ mode = "online" }: any) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isOnline = mode === "online";
@@ -15,8 +15,8 @@ const HeaderOnline = ({ navLinks, mode = "online" }: any) => {
   const totalItems = useCartStore((state) => state.getTotalItems());
 
   // Ambil status pesanan terbaru dari store untuk dikirim ke modal notifikasi
-  const { orders } = useOrderStore() as any;
-  const latestStatus = orders[0]?.status || "Proses";
+  // const { orders } = useOrderStore() as any;
+  // const latestStatus = orders[0]?.status || "Proses";
 
   const onlineMenuItems = [
     { name: "Beranda", path: "/customer/home" },

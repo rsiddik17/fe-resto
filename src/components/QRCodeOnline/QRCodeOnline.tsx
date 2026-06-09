@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// import { QRCodeSVG } from "qrcode.react";
 
 interface QRCodeOnlineProps {
   finalPayment: number;
@@ -7,7 +6,7 @@ interface QRCodeOnlineProps {
 }
 
 const QRCodeOnline = ({ finalPayment, onExpire }: QRCodeOnlineProps) => {
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(3600); // 1 jam = 3600 detik
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -22,6 +21,7 @@ const QRCodeOnline = ({ finalPayment, onExpire }: QRCodeOnlineProps) => {
     return () => clearInterval(timerId);
   }, [timeLeft, onExpire]);
 
+  // Hitung menit dan detik dari total detik
   const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0");
   const seconds = String(timeLeft % 60).padStart(2, "0");
 
@@ -37,9 +37,8 @@ const QRCodeOnline = ({ finalPayment, onExpire }: QRCodeOnlineProps) => {
         Selesaikan dalam <span className="font-bold text-primary">{minutes}:{seconds}</span>
       </p>
 
-      {/* Box QR Code yang Responsif untuk HP */}
       <div className="bg-white p-3 border-2 border-gray-50 rounded-2xl mb-6 shadow-inner">
-       <img
+        <img
           src={`${import.meta.env.BASE_URL}images/qris-client.jpeg`}
           alt="QRIS Pembayaran"
           className="w-48 h-48 md:w-52 md:h-52 object-contain"

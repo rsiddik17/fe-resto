@@ -21,9 +21,9 @@ const ActionMenu = ({
   onHapus,
 }: ActionMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState<"top" | "bottom">("bottom");
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -39,7 +39,7 @@ const ActionMenu = ({
 
   // Fungsi untuk mendapatkan posisi dropdown
   const getDropdownPosition = () => {
-    if (!buttonRef.current) return { top: 0, left: 0, position: "bottom" as const };
+    if (!buttonRef.current) return { top: 0, left: 0 };
     
     const rect = buttonRef.current.getBoundingClientRect();
     const scrollY = window.scrollY;
@@ -61,21 +61,18 @@ const ActionMenu = ({
     // Posisi left agar dropdown rata kanan dengan tombol
     const left = rect.right + scrollX - 176; // 176px adalah lebar dropdown (w-44 = 176px)
     
-    return { top, left, position: isTop ? "top" : "bottom" };
+    return { top, left };
   };
 
   const handleOpen = () => {
     if (!isOpen) {
-      const { top, left, position } = getDropdownPosition();
+      const { top, left } = getDropdownPosition();
       setCoords({ top, left });
-      setDropdownPosition(position);
       setIsOpen(true);
     } else {
       setIsOpen(false);
     }
   };
-
-  const [coords, setCoords] = useState({ top: 0, left: 0 });
 
   return (
     <div className="inline-block relative" ref={menuRef}>
@@ -90,7 +87,7 @@ const ActionMenu = ({
 
       {isOpen && (
         <div
-          className="fixed z-9999 w-44 bg-white border border-gray-100 rounded-2xl shadow-xl py-1.5"
+          className="fixed z-50 w-44 bg-white border border-gray-100 rounded-2xl shadow-xl py-1.5"
           style={{ top: `${coords.top}px`, left: `${coords.left}px` }}
         >
           <button

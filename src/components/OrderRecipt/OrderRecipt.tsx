@@ -9,9 +9,10 @@ interface OrderReceiptProps {
   orderId: string;
   items: any[];
   subTotal: number;
-  discountAmount?: number;  // ✅ TAMBAHKAN
+  discountAmount?: number;
   adminFee: number;
   totalPrice: number;
+  customerName?: string;
   onClose: () => void;
 }
 
@@ -19,14 +20,14 @@ const OrderReceipt = ({
   orderId, 
   items, 
   subTotal, 
-  discountAmount = 0,  // ✅ TAMBAHKAN
+  discountAmount = 0,
   adminFee, 
   totalPrice, 
+  customerName = "Pelanggan",
   onClose 
 }: OrderReceiptProps) => {
   const navigate = useNavigate();
 
-  // 🔥 PERBAIKAN: Hitung PPN dengan rumus backend (setelah diskon)
   const afterDiscount = subTotal - discountAmount;
   const ppn = afterDiscount * 0.1;
 
@@ -56,7 +57,7 @@ const OrderReceipt = ({
   const downloadPDF = () => {
     try {
       const itemRowsHeight = items.length * 10;
-      const pdfHeight = 120 + itemRowsHeight;
+      const pdfHeight = 140 + itemRowsHeight;
       
       const pdf = new jsPDF({
         orientation: 'portrait',
@@ -89,18 +90,23 @@ const OrderReceipt = ({
       pdf.text(`#${orderId}`, 75, 24, { align: 'right' });
 
       pdf.setFont('Helvetica', 'normal');
-      pdf.text("Tanggal", 5, 29);
+      pdf.text("Customer", 5, 29);
       pdf.setFont('Helvetica', 'bold');
-      pdf.text(getCurrentDateTime(), 75, 29, { align: 'right' });
+      pdf.text(customerName, 75, 29, { align: 'right' });
 
-      pdf.line(5, 33, 75, 33);
+      pdf.setFont('Helvetica', 'normal');
+      pdf.text("Tanggal", 5, 34);
+      pdf.setFont('Helvetica', 'bold');
+      pdf.text(getCurrentDateTime(), 75, 34, { align: 'right' });
+
+      pdf.line(5, 38, 75, 38);
 
       // RINCIAN ITEM
       pdf.setFont('Helvetica', 'normal');
       pdf.setTextColor(120, 120, 120);
-      pdf.text("RINCIAN PEMBAYARAN", 5, 38);
+      pdf.text("RINCIAN PEMBAYARAN", 5, 43);
 
-      let currentY = 44;
+      let currentY = 49;
       pdf.setTextColor(0, 0, 0);
       
       items.forEach((item) => {
@@ -129,7 +135,7 @@ const OrderReceipt = ({
       pdf.line(5, currentY, 75, currentY);
       currentY += 5;
 
-      // RINGKASAN BIAYA (PAKAI HITUNGAN BARU)
+      // RINGKASAN BIAYA
       pdf.setFont('Helvetica', 'bold');
       pdf.text("Total Pesanan", 5, currentY);
       pdf.text(formatRupiah(subTotal), 75, currentY, { align: 'right' });
@@ -186,7 +192,7 @@ const OrderReceipt = ({
           <button onClick={onClose} className="hover:bg-gray-100 p-1.5 rounded-full shrink-0 transition-colors">
             <ArrowLeft size={18} className="text-black" />
           </button>
-          <h1 className="text-xl font-bold text-black ">Pembayaran</h1>
+          <h1 className="text-xl font-bold text-black">Pembayaran</h1>
         </div>
       </div>
 
@@ -196,8 +202,20 @@ const OrderReceipt = ({
           <div className="bg-primary w-full md:w-[42%] flex flex-col items-center py-6 md:py-10 px-4 shrink-0">
             <div 
               id="receipt-to-print"
-              className="bg-white rounded-xs p-6 md:p-8 w-full max-w-[320px] shadow-xl flex flex-col text-black h-fit print:shadow-none"
+              className="bg-white rounded-xs p-4 md:p-8 w-full max-w-[320px] shadow-xl flex flex-col text-black h-fit print:shadow-none"
             >
+              {/* LOGO */}
+              <div className="flex justify-center mb-4">
+                <img 
+                  src={`${import.meta.env.BASE_URL}images/new-logo.webp`}
+                  alt="IT'S RESTO Logo"
+                  className="h-26 w-auto object-contain"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              </div>
+
               <h2 className="text-center text-gray-400 font-medium text-[12px] mb-4 uppercase">Total Pembayaran</h2>
               
               <div className="w-full flex justify-center mb-6">
@@ -208,6 +226,10 @@ const OrderReceipt = ({
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 font-medium">ID Pesanan</span>
                   <span className="text-black font-bold">#{orderId}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 font-medium">Customer</span>
+                  <span className="text-black font-bold">{customerName}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 font-medium">Tanggal</span>
@@ -229,7 +251,6 @@ const OrderReceipt = ({
                         <span className="text-black font-bold text-[13px] leading-tight">
                           {item.name || "Produk"} x{item.qty || item.quantity || 1}
                         </span>
-                        
                         <div className="flex items-center gap-1 mt-1 text-gray-400">
                           <FileText size={12} className="shrink-0" />
                           <span className={`text-[10px] font-medium ${hasNoNote ? 'italic text-gray-400' : 'text-gray-500'}`}>
@@ -262,10 +283,7 @@ const OrderReceipt = ({
                   <span className="text-[11px]">PPN 10%</span>
                   <span className="font-medium">{formatRupiah(ppn)}</span>
                 </div>
-                {/* <div className="flex justify-between items-center text-gray-600">
-                  <span className="text-[11px]">Biaya Admin</span>
-                  <span className="font-medium">{formatRupiah(adminFee)}</span>
-                </div> */}
+                {/* Biaya Admin di-comment karena sudah termasuk totalPrice */}
               </div>
 
               <div className="border-t-2 border-gray-100 pt-4 mt-2">
