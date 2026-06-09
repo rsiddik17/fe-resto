@@ -41,7 +41,6 @@ const MobileOrderSuccessPage = () => {
       return;
     }
 
-<<<<<<< HEAD
   }, [orderData, items.length, navigate, tableNumber]);
 
   const handleSelesai = async () => {
@@ -95,23 +94,6 @@ const MobileOrderSuccessPage = () => {
     } finally {
       setIsLoading(false);
     };
-=======
-    // SIMULASI: Menunggu kasir klik "Terima Pesanan" (5 detik)
-    const timer = setTimeout(() => {
-      setStatus("CONFIRMED");
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [orderData, items.length, navigate, tableId]);
-
-  const handleSelesai = async () => {
-   const targetUrl = tableId ? `/qr/${btoa(tableId.toString())}` : "/";
-
-    clearCart(); 
-    await logout(); // Logout Guest
-    
-    navigate(targetUrl, { replace: true });
->>>>>>> main
   };
 
   const handleModalClose = async () => {

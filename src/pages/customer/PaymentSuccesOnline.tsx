@@ -6,14 +6,30 @@ import Button from "../../components/ui/Button";
 import OrderSummaryOnline from "../../components/OrderSummaryOnline/OrderSummaryOnline";
 import OrderReceipt from "../../components/OrderRecipt/OrderRecipt";
 import { orderAPI } from "../../api/order.api";
+import Loading from "../../components/Loading/Loading";
+import AlertModal from "../../components/Modal/AlertModal";
 const PaymentSuccessOnline = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showReceipt, setShowReceipt] = useState(false);
+  const  [isLoading, setIsLoading] = useState(false);
 
   // State diubah: default-nya FALSE (berarti "Sedang Diproses" dulu)
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [, setOrderDetail] = useState(null);
+
+  const [modal, setModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: "PENDING" | "CANCELED";
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "PENDING",
+  });
+
   // Mengambil data dari navigasi sebelumnya
   const {
     orderId = "",
@@ -24,40 +40,89 @@ const PaymentSuccessOnline = () => {
       customerName = "Pelanggan",
     purchasedItems = [],
   } = location.state || {};
-  console.log(" PaymentSuccess - finalPayment:", finalPayment);
-  console.log(" PaymentSuccess - subTotal:", subTotal);
-  console.log(" PaymentSuccess - discountAmount:", discountAmount);
-
-  // Biaya admin dipaksa ke 205 sesuai permintaanmu
-  // const adminFee = 0;
-
-  // Efek timer: dari "Diproses" berubah menjadi "Dikonfirmasi" (true) setelah 3.5 detik
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsConfirmed(true);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     const fetchOrderDetail = async () => {
       if (orderId && orderId !== "260401205") {
+        if (!orderId) return;
+
         try {
           const response = await orderAPI.getMyOrderById(orderId);
           const orderData = response.data || response;
           setOrderDetail(orderData);
-          // console.log("Order detail:", orderDetail);
+
+          const currentStatus = orderData?.status;
+
+          if (currentStatus !== "PENDING" && currentStatus !== "CANCELED") {
+          setIsConfirmed(true);
+        };
+
         } catch (error) {
           console.error("Gagal ambil detail pesanan:", error);
         }
       }
     };
+
     fetchOrderDetail();
   }, [orderId]);
 
+  const handleStruk = async () => {
+    
+    setIsLoading(true);
+
+    if (isConfirmed) {
+      setShowReceipt(true);
+      return;
+    }
+
+    try {
+      const response = await orderAPI.getMyOrderById(orderId);
+      const currentStatus = response?.status || response?.data?.status;
+
+      if (currentStatus === "PENDING") {
+        setIsLoading(false);
+        setModal({
+          isOpen: true,
+          title: "Pesanan Belum Divalidasi",
+          message: "Maaf, pesanan Anda belum divalidasi oleh kasir. Pastikan Anda sudah menyelesaikan transaksi pembayaran via QRIS.",
+          type: "PENDING",
+        });
+        return;
+
+      } else if (currentStatus === "CANCELED") {
+        setIsLoading(false);
+        setModal({
+          isOpen: true,
+          title: "Pesanan Dibatalkan",
+          message: "Pesanan Anda telah dibatalkan, kunjungi kasir atau silahkan memesan kembali.",
+          type: "CANCELED",
+        });
+        return;
+      } else {
+        setIsConfirmed(true);
+        setShowReceipt(true);
+      }
+    } catch (error) {
+      console.error("Gagal ambil detail pesanan:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleModalClose = () => {
+    const currentModalType = modal.type;
+    setModal((prev) => ({ ...prev, isOpen: false }));
+
+    if (currentModalType === "CANCELED") {
+      navigate("/customer/orders");
+    }
+  };
+
+  if (!orderId) return null;
+
   return (
     <div className="min-h-screen bg-white pb-20 relative">
+      <Loading show={isLoading} />
       <Header mode="online" />
 
       <div className="bg-white border-b border-gray-100 shadow-sm mb-3 w-full">
@@ -164,7 +229,7 @@ const PaymentSuccessOnline = () => {
             Pantau Pesanan
           </Button>
           <Button
-            onClick={() => setShowReceipt(true)}
+            onClick={handleStruk}
             className="w-full sm:flex-1 py-4 rounded-full font-bold bg-primary text-white text-sm md:text-base"
           >
             Lihat Struk
@@ -184,6 +249,16 @@ const PaymentSuccessOnline = () => {
           onClose={() => setShowReceipt(false)}
         />
       )}
+
+      {modal.isOpen && (
+        <AlertModal
+          title={modal.title}
+          message={modal.message}
+          type={modal.type}
+          onClose={handleModalClose}
+        />
+      )}
+
     </div>
   );
 };
