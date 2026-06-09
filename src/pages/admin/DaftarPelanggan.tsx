@@ -345,7 +345,7 @@ const DaftarPelangganPage = () => {
                         {itemsPerPage} Data <ChevronDown size={10} className={`transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
                       </button>
                       {isDropdownOpen && (
-                        <div className="absolute left-0 bottom-full mb-1 w-20 bg-white border border-gray-200 rounded shadow-lg z-9999">
+                        <div className="absolute left-0 top-full mt-1 w-20 bg-white border border-gray-200 rounded shadow-lg z-9999">
                           {[10, 15, 20].map((n) => (
                             <button
                               key={n}

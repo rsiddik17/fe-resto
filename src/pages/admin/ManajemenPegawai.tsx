@@ -410,7 +410,7 @@ const ManajemenPegawaiPage = () => {
                     </button>
                     {isDropdownOpen && (
                       <div className="absolute left-0 top-full mt-1 w-24 bg-white border rounded shadow-lg z-9999">
-                        {[10, 15, 20, 25].map((n) => (
+                        {[10, 15, 20].map((n) => (
                           <button
                             key={n}
                             onClick={() => handleItemsPerPageChange(n)}
@@ -522,12 +522,12 @@ const ManajemenPegawaiPage = () => {
                   <div className="flex items-center gap-2 text-[11px] font-bold text-gray-500">
                     <span>Tampilkan</span>
                     <div className="relative z-50">
-                      <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="border border-gray-300 rounded-md px-3 py-1.5 flex items-center gap-1 bg-white text-gray-700 text-[11px] min-w-17.5 justify-between">
+                      <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="border border-gray-300 rounded px-3 py-1.5 flex items-center gap-1 bg-white text-gray-700 text-[11px] min-w-17.5 justify-between">
                         {itemsPerPage} Data
                         <ChevronDown size={12} className={`transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
                       </button>
                       {isDropdownOpen && (
-                        <div className="absolute left-0 bottom-full mb-1 w-20 bg-white border rounded-md shadow-lg z-9999">
+                        <div className="absolute left-0 top-full mt-1  w-20 bg-white border rounded shadow-lg z-9999">
                           {[10, 15, 20].map((n) => (
                             <button
                               key={n}
