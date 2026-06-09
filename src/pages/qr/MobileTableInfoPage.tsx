@@ -133,7 +133,7 @@ const MobileTableInfoPage = () => {
     <div className="w-full min-h-screen flex flex-col bg-linear-to-b from-primary/0 to-primary/15 relative overflow-hidden pb-4 md:pb-8 px-4">
       <Loading show={isLoading} />
 
-      <div className="w-full flex justify-center z-10 pt-4 md:pt-8">
+      <div className="w-full flex justify-center z-10 pt-0 md:pt-8">
         <img
           src={`${import.meta.env.BASE_URL}images/new-logo.webp`}
           alt="Logo IT'S RESTO"

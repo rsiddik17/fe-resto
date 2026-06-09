@@ -81,7 +81,7 @@ const WaiterCartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDelete
           onClick={() => onEditNote(item.cartId)}
           variant="outline"
           // Hapus max-w-[140px] agar full, tambahkan justify-start agar icon/teks di kiri
-          className="flex items-center justify-start gap-1.5 bg-gray/15 text-gray-500 px-2.5 py-2 rounded-sm font-normal w-full border-gray-200 cursor-pointer text-left hover:bg-gray/20 transition-colors"
+          className="flex items-center justify-start gap-1.5 bg-white text-gray-500 px-2.5 py-2 rounded-sm font-normal w-full border-[1.5px] border-primary/75 cursor-pointer text-left hover:bg-gray/20 transition-colors"
         >
           <NotesIcon className="shrink-0 w-3.5 h-3.5" />
           <span className="text-[11px] truncate">

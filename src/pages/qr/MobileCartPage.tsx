@@ -43,10 +43,10 @@ const MobileCartPage = () => {
   const tableNo = tableNumber?.match(/\d+/)?.[0];
 
   return (
-    <div className="min-h-screen bg-secondary/25 pb-4 relative flex flex-col">
+    <div className="min-h-[92vh] bg-secondary/25 pb-4 relative flex flex-col">
       <Header />
 
-      <main className="flex-1 w-full max-w-md md:max-w-2xl lg:max-w-3xl mx-auto px-4 pt-6">
+      <main className="flex-1 w-full max-w-md md:max-w-2xl lg:max-w-3xl mx-auto px-4 pt-6 pb-6">
         {/* --- JUDUL & INFO MEJA --- */}
         <div className="mb-5">
           <button
@@ -84,13 +84,13 @@ const MobileCartPage = () => {
           </>
         ) : (
           /* --- STATE KOSONG --- */
-          <div className="flex-1 flex flex-col items-center justify-center mt-24">
+          <div className="flex-1 flex flex-col items-center justify-center mt-16 md:mt-24">
             <img
               src={`${import.meta.env.BASE_URL}images/keranjang-kosong.webp`}
               alt="Keranjang Kosong"
               className="w-80 mb-16"
             />
-            <p className="text-gray-500 text-center text-[15px] md:text-xl lg:text-lg mb-57">
+            <p className="text-gray-500 text-center text-[15px] md:text-xl lg:text-lg mb-8 md:mb-57">
               Keranjangmu masih kosong, yuk pilih menu!
             </p>
             <Button

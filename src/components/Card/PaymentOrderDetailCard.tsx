@@ -10,10 +10,10 @@ interface PaymentOrderDetailCardProps {
 
 const PaymentOrderDetailCard = ({ passedOrder }: PaymentOrderDetailCardProps) => {
   // Hitung summary di dalam komponen ini saja biar rapi
-  const totalPesanan = passedOrder?.total || 0;
-  const ppn = totalPesanan * 0.1; // Contoh PPN 10%
-  const biayaAdmin = 101;
-  const totalPembayaran = totalPesanan + ppn + biayaAdmin;
+  const totalPesanan = passedOrder?.subTotal || 0;
+  const ppn = passedOrder?.tax || 0; 
+  const biayaAdmin = passedOrder?.adminFee || 0;
+  const totalPembayaran = passedOrder?.grandTotal || 0;
 
   const sourceMethod = passedOrder?.leftBadges?.[0]?.text || "Lainnya";
   const table = passedOrder?.title || "";

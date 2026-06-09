@@ -44,10 +44,10 @@ const OrderMenuItemCard = ({
         <div className="flex justify-between items-center w-full">
           {/* Klik catatan */}
           <div
-            className="border-l-2 border-primary pl-2 cursor-pointer hover:bg-primary/5 px-1 transition-colors"
+            className="border-l-2 border-primary pl-2 cursor-pointer px-1 transition-colors"
             onClick={onOpenNotes}
           >
-            <span className="text-black/50 text-[13px] md:text-[13.5px]">
+            <span className="text-black/50 text-[13px] md:text-[13.5px] hover:bg-primary/5 block w-70 bg-white border-[1.5px] py-1 px-2 border-primary rounded-[6px]">
               Catatan: {item.notes || "Tidak ada"}
             </span>
           </div>
