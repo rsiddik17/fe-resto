@@ -159,10 +159,10 @@ const LaporanMingguanPage = () => {
   const [showLaporan, setShowLaporan] = useState(false);
 
   // 🆕 State untuk menyimpan data yang sudah di-sort
-  const [sortedPesanan, setSortedPesanan] = useState(DATA_PESANAN_MINGGUAN);
-  const [sortedPendapatan, setSortedPendapatan] = useState(
-    DATA_PENDAPATAN_MINGGUAN,
-  );
+  // const [sortedPesanan, setSortedPesanan] = useState(DATA_PESANAN_MINGGUAN);
+  // const [sortedPendapatan, setSortedPendapatan] = useState(
+  //   DATA_PENDAPATAN_MINGGUAN,
+  // );
 
   const periodeText = `Minggu 1 - Minggu 5 Bulan ${bulan} ${tahun}`;
 
@@ -269,7 +269,7 @@ const LaporanMingguanPage = () => {
               onClick={() => setShowLaporan(true)}
               className="bg-primary hover:opacity-95 text-white text-[12.5px] font-bold px-5 py-2.5 rounded-xs shadow-md cursor-pointer flex items-center gap-2"
             >
-              <ReportIcon size={16} />
+              <ReportIcon className="w-4 h-4" />
               Tampilkan Laporan
             </button>
           </div>
@@ -311,8 +311,8 @@ const LaporanMingguanPage = () => {
                   <TabelMenuMingguan
                     data={DATA_MENU_MINGGUAN}
                     periode={periodeText}
-                    enablePagination={true}
-                    itemsPerPage={10}
+                    // enablePagination={true}
+                    // itemsPerPage={10}
                   />
                 )}
               </div>

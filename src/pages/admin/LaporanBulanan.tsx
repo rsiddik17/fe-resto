@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState,  useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import AdminSidebar from "../../components/AdminComponents/AdminSidebar";
 import AdminHeader from "../../components/AdminComponents/AdminHeader";
@@ -143,7 +143,7 @@ const LaporanBulananPage = () => {
             <FilterBulanan onFilterChange={handleFilterChange} />
 
             <button onClick={() => setShowLaporan(true)} className="bg-primary hover:opacity-95 text-white text-[12.5px] font-bold px-5 py-2.5 rounded-xs shadow-md cursor-pointer flex items-center gap-2">
-              <ReportIcon size={16} /> Tampilkan Laporan
+              <ReportIcon className="w-4 h-4" /> Tampilkan Laporan
             </button>
           </div>
 

@@ -6,7 +6,7 @@ import { discountAPI, type DiscountData } from "../../api/discount.api";
 
 interface DiscountModalProps {
   onClose: () => void;
-  onApply: (amount: number, discountId: number) => void;  // ✅ Perbaiki ini
+  onApply: (amount: number, discountId: number) => void; // ✅ Perbaiki ini
   subTotal: number;
 }
 
@@ -33,7 +33,7 @@ const DiscountModalOnline = ({
         console.log("Discount data:", response);
         const discountData = response.data || response;
         const activeDiscounts = discountData.filter(
-          (d: DiscountData) => d.is_active === true || d.is_active === 1,
+          (d: DiscountData) => !!d.is_active,
         );
         setDiscounts(activeDiscounts);
       } catch (error) {
@@ -81,7 +81,9 @@ const DiscountModalOnline = ({
           {isLoading ? (
             <div className="py-10 flex justify-center items-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <span className="ml-2 text-primary font-bold">Mencari promo...</span>
+              <span className="ml-2 text-primary font-bold">
+                Mencari promo...
+              </span>
             </div>
           ) : discounts.length > 0 ? (
             discounts.map((promo) => {
@@ -94,14 +96,17 @@ const DiscountModalOnline = ({
                 <div
                   key={promo.id}
                   className={cn(
-                    "border-2 border-primary rounded-md p-3 md:p-4 flex justify-between items-center gap-2 transition-colors"
+                    "border-2 border-primary rounded-md p-3 md:p-4 flex justify-between items-center gap-2 transition-colors",
                   )}
                 >
                   <div className="flex flex-col gap-1.5 md:gap-2 flex-1">
                     <h4 className="font-bold text-sm md:text-base">
                       {promo.discount_name}
                       <span className="font-normal ml-1">
-                        Diskon {rupiahFormatter.format(discountValue).replace("Rp", "")}
+                        Diskon{" "}
+                        {rupiahFormatter
+                          .format(discountValue)
+                          .replace("Rp", "")}
                       </span>
                     </h4>
                     <div className="flex items-center gap-2 flex-wrap">
@@ -120,9 +125,12 @@ const DiscountModalOnline = ({
                     variant={isSelected ? "primary" : "outline"}
                     className={cn(
                       "px-4 md:px-6 py-1.5 md:py-2 rounded-md text-sm md:text-base font-medium transition-colors whitespace-nowrap",
-                      !isEligible && "border-gray-300 text-gray-400 cursor-not-allowed bg-gray-100",
-                      isEligible && !isSelected && "border-primary text-primary hover:bg-primary/10",
-                      isSelected && "bg-primary text-white"
+                      !isEligible &&
+                        "border-gray-300 text-gray-400 cursor-not-allowed bg-gray-100",
+                      isEligible &&
+                        !isSelected &&
+                        "border-primary text-primary hover:bg-primary/10",
+                      isSelected && "bg-primary text-white",
                     )}
                   >
                     Pakai

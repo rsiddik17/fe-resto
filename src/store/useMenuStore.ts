@@ -268,7 +268,7 @@ export const useMenuStore = create<MenuStore>()(
           menu: state.menu.map((m) => {
             const sold = soldItems.find((s) => s.id === m.id);
             // Jika menu terjual, kurangi stoknya (minimal 0)
-            return sold ? { ...m, stock: Math.max(0, m.stock - sold.qty) } : m;
+            return sold ? { ...m, stock: Math.max(0, (m.stock || 0) - sold.qty) } : m;
           }),
         }));
       },

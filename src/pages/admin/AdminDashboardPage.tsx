@@ -3,7 +3,6 @@ import AdminSidebar from "../../components/AdminComponents/AdminSidebar";
 import AdminHeader from "../../components/AdminComponents/AdminHeader";
 import AdminStatCard from "../../components/AdminComponents/AdminStatCard";
 import DashboardChart from "../../components/AdminComponents/DashboardChart";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useMenus } from "../../hooks/useMenus";
 import {
@@ -46,17 +45,31 @@ const AdminDashboardPage = () => {
     MOCK_DATA_SOURCE["2026-04-10_2026-04-16"],
   );
 
-  const startDateRef = useRef(null);
-  const endDateRef = useRef(null);
-  
-
+  const startDateRef = useRef<HTMLInputElement>(
+    null,
+  ) as React.MutableRefObject<HTMLInputElement | null>;
+  const endDateRef = useRef<HTMLInputElement>(
+    null,
+  ) as React.MutableRefObject<HTMLInputElement | null>;
 
   const handleUpdateFilter = () => {
     const formatKey = `${startDate}_${endDate}`;
+
     if (formatKey in MOCK_DATA_SOURCE) {
-      setCurrentData(MOCK_DATA_SOURCE[formatKey]);
+      setCurrentData(
+        MOCK_DATA_SOURCE[formatKey as keyof typeof MOCK_DATA_SOURCE],
+      );
     } else {
       setCurrentData(MOCK_DATA_SOURCE["2026-04-10_2026-04-16"]);
+    }
+  };
+
+  // Helper untuk showPicker
+  const showDatePicker = (
+    ref: React.MutableRefObject<HTMLInputElement | null>,
+  ) => {
+    if (ref.current) {
+      (ref.current as any).showPicker();
     }
   };
 
@@ -92,11 +105,7 @@ const AdminDashboardPage = () => {
 
       <main className="flex-1 flex flex-col h-full min-w-0 overflow-y-auto p-4 md:p-6">
         <div className="w-full">
-          <AdminHeader
-            title="Dashboard Admin"
-            adminName="Citra"
-            roleName="Admin Role"
-          />
+          <AdminHeader title="Dashboard Admin" />
         </div>
 
         <div className="space-y-5 w-full max-w-300 mx-auto">
@@ -145,7 +154,7 @@ const AdminDashboardPage = () => {
                   Start Date
                 </span>
                 <div
-                  onClick={() => startDateRef.current?.showPicker()}
+                  onClick={() => showDatePicker(startDateRef)}
                   className="bg-white rounded-xs border border-gray-200 px-3 py-2 flex items-center gap-2 cursor-pointer hover:border-primary transition-colors"
                 >
                   <Calendar size={14} className="text-gray-400 shrink-0" />
@@ -162,11 +171,11 @@ const AdminDashboardPage = () => {
                 </div>
               </div>
               <div className="flex-1">
-                <span className="text-[11px] text-gray-500 font-medium block mb-1 roun">
+                <span className="text-[11px] text-gray-500 font-medium block mb-1">
                   End Date
                 </span>
                 <div
-                  onClick={() => endDateRef.current?.showPicker()}
+                  onClick={() => showDatePicker(endDateRef)}
                   className="bg-white rounded-xs border border-gray-200 px-3 py-2 flex items-center gap-2 cursor-pointer hover:border-primary transition-colors"
                 >
                   <Calendar size={14} className="text-gray-400 shrink-0" />

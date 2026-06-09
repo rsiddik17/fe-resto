@@ -95,13 +95,13 @@ export default function TableMenu({
             onClick={() => eksporKePDFMenu(sortedData, periode)}
             className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90"
           >
-            <ExportIcon size={10} /> Ekspor PDF
+            <ExportIcon className="w-4 h-4" /> Ekspor PDF
           </button>
           <button
             onClick={() => eksporKeExcelMenu(sortedData, periode)}
             className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90"
           >
-            <ExportIcon size={10} /> Ekspor Excel
+            <ExportIcon className="w-4 h-4"   /> Ekspor Excel
           </button>
         </div>
       </div>
@@ -142,7 +142,7 @@ export default function TableMenu({
 
       {/* ========== DESKTOP TABLE ========== */}
       <div className="hidden md:block border border-gray-150 rounded-xs bg-white overflow-visible ">
-        <div className="overlow-x-auto overflow-y-visible">
+        <div className="overflow-x-auto overflow-y-visible">
           <table className="w-full table-fixed text-left text-[12.5px] border-collapse overflow-visible">
             <thead className="bg-gray-200  text-gray-500 font-bold uppercase text-[11px] ">
               <tr>

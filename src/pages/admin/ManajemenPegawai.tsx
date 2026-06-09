@@ -103,7 +103,7 @@ const ManajemenPegawaiPage = () => {
     />
   );
 
-  const [toastMessage, setToastMessage] = useState("");
+  const [, setToastMessage] = useState("");
 
   useEffect(() => {
     if (location.state?.showSuccessToast) {

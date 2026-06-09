@@ -90,10 +90,10 @@ export default function TabelPendapatanMingguan({
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => eksporKePDFPendapatanMingguan(sortedData, periode)} className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90">
-            <ExportIcon size={10} /> Ekspor PDF
+            <ExportIcon w-4 h-4 /> Ekspor PDF
           </button>
           <button onClick={() => eksporKeExcelPendapatanMingguan(sortedData, periode)} className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90">
-            <ExportIcon size={10} /> Ekspor Excel
+            <ExportIcon w-4 h-4 /> Ekspor Excel
           </button>
         </div>
       </div>

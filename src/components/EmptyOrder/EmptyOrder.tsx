@@ -1,6 +1,12 @@
+// EmptyOrder.tsx - UPDATE dengan props default
 import { useNavigate } from "react-router";
 
-const EmptyOrder = () => {
+interface EmptyOrderProps {
+  title?: string;
+  description?: string;
+}
+
+const EmptyOrder = ({ title, description }: EmptyOrderProps) => {
   const navigate = useNavigate();
 
   return (
@@ -8,24 +14,25 @@ const EmptyOrder = () => {
       {/* Ilustrasi */}
       <div className="relative w-full max-w-[320px] mb-8">
         <img 
-           src={`${import.meta.env.BASE_URL}images/pesanan-kosong.png`}
+          src={`${import.meta.env.BASE_URL}images/pesanan-kosong.png`}
+          alt="Empty order"
         />
       </div>
 
-      {/* Teks */}
+      {/* Teks - dinamis dengan fallback ke default */}
       <div className="space-y-3 mb-10">
         <h2 className="text-2xl font-bold text-primary">
-          Belum Terdapat Pesanan
+          {title || "Belum Terdapat Pesanan"}
         </h2>
         <p className="text-gray-500 text-sm leading-relaxed max-w-[320px] mx-auto">
-          Pesanan yang sedang diproses akan muncul di halaman ini
+          {description || "Pesanan yang sedang diproses akan muncul di halaman ini"}
         </p>
       </div>
 
       {/* Tombol */}
       <button
         onClick={() => navigate("/customer/menu")}
-        className="bg-primary font-bold text-white w-full max-w-[320px] py-3.5 rounded-full  flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all"
+        className="bg-primary font-bold text-white w-full max-w-[320px] py-3.5 rounded-full flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all"
       >
         <span className="text-xl font-normal">+</span>
         <span>Tambah Pesanan</span>

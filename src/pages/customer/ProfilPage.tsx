@@ -245,9 +245,9 @@ const ProfilePage = () => {
 
   // Simpan alamat (CREATE atau UPDATE)
   const handleSaveAddress = async () => {
-    console.log("🚀 handleSaveAddress dipanggil");
-    console.log("📦 editingAddress:", editingAddress);
-    console.log("📦 addressForm:", addressForm);
+    console.log(" handleSaveAddress dipanggil");
+    console.log(" editingAddress:", editingAddress);
+    console.log(" addressForm:", addressForm);
 
     // if (editingAddress && !editingAddress.id) {
     //   showToast("ID alamat tidak ditemukan", "error");
@@ -272,8 +272,8 @@ const ProfilePage = () => {
         is_core_address: false,
       });
     } catch (error) {
-      console.error("❌ ERROR:", error);
-      alert("Gagal menyimpan alamat", "error");
+      console.error(" ERROR:", error);
+     showLocalToast("Gagal menyimpan alamat", "error");
     }
   };
 
@@ -466,7 +466,7 @@ const ProfilePage = () => {
                     <div className="relative">
                       <DatePicker
                         selected={dateOfBirth}
-                        onChange={(date: Date) => setDateOfBirth(date)}
+                        onChange={(date: Date | null) => setDateOfBirth(date)}
                         disabled={!isEditingProfile}
                         dateFormat="dd/MM/yyyy"
                         placeholderText="DD/MM/YYYY"
@@ -502,7 +502,7 @@ const ProfilePage = () => {
                       onClick={() => toggleModal("logout", true)}
                       className="bg-primary text-white px-6 py-2.5 rounded-xs font-bold flex items-center gap-2 shadow-lg text-sm font-poppins"
                     >
-                      <LogoutIcon size={16} /> Keluar
+                      <LogoutIcon width={18} height={16} /> Keluar
                     </button>
                   )}
                 </div>

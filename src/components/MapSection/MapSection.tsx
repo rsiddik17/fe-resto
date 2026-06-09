@@ -1,31 +1,23 @@
 import { useState, useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
-import L from "leaflet";
+import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet"; // Tambah useMapEvents
+// import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-
-// import markerIcon from "leaflet/dist/images/marker-icon.png";
-// import markerShadow from "leaflet/dist/images/marker-shadow.png";
-
-// const DefaultIcon = L.icon({
-//   iconUrl: markerIcon,
-//   shadowUrl: markerShadow,
-//   iconSize: [25, 41],
-//   iconAnchor: [12, 41],
-// });
-// L.Marker.prototype.options.icon = DefaultIcon;
-
-const emptyIcon = L.divIcon({
-  className: "empty-marker",
-  html: '<div style="background: transparent; width: 0; height: 0;"></div>',
-  iconSize: [0, 0],
-  popupAnchor: [0, 0],
-});
 
 const RecenterMap = ({ lat, lng }: { lat: number; lng: number }) => {
   const map = useMap();
   useEffect(() => {
     map.setView([lat, lng], 16);
   }, [lat, lng, map]);
+  return null;
+};
+
+// Buat komponen baru untuk menangani klik pada peta
+const MapClickHandler = ({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) => {
+  useMapEvents({
+    click: (e) => {
+      onMapClick(e.latlng.lat, e.latlng.lng);
+    },
+  });
   return null;
 };
 
@@ -128,6 +120,7 @@ const MapSection = ({
         onAddressChange(address, lat, lng, selectedTag);
       }
     } catch (error) {
+      console.error("Error reverse geocoding:", error);
       if (onAddressChange) {
         onAddressChange(searchQuery, lat, lng, selectedTag);
       }
@@ -138,7 +131,7 @@ const MapSection = ({
     <div className="space-y-6">
       {/* INPUT ALAMAT LENGKAP */}
       <div className="space-y-2 text-left relative">
-        <label className="text-black font-bold text-sm ">Alamat Lengkap</label>
+        <label className="text-black font-bold text-sm">Alamat Lengkap</label>
 
         {showDropdown && suggestions.length > 0 && (
           <ul className="absolute left-0 right-0 bottom-full mb-1 bg-white border border-gray-100 rounded-xl shadow-xl z-9999 max-h-60 overflow-y-auto divide-y divide-gray-50">
@@ -157,11 +150,10 @@ const MapSection = ({
         <textarea
           value={searchQuery}
           onChange={(e) => {
-            setSearchQuery(e.target.value); // ← nyimpan di lokal
+            setSearchQuery(e.target.value);
             setShowDropdown(true);
           }}
           onBlur={() => {
-            // ← 🔥 TAMBAHAN INI
             if (onAddressChange && searchQuery !== initialAddress) {
               onAddressChange(
                 searchQuery,
@@ -171,28 +163,29 @@ const MapSection = ({
               );
             }
           }}
-          className="w-full p-4 mt-2 bg-white border-[1.5px] border-primary rounded-xs h-24 ..."
+          className="w-full p-4 mt-2 bg-white border-[1.5px] border-primary rounded-xs h-24"
           placeholder="Ketik alamat..."
         />
       </div>
 
       {/* PETA */}
-      <div
-        className="w-full h-80 rounded-xl overflow-hidden border border-gray-100 
-      relative z-10  [&_.leaflet-marker-icon]:!hidden"
-      >
+      <div className="w-full h-80 rounded-xl overflow-hidden border border-gray-100 relative z-10">
+        <style>{`
+          .leaflet-marker-icon {
+            display: none !important;
+          }
+        `}</style>
         <MapContainer
           center={[position.lat, position.lng]}
           zoom={15}
           zoomControl={false}
           style={{ height: "100%", width: "100%" }}
-          onClick={(e) => handleMapClick(e.latlng.lat, e.latlng.lng)}
         >
           <TileLayer
-            attribution="&copy; OpenStreetMap contributors"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          {/* <Marker position={[position.lat, position.lng]} icon={emptyIcon} /> */}
+          <MapClickHandler onMapClick={handleMapClick} />
           <RecenterMap lat={position.lat} lng={position.lng} />
         </MapContainer>
       </div>

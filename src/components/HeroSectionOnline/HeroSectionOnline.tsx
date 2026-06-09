@@ -15,7 +15,7 @@ interface HeroSectionOnlineProps {
 const HeroSectionOnline = ({
   title,
   subtitle,
-  imageBg,
+  // imageBg,
   searchQuery,
   showSearch = false,
   onSearchChange,

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, useLocation} from "react-router";
 import { ChevronsRight, ChevronsLeft } from "lucide-react";
 import { cn } from "../../utils/utils";
 import Button from "../ui/Button";
@@ -18,7 +18,7 @@ const AdminSidebar = ({ onLogout }: AdminSidebarProps) => {
   // const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
+  
 
   // Daftar menu sesuai fitur Anda
   const adminMenuItems = [

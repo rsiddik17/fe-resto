@@ -13,27 +13,29 @@ const PaymentSuccessOnline = () => {
 
   // State diubah: default-nya FALSE (berarti "Sedang Diproses" dulu)
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const [orderDetail, setOrderDetail] = useState(null);
+  const [, setOrderDetail] = useState(null);
   // Mengambil data dari navigasi sebelumnya
   const {
-    orderId = "260401205",
+    orderId = "",
     finalPayment = 0,
     subTotal = 0,
     discountAmount = 0,
+    adminFee = 0,
+      customerName = "Pelanggan",
     purchasedItems = [],
   } = location.state || {};
-  console.log("🎉🎉🎉 PaymentSuccess - finalPayment:", finalPayment);
-console.log("🎉🎉🎉 PaymentSuccess - subTotal:", subTotal);
-console.log("🎉🎉🎉 PaymentSuccess - discountAmount:", discountAmount);
+  console.log(" PaymentSuccess - finalPayment:", finalPayment);
+  console.log(" PaymentSuccess - subTotal:", subTotal);
+  console.log(" PaymentSuccess - discountAmount:", discountAmount);
 
   // Biaya admin dipaksa ke 205 sesuai permintaanmu
-  const adminFee = 0;
+  // const adminFee = 0;
 
   // Efek timer: dari "Diproses" berubah menjadi "Dikonfirmasi" (true) setelah 3.5 detik
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsConfirmed(true);
-    }, 3000);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -45,6 +47,7 @@ console.log("🎉🎉🎉 PaymentSuccess - discountAmount:", discountAmount);
           const response = await orderAPI.getMyOrderById(orderId);
           const orderData = response.data || response;
           setOrderDetail(orderData);
+          // console.log("Order detail:", orderDetail);
         } catch (error) {
           console.error("Gagal ambil detail pesanan:", error);
         }
@@ -87,10 +90,8 @@ console.log("🎉🎉🎉 PaymentSuccess - discountAmount:", discountAmount);
           <div className="flex justify-between items-center">
             <span className="text-gray-500 text-sm">Total Pembayaran</span>
             <span className="text-primary font-bold text-sm">
-              Rp{finalPayment.toLocaleString("id-ID")}
-              
+              Rp{Number(finalPayment).toLocaleString("id-ID")}
             </span>
-            
           </div>
         </div>
 
@@ -150,7 +151,7 @@ console.log("🎉🎉🎉 PaymentSuccess - discountAmount:", discountAmount);
             taxRate={10}
             discountAmount={discountAmount}
             adminFee={adminFee}
-            finalPayment={finalPayment} 
+            finalPayment={finalPayment}
             hideAlertInfo={true}
           />
         </div>
@@ -174,10 +175,11 @@ console.log("🎉🎉🎉 PaymentSuccess - discountAmount:", discountAmount);
       {showReceipt && (
         <OrderReceipt
           orderId={orderId}
+          customerName={customerName}
           items={purchasedItems}
           subTotal={subTotal}
           discountAmount={discountAmount}
-          adminFee={0}
+          adminFee={adminFee}
           totalPrice={finalPayment}
           onClose={() => setShowReceipt(false)}
         />

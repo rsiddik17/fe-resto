@@ -44,6 +44,7 @@ const UbahSandiPage = () => {
       setIsSubmitting(true);
       
       const payload = {
+         old_password: "", 
         new_password: sandiBaru,
         confirm_password: konfirmasiSandi,
       };

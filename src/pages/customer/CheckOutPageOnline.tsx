@@ -16,6 +16,7 @@ import {
 import DiscountModalOnline from "../../components/DiscountModalOnline/DiscountModalOnline";
 import { orderAPI } from "../../api/order.api";
 import { addressAPI } from "../../api/address.api";
+import { useAuthStore } from "../../store/useAuthStore";
 
 interface Address {
   id: string;
@@ -23,6 +24,8 @@ interface Address {
 }
 
 const CheckoutPageOnline = () => {
+  const { user } = useAuthStore(); // ✅ ambil data user
+  const customerName = user?.fullname || "Pelanggan"; // ✅ nama asli
   const navigate = useNavigate();
   const { items } = useCartStore();
 
@@ -133,15 +136,21 @@ const CheckoutPageOnline = () => {
 
       const backendOrderId = response.data.id;
       const backendGrandTotal = response.data.grand_total_amount;
-      console.log("✅✅✅ backendGrandTotal:", backendGrandTotal);
-      console.log("✅✅✅ response.data:", response.data);
+
+      console.log(" backendGrandTotal:", backendGrandTotal);
+      console.log(" response.data:", response.data);
+
+      // const { user } = useAuthStore();
+      // const customerName = user?.fullname || "Pelanggan";
+
       navigate("/customer/payment", {
         state: {
           orderId: backendOrderId,
+          customerName: customerName,
           finalPayment: backendGrandTotal,
           subTotal: safeTotalPrice,
           discountAmount: appliedDiscount,
-          adminFee: 0,
+          adminFee: response.data.admin_fee || 0,
           address: currentAddress?.detail || "",
           purchasedItems: selectedItems,
         },

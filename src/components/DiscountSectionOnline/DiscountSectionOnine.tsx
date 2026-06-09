@@ -75,7 +75,7 @@ const DiscountSectionOnline = ({ onApplyDiscount }: DiscountSectionProps) => {
             {/* Bagian Atas: Ikon dan Teks */}
             <div className="flex items-start gap-3 md:gap-4">
               <div className="bg-primary rounded-full p-2 md:p-2.5 shrink-0 mt-0.5">
-                <Percent size={14} md:size={16} strokeWidth={4} className="text-white" />
+                <Percent size={14}  strokeWidth={4} className="text-white" />
               </div>
               <div className="space-y-1 md:space-y-2">
                 <h4 className="font-bold text-[16px] md:text-[18px] text-black leading-tight">
