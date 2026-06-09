@@ -21,12 +21,13 @@ const PaymentPageOnline = () => {
   const { removeCheckedItems } = useCartStore();
 
   const {
-    orderId = "260401205",
+    orderId = "",
     finalPayment = 0,
     subTotal = 0,
     discountAmount = 0,
     adminFee = 0,
     address = "",
+    customerName = "Pelanggan",
   } = location.state || {};
   console.log(" PaymentPage - finalPayment:", finalPayment);
   console.log(" PaymentPage - subTotal:", subTotal);
@@ -76,6 +77,7 @@ const PaymentPageOnline = () => {
           discountAmount,
           adminFee,
           address,
+          customerName,
           purchasedItems: selectedItems,
         },
       });
