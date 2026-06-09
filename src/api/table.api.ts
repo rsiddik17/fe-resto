@@ -37,5 +37,11 @@ export const tableAPI = {
   deleteTable: async (id: number) => {
     const response = await axiosInstance.delete(`/table/delete-tables/${id}`);
     return response.data;
-  }
+  },
+
+  // Tambahkan fungsi ini di dalam object tableAPI kamu (sesuaikan path URL-nya jika berbeda)
+  autoAssignTable: async (data: { guest: number }) => {
+    const response = await axiosInstance.post("/table/auto-assign", data); 
+    return response.data;
+  },
 };

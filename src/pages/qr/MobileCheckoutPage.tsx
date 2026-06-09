@@ -98,7 +98,7 @@ const MobileCheckoutPage = () => {
 
   return (
     // pb-28 agar konten paling bawah tidak tertutup oleh tombol sticky
-    <div className="min-h-screen bg-white pb-4  relative flex flex-col">
+    <div className="min-h-[90vh] bg-white pb-4  relative flex flex-col">
       <Header />
       <Loading show={isSubmitting} />
 
@@ -145,7 +145,7 @@ const MobileCheckoutPage = () => {
               <Button
                 onClick={() => { setDiscountAmount(0); setDiscountId(null); }}
                 variant="outline"
-                className="w-full py-2.5 rounded-lg text-sm font-bold border border-gray-300 text-gray-500 hover:bg-gray-50 mt-2"
+                className="w-full py-2.5 rounded-lg text-sm font-bold border-[1.5px] border-gray-300 text-gray-500 hover:bg-gray-50 mt-2"
               >
                 Batalkan Diskon
               </Button>

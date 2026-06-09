@@ -11,7 +11,7 @@ const FormGuestInput = () => {
   // Fungsi saat tombol enter (biru) dipencet
   const handleSubmit = () => {
     if (guestCount && parseInt(guestCount) > 0) {
-      navigate(`/kiosk/info-table?guests=${guestCount}`);
+      navigate(`/kiosk/info-table`, { state: { guests: guestCount } });
     }
   };
 
@@ -70,7 +70,7 @@ const FormGuestInput = () => {
                 "w-full pl-12 md:pl-18 lg:pl-16 pr-4 py-2 md:py-5 lg:py-2.5 border-2 rounded-xs text-lg md:text-3xl lg:text-xl text-black bg-white focus:outline-none transition-all cursor-pointer placeholder:text-sm md:placeholder:text-xl lg:placeholder:text-[17px]  md:placeholder:-translate-y-1 lg:placeholder:-translate-y-px",
                 guestCount
                   ? "border-primary ring-2 ring-primary/20"
-                  : "border-gray/30",
+                  : "border-primary/75",
               )}
             />
           </div>

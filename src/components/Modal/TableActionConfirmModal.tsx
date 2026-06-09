@@ -60,7 +60,7 @@ const TableActionConfirmModal = ({
         <div className="flex items-center gap-8 w-[85%] mx-auto mb-1">
           <button
             onClick={onClose}
-            className="flex-1 bg-[#DEDED9] text-sm py-2 rounded-xs hover:bg-gray/40 transition-colors cursor-pointer"
+            className="flex-1 bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 text-sm py-2 rounded-xs transition-colors cursor-pointer"
           >
             Batal
           </button>

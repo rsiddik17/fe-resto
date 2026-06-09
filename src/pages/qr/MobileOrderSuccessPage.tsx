@@ -15,7 +15,7 @@ import AlertModal from "../../components/Modal/AlertModal";
 const MobileOrderSuccessPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { items, clearCart, tableNumber } = useCartStore();
+  const { items, clearCart, tableNumber, tableId } = useCartStore();
   const { logout } = useAuthStore();
 
   const orderData = location.state;
@@ -36,13 +36,12 @@ const MobileOrderSuccessPage = () => {
   useEffect(() => {
     // Proteksi: Jika tidak ada data order, kembalikan ke menu
     if (!orderData || items.length === 0) {
-      const rawNumber = tableNumber?.replace(/\D/g, "");
-      if (rawNumber) {
-        navigate(`/qr/${rawNumber}`, { replace: true });
-      }
+      const targetUrl = tableId ? `/qr/${btoa(tableId.toString())}` : "/";
+      navigate(targetUrl, { replace: true });
       return;
     }
 
+<<<<<<< HEAD
   }, [orderData, items.length, navigate, tableNumber]);
 
   const handleSelesai = async () => {
@@ -96,6 +95,23 @@ const MobileOrderSuccessPage = () => {
     } finally {
       setIsLoading(false);
     };
+=======
+    // SIMULASI: Menunggu kasir klik "Terima Pesanan" (5 detik)
+    const timer = setTimeout(() => {
+      setStatus("CONFIRMED");
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [orderData, items.length, navigate, tableId]);
+
+  const handleSelesai = async () => {
+   const targetUrl = tableId ? `/qr/${btoa(tableId.toString())}` : "/";
+
+    clearCart(); 
+    await logout(); // Logout Guest
+    
+    navigate(targetUrl, { replace: true });
+>>>>>>> main
   };
 
   const handleModalClose = async () => {
@@ -122,7 +138,6 @@ const MobileOrderSuccessPage = () => {
   if (!orderData) return null;
 
   return (
-    // pb-24 agar tombol sticky tidak menutupi ringkasan harga
     <div className="min-h-screen bg-white pb-4 relative flex flex-col">
       <Loading show={isLoading} />
       <Header />

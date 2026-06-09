@@ -83,6 +83,10 @@ const CashierTableManagementPage = () => {
 
   useEffect(() => {
     fetchTables();
+
+    const intervalId = setInterval(fetchTables, 8000);
+    
+    return () => clearInterval(intervalId);
   }, []);
 
   // Logika Filter dan Search

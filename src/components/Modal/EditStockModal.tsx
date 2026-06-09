@@ -52,7 +52,7 @@ const EditStockModal = ({ isOpen, onClose, onSave, menu, isLoading = false }: Ed
             <Button 
               onClick={onClose} 
               disabled={isLoading}
-              className="flex-1 py-2.5 bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 text-[13px] md:text-[13px] lg:text-[13px] font-bold rounded-xs disabled:opacity-70"
+              className="flex-1 py-2.5 bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 text-[13px] md:text-[13px] lg:text-[13px] shadow-none font-bold rounded-xs disabled:opacity-70"
             >
               Batal
             </Button>

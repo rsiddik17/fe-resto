@@ -43,11 +43,11 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
 
   return (
     <div
-      className="fixed inset-0 z-100 flex items-center justify-center bg-black/3 backdrop-blur-[3px] p-4"
+      className="fixed inset-0 z-100 flex items-center justify-center bg-black/3 backdrop-blur-[3px] p-4 overflow-y-auto"
       onClick={onClose} // Menutup modal jika klik area luar
     >
       <div
-        className="bg-white w-full max-w-[88%] md:max-w-md lg:max-w-sm p-4 md:p-5.5 lg:p-4.5 rounded-2xl overflow-hidden shadow-sm flex flex-col animate-in zoom-in-95 duration-200"
+        className="bg-white w-[90%] max-w-sm p-4 md:p-5.5 lg:p-4.5 rounded-2xl overflow-hidden shadow-sm flex flex-col animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup jika isinya diklik
       >
         {/* --- HEADER: GAMBAR & TOMBOL KEMBALI --- */}
@@ -126,7 +126,7 @@ const MenuItemModal = ({ item, onClose, onAdd }: MenuItemModalProps) => {
               placeholder="Catatan (opsional)"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.75 md:py-3 lg:py-2.5 bg-gray/15 border-transparent focus:bg-white focus:border-primary text-xs md:text-sm rounded-md"
+              className="w-full pl-10 pr-4 py-2.75 md:py-3 lg:py-2.5 bg-white focus:bg-white border-[1.5px] border-primary focus:border-primary text-xs md:text-sm rounded-md"
             />
           </div>
 

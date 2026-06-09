@@ -10,6 +10,20 @@ import { authAPI } from "../../api/auth.api";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useCartStore } from "../../store/useCartStore";
 
+const formatTableNumber = (raw?: string) => {
+  if (!raw) return "Takeaway";
+  if (
+    raw.toLowerCase().includes("takeaway") ||
+    raw.toLowerCase().includes("tanpa")
+  ) {
+    return "Takeaway";
+  }
+  const match = raw.match(/\d+/);
+  if (match) {
+    return `Meja ${match[0]}`; // Mengubah "M02_o" menjadi "Meja 02"
+  }
+  return `Meja ${raw}`;
+};
 
 const MobileTableInfoPage = () => {
   const navigate = useNavigate();
@@ -24,7 +38,16 @@ const MobileTableInfoPage = () => {
     sub?: string;
   } | null>(null);
 
-  const parsedTableId = parseInt(tableId || "0", 10);
+  let parsedTableId = 0;
+  try {
+    if (tableId) {
+      const decodedString = atob(tableId);
+      parsedTableId = parseInt(decodedString, 10);
+    }
+  } catch (error) {
+    parsedTableId = 0;
+    console.error(error);
+  }
 
   useEffect(() => {
     const validateTable = async () => {
@@ -53,7 +76,7 @@ const MobileTableInfoPage = () => {
           if (foundTable.status === "OCCUPIED") {
             setErrorMsg({
               main: "Meja Sedang Digunakan",
-              sub: `Maaf, meja nomor ${foundTable.table_number} saat ini sedang digunakan. Silakan pindah ke meja yang kosong dan scan ulang QR Code.`,
+              sub: `Maaf, meja nomor ${formatTableNumber(foundTable.table_number)} saat ini sedang digunakan. Silakan pindah ke meja yang kosong dan scan ulang QR Code.`,
             });
           } else {
             // Jika meja tersedia, masukkan ke state
@@ -110,7 +133,7 @@ const MobileTableInfoPage = () => {
     <div className="w-full min-h-screen flex flex-col bg-linear-to-b from-primary/0 to-primary/15 relative overflow-hidden pb-4 md:pb-8 px-4">
       <Loading show={isLoading} />
 
-      <div className="w-full flex justify-center z-10 pt-4 md:pt-8">
+      <div className="w-full flex justify-center z-10 pt-0 md:pt-8">
         <img
           src={`${import.meta.env.BASE_URL}images/new-logo.webp`}
           alt="Logo IT'S RESTO"

@@ -4,6 +4,7 @@ import { axiosInstance } from "../lib/axios";
 export interface CreateOrderPayload {
   source: "KIOSK" | "WAITER" | "CASHIER" | "ONLINE" | "QR_SCAN";
   table_id: number | null;
+  address_id?: string;  
   discount_id?: number;
   order_items: {
     menu_id: string;
@@ -83,6 +84,36 @@ export const orderAPI = {
   // GET /order/:id
   getOrderById: async (orderId: string) => {
     const response = await axiosInstance.get(`/order/${orderId}`);
+    return response.data;
+  },
+
+  // GET /order/substitutes
+  getSubstituteMenus: async (targetPrice: number, currentMenuId: string) => {
+    const response = await axiosInstance.get("/order/substitutes", {
+      params: { 
+        price: targetPrice, 
+        current_menu_id: currentMenuId 
+      }
+    });
+    return response.data;
+  },
+
+  // PATCH /order/:id/swap-item
+  swapOrderItem: async (orderId: string, orderItemId: string, newMenuId: string, qtyToSwap: number, newNotes?: string) => {
+    const response = await axiosInstance.patch(`/order/${orderId}/swap-item`, {
+      order_item_id: orderItemId,
+      new_menu_id: newMenuId,
+      qty_to_swap: qtyToSwap,
+      notes: newNotes
+    });
+    return response.data;
+  },
+
+  // PATCH /order/:id/remove-item
+  removeOrderItem: async (orderId: string, orderItemId: string) => {
+    const response = await axiosInstance.patch(`/order/${orderId}/remove-item`, {
+      order_item_id: orderItemId
+    });
     return response.data;
   }
 };

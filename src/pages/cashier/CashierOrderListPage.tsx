@@ -170,6 +170,7 @@ const CashierOrderListPage = () => {
               leftBadges,
               rightBadges,
               items: mappedItems,
+              rawStatus: order.status,
             };
           });
 
@@ -240,24 +241,41 @@ const CashierOrderListPage = () => {
               <span>Memuat antrean pesanan...</span>
             </div>
           ) : orders.length > 0 ? (
-            orders.map((order) => (
-              <CashierOrderCard
-                key={order.id}
-                orderId={order.orderId}
-                rawOrderId={order.id}
-                time={order.time}
-                title={order.title}
-                leftBadges={order.leftBadges}
-                rightBadges={order.rightBadges}
-                items={order.items}
-                total={order.total}
-                isAwaitingValidation={activeFilter === "Menunggu Validasi"}
-                onViewDetail={() => handleOpenDetail(order)}
-                onValidate={() => navigate(`/cashier/order-list/payment-validation`, { state: { orderId: order.id, tableNumber: order.title } })}
-              />
-            ))
+            orders.map((order) => {
+              const isEditable = ["PENDING", "VALIDATED", "COOKING"].includes(
+                order.rawStatus,
+              );
+              return (
+                <CashierOrderCard
+                  key={order.id}
+                  orderId={order.orderId}
+                  rawOrderId={order.id}
+                  time={order.time}
+                  title={order.title}
+                  leftBadges={order.leftBadges}
+                  rightBadges={order.rightBadges}
+                  items={order.items}
+                  total={order.total}
+                  isAwaitingValidation={order.rawStatus === "PENDING"}
+                  onViewDetail={() => handleOpenDetail(order)}
+                  onValidate={() =>
+                    navigate(`/cashier/order-list/payment-validation`, {
+                      state: { orderId: order.id, tableNumber: order.title },
+                    })
+                  }
+                  onEdit={
+                    isEditable
+                      ? (rawId) =>
+                          navigate(`/cashier/order-list/edit/${rawId}`, {
+                            state: { tableNumber: order.title },
+                          })
+                      : undefined
+                  }
+                />
+              );
+            })
           ) : (
-            <div className="col-span-full py-10 text-center text-[15px] text-gray-400 font-medium bg-white rounded-xl border border-gray-200 border-dashed">
+            <div className="col-span-full py-10 text-center text-[14.5px] text-gray-400 font-medium bg-white rounded-xl border border-gray-200 border-dashed">
               Tidak ada pesanan di kategori "{activeFilter}"
             </div>
           )}

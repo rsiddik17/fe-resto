@@ -1,10 +1,12 @@
-import { useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { ArrowLeft, Download } from "lucide-react";
 import TableIcon from "../Icon/TableIcon";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { TableData } from "../../api/table.api";
+import Button from "../ui/Button";
+import { QRCodeSVG } from "qrcode.react";
 
 // 2. Buat Schema Zod untuk validasi
 const tableSchema = z.object({
@@ -46,6 +48,8 @@ const TableDetailModal = ({
     mode: "onSubmit", // Error cuma muncul pas tombol simpan diklik
   });
 
+  const qrRef = useRef<SVGSVGElement>(null);
+
   // Populate data kalau modenya edit / detail
   useEffect(() => {
     if (isOpen) {
@@ -75,6 +79,10 @@ const TableDetailModal = ({
         ? "Edit Meja"
         : "Detail Meja";
 
+  const qrValue = table?.id
+    ? `${window.location.origin}${import.meta.env.BASE_URL}qr/${btoa(table.id.toString())}`
+    : "TIDAK_ADA_DATA";
+
   // Fungsi yang dipanggil saat form valid dan disubmit
   const onSubmit = (data: TableFormData) => {
     if (onSave) {
@@ -83,6 +91,61 @@ const TableDetailModal = ({
         capacity: Number(data.capacity),
       });
     }
+  };
+
+  // Fungsi untuk mengunduh QR Code menjadi PNG
+  const handleDownloadQR = () => {
+    if (!qrRef.current || !table) return;
+
+    // 1. Ambil elemen SVG
+    const svgElement = qrRef.current;
+    const serializer = new XMLSerializer();
+    let source = serializer.serializeToString(svgElement);
+
+    // 2. Tambahkan namespace XML jika belum ada
+    if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
+      source = source.replace(
+        /^<svg/,
+        '<svg xmlns="http://www.w3.org/2000/svg"',
+      );
+    }
+
+    // 3. Konversi ke bentuk Blob URI
+    const svgBlob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+    const svgUrl = URL.createObjectURL(svgBlob);
+
+    // 4. Gambar SVG ke Canvas, lalu Convert ke PNG
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    // Ukuran hasil download (diperbesar agar tidak pecah saat diprint)
+    const size = 1000;
+    canvas.width = size;
+    canvas.height = size;
+
+    const img = new Image();
+    img.onload = () => {
+      if (ctx) {
+        // Beri background putih (karena SVG transparan)
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Gambar QR Code di tengah canvas
+        ctx.drawImage(img, 50, 50, size - 100, size - 100);
+
+        // Convert canvas ke PNG URL
+        const pngUrl = canvas.toDataURL("image/png");
+
+        // Paksa browser mendownload file
+        const downloadLink = document.createElement("a");
+        downloadLink.href = pngUrl;
+        downloadLink.download = `QR_${table.table_number.replace(/\s+/g, "_")}.png`; // Contoh nama file: QR_Meja_02.png
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(svgUrl);
+      }
+    };
+    img.src = svgUrl;
   };
 
   return (
@@ -115,10 +178,39 @@ const TableDetailModal = ({
           className="flex flex-col md:flex-row gap-6 flex-1"
         >
           {/* KIRI: Ilustrasi Meja Ungu (Persis desain) */}
-          <div className="w-full md:w-80 h-55 md:h-75 bg-primary/25 rounded-md flex items-center justify-center shrink-0">
-            <div className="w-28 h-28 bg-primary/25 rounded-full flex items-center justify-center">
-              <TableIcon className="w-16 h-16 text-primary" />
-            </div>
+          <div className="flex flex-col gap-4 w-full md:w-80 shrink-0">
+            {mode === "add" ? (
+              // Tampilan Tambah Meja (Ilustrasi Ungu)
+              <div className="w-full md:w-80 h-55 md:h-75 bg-primary/25 rounded-md flex items-center justify-center shrink-0">
+                <div className="w-28 h-28 bg-primary/25 rounded-full flex items-center justify-center">
+                  <TableIcon className="w-16 h-16 text-primary" />
+                </div>
+              </div>
+            ) : (
+              // Tampilan Detail / Edit (QR Code)
+              <div className="w-full aspect-square border-[1.5px] border-primary/50 rounded-md flex items-center justify-center p-4 bg-white">
+                <QRCodeSVG
+                  value={qrValue}
+                  size={200}
+                  level={"H"} // Error correction High (bagus untuk diprint)
+                  className="w-full h-full object-contain"
+                  ref={qrRef}
+                />
+              </div>
+            )}
+
+            {/* Tombol Unduh Hanya muncul di mode Detail/Edit */}
+            {mode !== "add" && mode !== "edit" && (
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  onClick={handleDownloadQR}
+                  className="w-full bg-primary text-white text-[13px] md:text-[14px] font-bold py-2.5 flex items-center justify-center gap-2 shadow-sm rounded-sm hover:bg-primary-hover transition-colors"
+                >
+                  <Download size={16} strokeWidth={2.5} /> Unduh
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* KANAN: Form Input */}
@@ -180,7 +272,7 @@ const TableDetailModal = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-[0.8] bg-primary/25 text-primary font-bold text-sm py-3 rounded-sm hover:bg-primary/30 transition-colors cursor-pointer"
+                  className="flex-[0.8] bg-[#FFFFFF] hover:bg-black/5 text-black border-[1.5px] border-gray/50 font-bold text-sm py-3 rounded-sm transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
