@@ -7,6 +7,9 @@ import StatusBanner from "../../components/StatusBanner/StatusBanner";
 import { useCartStore } from "../../store/useCartStore";
 import OrderSummary from "../../components/OrderSummary/OrderSummary";
 import SuccessIcon from "../../components/Icon/SuccessIcon";
+import { orderAPI } from "../../api/order.api";
+import Loading from "../../components/Loading/Loading";
+import AlertModal from "../../components/Modal/AlertModal";
 
 const KioskOrderSuccessPage = () => {
   const navigate = useNavigate();
@@ -19,24 +22,89 @@ const KioskOrderSuccessPage = () => {
 
   // State untuk mengatur status PENDING -> CONFIRMED
   const [status, setStatus] = useState<"PENDING" | "CONFIRMED">("PENDING");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [modal, setModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: "PENDING" | "CANCELED";
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "PENDING",
+  });
 
   useEffect(() => {
     if (!orderData || items.length === 0) {
       navigate("/kiosk/home");
       return;
     }
-
-    // SIMULASI WEBSOCKET: Menunggu kasir klik "Terima Pesanan" di sistem dapur (5 detik)
-    const timer = setTimeout(() => {
-      setStatus("CONFIRMED");
-    }, 5000);
-
-    return () => clearTimeout(timer);
   }, [orderData, items.length, navigate]);
 
-  const handleSelesai = () => {
-    clearCart(); // Kosongkan keranjang untuk pelanggan berikutnya!
-    navigate("/kiosk/home");
+  const handleSelesai = async () => {
+
+    // if status is confirmed, clear cart and navigate to home
+    if (status === "CONFIRMED") {
+      clearCart();
+      navigate("/kiosk/home");
+      return;
+    }
+
+    // set loading state to true
+    setIsLoading(true);
+
+    try {
+
+      // get order by id
+      const response = await orderAPI.getOrderById(orderData.orderId);
+      const currentStatus = response?.status || response?.data?.status;
+
+      // if order status is pending, show banner alert
+      if (currentStatus === "PENDING") {
+        setIsLoading(false);
+        setModal({
+          isOpen: true,
+          title: "Pesanan Belum Divalidasi",
+          message: "Maaf, pesanan Anda belum divalidasi oleh kasir. Pastikan Anda sudah menyelesaikan transaksi pembayaran via QRIS.",
+          type: "PENDING",
+        });
+        return;
+      } else if (currentStatus === "CANCELED") {
+        setIsLoading(false);
+        setModal({
+          isOpen: true,
+          title: "Pesanan Dibatalkan",
+          message: "Pesanan Anda telah dibatalkan, kunjungi kasir atau silahkan memesan kembali.",
+          type: "CANCELED",
+        });
+        return;
+
+      } else {
+        // if order status is confirmed, set status to confirmed
+        setStatus("CONFIRMED");
+      };
+      
+    } catch (error) {
+      console.error("Gagal mengambil data pesanan:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleModalClose = () => {
+
+    // get modal type
+    const currentModalType = modal.type;
+
+    // close modal
+    setModal((prev) => ({ ...prev, isOpen: false }));
+
+    // if order canceled, clear cart and navigate to home
+    if (currentModalType === "CANCELED") {
+      clearCart();
+      navigate("/kiosk/home");
+    };
   };
 
   const tableNo = tableNumber?.match(/\d+/)?.[0];
@@ -46,6 +114,7 @@ const KioskOrderSuccessPage = () => {
 
   return (
     <div className="min-h-screen bg-white pb-8 relative flex flex-col">
+      <Loading show={isLoading} />
       <Header showProfile />
 
       <main className="flex-1 w-full px-4 max-w-full md:max-w-185 lg:max-w-2xl mx-auto pt-6 md:pt-10 flex flex-col items-center">
@@ -110,6 +179,14 @@ const KioskOrderSuccessPage = () => {
             Selesai
           </Button>
       </div>
+
+      {/* --- MODAL ALERT --- */}
+      {modal.isOpen && (<AlertModal
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+        onClose={handleModalClose}
+      />)}
 
     </div>
   );
