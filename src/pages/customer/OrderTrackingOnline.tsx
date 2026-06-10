@@ -13,7 +13,7 @@ interface Order {
   subTotal: number;
   discountAmount: number;
   adminFee: number;
-  status: "pending" | "proses" | "dimasak" | "diantar" | "diterima" | "selesai";
+ status: "pending" | "proses" | "dimasak" | "diantar" | "selesai" | "dibatalkan";
   date: string;
 }
 
@@ -72,12 +72,12 @@ const OrderTrackingOnline = () => {
 
       const mapBackendStatus = (backendStatus: string): Order["status"] => {
         const status = backendStatus?.toUpperCase() || "";
-        if (status === "PENDING") return "pending";
+        if (status === "PAID" || status === "PENDING") return "pending";
         if (status === "VALIDATED") return "proses";
         if (status === "COOKING") return "dimasak";
         if (status === "READY") return "diantar";
-        if (status === "DELIVERING") return "diantar";
-        if (status === "COMPLETED") return "selesai";
+        if (status === "SERVED") return "selesai";
+        if (status === "CANCELED") return "dibatalkan"; // atau "pending"
         return "pending";
       };
 
@@ -133,17 +133,16 @@ const OrderTrackingOnline = () => {
     status === "proses" ||
     status === "dimasak" ||
     status === "diantar" ||
-    status === "diterima" ||
     status === "selesai";
   const isDiantarActive =
-    status === "diantar" || status === "diterima" || status === "selesai";
+    status === "diantar" || status === "selesai";
 
   let progressWidth = "0%";
   if (status === "pending") progressWidth = "0%"; // atau "10%" kalau mau sedikit
   if (status === "proses") progressWidth = "25%";
   if (status === "dimasak") progressWidth = "50%";
   if (status === "diantar") progressWidth = "75%";
-  if (status === "diterima" || status === "selesai") progressWidth = "100%";
+if (status === "selesai") progressWidth = "100%";
 
   let bannerText = "Pesanan Anda sedang diproses sistem";
   if (status === "pending") bannerText = "Menunggu konfirmasi pembayaran";
@@ -151,7 +150,7 @@ const OrderTrackingOnline = () => {
     bannerText = "Pesanan Anda sedang dimasak";
   else if (status === "diantar")
     bannerText = "Pesanan Anda sedang diantar menuju lokasi Anda";
-  else if (status === "diterima" || status === "selesai")
+  else if ( status === "selesai")
     bannerText = "Pesanan telah sampai! Selamat menikmati";
 
   // Loading state

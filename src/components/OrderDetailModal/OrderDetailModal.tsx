@@ -71,7 +71,7 @@ const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
   const taxAmount = Number(orderData.payments?.tax_amount) || Number(orderData.tax_amount) || order.taxAmount || 0;
   const status = orderData.status || order.status || "PENDING";
   const s = status.toString().trim().toLowerCase();
-  const isSelesai = s === "diterima" || s === "selesai" || s === "completed";
+const isSelesai = s === "selesai";
 
   console.log("OrderDetailModal - Admin Fee:", adminFeeValue);
   console.log("OrderDetailModal - Final Payment:", finalPaymentValue);

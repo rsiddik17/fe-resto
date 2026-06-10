@@ -95,7 +95,7 @@ const OrderTrackingPage = () => {
         s === "pending" || s === "proses" || s === "dimasak" || s === "diantar"
       );
     } else {
-      return s === "diterima" || s === "selesai";
+       return s === "selesai" || s === "dibatalkan";
     }
   });
 
