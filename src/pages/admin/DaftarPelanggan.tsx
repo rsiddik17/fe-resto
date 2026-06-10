@@ -3,11 +3,7 @@ import AdminSidebar from "../../components/AdminComponents/AdminSidebar";
 import AdminHeader from "../../components/AdminComponents/AdminHeader";
 import SortIcon from "../../components/Icon/SortIcon";
 import { customerAPI } from "../../api/customer.api";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 
 interface Pelanggan {
   id: string;
@@ -23,12 +19,12 @@ interface Pelanggan {
 const DaftarPelangganPage = () => {
   const [pelangganList, setPelangganList] = useState<Pelanggan[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  
+
   // Sorting
   const [currentSortKey, setCurrentSortKey] = useState<keyof Pelanggan>("nama");
   const [isAscending, setIsAscending] = useState<boolean>(true);
@@ -196,54 +192,115 @@ const DaftarPelangganPage = () => {
                 <thead>
                   <tr className="bg-primary font-bold text-white uppercase text-[9px]">
                     <th className="py-2 text-center w-10 rounded-tl-xs">NO</th>
-                    <th className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap" onClick={() => handleSort("nama")}>
-                      <div className="flex items-center gap-0.5">Nama {renderSortIcon("nama")}</div>
+                    <th
+                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap"
+                      onClick={() => handleSort("nama")}
+                    >
+                      <div className="flex items-center gap-0.5">
+                        Nama {renderSortIcon("nama")}
+                      </div>
                     </th>
-                    <th className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap" onClick={() => handleSort("email")}>
-                      <div className="flex items-center gap-0.5">Email {renderSortIcon("email")}</div>
+                    <th
+                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap"
+                      onClick={() => handleSort("email")}
+                    >
+                      <div className="flex items-center gap-0.5">
+                        Email {renderSortIcon("email")}
+                      </div>
                     </th>
-                    <th className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap" onClick={() => handleSort("noTelepon")}>
-                      <div className="flex items-center gap-0.5">No Telp {renderSortIcon("noTelepon")}</div>
+                    <th
+                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap"
+                      onClick={() => handleSort("noTelepon")}
+                    >
+                      <div className="flex items-center gap-0.5">
+                        No Telp {renderSortIcon("noTelepon")}
+                      </div>
                     </th>
-                    <th className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap" onClick={() => handleSort("tanggalLahir")}>
-                      <div className="flex items-center gap-0.5">Tgl Lahir {renderSortIcon("tanggalLahir")}</div>
+                    <th
+                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap"
+                      onClick={() => handleSort("tanggalLahir")}
+                    >
+                      <div className="flex items-center gap-0.5">
+                        Tgl Lahir {renderSortIcon("tanggalLahir")}
+                      </div>
                     </th>
-                    <th className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap" onClick={() => handleSort("jenisKelamin")}>
-                      <div className="flex items-center gap-0.5">JK {renderSortIcon("jenisKelamin")}</div>
+                    <th
+                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap"
+                      onClick={() => handleSort("jenisKelamin")}
+                    >
+                      <div className="flex items-center gap-0.5">
+                        JK {renderSortIcon("jenisKelamin")}
+                      </div>
                     </th>
-                    <th className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap" onClick={() => handleSort("status")}>
-                      <div className="flex items-center gap-0.5">Status {renderSortIcon("status")}</div>
+                    <th
+                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap"
+                      onClick={() => handleSort("status")}
+                    >
+                      <div className="flex items-center gap-0.5">
+                        Status {renderSortIcon("status")}
+                      </div>
                     </th>
-                    <th className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap rounded-tr-xs" onClick={() => handleSort("alamat")}>
-                      <div className="flex items-center gap-0.5">Alamat {renderSortIcon("alamat")}</div>
+                    <th
+                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap rounded-tr-xs"
+                      onClick={() => handleSort("alamat")}
+                    >
+                      <div className="flex items-center gap-0.5">
+                        Alamat {renderSortIcon("alamat")}
+                      </div>
                     </th>
                   </tr>
                 </thead>
                 <tbody className="text-gray-800 bg-white font-medium text-[10px]">
                   {currentItems.length > 0 ? (
                     currentItems.map((pelanggan, index) => (
-                      <tr key={pelanggan.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                        <td className="py-2 text-center text-gray-400">{startCount + index}</td>
-                        <td className="py-2 px-1.5 text-gray-800 whitespace-nowrap">{pelanggan.nama}</td>
-                        <td className="py-2 px-1.5 text-gray-500 break-all">{pelanggan.email}</td>
-                        <td className="py-2 px-1.5 text-gray-500 whitespace-nowrap">{pelanggan.noTelepon}</td>
-                        <td className="py-2 px-1.5 text-gray-500 whitespace-nowrap">{pelanggan.tanggalLahir}</td>
-                        <td className="py-2 px-1.5 text-gray-500 whitespace-nowrap">{pelanggan.jenisKelamin}</td>
+                      <tr
+                        key={pelanggan.id}
+                        className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="py-2 text-center text-gray-400">
+                          {startCount + index}
+                        </td>
+                        <td className="py-2 px-1.5 text-gray-800 whitespace-nowrap">
+                          {pelanggan.nama}
+                        </td>
+                        <td className="py-2 px-1.5 text-gray-500 break-all">
+                          {pelanggan.email}
+                        </td>
+                        <td className="py-2 px-1.5 text-gray-500 whitespace-nowrap">
+                          {pelanggan.noTelepon}
+                        </td>
+                        <td className="py-2 px-1.5 text-gray-500 whitespace-nowrap">
+                          {pelanggan.tanggalLahir}
+                        </td>
+                        <td className="py-2 px-1.5 text-gray-500 whitespace-nowrap">
+                          {pelanggan.jenisKelamin}
+                        </td>
                         <td className="py-2 px-1.5">
-                          <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-medium ${
-                            pelanggan.status === "Aktif"
-                              ? "text-gray"
-                              : "text-gray"
-                          }`}>
-                            {pelanggan.status === "Tidak Aktif" ? "Nonaktif" : pelanggan.status}
+                          <span
+                            className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-medium ${
+                              pelanggan.status === "Aktif"
+                                ? "text-gray"
+                                : "text-gray"
+                            }`}
+                          >
+                            {pelanggan.status === "Tidak Aktif"
+                              ? "Nonaktif"
+                              : pelanggan.status}
                           </span>
                         </td>
-                        <td className="py-2 px-1.5 text-gray-500 break-all">{pelanggan.alamat}</td>
+                        <td className="py-2 px-1.5 text-gray-500 break-all">
+                          {pelanggan.alamat}
+                        </td>
                       </tr>
                     ))
                   ) : (
                     <tr className="border-b border-gray-100">
-                      <td colSpan={8} className="py-8 text-center text-gray-400">Tidak ada data pelanggan.</td>
+                      <td
+                        colSpan={8}
+                        className="py-8 text-center text-gray-400"
+                      >
+                        Tidak ada data pelanggan.
+                      </td>
                     </tr>
                   )}
                 </tbody>
@@ -256,8 +313,15 @@ const DaftarPelangganPage = () => {
                 <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500">
                   <span>Tampilkan</span>
                   <div className="relative z-50">
-                    <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="border border-gray-300 rounded px-2 py-1 flex items-center gap-1 bg-white text-gray-700 text-[10px] min-w-17.5 justify-between">
-                      {itemsPerPage} Data <ChevronDown size={12} className={`transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
+                    <button
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      className="border border-gray-300 rounded px-2 py-1 flex items-center gap-1 bg-white text-gray-700 text-[10px] min-w-17.5 justify-between"
+                    >
+                      {itemsPerPage} Data{" "}
+                      <ChevronDown
+                        size={12}
+                        className={`transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
+                      />
                     </button>
                     {isDropdownOpen && (
                       <div className="absolute left-0 top-full mt-1 w-24 bg-white border border-gray-200 rounded shadow-lg z-9999">
@@ -275,11 +339,16 @@ const DaftarPelangganPage = () => {
                   </div>
                 </div>
                 <span className="text-[10px] text-gray-500">
-                  Menampilkan {startCount}-{endCount} dari {sortedPelanggan.length} data
+                  Menampilkan {startCount}-{endCount} dari{" "}
+                  {sortedPelanggan.length} data
                 </span>
               </div>
               <div className="flex items-center gap-0.5 text-[10px] font-bold">
-                <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="w-6 h-6 flex items-center justify-center border rounded disabled:opacity-30">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  className="w-6 h-6 flex items-center justify-center border rounded disabled:opacity-30"
+                >
                   <ChevronLeft size={12} />
                 </button>
                 {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
@@ -294,12 +363,20 @@ const DaftarPelangganPage = () => {
                     pageNum = currentPage - 2 + i;
                   }
                   return (
-                    <button key={pageNum} onClick={() => setCurrentPage(pageNum)} className={`w-6 h-6 rounded border ${currentPage === pageNum ? "bg-white text-primary border-primary" : "border-gray-200"}`}>
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-6 h-6 rounded border ${currentPage === pageNum ? "bg-white text-primary border-primary" : "border-gray-200"}`}
+                    >
                       {pageNum}
                     </button>
                   );
                 })}
-                <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} className="w-6 h-6 border flex items-center justify-center rounded disabled:opacity-30">
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  className="w-6 h-6 border flex items-center justify-center rounded disabled:opacity-30"
+                >
                   <ChevronRight size={12} />
                 </button>
               </div>
@@ -308,70 +385,111 @@ const DaftarPelangganPage = () => {
 
           {/* ========== MOBILE CARD VIEW ========== */}
           <div className="md:hidden space-y-3 mt-4 pb-32">
-            {currentItems.map((pelanggan, index) => (
-              <div key={pelanggan.id} className="bg-white rounded-lg border border-gray-100 p-3 shadow-sm">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="text-[10px] text-gray-400 font-medium">#{startCount + index}</span>
-                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-medium ${pelanggan.status === "Aktif" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                    {pelanggan.status === "Tidak Aktif" ? "Nonaktif" : pelanggan.status}
-                  </span>
-                </div>
-                <p className="font-semibold text-gray-800 text-sm">{pelanggan.nama}</p>
-                <p className="text-[10px] text-gray-500 mt-1 break-all">{pelanggan.email}</p>
-                <div className="mt-2 pt-1 border-t border-gray-100 grid grid-cols-2 gap-1 text-[9px]">
-                  <span className="text-gray-400">No Telp:</span>
-                  <span className="text-gray-600">{pelanggan.noTelepon}</span>
-                  <span className="text-gray-400">Tgl Lahir:</span>
-                  <span className="text-gray-600">{pelanggan.tanggalLahir}</span>
-                  <span className="text-gray-400">JK:</span>
-                  <span className="text-gray-600">{pelanggan.jenisKelamin}</span>
-                  <span className="text-gray-400">Alamat:</span>
-                  <span className="text-gray-600 break-all">{pelanggan.alamat}</span>
-                </div>
-              </div>
-            ))}
+            <div className="min-w-187.5">
+              <table className="w-full bg-white rounded-xs border border-gray-100">
+                <thead className="bg-primary text-white">
+                  <tr>
+                    <th className="py-2 px-2 text-center text-[10px] rounded-tl-xs">
+                      NO
+                    </th>
+                    <th className="py-2 px-2 text-left text-[10px]">Nama</th>
+                    <th className="py-2 px-2 text-left text-[10px]">Email</th>
+                    <th className="py-2 px-2 text-left text-[10px]">No Telp</th>
+                    <th className="py-2 px-2 text-left text-[10px]">
+                      Tgl Lahir
+                    </th>
+                    <th className="py-2 px-2 text-left text-[10px]">JK</th>
+                    <th className="py-2 px-2 text-center text-[10px]">
+                      Status
+                    </th>
+                    <th className="py-2 px-2 text-left text-[10px] rounded-tr-xs">
+                      Alamat
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentItems.map((pelanggan, index) => (
+                    <tr key={pelanggan.id} className="border-b border-gray-100">
+                      <td className="py-2 px-2 text-center text-gray-400 text-[10px]">
+                        {startCount + index}
+                      </td>
+                      <td className="py-2 px-2 text-gray-800 text-[10px] whitespace-nowrap">
+                        {pelanggan.nama}
+                      </td>
+                      <td className="py-2 px-2 text-gray-500 text-[10px] break-all">
+                        {pelanggan.email}
+                      </td>
+                      <td className="py-2 px-2 text-gray-500 text-[10px] whitespace-nowrap">
+                        {pelanggan.noTelepon}
+                      </td>
+                      <td className="py-2 px-2 text-gray-500 text-[10px] whitespace-nowrap">
+                        {pelanggan.tanggalLahir}
+                      </td>
+                      <td className="py-2 px-2 text-gray-500 text-[10px] whitespace-nowrap">
+                        {pelanggan.jenisKelamin}
+                      </td>
+                      <td className="py-2 px-2 text-center">
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded text-[9px] font-medium ${pelanggan.status === "Aktif" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                        >
+                          {pelanggan.status === "Tidak Aktif"
+                            ? "Nonaktif"
+                            : pelanggan.status}
+                        </span>
+                      </td>
+                      <td className="py-2 px-2 text-gray-500 text-[10px] break-all">
+                        {pelanggan.alamat}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
             {sortedPelanggan.length === 0 && (
-              <div className="text-center py-8 text-gray-400">Tidak ada data pelanggan.</div>
+              <div className="text-center py-8 text-gray-400">
+                Tidak ada data pelanggan.
+              </div>
             )}
 
             {/* PAGINATION MOBILE */}
             {totalPages > 1 && (
-              <div className="flex flex-col gap-2 pt-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-gray-500">
-                    <span>Tampilkan</span>
-                    <div className="relative z-50">
-                      <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="border border-gray-300 rounded px-2 py-0.5 flex items-center gap-1 bg-white text-gray-700 text-[10px] min-w-16.25 justify-between">
-                        {itemsPerPage} Data <ChevronDown size={10} className={`transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
-                      </button>
-                      {isDropdownOpen && (
-                        <div className="absolute left-0 top-full mt-1 w-20 bg-white border border-gray-200 rounded shadow-lg z-9999">
-                          {[10, 15, 20].map((n) => (
-                            <button
-                              key={n}
-                              onClick={() => handleItemsPerPageChange(n)}
-                              className="block w-full px-2 py-1.5 text-left hover:bg-gray-100 text-[10px] font-medium"
-                            >
-                              {n} Data
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <span className="text-[10px] text-gray-400">
-                    {startCount}-{endCount} dari {sortedPelanggan.length}
-                  </span>
+              <div className="md:hidden flex flex-col gap-2 py-4">
+                <div className="text-center text-[10px] text-gray-500">
+                  Menampilkan {startCount}-{endCount} dari{" "}
+                  {sortedPelanggan.length} data
                 </div>
                 <div className="flex items-center justify-center gap-1">
-                  <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30">
-                    <ChevronLeft size={14} />
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((p) => p - 1)}
+                    className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30 text-xs"
+                  >
+                    &lt;
                   </button>
-                  <span className="text-[11px] font-medium text-gray-600 px-2">
-                    {currentPage} / {totalPages}
-                  </span>
-                  <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30">
-                    <ChevronRight size={14} />
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) pageNum = i + 1;
+                    else if (currentPage <= 3) pageNum = i + 1;
+                    else if (currentPage >= totalPages - 2)
+                      pageNum = totalPages - 4 + i;
+                    else pageNum = currentPage - 2 + i;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`w-7 h-7 rounded border text-xs ${currentPage === pageNum ? "bg-primary text-white border-primary" : "border-gray-200"}`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                  <button
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage((p) => p + 1)}
+                    className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30 text-xs"
+                  >
+                    &gt;
                   </button>
                 </div>
               </div>
