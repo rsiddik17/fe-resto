@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
-
 import Header from "../../components/Header/Header";
 import Button from "../../components/ui/Button";
 import OrderItemCard from "../../components/Card/OrderItemCard";
 import StatusBanner from "../../components/StatusBanner/StatusBanner";
 import OrderSummary from "../../components/OrderSummary/OrderSummary";
 import SuccessIcon from "../../components/Icon/SuccessIcon";
-
 import { useCartStore } from "../../store/useCartStore";
 import { useAuthStore } from "../../store/useAuthStore";
+import { orderAPI } from "../../api/order.api";
+import Loading from "../../components/Loading/Loading";
+import AlertModal from "../../components/Modal/AlertModal";
 
 const MobileOrderSuccessPage = () => {
   const navigate = useNavigate();
@@ -19,6 +20,18 @@ const MobileOrderSuccessPage = () => {
 
   const orderData = location.state;
   const [status, setStatus] = useState<"PENDING" | "CONFIRMED">("PENDING");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [modal, setModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: "PENDING" | "CANCELED";
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "PENDING",
+  });
 
   useEffect(() => {
     // Proteksi: Jika tidak ada data order, kembalikan ke menu
@@ -28,22 +41,79 @@ const MobileOrderSuccessPage = () => {
       return;
     }
 
-    // SIMULASI: Menunggu kasir klik "Terima Pesanan" (5 detik)
-    const timer = setTimeout(() => {
-      setStatus("CONFIRMED");
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [orderData, items.length, navigate, tableId]);
+  }, [orderData, items.length, navigate, tableNumber]);
 
   const handleSelesai = async () => {
-   const targetUrl = tableId ? `/qr/${btoa(tableId.toString())}` : "/";
+    const rawNumber = tableNumber?.replace(/\D/g, "");
 
-    clearCart(); 
-    await logout(); // Logout Guest
-    
-    navigate(targetUrl, { replace: true });
+    // if status is confirmed, clear cart and navigate to home
+    if (status === "CONFIRMED") {
+      clearCart();
+      await logout();
+      if (rawNumber) {
+        navigate(`/qr/${rawNumber}`, { replace: true });
+      }
+      return;
+    };
+
+    // loading true
+    setIsLoading(true);
+
+    try {
+      const response = await orderAPI.getOrderById(orderData.orderId);
+      const currentStatus = response?.status || response?.data?.status;
+
+      // if order status is pending, show banner alert
+      if (currentStatus === "PENDING") {
+        setIsLoading(false);
+        setModal({
+          isOpen: true,
+          title: "Pesanan Belum Divalidasi",
+          message: "Maaf, pesanan Anda belum divalidasi oleh kasir. Pastikan Anda sudah menyelesaikan transaksi pembayaran via QRIS.",
+          type: "PENDING",
+        });
+        return;
+
+      } else if (currentStatus === "CANCELED") {
+        setIsLoading(false);
+        setModal({
+          isOpen: true,
+          title: "Pesanan Dibatalkan",
+          message: "Pesanan Anda telah dibatalkan, kunjungi kasir atau silahkan memesan kembali.",
+          type: "CANCELED",
+        });
+        return;
+
+      } else {
+        // if order status is confirmed, set status to confirmed
+        setStatus("CONFIRMED");
+      };
+
+    } catch (error) {
+      console.error("Gagal mengambil data pesanan:", error);
+    } finally {
+      setIsLoading(false);
+    };
   };
+
+  const handleModalClose = async () => {
+
+    // get modal type and table number
+    const currentModalType = modal.type;
+    const rawNumber = tableNumber?.replace(/\D/g, "");
+
+    // close modal
+    setModal((prev) => ({ ...prev, isOpen: false }));
+
+    // if order canceled, clear cart and logout
+    if (currentModalType === "CANCELED") {
+      clearCart();
+      await logout();
+      if (rawNumber) {
+        navigate(`/qr/${rawNumber}`, { replace: true });
+      }
+    }
+  }
 
   const tableNo = tableNumber?.match(/\d+/)?.[0];
 
@@ -51,6 +121,7 @@ const MobileOrderSuccessPage = () => {
 
   return (
     <div className="min-h-screen bg-white pb-4 relative flex flex-col">
+      <Loading show={isLoading} />
       <Header />
 
       <main className="flex-1 w-full max-w-md md:max-w-2xl lg:max-w-3xl mx-auto px-4 pt-10 flex flex-col items-center">
@@ -118,6 +189,17 @@ const MobileOrderSuccessPage = () => {
           Selesai
         </Button>
       </div>
+
+      {/* modal alert */}
+      {modal.isOpen && (
+        <AlertModal
+          title={modal.title}
+          message={modal.message}
+          type={modal.type}
+          onClose={handleModalClose}
+        />
+      )}
+
     </div>
   );
 };
