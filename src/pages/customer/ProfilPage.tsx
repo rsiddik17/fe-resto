@@ -273,7 +273,7 @@ const ProfilePage = () => {
       });
     } catch (error) {
       console.error(" ERROR:", error);
-     showLocalToast("Gagal menyimpan alamat", "error");
+      showLocalToast("Gagal menyimpan alamat", "error");
     }
   };
 
@@ -293,15 +293,14 @@ const ProfilePage = () => {
       "_blank",
     );
   };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
         <Header mode="online" />
         <main className="max-w-7xl mx-auto px-6 md:px-12 py-6">
-          <div className="flex items-center justify-center h-96">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-gray-600">Memuat profil...</p>
+          <div className="flex flex-col items-center justify-center h-96">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="mt-4 text-gray-600 text-center">Memuat profil...</p>
           </div>
         </main>
       </div>

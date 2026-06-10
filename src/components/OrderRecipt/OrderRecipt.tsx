@@ -56,6 +56,8 @@ const OrderReceipt = ({
     return `${date} • ${time.replace(".", ":")}`;
   };
 
+  // const trackingUrl = `${window.location.origin}/its-resto/customer/track-order/${orderId}`;
+
   const downloadPDF = () => {
     try {
       const itemRowsHeight = items.length * 10;
@@ -214,23 +216,25 @@ const OrderReceipt = ({
               id="receipt-to-print"
               className="bg-white rounded-xs p-4 md:p-8 w-full max-w-[320px] shadow-xl flex flex-col text-black h-fit print:shadow-none"
             >
-              {/* LOGO */}
-              <div className="flex justify-center mb-4">
+              <div className="flex flex-col items-center justify-center mb-4">
                 <img
                   src={`${import.meta.env.BASE_URL}images/new-logo.webp`}
-                  alt="IT'S RESTO Logo"
-                  className="h-26 w-auto object-contain"
+                  alt="Logo"
+                  className="h-24 w-auto object-contain mb-1"
                   onError={(e) => {
                     e.currentTarget.style.display = "none";
                   }}
                 />
+                <h1 className="text-primary font-bold text-lg tracking-wider">
+                  IT'S RESTO
+                </h1>
               </div>
 
               <h2 className="text-center text-gray-400 font-medium text-[12px] mb-4 uppercase">
                 Total Pembayaran
               </h2>
 
-              <div className="w-full flex justify-center mb-6">
+              <div className="w-full flex justify-center mb-4">
                 <Barcode value={orderId} className="h-12 w-full opacity-90" />
               </div>
 

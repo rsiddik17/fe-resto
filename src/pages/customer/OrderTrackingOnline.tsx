@@ -13,7 +13,7 @@ interface Order {
   subTotal: number;
   discountAmount: number;
   adminFee: number;
-  status: "pending" | "proses" | "dimasak" | "diantar" | "diterima" | "selesai";
+ status: "pending" | "proses" | "dimasak" | "diantar" | "selesai" | "dibatalkan";
   date: string;
 }
 
@@ -70,6 +70,17 @@ const OrderTrackingOnline = () => {
       const response = await orderAPI.getMyOrderById(orderId);
       const orderData = response.data || response.order || response;
 
+      const mapBackendStatus = (backendStatus: string): Order["status"] => {
+        const status = backendStatus?.toUpperCase() || "";
+        if (status === "PAID" || status === "PENDING") return "pending";
+        if (status === "VALIDATED") return "proses";
+        if (status === "COOKING") return "dimasak";
+        if (status === "READY") return "diantar";
+        if (status === "SERVED") return "selesai";
+        if (status === "CANCELED") return "dibatalkan"; // atau "pending"
+        return "pending";
+      };
+
       const mappedOrder: Order = {
         orderId: orderData.id || orderData.orderId,
         // 🔥 PERBAIKAN: gunakan helper function
@@ -87,8 +98,8 @@ const OrderTrackingOnline = () => {
         discountAmount: Number(
           orderData.discount_amount || orderData.discountAmount || 0,
         ),
-        adminFee: 0,
-        status: (orderData.status || "").toLowerCase(),
+        adminFee: Number(orderData.payments?.unique_code || 0),
+        status: mapBackendStatus(orderData.status),
         date: orderData.created_at
           ? new Date(orderData.created_at).toLocaleString("id-ID")
           : orderData.date || new Date().toLocaleString("id-ID"),
@@ -122,17 +133,16 @@ const OrderTrackingOnline = () => {
     status === "proses" ||
     status === "dimasak" ||
     status === "diantar" ||
-    status === "diterima" ||
     status === "selesai";
   const isDiantarActive =
-    status === "diantar" || status === "diterima" || status === "selesai";
+    status === "diantar" || status === "selesai";
 
   let progressWidth = "0%";
-if (status === "pending") progressWidth = "0%";  // atau "10%" kalau mau sedikit
-if (status === "proses") progressWidth = "25%";
-if (status === "dimasak") progressWidth = "50%";
-if (status === "diantar") progressWidth = "75%";
-if (status === "diterima" || status === "selesai") progressWidth = "100%";
+  if (status === "pending") progressWidth = "0%"; // atau "10%" kalau mau sedikit
+  if (status === "proses") progressWidth = "25%";
+  if (status === "dimasak") progressWidth = "50%";
+  if (status === "diantar") progressWidth = "75%";
+if (status === "selesai") progressWidth = "100%";
 
   let bannerText = "Pesanan Anda sedang diproses sistem";
   if (status === "pending") bannerText = "Menunggu konfirmasi pembayaran";
@@ -140,7 +150,7 @@ if (status === "diterima" || status === "selesai") progressWidth = "100%";
     bannerText = "Pesanan Anda sedang dimasak";
   else if (status === "diantar")
     bannerText = "Pesanan Anda sedang diantar menuju lokasi Anda";
-  else if (status === "diterima" || status === "selesai")
+  else if ( status === "selesai")
     bannerText = "Pesanan telah sampai! Selamat menikmati";
 
   // Loading state

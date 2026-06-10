@@ -6,7 +6,7 @@ interface OrderSummaryOnlineProps {
   discountAmount?: number;
   adminFee?: number;
   hideAlertInfo?: boolean;
-  finalPayment?: number; // ✅ TAMBAHKAN - dari backend
+  finalPayment?: number; //
 }
 
 const rupiahFormatter = new Intl.NumberFormat("id-ID", {
@@ -26,11 +26,12 @@ const OrderSummaryOnline = ({
   // 🔥 PERBAIKAN: PAKAI RUMUS BACKEND (PPN setelah diskon)
   const afterDiscount = subTotal - discountAmount;
   const taxAmount = afterDiscount * (taxRate / 100);
-  
+
   // ✅ Jika ada finalPayment dari backend, pakai itu. Jika tidak, hitung manual
-  const grandTotal = finalPayment !== undefined 
-    ? finalPayment 
-    : afterDiscount + taxAmount + adminFee;
+  const grandTotal =
+    finalPayment !== undefined
+      ? finalPayment
+      : afterDiscount + taxAmount + adminFee;
 
   return (
     <div className="flex flex-col w-full gap-4 py-4">
@@ -58,14 +59,12 @@ const OrderSummaryOnline = ({
           </span>
         </div>
 
-        {adminFee > 0 && (
-          <div className="flex justify-between items-center">
-            <span className="text-xl">Biaya Admin</span>
-            <span className="font-medium text-xl">
-              {rupiahFormatter.format(adminFee)}
-            </span>
-          </div>
-        )}
+        <div className="flex justify-between items-center">
+          <span className="text-xl">Biaya Admin</span>
+          <span className="font-medium text-xl">
+            {rupiahFormatter.format(adminFee)}
+          </span>
+        </div>
       </div>
 
       <div className="flex justify-between items-center mt-1">

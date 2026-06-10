@@ -17,6 +17,7 @@ import DiscountModalOnline from "../../components/DiscountModalOnline/DiscountMo
 import { orderAPI } from "../../api/order.api";
 import { addressAPI } from "../../api/address.api";
 import { useAuthStore } from "../../store/useAuthStore";
+import { customerAPI } from "../../api/onlinecustomer.api";
 
 interface Address {
   id: string;
@@ -24,8 +25,8 @@ interface Address {
 }
 
 const CheckoutPageOnline = () => {
-  const { user } = useAuthStore(); // ✅ ambil data user
-  const customerName = user?.fullname || "Pelanggan"; // ✅ nama asli
+  const { user, setUser } = useAuthStore(); // ✅ ambil data user
+  const [customerName, setCustomerName] = useState("Pelanggan"); // ✅ nama asli
   const navigate = useNavigate();
   const { items } = useCartStore();
 
@@ -71,6 +72,43 @@ const CheckoutPageOnline = () => {
     };
     fetchAddresses();
   }, []);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        console.log("1. START fetching user profile");
+        const response = await customerAPI.getProfile();
+        console.log("2. RAW response:", response);
+
+        const profileData = response.data || response;
+        console.log("3. Profile data:", profileData);
+        console.log("4. fullname field:", profileData.fullname);
+        console.log("5. name field:", profileData.name);
+        console.log("6. nama field:", profileData.nama);
+
+        setUser(profileData);
+        setCustomerName(
+          profileData.fullname ||
+            profileData.name ||
+            profileData.nama ||
+            "Pelanggan",
+        );
+      } catch (error) {
+        console.error("ERROR fetching profile:", error);
+        setCustomerName("Pelanggan (error)");
+      }
+    };
+
+    console.log("0. User dari store:", user);
+
+    if (user?.fullname) {
+      console.log("User sudah ada, pakai dari store:", user.fullname);
+      setCustomerName(user.fullname);
+    } else {
+      console.log("User kosong, fetch dari API...");
+      fetchUserProfile();
+    }
+  }, [user, setUser]);
 
   // Simpan selectedAddressId ke localStorage
   useEffect(() => {
@@ -205,7 +243,7 @@ const CheckoutPageOnline = () => {
               </div>
               <button
                 onClick={() => setIsAddressModalOpen(true)}
-                className="text-primary border border-primary px-3 py-1.5 rounded-full text-[10px]"
+                className="text-primary border border-primary px-5 py-1.5 rounded-full text-[10px]"
               >
                 Ganti Alamat
               </button>

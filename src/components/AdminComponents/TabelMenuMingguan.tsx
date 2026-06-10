@@ -181,9 +181,7 @@ export default function TabelMenuMingguan({
                     Rp {item.harga.toLocaleString("id-ID")}
                   </td>
                   <td className="py-4 px-4 truncate">{item.kategori}</td>
-                  <td className="py-4 px-4  text-black">
-                    {item.total}
-                  </td>
+                  <td className="py-4 px-4  text-black">{item.total}</td>
                 </tr>
               ))}
             </tbody>
@@ -263,96 +261,84 @@ export default function TabelMenuMingguan({
 
       {/* ========== MOBILE CARD VIEW ========== */}
       <div className="md:hidden space-y-3">
-        {currentItems.map((item, index) => (
-          <div
-            key={item.id}
-            className="bg-white rounded-lg border border-gray-100 p-3 shadow-sm"
-          >
-            <div className="flex justify-between items-start mb-2">
-              <span className="text-[10px] text-black-400 font-medium">
-                #{(currentPage - 1) * menuPerPage + index + 1}
-              </span>
-            </div>
-            <p className="font-semibold text-gray-800 text-sm">{item.nama}</p>
-            <div className="mt-2 space-y-1 text-xs">
-              <div className="flex justify-between">
-                <span className="text-black-400">Harga</span>
-                <span className="font-medium text-gray-800">
-                  Rp {item.harga.toLocaleString("id-ID")}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-black-400">Kategori</span>
-                <span className="font-medium text-gray-800">
-                  {item.kategori}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-black-400">Total Terjual</span>
-                <span className="font-bold text-primary">{item.total}</span>
-              </div>
-            </div>
+        <div className="bg-white rounded-xs border border-gray-100 overflow-x-auto">
+          <div className="min-w-137.5">
+            <table className="w-full">
+              <thead className="bg-gray-100 text-black">
+                <tr>
+                  <th className="py-2 px-2 text-center text-[10px] rounded-tl-xs">
+                    NO
+                  </th>
+                  <th className="py-2 px-2 text-left text-[10px]">Nama Menu</th>
+                  <th className="py-2 px-2 text-right text-[10px]">Harga</th>
+                  <th className="py-2 px-2 text-left text-[10px]">Kategori</th>
+                  <th className="py-2 px-2 text-right text-[10px] rounded-tr-xs">
+                    Total Terjual
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentItems.map((item, index) => (
+                  <tr key={item.id} className="border-b border-gray-100">
+                    <td className="py-2 px-2 text-center text-gray-400 text-[10px]">
+                      {startCount + index}
+                    </td>
+                    <td className="py-2 px-2 text-gray-800 text-[10px] whitespace-nowrap">
+                      {item.nama}
+                    </td>
+                    <td className="py-2 px-2 text-right text-gray-800 text-[10px]">
+                      Rp {item.harga.toLocaleString("id-ID")}
+                    </td>
+                    <td className="py-2 px-2 text-gray-800 text-[10px]">
+                      {item.kategori}
+                    </td>
+                    <td className="py-2 px-2 text-right text-gray-800  text-[10px]">
+                      {item.total}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ))}
+        </div>
 
         {/* PAGINATION MOBILE */}
         {totalPages > 1 && (
-          <div className="flex flex-col gap-2 pt-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[11px] font-bold text-gray-500">
-                <span>Tampilkan</span>
-                <div className="relative z-50" ref={dropdownRef}>
-                  <button
-                    onClick={() => setIsDropdownPageOpen(!isDropdownPageOpen)}
-                    className="border border-gray-300 rounded px-2 py-0.5 flex items-center gap-1 hover:bg-primary-50 text-[11px] text-gray-800"
-                  >
-                    {menuPerPage} Menu{" "}
-                    <ChevronDown
-                      size={10}
-                      className={`transition-transform duration-200 ${isDropdownPageOpen ? "rotate-180" : ""}`}
-                    />
-                  </button>
-                  {isDropdownPageOpen && (
-                    <div className="absolute left-0 bottom-full mb-1 w-20 bg-white border border-gray-200 rounded shadow-lg">
-                      {[10, 15, 20].map((n) => (
-                        <button
-                          key={n}
-                          onClick={() => {
-                            setMenuPerPage(n);
-                            setCurrentPage(1);
-                            setIsDropdownPageOpen(false);
-                          }}
-                          className="block w-full px-2 py-1.5 text-left hover:bg-gray-100 text-[11px] font-bold"
-                        >
-                          {n} Menu
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <span className="text-[10px] font-bold text-gray-400">
-                {startCount}-{endCount} dari {sortedData.length}
-              </span>
+          <div className="md:hidden flex flex-col gap-2 py-4">
+            <div className="text-center text-[10px] text-gray-500">
+              Menampilkan {startCount}-{endCount} dari {sortedData.length} menu
             </div>
-
             <div className="flex items-center justify-center gap-1">
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => p - 1)}
-                className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30"
+                className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30 text-xs"
               >
-                <ChevronLeft size={14} />
+                &lt;
               </button>
-              <span className="text-[11px] font-medium text-gray-600 px-2">
-                {currentPage} / {totalPages}
-              </span>
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                let pageNum;
+                if (totalPages <= 5) pageNum = i + 1;
+                else if (currentPage <= 3) pageNum = i + 1;
+                else if (currentPage >= totalPages - 2)
+                  pageNum = totalPages - 4 + i;
+                else pageNum = currentPage - 2 + i;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-7 h-7 rounded border text-xs ${currentPage === pageNum ? "bg-primary text-white border-primary" : "border-gray-200"}`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage((p) => p + 1)}
-                className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30"
+                className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30 text-xs"
               >
-                <ChevronRight size={14} />
+                &gt;
               </button>
             </div>
           </div>
