@@ -41,17 +41,17 @@ const OrderMenuItemCard = ({
         <span className="font-medium text-[14px] md:text-[15px] text-black">
           {item.menu_name} x{item.quantity}
         </span>
-        <div className="flex justify-between items-center w-full">
+        <div className="flex flex-col justify-start md:flex-row md:justify-between md:items-center w-full">
           {/* Klik catatan */}
           <div
             className="border-l-2 border-primary pl-2 cursor-pointer px-1 transition-colors"
             onClick={onOpenNotes}
           >
-            <span className="text-black/50 text-[13px] md:text-[13.5px] hover:bg-primary/5 block w-70 bg-white border-[1.5px] py-1 px-2 border-primary rounded-[6px]">
+            <span className="text-black/50 text-[13px] md:text-[13.5px] hover:bg-primary/5 block md:min-w-70 bg-white border-[1.5px] py-1 px-2 border-primary rounded-[6px]">
               Catatan: {item.notes || "Tidak ada"}
             </span>
           </div>
-          <span className="text-[14px] md:text-[15px] pr-4 text-black">
+          <span className="text-[14px] md:text-[15px] pr-4 text-black self-end">
             {rupiahFormatter(Number(item.sub_total))}
           </span>
         </div>
