@@ -293,7 +293,7 @@ const LaporanBulananPage = () => {
                   onClick={() => setActiveTab("Pesanan")}
                   className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${activeTab === "Pesanan" ? "bg-purple-50 border-primary text-primary shadow-xs" : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"}`}
                 >
-                  <span>Total</span>
+                  <span>Laporan</span>
                   <span>Pesanan</span>
                 </button>
                 <button

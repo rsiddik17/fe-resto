@@ -395,7 +395,7 @@ const LaporanMingguanPage = () => {
                       : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
                   }`}
                 >
-                  <span>Total</span>
+                  <span>Laporan</span>
                   <span>Pesanan</span>
                 </button>
 

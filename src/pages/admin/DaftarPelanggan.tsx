@@ -152,7 +152,7 @@ const DaftarPelangganPage = () => {
 
           {/* ========== SORTING MOBILE ========== */}
           <div className="md:hidden mt-4">
-            <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+            <div className="bg-white p-3 rounded-xs shadow-sm border border-gray-100">
               <span className="text-xs font-bold text-gray-500 block mb-2">
                 Urutkan berdasarkan:
               </span>
@@ -169,10 +169,10 @@ const DaftarPelangganPage = () => {
                   <button
                     key={option.key}
                     onClick={() => handleSort(option.key as keyof Pelanggan)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                    className={`px-3 py-1.5 rounded-xs text-xs font-medium transition-all ${
                       currentSortKey === option.key
                         ? "bg-primary text-white shadow-sm"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        : "bg-white-100 border text-gray-800 hover:bg-gray-200"
                     }`}
                   >
                     {option.label}

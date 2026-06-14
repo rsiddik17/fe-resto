@@ -234,16 +234,16 @@ const CheckoutPageOnline = () => {
         <div className="bg-white rounded-xs shadow-sm p-5 md:p-6 space-y-6 border border-gray-100">
           {/* 1. SEKSI PENGANTARAN */}
           <div className="bg-white rounded-xs border border-gray-200 p-6">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-3">
-                <div className="bg-primary p-2 rounded-full text-white flex items-center justify-center">
+            <div className="flex flex-row justify-between items-center gap-3 mb-4 w-full">
+              <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                <div className="bg-primary p-2 rounded-full text-white flex items-center justify-center shrink-0">
                   <Bike size={18} fill="white" />
                 </div>
-                <h2 className="font-bold text-black text-lg">Pengantaran</h2>
+                <h2 className="font-bold text-black text-sm md:text-lg tracking-tight whitespace-nowrap">Pengantaran</h2>
               </div>
               <button
                 onClick={() => setIsAddressModalOpen(true)}
-                className="text-primary border border-primary px-3 py-1 rounded-full text-[10px]"
+                className="text-primary border border-primary px-3 py-1.5 rounded-full text-[10px] shrink-0 whitespace-nowrap "
               >
                 Ganti Alamat
               </button>
