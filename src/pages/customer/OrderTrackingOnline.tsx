@@ -130,7 +130,7 @@ const OrderTrackingOnline = () => {
   const status = (currentOrder?.status || "").toString().trim().toLowerCase();
 
   const isDimasakActive =
-    status === "proses" ||
+    // status === "proses" ||
     status === "dimasak" ||
     status === "diantar" ||
     status === "selesai";
@@ -141,17 +141,21 @@ const OrderTrackingOnline = () => {
   if (status === "pending") progressWidth = "0%"; // atau "10%" kalau mau sedikit
   if (status === "proses") progressWidth = "25%";
   if (status === "dimasak") progressWidth = "50%";
-  if (status === "diantar") progressWidth = "75%";
+  if (status === "diantar") progressWidth = "100%";
 if (status === "selesai") progressWidth = "100%";
 
   let bannerText = "Pesanan Anda sedang diproses sistem";
-  if (status === "pending") bannerText = "Menunggu konfirmasi pembayaran";
-  else if (status === "proses" || status === "dimasak")
-    bannerText = "Pesanan Anda sedang dimasak";
-  else if (status === "diantar")
+ if (status === "pending") {
+    bannerText = "Menunggu konfirmasi pembayaran";
+  } else if (status === "proses") {
+    bannerText = "Pesanan dikonfirmasi"; // Teks lebih logis untuk VALIDATED
+  } else if (status === "dimasak") {
+    bannerText = "Pesanan Anda sedang dimasak oleh koki";
+  } else if (status === "diantar") {
     bannerText = "Pesanan Anda sedang diantar menuju lokasi Anda";
-  else if ( status === "selesai")
+  } else if (status === "selesai") {
     bannerText = "Pesanan telah sampai! Selamat menikmati";
+  }
 
   // Loading state
   if (loading) {

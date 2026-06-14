@@ -308,48 +308,50 @@ const ManajemenPegawaiPage = () => {
               />
             </div>
 
-            {/* Role, Status, Reset - SEJAJAR 3 KOLOM */}
-            <div className="flex flex-row gap-2">
-              <div className="flex-1">
-                <FilterDropdown
-                  label="Role"
-                  selectedOption={selectedRole}
-                  options={[
-                    "Kasir",
-                    "Dapur",
-                    "Pelayan",
-                    "Kiosk Sistem",
-                    "Admin Role",
-                  ]}
-                  onSelect={(val) => {
-                    setSelectedRole(val);
-                    setCurrentPage(1);
-                  }}
-                />
-              </div>
-              <div className="flex-1">
-                <FilterDropdown
-                  label="Status"
-                  selectedOption={selectedStatus}
-                  options={["Aktif", "Nonaktif"]}
-                  onSelect={(val) => {
-                    setSelectedStatus(val);
-                    setCurrentPage(1);
-                  }}
-                />
-              </div>
-              {hasActiveFilters && (
-                <div className="flex-1">
+            {/* Role, Status, Reset - SEJAJAR / WRAP DI MOBILE */}
+            <div className="flex flex-col gap-2">
+              {/* Filter Row - Menampung Role, Status, dan Reset Filter */}
+              <div className="flex flex-row flex-wrap items-center gap-2">
+                <div>
+                  <FilterDropdown
+                    label="Role"
+                    selectedOption={selectedRole}
+                    options={[
+                      "Kasir",
+                      "Dapur",
+                      "Pelayan",
+                      "Kiosk Sistem",
+                      "Admin Role",
+                    ]}
+                    onSelect={(val) => {
+                      setSelectedRole(val);
+                      setCurrentPage(1);
+                    }}
+                  />
+                </div>
+                <div>
+                  <FilterDropdown
+                    label="Status"
+                    selectedOption={selectedStatus}
+                    options={["Aktif", "Nonaktif"]}
+                    onSelect={(val) => {
+                      setSelectedStatus(val);
+                      setCurrentPage(1);
+                    }}
+                  />
+                </div>
+
+                {/* Reset filter - SEKARANG DI SAMPING STATUS */}
+                {hasActiveFilters && (
                   <button
                     onClick={resetFilters}
-                    className="w-full bg-white rounded-xs border border-red-300 px-2 py-2 shadow-sm flex items-center justify-center gap-1 text-[11px] text-red-500 font-medium cursor-pointer hover:bg-red-50"
+                    className="bg-white rounded-xs border border-red-300 px-3 py-2 shadow-sm flex items-center justify-center gap-1 text-[11px] text-red-500 font-medium cursor-pointer hover:bg-red-50 h-[34px]"
                   >
-                    <X size={12} /> Reset
+                    <X size={12} /> Reset Filter
                   </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-
             {/* Tombol Tambah Pegawai - full width */}
             <button
               onClick={() => navigate("/admin/employee-management/add")}
@@ -361,7 +363,7 @@ const ManajemenPegawaiPage = () => {
 
           {/* ========== SORTING MOBILE ========== */}
           <div className="md:hidden">
-            <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+            <div className="bg-white p-3 rounded-xs shadow-sm border border-gray-100">
               <span className="text-xs font-bold text-gray-500 block mb-2">
                 Urutkan berdasarkan:
               </span>
@@ -375,10 +377,10 @@ const ManajemenPegawaiPage = () => {
                   <button
                     key={option.key}
                     onClick={() => handleSort(option.key as any)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                    className={`px-3 py-1.5 rounded-xs text-xs font-medium transition-all ${
                       currentSortKey === option.key
                         ? "bg-primary text-white shadow-sm"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        : "bg-white-100 border text-gray-00 hover:bg-gray-200"
                     }`}
                   >
                     {option.label}

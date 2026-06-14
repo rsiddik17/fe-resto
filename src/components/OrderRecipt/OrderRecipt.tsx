@@ -188,8 +188,19 @@ const OrderReceipt = ({
         align: "center",
       });
 
-      pdf.save(`struk-${orderId}.pdf`);
+      const pdfBlob = pdf.output("blob");
+      const url = window.URL.createObjectURL(pdfBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `struk-${orderId}.pdf`;
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
+      document.body.removeChild((document.body.lastChild as HTMLElement));
       console.error("Gagal cetak PDF:", error);
     }
   };

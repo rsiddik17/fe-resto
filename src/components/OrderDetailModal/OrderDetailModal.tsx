@@ -78,7 +78,7 @@ const isSelesai = s === "selesai";
 
   return (
     <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/10 px-4 backdrop-blur-[1px]">
-      <div className="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl relative flex flex-col max-h-[85vh] animate-in fade-in duration-200">
+      <div className="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl relative flex flex-col max-h-[85vh] ">
         <div className="p-4 border-b border-gray-50 flex justify-between items-center bg-white shrink-0">
           <h3 className="text-gray-900 text-sm font-bold">Detail Pesanan</h3>
           <button

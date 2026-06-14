@@ -153,7 +153,7 @@ const HeaderOnline = ({ mode = "online" }: any) => {
                 to={item.path}
                 onClick={() => setIsMenuOpen(false)}
                 className={({ isActive }) =>
-                  `text-lg font-bold py-4 px-5 rounded-2xl flex items-center gap-3 transition-all ${
+                  `text-base font-semibold py-3 px-4 border border-grey/50 rounded-xs flex items-center gap-3 transition-all ${
                     isActive
                       ? "bg-primary text-white"
                       : "text-gray-700 bg-gray-50"

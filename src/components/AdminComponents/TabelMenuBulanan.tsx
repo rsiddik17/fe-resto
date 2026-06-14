@@ -4,7 +4,7 @@ import {
   eksporKePDFMenuBulanan,
   eksporKeExcelMenuBulanan,
 } from "../../components/AdminComponents/ExportUtilsBulanan";
-import ExportIcon from "../Icon/ExportIcon";
+import ExportPdfIcon from "../Icon/ExportPdfIcon";
 import SortIcon from "../Icon/SortIcon";
 
 interface MenuBulanan {
@@ -101,20 +101,20 @@ export default function TabelMenuBulanan({
             onClick={() => eksporKePDFMenuBulanan(sortedData, periode)}
             className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90"
           >
-            <ExportIcon className="w-4 h-4" /> Ekspor PDF
+            <ExportPdfIcon className="w-4 h-4" /> Ekspor PDF
           </button>
           <button
             onClick={() => eksporKeExcelMenuBulanan(sortedData, periode)}
             className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90"
           >
-            <ExportIcon className="w-4 h-4" /> Ekspor Excel
+            <ExportPdfIcon className="w-4 h-4" /> Ekspor Excel
           </button>
         </div>
       </div>
 
       {/* SORTING MOBILE */}
       <div className="md:hidden">
-        <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+        <div className="bg-white p-3 rounded-xs shadow-sm border border-gray-100">
           <span className="text-xs font-bold text-gray-500 block mb-2">Urutkan berdasarkan:</span>
           <div className="flex flex-wrap gap-2">
             {[
@@ -126,10 +126,10 @@ export default function TabelMenuBulanan({
               <button
                 key={option.key}
                 onClick={() => handleSort(option.key as any)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-xs text-xs font-medium transition-all ${
                   sortField === option.key
                     ? "bg-primary text-white shadow-sm"
-                    : "bg-gray-200 text-gray-600 hover:bg-gray-200"
+                    : "bg-white-100 bordertext-gray-800 hover:bg-gray-200"
                 }`}
               >
                 {option.label}
