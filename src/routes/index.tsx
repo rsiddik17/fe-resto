@@ -217,7 +217,7 @@ const router = createBrowserRouter(
               Component: CashierOrderListPage,
             },
             {
-              path: "/cashier/order-list/edit/:id",
+              path: "/cashier/order-list/edit",
               Component: CashierEditOrderPage,
             },
             {

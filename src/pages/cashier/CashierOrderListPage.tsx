@@ -266,8 +266,8 @@ const CashierOrderListPage = () => {
                   onEdit={
                     isEditable
                       ? (rawId) =>
-                          navigate(`/cashier/order-list/edit/${rawId}`, {
-                            state: { tableNumber: order.title },
+                          navigate(`/cashier/order-list/edit`, {
+                            state: { orderId: rawId, tableNumber: order.title },
                           })
                       : undefined
                   }

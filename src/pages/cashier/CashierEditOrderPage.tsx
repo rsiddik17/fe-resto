@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router"; 
+import { useNavigate, useLocation } from "react-router"; 
 import { ArrowLeft } from "lucide-react"; 
 import DashboardHeader from "../../components/Header/DashboardHeader";
 import Loading from "../../components/Loading/Loading";
@@ -36,11 +36,11 @@ const getStatusBadge = (status: string) => {
 };
 
 const CashierEditOrderPage = () => {
-  const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation(); 
   const { firstName, roleName } = useProfile();
 
+  const passedOrderId = location.state?.orderId;
   const passedTableNumber = location.state?.tableNumber || "Takeaway";
 
   const [isLoading, setIsLoading] = useState(true);
@@ -67,10 +67,15 @@ const CashierEditOrderPage = () => {
   };
 
   const fetchOrderDetails = async () => {
-    if (!id) return;
+    if (!passedOrderId) {
+      // Jika tidak ada ID di state (misal user asal copas URL /edit), tendang balik ke order list
+      triggerToast("Akses tidak valid. Tidak ada ID pesanan.", "error");
+      setTimeout(() => navigate(-1), 1500);
+      return;
+    }
     try {
       setIsLoading(true);
-      const response = await orderAPI.getOrderById(id);
+      const response = await orderAPI.getOrderById(passedOrderId);
       if (response.success && response.data) setOrderData(response.data);
     } catch (error: any) {
       console.error("Gagal menarik data pesanan:", error);
@@ -80,7 +85,7 @@ const CashierEditOrderPage = () => {
     }
   };
 
-  useEffect(() => { fetchOrderDetails(); }, [id]);
+  useEffect(() => { fetchOrderDetails(); }, [passedOrderId]);
 
   const handleOpenSubstituteDropdown = async (item: any) => {
     const uniqueKey = item.id || item.menu_name;
