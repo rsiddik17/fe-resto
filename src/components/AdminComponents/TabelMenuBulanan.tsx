@@ -147,7 +147,7 @@ export default function TabelMenuBulanan({
         <div className="overflow-x-auto">
           <div className="min-w-150">
             <table className="w-full text-left text-[12.5px]">
-              <thead className="bg-gray-100 text-gray-500 font-bold uppercase text-[11px]">
+              <thead className="bg-gray-200 text-gray-500 font-bold uppercase text-[11px]">
                 <tr>
                   <th className="py-3 text-center w-14 rounded-tl-xs">NO</th>
                   <th className="py-3 px-4 cursor-pointer" onClick={() => handleSort("nama")}>
@@ -167,7 +167,7 @@ export default function TabelMenuBulanan({
               <tbody className="font-medium text-gray-800">
                 {currentItems.map((item, index) => (
                   <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 text-center text-gray-400 font-bold">
+                    <td className="py-3 text-center text-gray-400 font-bold rounded-bl-xs">
                       {(currentPage - 1) * menuPerPage + index + 1}
                     </td>
                     <td className="py-3 px-4 text-black truncate">{item.nama}</td>
@@ -256,7 +256,7 @@ export default function TabelMenuBulanan({
         <div className="bg-white rounded-xs border border-gray-100 overflow-x-auto">
           <div className="min-w-100">
             <table className="w-full">
-              <thead className="bg-gray-100 text-black">
+              <thead className="bg-gray-200 text-black">
                 <tr>
                   <th className="py-2 px-2 text-center text-[10px] rounded-tl-xs">NO</th>
                   <th className="py-2 px-2 text-left text-[10px]">Nama Menu</th>

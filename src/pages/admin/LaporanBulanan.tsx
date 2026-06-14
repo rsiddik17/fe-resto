@@ -11,52 +11,14 @@ import { adminReportsAPI } from "../../api/adminReports.api";
 
 const DATA_MENU_FALLBACK: any[] = [];
 
-// const DATA_MENU_BULANAN = [
-//   { id: 1, nama: "Es Teler", harga: 20000, kategori: "Minuman", total: 210 },
-//   { id: 2, nama: "Mie Ayam Bakso", harga: 30000, kategori: "Makanan", total: 205 },
-//   { id: 3, nama: "Ayam Penyet", harga: 40000, kategori: "Makanan", total: 200 },
-//   { id: 4, nama: "Nasi Goreng Kambing", harga: 40000, kategori: "Makanan", total: 195 },
-//   { id: 5, nama: "Sate Ayam", harga: 40000, kategori: "Makanan", total: 190 },
-//   { id: 6, nama: "Sop Iga", harga: 50000, kategori: "Makanan", total: 185 },
-//   { id: 7, nama: "Lychee Tea", harga: 20000, kategori: "Minuman", total: 180 },
-//   { id: 8, nama: "Gado-gado", harga: 30000, kategori: "Makanan", total: 165 },
-//   { id: 9, nama: "Matcha Latte", harga: 30000, kategori: "Minuman", total: 160 },
-//   { id: 10, nama: "Lemon Tea", harga: 20000, kategori: "Minuman", total: 158 },
-//   { id: 11, nama: "Bakso Urat", harga: 30000, kategori: "Makanan", total: 151 },
-//   { id: 12, nama: "Le Mineral", harga: 5000, kategori: "Minuman", total: 150 },
-//   { id: 13, nama: "Jus Alpukat", harga: 20000, kategori: "Minuman", total: 148 },
-//   { id: 14, nama: "Dimsum", harga: 30000, kategori: "Makanan", total: 145 },
-//   { id: 15, nama: "Jus Mangga", harga: 20000, kategori: "Minuman", total: 143 },
-//   { id: 16, nama: "Nasi Bakar", harga: 30000, kategori: "Makanan", total: 140 },
-//   { id: 17, nama: "Nasi Goreng", harga: 30000, kategori: "Makanan", total: 138 },
-//   { id: 18, nama: "Es Jeruk", harga: 20000, kategori: "Minuman", total: 135 },
-//   { id: 19, nama: "Soto Ayam", harga: 40000, kategori: "Makanan", total: 133 },
-//   { id: 20, nama: "Nasi Liwet", harga: 30000, kategori: "Makanan", total: 130 },
-//   { id: 21, nama: "Kopi Susu", harga: 20000, kategori: "Minuman", total: 128 },
-//   { id: 22, nama: "Nasi Goreng Udang", harga: 40000, kategori: "Makanan", total: 125 },
-//   { id: 23, nama: "Nasi Kuning", harga: 30000, kategori: "Makanan", total: 123 },
-//   { id: 24, nama: "Milkshake Stroberi", harga: 20000, kategori: "Minuman", total: 120 },
-//   { id: 25, nama: "Nasi Kebuli", harga: 50000, kategori: "Makanan", total: 118 },
-//   { id: 26, nama: "Cireng Bumbu Rujak", harga: 20000, kategori: "Makanan", total: 115 },
-//   { id: 27, nama: "Roti Bakar Cokelat", harga: 20000, kategori: "Makanan", total: 112 },
-//   { id: 28, nama: "Es Kelapa Muda", harga: 20000, kategori: "Minuman", total: 110 },
-//   { id: 29, nama: "Pempek", harga: 40000, kategori: "Makanan", total: 108 },
-//   { id: 30, nama: "Jus Stroberi", harga: 20000, kategori: "Minuman", total: 105 },
-//   { id: 31, nama: "Kwetiau Goreng", harga: 30000, kategori: "Makanan", total: 100 },
-//   { id: 32, nama: "Capcay", harga: 30000, kategori: "Makanan", total: 95 },
-//   { id: 33, nama: "Jus Jambu", harga: 20000, kategori: "Minuman", total: 90 },
-//   { id: 34, nama: "Nasi Putih", harga: 10000, kategori: "Makanan", total: 85 },
-//   { id: 35, nama: "Es Kuwut", harga: 20000, kategori: "Minuman", total: 80 },
-//   { id: 36, nama: "Es Cincau", harga: 20000, kategori: "Minuman", total: 72 },
-// ];
-
-// ========== KOMPONEN ==========
 const LaporanBulananPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
     "Semua" | "Pesanan" | "Pendapatan" | "Menu"
   >("Semua");
-  const getCurrentMonth = () => {
+
+  // Fungsi untuk mendapatkan bulan sekarang
+  const getLastTwoMonths = () => {
     const bulanNames = [
       "Januari",
       "Februari",
@@ -72,19 +34,22 @@ const LaporanBulananPage = () => {
       "Desember",
     ];
     const currentMonthIndex = new Date().getMonth();
-    const currentMonth = bulanNames[currentMonthIndex];
-    return [currentMonth];
+    const lastMonthIndex = currentMonthIndex === 0 ? 11 : currentMonthIndex - 1;
+    return [bulanNames[lastMonthIndex], bulanNames[currentMonthIndex]];
+    // return [bulanNames[new Date().getMonth()]];
   };
 
-  const [selectedBulans, setSelectedBulans] =
-    useState<string[]>(getCurrentMonth());
-  const [tahun, setTahun] = useState("2026");
-  const [showLaporan, setShowLaporan] = useState(false);
-  const [loadingReport, setLoadingReport] = useState(false);
+  const [selectedBulans, setSelectedBulans] = useState<string[]>(getLastTwoMonths);
+  const [tahun, setTahun] = useState(new Date().getFullYear().toString());
 
+  // State untuk loading dan data
+  const [loadingReport, setLoadingReport] = useState(false);
   const [pesananData, setPesananData] = useState<any[]>([]);
   const [pendapatanData, setPendapatanData] = useState<any[]>([]);
   const [menuData, setMenuData] = useState<any[]>(DATA_MENU_FALLBACK);
+
+  // State untuk menandai apakah laporan sudah ditampilkan
+  const [isLaporanDitampilkan, setIsLaporanDitampilkan] = useState(false);
 
   const getMonthNumber = (namaBulan: string): number => {
     const bulanMap: { [key: string]: number } = {
@@ -104,17 +69,34 @@ const LaporanBulananPage = () => {
     return bulanMap[namaBulan] || 1;
   };
 
-  const fetchReports = async () => {
-    if (selectedBulans.length === 0) return;
+  const fetchReports = async (bulanList: string[], tahunValue: string) => {
+    if (bulanList.length === 0) {
+      console.warn("Tidak ada bulan dipilih");
+      return;
+    }
+
+    if (!tahunValue || tahunValue === "") {
+      console.warn("Belum ada tahun dipilih");
+      return;
+    }
 
     setLoadingReport(true);
     try {
-      const months = selectedBulans.map((b) => getMonthNumber(b));
-      const yearNum = parseInt(tahun);
+      const months = bulanList.map((b) => getMonthNumber(b));
+      const yearNum = parseInt(tahunValue);
 
-      console.log("📅 Filter:", { months, year: yearNum, selectedBulans });
+      if (isNaN(yearNum)) {
+        console.error("Tahun tidak valid:", tahunValue);
+        return;
+      }
 
-      // ✅ UNTUK TAB "SEMUA", PANGGIL 3 API SEKALIGUS
+      console.log("📅 Fetching dengan filter:", {
+        months,
+        year: yearNum,
+        bulanList,
+      });
+
+      // UNTUK TAB "SEMUA", PANGGIL 3 API SEKALIGUS
       if (activeTab === "Semua") {
         const [ordersRes, revenueRes, menuRes] = await Promise.all([
           adminReportsAPI.getReports({
@@ -143,7 +125,6 @@ const LaporanBulananPage = () => {
           }),
         ]);
 
-        // Proses orders (bulanan)
         const ordersData = (ordersRes.data || []).map(
           (item: any, index: number) => ({
             id: index + 1,
@@ -155,7 +136,6 @@ const LaporanBulananPage = () => {
         );
         setPesananData(ordersData);
 
-        // Proses revenue (bulanan)
         const revenueData = (revenueRes.data || []).map(
           (item: any, index: number) => ({
             id: index + 1,
@@ -166,7 +146,6 @@ const LaporanBulananPage = () => {
         );
         setPendapatanData(revenueData);
 
-        // Proses menu (bulanan)
         const menuDataMapped = (menuRes.data || []).map(
           (item: any, index: number) => ({
             id: index + 1,
@@ -178,7 +157,6 @@ const LaporanBulananPage = () => {
         );
         setMenuData(menuDataMapped);
       } else {
-        // ✅ UNTUK TAB INDIVIDUAL
         const reportCategory =
           activeTab === "Pesanan"
             ? "orders"
@@ -195,15 +173,7 @@ const LaporanBulananPage = () => {
           limit: 100,
         });
 
-        console.log("📦 Response API:", response);
         const reportData = response.data || [];
-
-        if (reportData.length === 0) {
-          setPesananData([]);
-          setPendapatanData([]);
-          setMenuData([]);
-          return;
-        }
 
         if (reportCategory === "orders") {
           const formattedData = reportData.map((item: any, index: number) => ({
@@ -246,15 +216,35 @@ const LaporanBulananPage = () => {
     }
   };
 
-  const handleTampilkanLaporan = async () => {
-    await fetchReports();
-    setShowLaporan(true);
-  };
-
   const handleFilterChange = useCallback((bulanList: string[], thn: string) => {
+    console.log("📅 Filter berubah:", { bulanList, thn });
     setSelectedBulans(bulanList);
     setTahun(thn);
+    setIsLaporanDitampilkan(false);
+    setPesananData([]);
+    setPendapatanData([]);
+    setMenuData([]);
   }, []);
+
+  const handleTampilkanLaporan = async () => {
+    console.log("📅 Menampilkan laporan dengan filter:", {
+      bulan: selectedBulans,
+      tahun,
+    });
+
+    if (selectedBulans.length === 0) {
+      alert("Silakan pilih minimal 1 bulan terlebih dahulu!");
+      return;
+    }
+
+    if (!tahun || tahun === "") {
+      alert("Silakan pilih tahun terlebih dahulu!");
+      return;
+    }
+
+    await fetchReports(selectedBulans, tahun);
+    setIsLaporanDitampilkan(true);
+  };
 
   const periodeText = useMemo(() => {
     if (selectedBulans.length === 0) return "Tidak ada bulan dipilih";
@@ -263,6 +253,8 @@ const LaporanBulananPage = () => {
       return `Bulan ${selectedBulans[0]} ${tahun}`;
     return `Bulan ${selectedBulans[0]} - ${selectedBulans[selectedBulans.length - 1]} ${tahun}`;
   }, [selectedBulans, tahun]);
+
+  const isLoading = loadingReport && !isLaporanDitampilkan;
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F3F4F6]">
@@ -275,7 +267,7 @@ const LaporanBulananPage = () => {
         />
 
         <div className="w-full max-w-6xl mx-auto mt-4 space-y-6">
-          {/* FILTER */}
+          {/* FILTER SECTION */}
           <div className="bg-white rounded-[20px] border border-gray-150 p-6 space-y-6 overflow-visible">
             <div className="space-y-3">
               <h3 className="text-[13.5px] font-extrabold text-black uppercase tracking-wider">
@@ -283,28 +275,40 @@ const LaporanBulananPage = () => {
               </h3>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <button
-                  onClick={() => setActiveTab("Semua")}
+                  onClick={() => {
+                    setActiveTab("Semua");
+                    setIsLaporanDitampilkan(false);
+                  }}
                   className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${activeTab === "Semua" ? "bg-purple-50 border-primary text-primary shadow-xs" : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"}`}
                 >
                   <span>Semua</span>
                   <span>Laporan</span>
                 </button>
                 <button
-                  onClick={() => setActiveTab("Pesanan")}
+                  onClick={() => {
+                    setActiveTab("Pesanan");
+                    setIsLaporanDitampilkan(false);
+                  }}
                   className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${activeTab === "Pesanan" ? "bg-purple-50 border-primary text-primary shadow-xs" : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"}`}
                 >
                   <span>Laporan</span>
                   <span>Pesanan</span>
                 </button>
                 <button
-                  onClick={() => setActiveTab("Pendapatan")}
+                  onClick={() => {
+                    setActiveTab("Pendapatan");
+                    setIsLaporanDitampilkan(false);
+                  }}
                   className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${activeTab === "Pendapatan" ? "bg-purple-50 border-primary text-primary shadow-xs" : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"}`}
                 >
                   <span>Laporan</span>
                   <span>Pendapatan</span>
                 </button>
                 <button
-                  onClick={() => setActiveTab("Menu")}
+                  onClick={() => {
+                    setActiveTab("Menu");
+                    setIsLaporanDitampilkan(false);
+                  }}
                   className={`py-3 px-4 rounded-xs border text-[13px] font-bold text-center transition-all cursor-pointer flex flex-col items-center ${activeTab === "Menu" ? "bg-purple-50 border-primary text-primary shadow-xs" : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"}`}
                 >
                   <span>Laporan</span>
@@ -334,7 +338,11 @@ const LaporanBulananPage = () => {
               </button>
             </div>
 
-            <FilterBulanan onFilterChange={handleFilterChange} />
+            <FilterBulanan
+              defaultBulans={selectedBulans}
+              defaultTahun={tahun}
+              onFilterChange={handleFilterChange}
+            />
 
             <button
               onClick={handleTampilkanLaporan}
@@ -346,39 +354,41 @@ const LaporanBulananPage = () => {
             </button>
           </div>
 
-          {/* TABEL LAPORAN */}
-          {showLaporan && selectedBulans.length > 0 && (
-            <div className="bg-white rounded-[20px] border border-gray-150 p-6">
-              <div className="flex justify-end mb-4">
-                <button
-                  onClick={() => setShowLaporan(false)}
-                  className="text-[12px] font-bold text-black hover:text-black"
-                >
-                  Tutup
-                </button>
+          {/* LOADING STATE */}
+          {isLoading && (
+            <div className="bg-white rounded-[20px] border border-gray-150 p-6 text-center">
+              <div className="flex justify-center items-center gap-3">
+                <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-gray-500">Sedang memuat data...</span>
               </div>
+            </div>
+          )}
 
+          {/* TABEL LAPORAN - SELALU TAMPIL (seperti mingguan) */}
+          {isLaporanDitampilkan && selectedBulans.length > 0 && (
+            <div className="bg-white rounded-[20px] border border-gray-150 p-6">
               <div className="space-y-12">
-                {(activeTab === "Semua" || activeTab === "Pesanan") &&
-                  pesananData.length > 0 && (
-                    <TabelPesananBulanan
-                      data={pesananData}
-                      periode={periodeText}
-                      enablePagination={true}
-                      itemsPerPage={10}
-                    />
-                  )}
+                {/* LAPORAN PESANAN */}
+                {(activeTab === "Semua" || activeTab === "Pesanan") && (
+                  <TabelPesananBulanan
+                    data={pesananData}
+                    periode={periodeText}
+                    enablePagination={true}
+                    itemsPerPage={10}
+                  />
+                )}
 
-                {(activeTab === "Semua" || activeTab === "Pendapatan") &&
-                  pendapatanData.length > 0 && (
-                    <TabelPendapatanBulanan
-                      data={pendapatanData}
-                      periode={periodeText}
-                      enablePagination={true}
-                      itemsPerPage={10}
-                    />
-                  )}
+                {/* LAPORAN PENDAPATAN */}
+                {(activeTab === "Semua" || activeTab === "Pendapatan") && (
+                  <TabelPendapatanBulanan
+                    data={pendapatanData}
+                    periode={periodeText}
+                    enablePagination={true}
+                    itemsPerPage={10}
+                  />
+                )}
 
+                {/* LAPORAN MENU */}
                 {(activeTab === "Semua" || activeTab === "Menu") && (
                   <LaporanTableMenuBulanan
                     data={menuData}
@@ -389,7 +399,8 @@ const LaporanBulananPage = () => {
             </div>
           )}
 
-          {showLaporan && selectedBulans.length === 0 && (
+          {/* PERINGATAN - Belum pilih filter */}
+          {isLaporanDitampilkan && selectedBulans.length === 0 && (
             <div className="bg-white rounded-[20px] border border-gray-150 p-6 text-center text-gray-400">
               Silakan pilih minimal 1 bulan untuk menampilkan laporan
             </div>

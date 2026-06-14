@@ -227,7 +227,7 @@ const MapSection = ({
               setTimeout(() => setShowDropdown(false), 300);
             }}
             className="w-full p-4 mt-2 bg-white border-[1.5px] border-primary rounded-xs h-24"
-            placeholder="Ketik alamat (minimal 3 huruf)..."
+            placeholder="Ketikan alamat "
           />
           
           {isLoading && (

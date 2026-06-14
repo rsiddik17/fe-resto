@@ -171,17 +171,17 @@ export default function TabelMenuMingguan({
               {currentItems.map((item, index) => (
                 <tr
                   key={item.id}
-                  className="border-b border-gray-100 hover:bg-gray-50"
+                  className="border-b  border-gray-100 hover:bg-gray-50"
                 >
                   <td className="py-4 px-6 text-gray-400 font-bold">
                     {(currentPage - 1) * menuPerPage + index + 1}
                   </td>
-                  <td className="py-4 px-4 text-black truncate">{item.nama}</td>
+                  <td className="py-4 px-4 text-black truncate rounded-bl-xs">{item.nama}</td>
                   <td className="py-4 px-4">
                     Rp {item.harga.toLocaleString("id-ID")}
                   </td>
                   <td className="py-4 px-4 truncate">{item.kategori}</td>
-                  <td className="py-4 px-4  text-black">{item.total}</td>
+                  <td className="py-4 px-4  text-black rounded-br-xs">{item.total}</td>
                 </tr>
               ))}
             </tbody>
@@ -264,7 +264,7 @@ export default function TabelMenuMingguan({
         <div className="bg-white rounded-xs border border-gray-100 overflow-x-auto">
           <div className="min-w-137.5">
             <table className="w-full">
-              <thead className="bg-gray-100 text-black">
+              <thead className="bg-gray-200 text-black">
                 <tr>
                   <th className="py-2 px-2 text-center text-[10px] rounded-tl-xs">
                     NO

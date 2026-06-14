@@ -172,7 +172,7 @@ export default function TabelPesananBulanan({
         <div className="overflow-x-auto">
           <div className="min-w-150">
             <table className="w-full text-left text-[12.5px]">
-              <thead className="bg-gray-100 text-gray-500 font-bold uppercase text-[11px]">
+              <thead className="bg-gray-200 text-gray-500 font-bold uppercase text-[11px]">
                 <tr>
                   <th className="py-3 text-center w-14 rounded-tl-xs">NO</th>
                   <th className="py-3 px-4 cursor-pointer" onClick={() => handleSort("bulan")}>
@@ -198,15 +198,15 @@ export default function TabelPesananBulanan({
                     <td className="py-3 px-4">{item.bulan}</td>
                     <td className="py-3 px-4">{formatNumber(item.totalPesanan)}</td>
                     <td className="py-3 px-4">{formatNumber(item.selesai)}</td>
-                    <td className="py-3 px-4">{formatNumber(item.cancel)}</td>
+                    <td className="py-3 px-4 rounded-rl-xs">{formatNumber(item.cancel)}</td>
                   </tr>
                 ))}
                 <tr className="bg-gray-100 font-bold text-black border-t border-gray-200">
-                  <td className="py-3 text-center"></td>
-                  <td className="py-3 px-4">Total Keseluruhan</td>
+                  <td className="py-3 text-center rounded-bl-xs"></td>
+                  <td className="py-3 px-4">Total</td>
                   <td className="py-3 px-4">{formatNumber(totalPesanan)}</td>
                   <td className="py-3 px-4">{formatNumber(totalSelesai)}</td>
-                  <td className="py-3 px-4">{formatNumber(totalCancel)}</td>
+                  <td className="py-3 px-4 rounded-br-xs">{formatNumber(totalCancel)}</td>
                 </tr>
               </tbody>
             </table>
@@ -229,7 +229,7 @@ export default function TabelPesananBulanan({
                   </button>
                   {isDropdownOpen && (
                     <div className="absolute left-0 top-full mt-1 w-24 bg-white border border-gray-200 rounded shadow-lg z-9999">
-                      {[5, 10, 15, 20].map((n) => (
+                      {[10, 20].map((n) => (
                         <button
                           key={n}
                           onClick={() => {
@@ -284,7 +284,7 @@ export default function TabelPesananBulanan({
         <div className="bg-white rounded-xs border border-gray-100 overflow-x-auto">
           <div className="min-w-100">
             <table className="w-full">
-              <thead className="bg-gray-100 text-black">
+              <thead className="bg-gray-200 text-black">
                 <tr>
                   <th className="py-2 px-2 text-center text-[10px] rounded-tl-xs">NO</th>
                   <th className="py-2 px-2 text-left text-[10px]">Bulan</th>
