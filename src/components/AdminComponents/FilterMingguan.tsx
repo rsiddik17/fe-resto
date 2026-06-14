@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
 const LIST_BULAN = [
@@ -10,13 +10,25 @@ const LIST_TAHUN = ["2025", "2026"];
 
 interface FilterMingguanProps {
   onFilterChange: (bulan: string, tahun: string) => void;
+  defaultBulan?: string;
+  defaultTahun?: string;
 }
 
-export default function FilterMingguan({ onFilterChange }: FilterMingguanProps) {
-  const [bulan, setBulan] = useState("Maret");
-  const [tahun, setTahun] = useState("2026");
+export default function FilterMingguan({ onFilterChange, defaultBulan, defaultTahun }: FilterMingguanProps) {
+  // ✅ LANGSUNG PAKAI defaultBulan/defaultTahun dari props
+  const [bulan, setBulan] = useState(defaultBulan || "Maret");
+  const [tahun, setTahun] = useState(defaultTahun || "2026");
   const [isBulanOpen, setIsBulanOpen] = useState(false);
   const [isTahunOpen, setIsTahunOpen] = useState(false);
+
+  // Update jika props berubah (misal parent ganti bulan)
+  useEffect(() => {
+    if (defaultBulan && defaultBulan !== bulan) setBulan(defaultBulan);
+  }, [defaultBulan]);
+
+  useEffect(() => {
+    if (defaultTahun && defaultTahun !== tahun) setTahun(defaultTahun);
+  }, [defaultTahun]);
 
   const handleBulanPilih = (b: string) => {
     setBulan(b);
@@ -32,7 +44,6 @@ export default function FilterMingguan({ onFilterChange }: FilterMingguanProps) 
 
   return (
     <div className="flex flex-col sm:flex-row gap-6 items-start overflow-visible">
-      {/* Pilih Bulan */}
       <div className="space-y-1 relative overflow-visible">
         <span className="text-[11.5px] text-gray-400 font-bold block">Bulan</span>
         <div className="relative">
@@ -61,9 +72,8 @@ export default function FilterMingguan({ onFilterChange }: FilterMingguanProps) 
         </div>
       </div>
 
-      {/* Pilih Tahun */}
       <div className="space-y-1 relative overflow-visible">
-        <span className="text-[11.5px] text-gray-400 font-bold block ">Tahun</span>
+        <span className="text-[11.5px] text-gray-400 font-bold block">Tahun</span>
         <div className="relative">
           <button
             onClick={() => {

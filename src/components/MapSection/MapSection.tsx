@@ -1,17 +1,26 @@
 import { useState, useEffect, useRef } from "react";
-import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet"; // Tambah useMapEvents
-// import L from "leaflet";
+import { MapContainer, TileLayer, useMap, useMapEvents, Marker } from "react-leaflet";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+
+// Fix icon Leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+});
 
 const RecenterMap = ({ lat, lng }: { lat: number; lng: number }) => {
   const map = useMap();
   useEffect(() => {
-    map.setView([lat, lng], 16);
+    if (lat && lng) {
+      map.setView([lat, lng], 16);
+    }
   }, [lat, lng, map]);
   return null;
 };
 
-// Buat komponen baru untuk menangani klik pada peta
 const MapClickHandler = ({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) => {
   useMapEvents({
     click: (e) => {
@@ -34,6 +43,33 @@ interface MapSectionProps {
   ) => void;
 }
 
+// Format alamat ke Indonesia
+const formatAddressToIndonesian = (displayName: string): string => {
+  let formatted = displayName;
+  
+  const replacements: { [key: string]: string } = {
+    'Street': 'Jalan', 'Road': 'Jalan', 'West Java': 'Jawa Barat',
+    'East Java': 'Jawa Timur', 'Central Java': 'Jawa Tengah',
+    'North': 'Utara', 'South': 'Selatan', 'East': 'Timur', 'West': 'Barat',
+    'Central': 'Tengah', 'Regency': 'Kabupaten', 'City': 'Kota',
+    'Village': 'Desa', 'District': 'Kecamatan', 'Province': 'Provinsi',
+    'Indonesia': 'Indonesia', 'Java': 'Jawa', 'RT': 'RT', 'RW': 'RW',
+  };
+  
+  const sortedKeys = Object.keys(replacements).sort((a, b) => b.length - a.length);
+  
+  for (const eng of sortedKeys) {
+    const id = replacements[eng];
+    const regex = new RegExp(`\\b${eng}\\b`, 'gi');
+    formatted = formatted.replace(regex, id);
+  }
+  
+  formatted = formatted.replace(/, ,/g, ',').replace(/,,/g, ',');
+  formatted = formatted.replace(/\s+/g, ' ').trim();
+  
+  return formatted;
+};
+
 const MapSection = ({
   initialAddress = "",
   initialLat = -6.510626,
@@ -47,53 +83,91 @@ const MapSection = ({
   });
   const [searchQuery, setSearchQuery] = useState(initialAddress);
   const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [selectedTag, setSelectedTag] = useState<"Rumah" | "Kantor">(
-    initialTag,
-  );
+  const [selectedTag, setSelectedTag] = useState<"Rumah" | "Kantor">(initialTag);
   const [showDropdown, setShowDropdown] = useState(false);
-
-  // Gunakan ref untuk track apakah ini render pertama kali
+  const [isLoading, setIsLoading] = useState(false);
   const isFirstRender = useRef(true);
 
   // Update state ketika props berubah (mode edit)
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
+      if (initialLat && initialLng && initialAddress) {
+        setPosition({ lat: initialLat, lng: initialLng });
+        setSearchQuery(initialAddress);
+      }
       return;
     }
-    setPosition({ lat: initialLat, lng: initialLng });
-    setSearchQuery(initialAddress);
-    // setSelectedTag(initialTag);
+    if (initialLat && initialLng) {
+      setPosition({ lat: initialLat, lng: initialLng });
+    }
+    if (initialAddress) {
+      setSearchQuery(initialAddress);
+    }
   }, [initialAddress, initialLat, initialLng]);
 
-  // Ambil data saran alamat
+  // ✅ AMBIL DATA SARAN ALAMAT DARI KOMOOT (TANPA AUTO-GEOCODE)
   useEffect(() => {
-    if (searchQuery.length < 4) {
+    if (searchQuery.length < 3) {
       setSuggestions([]);
+      setShowDropdown(false);
       return;
     }
 
     const delayDebounce = setTimeout(async () => {
+      setIsLoading(true);
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5&countrycodes=id`,
+          `https://photon.komoot.io/api/?q=${encodeURIComponent(searchQuery)}&limit=5`,
         );
         const data = await response.json();
-        setSuggestions(data);
+        
+        if (data && data.features && data.features.length > 0) {
+          const formattedSuggestions = data.features.map((feature: any) => {
+            const [lng, lat] = feature.geometry.coordinates;
+            const city = feature.properties.city || feature.properties.state || "";
+            const name = feature.properties.name;
+            const street = feature.properties.street || "";
+            
+            let displayName = name;
+            if (street && street !== name) {
+              displayName = `${street}, ${name}`;
+            }
+            if (city && !displayName.includes(city)) {
+              displayName = `${displayName}, ${city}`;
+            }
+            
+            return {
+              display_name: formatAddressToIndonesian(displayName),
+              lat: lat,
+              lon: lng,
+            };
+          });
+          setSuggestions(formattedSuggestions);
+          setShowDropdown(formattedSuggestions.length > 0);
+        } else {
+          setSuggestions([]);
+        }
       } catch (error) {
-        console.error("Error fetching geocoding data:", error);
+        console.error("Error fetching suggestions:", error);
+        setSuggestions([]);
+      } finally {
+        setIsLoading(false);
       }
     }, 500);
 
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
 
+  // ✅ HANDLE PILIH ALAMAT DARI DROPDOWN
   const handleSelectAddress = (item: any) => {
-    const lat = parseFloat(item.lat);
-    const lng = parseFloat(item.lon);
+    const lat = item.lat;
+    const lng = item.lon;
+    
     setPosition({ lat, lng });
     setSearchQuery(item.display_name);
     setShowDropdown(false);
+    
     if (onAddressChange) {
       onAddressChange(item.display_name, lat, lng, selectedTag);
     }
@@ -101,11 +175,12 @@ const MapSection = ({
 
   const handleTagChange = (tag: "Rumah" | "Kantor") => {
     setSelectedTag(tag);
-    if (onAddressChange) {
+    if (onAddressChange && searchQuery) {
       onAddressChange(searchQuery, position.lat, position.lng, tag);
     }
   };
 
+  // ✅ HANDLE KLIK PETA
   const handleMapClick = async (lat: number, lng: number) => {
     setPosition({ lat, lng });
 
@@ -114,7 +189,8 @@ const MapSection = ({
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
       );
       const data = await response.json();
-      const address = data.display_name || `${lat}, ${lng}`;
+      const rawAddress = data.display_name || `${lat}, ${lng}`;
+      const address = formatAddressToIndonesian(rawAddress);
       setSearchQuery(address);
       if (onAddressChange) {
         onAddressChange(address, lat, lng, selectedTag);
@@ -133,48 +209,55 @@ const MapSection = ({
       <div className="space-y-2 text-left relative">
         <label className="text-black font-bold text-sm">Alamat Lengkap</label>
 
-        {showDropdown && suggestions.length > 0 && (
-          <ul className="absolute left-0 right-0 bottom-full mb-1 bg-white border border-gray-100 rounded-xl shadow-xl z-9999 max-h-60 overflow-y-auto divide-y divide-gray-50">
-            {suggestions.map((item, index) => (
-              <li
-                key={index}
-                onClick={() => handleSelectAddress(item)}
-                className="p-3 hover:bg-primary/5 cursor-pointer text-sm text-left transition-colors text-gray-700"
-              >
-                {item.display_name}
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className="relative">
+          <textarea
+            value={searchQuery}
+            onChange={(e) => {
+              const newAddress = e.target.value;
+              setSearchQuery(newAddress);
+              setShowDropdown(true);
+              
+              // Langsung oper nilai terbaru ke ProfilPage secara real-time
+              if (onAddressChange) {
+                onAddressChange(newAddress, position.lat, position.lng, selectedTag);
+              }
+            }}
+            onBlur={() => {
+              // Menghindari konflik klik item dropdown dengan penutupan otomatis dropdown
+              setTimeout(() => setShowDropdown(false), 300);
+            }}
+            className="w-full p-4 mt-2 bg-white border-[1.5px] border-primary rounded-xs h-24"
+            placeholder="Ketik alamat (minimal 3 huruf)..."
+          />
+          
+          {isLoading && (
+            <div className="absolute right-3 top-10">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+            </div>
+          )}
 
-        <textarea
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setShowDropdown(true);
-          }}
-          onBlur={() => {
-            if (onAddressChange && searchQuery !== initialAddress) {
-              onAddressChange(
-                searchQuery,
-                position.lat,
-                position.lng,
-                selectedTag,
-              );
-            }
-          }}
-          className="w-full p-4 mt-2 bg-white border-[1.5px] border-primary rounded-xs h-24"
-          placeholder="Ketik alamat..."
-        />
+          {/* DROPDOWN */}
+          {showDropdown && suggestions.length > 0 && (
+            <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-9999 max-h-60 overflow-y-auto">
+              {suggestions.map((item, index) => (
+                <li
+                  key={index}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    handleSelectAddress(item);
+                  }}
+                  className="p-3 hover:bg-primary/5 cursor-pointer text-sm text-left text-gray-700"
+                >
+                  {item.display_name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
 
       {/* PETA */}
       <div className="w-full h-80 rounded-xl overflow-hidden border border-gray-100 relative z-10">
-        <style>{`
-          .leaflet-marker-icon {
-            display: none !important;
-          }
-        `}</style>
         <MapContainer
           center={[position.lat, position.lng]}
           zoom={15}
@@ -185,6 +268,7 @@ const MapSection = ({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          <Marker position={[position.lat, position.lng]} />
           <MapClickHandler onMapClick={handleMapClick} />
           <RecenterMap lat={position.lat} lng={position.lng} />
         </MapContainer>

@@ -1,5 +1,5 @@
 import { Check, Download, ArrowLeft, FileText } from "lucide-react";
-import { Barcode } from "../Barcode/Barcode";
+// import { Barcode } from "../Barcode/Barcode";
 import Button from "../ui/Button";
 import { useNavigate } from "react-router";
 import HeaderOnline from "../HeaderOnline/HeaderOnline";
@@ -234,9 +234,9 @@ const OrderReceipt = ({
                 Total Pembayaran
               </h2>
 
-              <div className="w-full flex justify-center mb-4">
+              {/* <div className="w-full flex justify-center mb-4">
                 <Barcode value={orderId} className="h-12 w-full opacity-90" />
-              </div>
+              </div> */}
 
               <div className="space-y-2 mb-4 text-[12px]">
                 <div className="flex justify-between items-center">

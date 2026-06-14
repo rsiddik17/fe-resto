@@ -14,12 +14,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./datepicker-custom.css";
 import Header from "../../components/HeaderOnline/HeaderOnline";
 import MapSection from "../../components/MapSection/MapSection";
-import LogoutModal from "../../components/LogoutModal/LogoutModal";
+import LogoutConfirmModal from "../../components/Modal/LogoutConfirmModal";
 import ChangePwProf from "../../components/ChangePwProf/ChangePwProf";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal/DeleteConfirmationModal";
 import ConfirAlamat from "../../components/ConfirmationModal/ConfirmationModal";
 import { useAuthStore } from "../../store/useAuthStore";
-import LogoutIcon from "../../components/Icon/LogOutIcon";
+import { LogOut } from "lucide-react";
 import { customerAPI } from "../../api/onlinecustomer.api";
 import { addressAPI } from "../../api/address.api";
 
@@ -233,37 +233,154 @@ const ProfilePage = () => {
     tag: "Rumah" | "Kantor",
   ) => {
     console.log("handleAddressChange dipanggil dengan tag:", tag);
-    console.log("addressForm sebelum:", addressForm);
-    setAddressForm({
-      ...addressForm,
+    setAddressForm((prev) => ({
+      ...prev,
       address_name: address,
       latitude: lat,
       longitude: lng,
       mark_as: tag === "Rumah" ? "HOME" : "OFFICE",
-    });
+    }));
   };
 
   // Simpan alamat (CREATE atau UPDATE)
-  const handleSaveAddress = async () => {
-    console.log(" handleSaveAddress dipanggil");
-    console.log(" editingAddress:", editingAddress);
-    console.log(" addressForm:", addressForm);
+ const handleSaveAddress = async () => {
+    console.log("handleSaveAddress dipanggil");
+    console.log("editingAddress:", editingAddress);
+    console.log("addressForm:", addressForm);
 
-    // if (editingAddress && !editingAddress.id) {
-    //   showToast("ID alamat tidak ditemukan", "error");
-    //   return;
-    // }
+    const finalAddress = addressForm.address_name;
+    let finalLat = addressForm.latitude;
+    let finalLng = addressForm.longitude;
+
+    // VALIDASI: Alamat tidak boleh kosong
+    if (!finalAddress || finalAddress.trim() === "") {
+      showLocalToast("Silakan isi alamat terlebih dahulu", "error");
+      return;
+    }
+
+    // Hanya geocode otomatis jika ini tambah baru DAN koordinat masih default awal (user ketik manual tanpa klik map/dropdown)
+    if (!editingAddress && finalLat === -6.510626 && finalLng === 106.809559) {
+      try {
+        // 📝 1. PROSES PEMBERSIHAN (Regex Cleansing)
+        const cleanQuery = finalAddress
+          .toLowerCase()
+          .replace(/\bno\.\s*\d+|\bno\s*\d+/g, "") // Hapus "no 13" atau "no.13"
+          .replace(/\brt\s*\d+|\brw\s*\d+/g, "") // Hapus "RT 01" / "RW 02"
+          .replace(/\bjl\b|\bjalan\b/g, "") // Hapus kata "jl" atau "jalan"
+          .replace(/,/g, " ") // Ubah koma jadi spasi agar parsing Elasticsearch lebih mulus
+          .replace(/\s+/g, " ") // Bersihkan spasi ganda
+          .trim();
+
+        console.log("🔎 Tembakan 1 (Clean Query untuk Komoot - Multi Limit):", cleanQuery);
+
+        const geocodeResponse = await fetch(
+          `https://photon.komoot.io/api/?q=${encodeURIComponent(cleanQuery)}&limit=3`,
+        );
+        const geocodeData = await geocodeResponse.json() as any;
+
+        if (
+          geocodeData &&
+          geocodeData.features &&
+          geocodeData.features.length > 0
+        ) {
+          // 🌟 PERBAIKAN DI SINI: Menyisir 3 hasil kandidat dari Komoot
+          // Mengutamakan kandidat lokasi yang punya properti nama jalan (street) atau tipe perumahan (residential)
+          const bestMatch = geocodeData.features.find(
+            (f: any) => f.properties?.street || f.properties?.osm_value === "residential"
+          ) || geocodeData.features[0]; // Jika tidak ada kriteria yang cocok, fallback ke index ke-0 (default)
+
+          finalLng = bestMatch.geometry.coordinates[0];
+          finalLat = bestMatch.geometry.coordinates[1];
+          console.log("📍 Koordinat Terbaik Komoot Berhasil:", {
+            finalLat,
+            finalLng,
+            properties: bestMatch.properties
+          });
+        }
+        // 🔄 FALLBACK LAPIZ 2: Jika pencarian detail gagal, ambil 3 kata terakhir (Kecamatan, Kota, Provinsi)
+        else {
+          const words = cleanQuery.split(" ");
+          if (words.length > 2) {
+            const fallbackQuery = words.slice(-3).join(" ");
+            console.log(
+              "⚠️ Tembakan 1 buntu. Coba Tembakan 2 (Wilayah):",
+              fallbackQuery,
+            );
+
+            const fallbackResponse = await fetch(
+              `https://photon.komoot.io/api/?q=${encodeURIComponent(fallbackQuery)}&limit=1`,
+            );
+            const fallbackData = await fallbackResponse.json() as any;
+
+            if (
+              fallbackData &&
+              fallbackData.features &&
+              fallbackData.features.length > 0
+            ) {
+              const feature = fallbackData.features[0];
+              finalLng = feature.geometry.coordinates[0];
+              finalLat = feature.geometry.coordinates[1];
+              console.log("📍 Koordinat Tembakan 2 Berhasil:", {
+                finalLat,
+                finalLng,
+              });
+            }
+            // 🔄 FALLBACK LAPIS 3 (PERTAHANAN TERAKHIR): Jika wilayah pun gagal, cari kata paling belakang (Nama Kota/Kabupaten)
+            else {
+              const lastWord = words[words.length - 1];
+              console.log(
+                "⚠️ Tembakan 2 buntu. Coba Tembakan 3 (Kota Saja):",
+                lastWord,
+              );
+
+              const cityResponse = await fetch(
+                `https://photon.komoot.io/api/?q=${encodeURIComponent(lastWord)}&limit=1`,
+              );
+              const cityData = await cityResponse.json() as any;
+              if (
+                cityData &&
+                cityData.features &&
+                cityData.features.length > 0
+              ) {
+                const feature = cityData.features[0];
+                finalLng = feature.geometry.coordinates[0];
+                finalLat = feature.geometry.coordinates[1];
+                console.log("📍 Koordinat Tembakan 3 Berhasil:", {
+                  finalLat,
+                  finalLng,
+                });
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Geocode error:", error);
+      }
+    }
+
+    // PROSES PAYLOAD MASUK KE BACKEND DATABASE
     try {
+      const payload = {
+        address_name: finalAddress,
+        latitude: finalLat,
+        longitude: finalLng,
+        mark_as: addressForm.mark_as,
+        is_core_address: addressForm.is_core_address,
+      };
+
+      console.log("📦 Payload yang akan dikirim ke API:", payload);
+
       if (editingAddress) {
-        await addressAPI.updateAddress(editingAddress.id, addressForm);
+        await addressAPI.updateAddress(editingAddress.id, payload);
         showLocalToast("Perubahan berhasil disimpan", "success");
       } else {
-        await addressAPI.createAddress(addressForm);
+        await addressAPI.createAddress(payload);
+        showLocalToast("Alamat berhasil ditambahkan", "success");
       }
+
       await fetchAddresses();
       setAddressView("list");
       setEditingAddress(null);
-      // Reset form
       setAddressForm({
         address_name: "",
         latitude: -6.510626,
@@ -271,9 +388,11 @@ const ProfilePage = () => {
         mark_as: "HOME",
         is_core_address: false,
       });
-    } catch (error) {
-      console.error(" ERROR:", error);
-      showLocalToast("Gagal menyimpan alamat", "error");
+    } catch (error: any) {
+      console.error("ERROR:", error);
+      const errorMsg =
+        error.response?.data?.message || "Gagal menyimpan alamat";
+      showLocalToast(errorMsg, "error");
     }
   };
 
@@ -287,12 +406,14 @@ const ProfilePage = () => {
       .slice(0, 2);
   };
 
+  // ✅ Perbaikan format URL Google Maps agar mengarah dengan benar
   const handleOpenGoogleMaps = (address: string) => {
     window.open(
-      `http://maps.google.com/?q=${encodeURIComponent(address)}`,
+      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`,
       "_blank",
     );
   };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
@@ -501,7 +622,7 @@ const ProfilePage = () => {
                       onClick={() => toggleModal("logout", true)}
                       className="bg-primary text-white px-6 py-2.5 rounded-xs font-bold flex items-center gap-2 shadow-lg text-sm font-poppins"
                     >
-                      <LogoutIcon width={18} height={16} /> Keluar
+                      <LogOut width={18} height={16} /> Keluar
                     </button>
                   )}
                 </div>
@@ -521,7 +642,6 @@ const ProfilePage = () => {
                         onClick={() => {
                           setAddressView("form");
                           setEditingAddress(null);
-                          // Reset form ke default
                           setAddressForm({
                             address_name: "",
                             latitude: -6.510626,
@@ -585,9 +705,7 @@ const ProfilePage = () => {
                               <button
                                 onClick={() => {
                                   console.log("Data alamat yang diedit:", addr);
-                                  console.log("mark_as value:", addr.mark_as);
                                   setEditingAddress(addr);
-                                  // Set form dengan data yang akan diedit
                                   setAddressForm({
                                     address_name: addr.address_name,
                                     latitude: addr.latitude,
@@ -657,7 +775,6 @@ const ProfilePage = () => {
                         onClick={() => {
                           setAddressView("list");
                           setEditingAddress(null);
-                          // Reset form
                           setAddressForm({
                             address_name: "",
                             latitude: -6.510626,
@@ -718,11 +835,11 @@ const ProfilePage = () => {
         description={`Apakah anda yakin ingin ${editingAddress ? "mengubah" : "menambahkan"} alamat ini?`}
         onCancel={() => toggleModal("confirmAddress", false)}
         onConfirm={() => {
-          handleSaveAddress(); // ← PANGGIL FUNGSI SAVE
+          handleSaveAddress();
           toggleModal("confirmAddress", false);
         }}
       />
-      <LogoutModal
+      <LogoutConfirmModal
         isOpen={modal.logout}
         onClose={() => toggleModal("logout", false)}
         onConfirm={() => {
