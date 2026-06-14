@@ -63,18 +63,8 @@ export default function TabelPesananBulanan({
     if (!sortField) return 0;
     if (sortField === "bulan") {
       const bulanOrder = [
-        "Januari",
-        "Februari",
-        "Maret",
-        "April",
-        "Mei",
-        "Juni",
-        "Juli",
-        "Agustus",
-        "September",
-        "Oktober",
-        "November",
-        "Desember",
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember",
       ];
       const aIndex = bulanOrder.indexOf(a.bulan);
       const bIndex = bulanOrder.indexOf(b.bulan);
@@ -116,6 +106,10 @@ export default function TabelPesananBulanan({
   const startCount = indexOfFirstItem + 1;
   const endCount = Math.min(indexOfLastItem, sortedData.length);
 
+  const formatNumber = (angka: number) => {
+    return angka.toLocaleString("id-ID");
+  };
+
   return (
     <div className="space-y-4">
       {/* HEADER */}
@@ -133,13 +127,13 @@ export default function TabelPesananBulanan({
             onClick={() => eksporKePDFPesananBulanan(sortedData, periode)}
             className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90"
           >
-            <ExportIcon w-4 h-4 /> Ekspor PDF
+            <ExportIcon className="w-4 h-4" /> Ekspor PDF
           </button>
           <button
             onClick={() => eksporKeExcelPesananBulanan(sortedData, periode)}
             className="bg-primary text-white font-bold text-[11px] sm:text-[12.5px] px-3 py-1.5 sm:px-5 sm:py-2 rounded-xs flex items-center gap-1 shadow-md hover:bg-primary/90"
           >
-            <ExportIcon w-4 h-4 /> Ekspor Excel
+            <ExportIcon className="w-4 h-4" /> Ekspor Excel
           </button>
         </div>
       </div>
@@ -164,9 +158,7 @@ export default function TabelPesananBulanan({
               >
                 {option.label}
                 {sortField === option.key && (
-                  <span className="ml-1">
-                    {sortOrder === "asc" ? "↑" : "↓"}
-                  </span>
+                  <span className="ml-1">{sortOrder === "asc" ? "↑" : "↓"}</span>
                 )}
               </button>
             ))}
@@ -174,98 +166,68 @@ export default function TabelPesananBulanan({
         </div>
       </div>
 
-      {/* DESKTOP TABLE */}
-      <div className="hidden md:block border border-gray-150 rounded-xs overflow-hidden bg-white">
-        <div className="w-full overflow-x-auto">
-          <table className="w-full min-w-125 text-left text-[12.5px]">
-            <thead className="bg-gray-100 text-gray-500 font-bold uppercase text-[11px]">
-              <tr>
-                <th className="py-3 text-center w-14">NO</th>
-                <th
-                  className="py-3 px-4 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSort("bulan")}
-                >
-                  <div className="flex items-center gap-1">
-                    BULAN {renderSortIcon("bulan")}
-                  </div>
-                </th>
-                <th
-                  className="py-3 px-4 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSort("totalPesanan")}
-                >
-                  <div className="flex items-center gap-1">
-                    TOTAL PESANAN {renderSortIcon("totalPesanan")}
-                  </div>
-                </th>
-                <th
-                  className="py-3 px-4 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSort("selesai")}
-                >
-                  <div className="flex items-center gap-1">
-                    PESANAN SELESAI {renderSortIcon("selesai")}
-                  </div>
-                </th>
-                <th
-                  className="py-3 px-4 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSort("cancel")}
-                >
-                  <div className="flex items-center gap-1">
-                    PESANAN CANCEL {renderSortIcon("cancel")}
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="font-medium text-gray-800">
-              {currentItems.map((item, index) => (
-                <tr
-                  key={item.id}
-                  className="border-b border-gray-100 hover:bg-gray-50"
-                >
-                  <td className="py-3 text-center text-gray-400 font-bold">
-                    {indexOfFirstItem + index + 1}
-                  </td>
-                  <td className="py-3 px-4">{item.bulan}</td>
-                  <td className="py-3 px-4">
-                    {item.totalPesanan.toLocaleString("id-ID")}
-                  </td>
-                  <td className="py-3 px-4">
-                    {item.selesai.toLocaleString("id-ID")}
-                  </td>
-                  <td className="py-3 px-4">{item.cancel}</td>
+      {/* ========== DESKTOP TABLE dengan PAGINATION ========== */}
+      <div className="hidden md:block border border-gray-150 rounded-xs bg-white">
+        <div className="overflow-x-auto">
+          <div className="min-w-150">
+            <table className="w-full text-left text-[12.5px]">
+              <thead className="bg-gray-100 text-gray-500 font-bold uppercase text-[11px]">
+                <tr>
+                  <th className="py-3 text-center w-14 rounded-tl-xs">NO</th>
+                  <th className="py-3 px-4 cursor-pointer" onClick={() => handleSort("bulan")}>
+                    <div className="flex items-center gap-1">BULAN {renderSortIcon("bulan")}</div>
+                  </th>
+                  <th className="py-3 px-4 cursor-pointer" onClick={() => handleSort("totalPesanan")}>
+                    <div className="flex items-center gap-1">TOTAL PESANAN {renderSortIcon("totalPesanan")}</div>
+                  </th>
+                  <th className="py-3 px-4 cursor-pointer" onClick={() => handleSort("selesai")}>
+                    <div className="flex items-center gap-1">PESANAN SELESAI {renderSortIcon("selesai")}</div>
+                  </th>
+                  <th className="py-3 px-4 cursor-pointer rounded-tr-xs" onClick={() => handleSort("cancel")}>
+                    <div className="flex items-center gap-1">PESANAN CANCEL {renderSortIcon("cancel")}</div>
+                  </th>
                 </tr>
-              ))}
-              <tr className="bg-gray-100 font-bold text-black border-t border-gray-200">
-                <td className="py-3 text-center"></td>
-                <td className="py-3 px-4">Total Keseluruhan</td>
-                <td className="py-3 px-4">
-                  {totalPesanan.toLocaleString("id-ID")}
-                </td>
-                <td className="py-3 px-4">
-                  {totalSelesai.toLocaleString("id-ID")}
-                </td>
-                <td className="py-3 px-4">{totalCancel}</td>
-              </tr>
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="font-medium text-gray-800">
+                {currentItems.map((item, index) => (
+                  <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 text-center text-gray-400 font-bold">
+                      {indexOfFirstItem + index + 1}
+                    </td>
+                    <td className="py-3 px-4">{item.bulan}</td>
+                    <td className="py-3 px-4">{formatNumber(item.totalPesanan)}</td>
+                    <td className="py-3 px-4">{formatNumber(item.selesai)}</td>
+                    <td className="py-3 px-4">{formatNumber(item.cancel)}</td>
+                  </tr>
+                ))}
+                <tr className="bg-gray-100 font-bold text-black border-t border-gray-200">
+                  <td className="py-3 text-center"></td>
+                  <td className="py-3 px-4">Total Keseluruhan</td>
+                  <td className="py-3 px-4">{formatNumber(totalPesanan)}</td>
+                  <td className="py-3 px-4">{formatNumber(totalSelesai)}</td>
+                  <td className="py-3 px-4">{formatNumber(totalCancel)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+
+        {/* PAGINATION - DI DALAM 1 BORDER */}
         {enablePagination && totalPages > 1 && (
-          <div className="flex items-center justify-between py-3 px-4 border-t border-gray-100 bg-white">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-3 px-4 border-t border-gray-100 bg-white rounded-b-xs">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
                 <span>Tampilkan</span>
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="border border-gray-300 rounded-md px-3 py-1.5 flex items-center gap-2 bg-white text-gray-700"
+                    className="border border-gray-300 rounded px-2 py-1 flex items-center gap-2 hover:bg-gray-50 bg-white"
                   >
                     {itemsPerPageState} Data{" "}
-                    <ChevronDown
-                      size={14}
-                      className={`transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
-                    />
+                    <ChevronDown size={12} className={`transition-transform ${isDropdownOpen ? "rotate-180" : ""}`} />
                   </button>
                   {isDropdownOpen && (
-                    <div className="absolute left-0 top-full mt-1 w-28 bg-white border rounded-md shadow-lg">
+                    <div className="absolute left-0 top-full mt-1 w-24 bg-white border border-gray-200 rounded shadow-lg z-9999">
                       {[5, 10, 15, 20].map((n) => (
                         <button
                           key={n}
@@ -274,7 +236,7 @@ export default function TabelPesananBulanan({
                             setCurrentPage(1);
                             setIsDropdownOpen(false);
                           }}
-                          className="block w-full px-3 py-2 text-left hover:bg-gray-100"
+                          className="block w-full px-3 py-2 text-left hover:bg-gray-100 text-[12px] font-bold"
                         >
                           {n} Data
                         </button>
@@ -283,16 +245,15 @@ export default function TabelPesananBulanan({
                   )}
                 </div>
               </div>
-              <span className="text-[12px] text-gray-500">
-                Menampilkan {startCount}-{endCount} dari {sortedData.length}{" "}
-                data
+              <span className="text-[12px] font-bold text-gray-400">
+                Menampilkan {startCount}-{endCount} dari {sortedData.length} data
               </span>
             </div>
             <div className="flex items-center gap-1">
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => p - 1)}
-                className="w-7 h-7 border rounded-md"
+                className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30"
               >
                 <ChevronLeft size={14} />
               </button>
@@ -300,7 +261,7 @@ export default function TabelPesananBulanan({
                 <button
                   key={p}
                   onClick={() => setCurrentPage(p)}
-                  className={`w-7 h-7 rounded-md border ${currentPage === p ? "bg-primary text-white border-primary" : "border-gray-200"}`}
+                  className={`w-7 h-7 rounded border ${currentPage === p ? "bg-primary text-white border-primary" : "border-gray-200"}`}
                 >
                   {p}
                 </button>
@@ -308,7 +269,7 @@ export default function TabelPesananBulanan({
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage((p) => p + 1)}
-                className="w-7 h-7 border rounded-md"
+                className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30"
               >
                 <ChevronRight size={14} />
               </button>
@@ -317,26 +278,18 @@ export default function TabelPesananBulanan({
         )}
       </div>
 
-      {/* MOBILE CARD VIEW */}
+      {/* MOBILE VIEW */}
       <div className="md:hidden space-y-3">
         <div className="bg-white rounded-xs border border-gray-100 overflow-x-auto">
-          <div className="min-w-137.5">
+          <div className="min-w-100">
             <table className="w-full">
               <thead className="bg-gray-100 text-black">
                 <tr>
-                  <th className="py-2 px-2 text-center text-[10px] rounded-tl-xs">
-                    NO
-                  </th>
+                  <th className="py-2 px-2 text-center text-[10px] rounded-tl-xs">NO</th>
                   <th className="py-2 px-2 text-left text-[10px]">Bulan</th>
-                  <th className="py-2 px-2 text-right text-[10px]">
-                    Total Pesanan
-                  </th>
-                  <th className="py-2 px-2 text-right text-[10px]">
-                    Pesanan Selesai
-                  </th>
-                  <th className="py-2 px-2 text-right text-[10px] rounded-tr-xs">
-                    Pesanan Cancel
-                  </th>
+                  <th className="py-2 px-2 text-right text-[10px]">Total Pesanan</th>
+                  <th className="py-2 px-2 text-right text-[10px]">Selesai</th>
+                  <th className="py-2 px-2 text-right text-[10px] rounded-tr-xs">Cancel</th>
                 </tr>
               </thead>
               <tbody>
@@ -349,13 +302,13 @@ export default function TabelPesananBulanan({
                       {item.bulan}
                     </td>
                     <td className="py-2 px-2 text-right text-gray-800 text-[10px]">
-                      {item.totalPesanan.toLocaleString("id-ID")}
+                      {formatNumber(item.totalPesanan)}
                     </td>
                     <td className="py-2 px-2 text-right text-gray-800 text-[10px]">
-                      {item.selesai.toLocaleString("id-ID")}
+                      {formatNumber(item.selesai)}
                     </td>
                     <td className="py-2 px-2 text-right text-gray-800 text-[10px]">
-                      {item.cancel}
+                      {formatNumber(item.cancel)}
                     </td>
                   </tr>
                 ))}
@@ -363,22 +316,21 @@ export default function TabelPesananBulanan({
                   <td className="py-2 px-2 text-center"></td>
                   <td className="py-2 px-2 text-gray-800 text-[10px]">Total</td>
                   <td className="py-2 px-2 text-right text-gray-800 text-[10px]">
-                    {totalPesanan.toLocaleString("id-ID")}
+                    {formatNumber(totalPesanan)}
                   </td>
                   <td className="py-2 px-2 text-right text-gray-800 text-[10px]">
-                    {totalSelesai.toLocaleString("id-ID")}
+                    {formatNumber(totalSelesai)}
                   </td>
                   <td className="py-2 px-2 text-right text-gray-800 text-[10px]">
-                    {totalCancel}
+                    {formatNumber(totalCancel)}
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
-
         {enablePagination && totalPages > 1 && (
-          <div className="md:hidden flex flex-col gap-2 py-4">
+          <div className="flex flex-col gap-2 py-4">
             <div className="text-center text-[10px] text-gray-500">
               Menampilkan {startCount}-{endCount} dari {sortedData.length} data
             </div>

@@ -12,7 +12,7 @@ const PaymentSuccessOnline = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showReceipt, setShowReceipt] = useState(false);
-  const  [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // State diubah: default-nya FALSE (berarti "Sedang Diproses" dulu)
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -37,7 +37,7 @@ const PaymentSuccessOnline = () => {
     subTotal = 0,
     discountAmount = 0,
     adminFee = 0,
-      customerName = "Pelanggan",
+    customerName = "Pelanggan",
     purchasedItems = [],
   } = location.state || {};
 
@@ -53,10 +53,14 @@ const PaymentSuccessOnline = () => {
 
           const currentStatus = orderData?.status;
 
-          if (currentStatus !== "PENDING" && currentStatus !== "CANCELED") {
-          setIsConfirmed(true);
-        };
-
+          if (
+            currentStatus !== "PENDING" &&
+            currentStatus !== "CANCELED" &&
+            currentStatus !== "VALIDATED"
+          ) {
+            // ✅ JANGAN LUPA VALIDATED JUGA
+            setIsConfirmed(true);
+          }
         } catch (error) {
           console.error("Gagal ambil detail pesanan:", error);
         }
@@ -67,7 +71,6 @@ const PaymentSuccessOnline = () => {
   }, [orderId]);
 
   const handleStruk = async () => {
-    
     setIsLoading(true);
 
     if (isConfirmed) {
@@ -84,17 +87,18 @@ const PaymentSuccessOnline = () => {
         setModal({
           isOpen: true,
           title: "Pesanan Belum Divalidasi",
-          message: "Maaf, pesanan Anda belum divalidasi oleh kasir. Pastikan Anda sudah menyelesaikan transaksi pembayaran via QRIS.",
+          message:
+            "Maaf, pesanan Anda belum divalidasi oleh kasir. Pastikan Anda sudah menyelesaikan transaksi pembayaran via QRIS.",
           type: "PENDING",
         });
         return;
-
       } else if (currentStatus === "CANCELED") {
         setIsLoading(false);
         setModal({
           isOpen: true,
           title: "Pesanan Dibatalkan",
-          message: "Pesanan Anda telah dibatalkan, kunjungi kasir atau silahkan memesan kembali.",
+          message:
+            "Pesanan Anda telah dibatalkan, kunjungi kasir atau silahkan memesan kembali.",
           type: "CANCELED",
         });
         return;
@@ -258,7 +262,6 @@ const PaymentSuccessOnline = () => {
           onClose={handleModalClose}
         />
       )}
-
     </div>
   );
 };

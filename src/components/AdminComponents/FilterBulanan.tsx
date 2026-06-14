@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
 const LIST_BULAN = [
@@ -6,17 +6,33 @@ const LIST_BULAN = [
   "Juli", "Agustus", "September", "Oktober", "November", "Desember"
 ];
 
-const LIST_TAHUN = ["2025", "2026"];
+const getYearList = () => {
+  const currentYear = new Date().getFullYear();
+  return [currentYear.toString(), (currentYear + 1).toString()];
+};
 
 interface FilterBulananProps {
   onFilterChange: (bulanTerpilih: string[], tahun: string) => void;
 }
 
 export default function FilterBulanan({ onFilterChange }: FilterBulananProps) {
-  const [selectedBulans, setSelectedBulans] = useState<string[]>(["Januari", "Februari", "Maret"]);
-  const [tahun, setTahun] = useState("2026");
+  // ✅ DEFAULT 2 BULAN TERAKHIR (BULAN LALU & BULAN SEKARANG)
+  const getLastTwoMonths = () => {
+    const currentMonthIndex = new Date().getMonth();
+    const lastMonthIndex = currentMonthIndex === 0 ? 11 : currentMonthIndex - 1;
+    return [LIST_BULAN[lastMonthIndex], LIST_BULAN[currentMonthIndex]];
+  };
+
+  const [selectedBulans, setSelectedBulans] = useState<string[]>(getLastTwoMonths());
+  const [tahun, setTahun] = useState(new Date().getFullYear().toString());
   const [isBulanOpen, setIsBulanOpen] = useState(false);
   const [isTahunOpen, setIsTahunOpen] = useState(false);
+  
+  const LIST_TAHUN = getYearList();
+
+  useEffect(() => {
+    onFilterChange(selectedBulans, tahun);
+  }, []);
 
   const handleBulanToggle = (bulan: string) => {
     let newSelected;
@@ -45,7 +61,6 @@ export default function FilterBulanan({ onFilterChange }: FilterBulananProps) {
     onFilterChange(selectedBulans, t);
   };
 
-  // Format tampilan bulan yang dipilih
   const getDisplayText = () => {
     if (selectedBulans.length === 0) return "Pilih Bulan";
     if (selectedBulans.length === 12) return "Semua Bulan";
@@ -55,7 +70,6 @@ export default function FilterBulanan({ onFilterChange }: FilterBulananProps) {
 
   return (
     <div className="flex flex-col sm:flex-row gap-6 items-start overflow-visible">
-      {/* Pilih Bulan */}
       <div className="space-y-1 relative overflow-visible">
         <span className="text-[11.5px] text-gray-400 font-bold block">Pilih Bulan</span>
         <div className="relative">
@@ -72,7 +86,6 @@ export default function FilterBulanan({ onFilterChange }: FilterBulananProps) {
           
           {isBulanOpen && (
             <div className="absolute left-0 top-full mt-1 w-56 bg-white border border-gray-200 rounded-xs shadow-lg z-100 p-3">
-              {/* Daftar bulan + Pilih Semua - LANGSUNG NYATU, TANPA GARIS */}
               <div className="flex flex-col gap-2 max-h-60 overflow-y-auto">
                 {LIST_BULAN.map((bulan) => (
                   <label key={bulan} className="flex items-center justify-between text-[13px] cursor-pointer hover:bg-gray-50 p-1 rounded">
@@ -85,7 +98,6 @@ export default function FilterBulanan({ onFilterChange }: FilterBulananProps) {
                     />
                   </label>
                 ))}
-                {/* Pilih Semua LANGSUNG DI BAWAH DESEMBER, TANPA GARIS */}
                 <label className="flex items-center justify-between text-[13px] font-bold text-primary cursor-pointer hover:bg-purple-50 p-1 rounded mt-1">
                   <span>Pilih Semua</span>
                   <input
@@ -101,7 +113,6 @@ export default function FilterBulanan({ onFilterChange }: FilterBulananProps) {
         </div>
       </div>
 
-      {/* Pilih Tahun */}
       <div className="space-y-1 relative overflow-visible">
         <span className="text-[11.5px] text-gray-400 font-bold block">Pilih Tahun</span>
         <div className="relative">

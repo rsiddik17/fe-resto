@@ -42,6 +42,17 @@ const OrderTrackingPage = () => {
       const orderResponse = await orderAPI.getMyAllOrders();
       const orderList = orderResponse.data || orderResponse.orders || [];
 
+      const mapStatus = (backendStatus: string): string => {
+        const status = backendStatus?.toUpperCase() || "";
+        if (status === "PENDING") return "pending";
+        if (status === "VALIDATED") return "proses";
+        if (status === "COOKING") return "dimasak";
+        if (status === "READY") return "diantar";
+        if (status === "SERVED") return "selesai";
+        if (status === "CANCELED") return "dibatalkan";
+        return "pending";
+      };
+
       const mappedOrders: Order[] = orderList.map((order: any) => {
         const adminFeeValue =
           Number(order.admin_fee) ||
@@ -67,7 +78,7 @@ const OrderTrackingPage = () => {
             0,
 
           // finalPayment: Number(order.grand_total_amount) || 0,
-          status: (order.status || "pending").toLowerCase(),
+          status: mapStatus(order.status),
           date: order.created_at
             ? new Date(order.created_at).toLocaleString("id-ID")
             : order.date || new Date().toLocaleString("id-ID"),
@@ -95,7 +106,7 @@ const OrderTrackingPage = () => {
         s === "pending" || s === "proses" || s === "dimasak" || s === "diantar"
       );
     } else {
-       return s === "selesai" || s === "dibatalkan";
+      return s === "selesai" || s === "dibatalkan";
     }
   });
 

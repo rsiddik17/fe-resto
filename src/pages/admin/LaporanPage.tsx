@@ -8,26 +8,27 @@ import LaporanTablePendapatan from "../../components/AdminComponents/LaporanTabl
 import LaporanTablePesanan from "../../components/AdminComponents/LaporanTablePesanan";
 import ReportIcon from "../../components/Icon/ReportIcon";
 import "react-datepicker/dist/react-datepicker.css";
+import { adminReportsAPI } from "../../api/adminReports.api";
 // DATA (sama seperti sebelumnya)
-const DATA_PESANAN_AWAL = [
-  { id: 1, tanggal: "05 Apr 2026", total: 135, selesai: 133, cancel: 2 },
-  { id: 2, tanggal: "04 Apr 2026", total: 151, selesai: 150, cancel: 1 },
-  { id: 3, tanggal: "03 Apr 2026", total: 155, selesai: 155, cancel: 0 },
-  { id: 4, tanggal: "02 Apr 2026", total: 135, selesai: 135, cancel: 0 },
-  { id: 5, tanggal: "01 Apr 2026", total: 144, selesai: 143, cancel: 1 },
-  { id: 6, tanggal: "31 Mar 2026", total: 155, selesai: 155, cancel: 0 },
-  { id: 7, tanggal: "30 Mar 2026", total: 162, selesai: 162, cancel: 0 },
-];
+// const DATA_PESANAN_AWAL = [
+//   { id: 1, tanggal: "05 Apr 2026", total: 135, selesai: 133, cancel: 2 },
+//   { id: 2, tanggal: "04 Apr 2026", total: 151, selesai: 150, cancel: 1 },
+//   { id: 3, tanggal: "03 Apr 2026", total: 155, selesai: 155, cancel: 0 },
+//   { id: 4, tanggal: "02 Apr 2026", total: 135, selesai: 135, cancel: 0 },
+//   { id: 5, tanggal: "01 Apr 2026", total: 144, selesai: 143, cancel: 1 },
+//   { id: 6, tanggal: "31 Mar 2026", total: 155, selesai: 155, cancel: 0 },
+//   { id: 7, tanggal: "30 Mar 2026", total: 162, selesai: 162, cancel: 0 },
+// ];
 
-const DATA_PENDAPATAN_AWAL = [
-  { id: 1, tanggal: "05 Apr 2026", totalPesanan: 133, pendapatan: 3009876 },
-  { id: 2, tanggal: "04 Apr 2026", totalPesanan: 150, pendapatan: 5987000 },
-  { id: 3, tanggal: "03 Apr 2026", totalPesanan: 155, pendapatan: 6507984 },
-  { id: 4, tanggal: "02 Apr 2026", totalPesanan: 135, pendapatan: 4876234 },
-  { id: 5, tanggal: "01 Apr 2026", totalPesanan: 143, pendapatan: 5001100 },
-  { id: 6, tanggal: "31 Mar 2026", totalPesanan: 155, pendapatan: 6654000 },
-  { id: 7, tanggal: "30 Mar 2026", totalPesanan: 162, pendapatan: 7875000 },
-];
+// const DATA_PENDAPATAN_AWAL = [
+//   { id: 1, tanggal: "05 Apr 2026", totalPesanan: 133, pendapatan: 3009876 },
+//   { id: 2, tanggal: "04 Apr 2026", totalPesanan: 150, pendapatan: 5987000 },
+//   { id: 3, tanggal: "03 Apr 2026", totalPesanan: 155, pendapatan: 6507984 },
+//   { id: 4, tanggal: "02 Apr 2026", totalPesanan: 135, pendapatan: 4876234 },
+//   { id: 5, tanggal: "01 Apr 2026", totalPesanan: 143, pendapatan: 5001100 },
+//   { id: 6, tanggal: "31 Mar 2026", totalPesanan: 155, pendapatan: 6654000 },
+//   { id: 7, tanggal: "30 Mar 2026", totalPesanan: 162, pendapatan: 7875000 },
+// ];
 
 const DATA_MENU_AWAL = [
   { id: 1, nama: "Es Teler", harga: 20000, kategori: "Minuman", total: 56 },
@@ -153,14 +154,14 @@ const LIST_BULAN = [
   "Desember",
 ];
 
-const parseTanggalFigma = (tglStr: string) => {
-  const parts = tglStr.split(" ");
-  if (parts.length < 3) return new Date();
-  const day = parseInt(parts[0], 10);
-  const bulanMap: { [key: string]: number } = { Mar: 2, Apr: 3 };
-  const month = bulanMap[parts[1]] !== undefined ? bulanMap[parts[1]] : 0;
-  return new Date(parseInt(parts[2], 10), month, day);
-};
+// const parseTanggalFigma = (tglStr: string) => {
+//   const parts = tglStr.split(" ");
+//   if (parts.length < 3) return new Date();
+//   const day = parseInt(parts[0], 10);
+//   const bulanMap: { [key: string]: number } = { Mar: 2, Apr: 3 };
+//   const month = bulanMap[parts[1]] !== undefined ? bulanMap[parts[1]] : 0;
+//   return new Date(parseInt(parts[2], 10), month, day);
+// };
 
 const LaporanPage = () => {
   const navigate = useNavigate();
@@ -168,21 +169,166 @@ const LaporanPage = () => {
     "Semua" | "Pesanan" | "Pendapatan" | "Menu"
   >("Semua");
   // const [rentangWaktu, setRentangWaktu] = useState("Harian");
-  const [tanggalMulai, setTanggalMulai] = useState<number>(30);
-  const [tanggalSelesai, setTanggalSelesai] = useState<number>(5);
+
+  const now = new Date();
+  const currentMonth = now.getMonth(); // 0-11 (Juni = 5)
+  const currentDate = now.getDate();
+
+  const [tanggalMulai, setTanggalMulai] = useState<number>(1);
+  const [tanggalSelesai, setTanggalSelesai] = useState<number>(currentDate);
   const [showLaporan, setShowLaporan] = useState(false);
-  const [bulanMulaiIdx, setBulanMulaiIdx] = useState(2);
-  const [bulanSelesaiIdx, setBulanSelesaiIdx] = useState(3);
+  const [bulanMulaiIdx, setBulanMulaiIdx] = useState(currentMonth);
+  const [bulanSelesaiIdx, setBulanSelesaiIdx] = useState(currentMonth);
+  const [loadingReport, setLoadingReport] = useState(false);
+
   // const [startDate, setStartDate] = useState<Date | null>(new Date());
   // const [endDate, setEndDate] = useState<Date | null>(new Date());
-  const [sortPesanan, ] = useState<any>({
-    field: "",
-    order: "asc",
-  });
-  const [sortPendapatan, ] = useState<any>({
-    field: "",
-    order: "asc",
-  });
+
+  const [pesananData, setPesananData] = useState<any[]>([]);
+  const [pendapatanData, setPendapatanData] = useState<any[]>([]);
+  const [menuData, setMenuData] = useState<any[]>(DATA_MENU_AWAL);
+
+  // const [sortPesanan, setSortPesanan] = useState({ field: "", order: "asc" });
+  // const [sortPendapatan, setSortPendapatan] = useState({
+  //   field: "",
+  //   order: "asc",
+  // });
+
+  const fetchReports = async () => {
+    setLoadingReport(true);
+    try {
+      const startDate = `2026-${(bulanMulaiIdx + 1).toString().padStart(2, "0")}-${tanggalMulai.toString().padStart(2, "0")}`;
+      const endDate = `2026-${(bulanSelesaiIdx + 1).toString().padStart(2, "0")}-${tanggalSelesai.toString().padStart(2, "0")}`;
+
+      const getReportCategory = () => {
+        if (activeTab === "Pesanan") return "orders";
+        if (activeTab === "Pendapatan") return "revenue";
+        if (activeTab === "Menu") return "menu";
+        return "orders";
+      };
+
+      // ✅ JIKA TAB "SEMUA", PANGGIL 3 API SEKALIGUS
+      if (activeTab === "Semua") {
+        const [ordersRes, revenueRes, menuRes] = await Promise.all([
+          adminReportsAPI.getReports({
+            reportCategory: "orders",
+            type: "daily",
+            startDate,
+            endDate,
+            page: 1,
+            limit: 100,
+          }),
+          adminReportsAPI.getReports({
+            reportCategory: "revenue",
+            type: "daily",
+            startDate,
+            endDate,
+            page: 1,
+            limit: 100,
+          }),
+          adminReportsAPI.getReports({
+            reportCategory: "menu",
+            type: "daily",
+            startDate,
+            endDate,
+            page: 1,
+            limit: 100,
+          }),
+        ]);
+
+        // Proses orders
+        const ordersData = (ordersRes.data || []).map(
+          (item: any, index: number) => ({
+            id: index + 1,
+            tanggal: item.label,
+            total: item.total_pesanan,
+            selesai: item.pesanan_selesai,
+            cancel: item.pesanan_cancel,
+          }),
+        );
+        setPesananData(ordersData);
+
+        // Proses revenue
+        const revenueData = (revenueRes.data || []).map(
+          (item: any, index: number) => ({
+            id: index + 1,
+            tanggal: item.label,
+            totalPesanan: item.total_pesanan,
+            pendapatan: item.total_pendapatan,
+          }),
+        );
+        setPendapatanData(revenueData);
+
+        // Proses menu
+        const menuDataMapped = (menuRes.data || []).map(
+          (item: any, index: number) => ({
+            id: index + 1,
+            nama: item.nama_menu,
+            harga: item.harga,
+            kategori: item.kategori === "FOOD" ? "Makanan" : "Minuman",
+            total: item.total,
+          }),
+        );
+        setMenuData(menuDataMapped);
+      } else {
+        // ✅ UNTUK TAB INDIVIDUAL (Pesanan, Pendapatan, Menu)
+        const reportCategory = getReportCategory();
+        const response = await adminReportsAPI.getReports({
+          reportCategory: reportCategory,
+          type: "daily",
+          startDate: startDate,
+          endDate: endDate,
+          page: 1,
+          limit: 100,
+        });
+
+        const reportData = response.data || [];
+
+        if (reportCategory === "orders") {
+          const formattedData = reportData.map((item: any, index: number) => ({
+            id: index + 1,
+            tanggal: item.label,
+            total: item.total_pesanan,
+            selesai: item.pesanan_selesai,
+            cancel: item.pesanan_cancel,
+          }));
+          setPesananData(formattedData);
+          setPendapatanData([]);
+          setMenuData([]);
+        } else if (reportCategory === "revenue") {
+          const formattedData = reportData.map((item: any, index: number) => ({
+            id: index + 1,
+            tanggal: item.label,
+            totalPesanan: item.total_pesanan,
+            pendapatan: item.total_pendapatan,
+          }));
+          setPesananData([]);
+          setPendapatanData(formattedData);
+          setMenuData([]);
+        } else if (reportCategory === "menu") {
+          const formattedData = reportData.map((item: any, index: number) => ({
+            id: index + 1,
+            nama: item.nama_menu,
+            harga: item.harga,
+            kategori: item.kategori === "FOOD" ? "Makanan" : "Minuman",
+            total: item.total,
+          }));
+          setPesananData([]);
+          setPendapatanData([]);
+          setMenuData(formattedData);
+        }
+      }
+    } catch (error) {
+      console.error("Gagal ambil laporan:", error);
+    } finally {
+      setLoadingReport(false);
+    }
+  };
+
+  const handleTampilkanLaporan = () => {
+    fetchReports();
+    setShowLaporan(true);
+  };
 
   const handlePrevBulanMulai = () =>
     setBulanMulaiIdx((prev) => (prev === 0 ? 11 : prev - 1));
@@ -192,37 +338,6 @@ const LaporanPage = () => {
     setBulanSelesaiIdx((prev) => (prev === 0 ? 11 : prev - 1));
   const handleNextBulanSelesai = () =>
     setBulanSelesaiIdx((prev) => (prev === 11 ? 0 : prev + 1));
-
-  const pesananSorted = [...DATA_PESANAN_AWAL].sort((a, b) => {
-    if (!sortPesanan.field) return 0;
-    if (sortPesanan.field === "tanggal") {
-      return sortPesanan.order === "asc"
-        ? parseTanggalFigma(a.tanggal).getTime() -
-            parseTanggalFigma(b.tanggal).getTime()
-        : parseTanggalFigma(b.tanggal).getTime() -
-            parseTanggalFigma(a.tanggal).getTime();
-    }
-    const field = sortPesanan.field as keyof typeof a;
-    return sortPesanan.order === "asc"
-      ? (a[field] as number) - (b[field] as number)
-      : (b[field] as number) - (a[field] as number);
-  });
-
-  const pendapatanSorted = [...DATA_PENDAPATAN_AWAL].sort((a, b) => {
-    if (!sortPendapatan.field) return 0;
-    if (sortPendapatan.field === "tanggal") {
-      return sortPendapatan.order === "asc"
-        ? parseTanggalFigma(a.tanggal).getTime() -
-            parseTanggalFigma(b.tanggal).getTime()
-        : parseTanggalFigma(b.tanggal).getTime() -
-            parseTanggalFigma(a.tanggal).getTime();
-    }
-    const field = sortPendapatan.field as keyof typeof a;
-    return sortPendapatan.order === "asc"
-      ? (a[field] as number) - (b[field] as number)
-      : (b[field] as number) - (a[field] as number);
-  });
-
   const periodeText = `${tanggalMulai} ${LIST_BULAN[bulanMulaiIdx]} - ${tanggalSelesai} ${LIST_BULAN[bulanSelesaiIdx]} 2026`;
 
   // FUNGSI INI ADALAH KOMPONEN KALENDER RAPI YANG BISA KAMU PAKAI
@@ -393,11 +508,12 @@ const LaporanPage = () => {
 
             {/* Tombol Tampilkan Laporan */}
             <button
-              onClick={() => setShowLaporan(true)}
+              onClick={handleTampilkanLaporan}
+              disabled={loadingReport}
               className="bg-primary hover:opacity-95 text-white text-[12.5px] font-bold px-5 py-2.5 rounded-xs shadow-md cursor-pointer flex items-center gap-2"
             >
               <ReportIcon className="w-4 h-4" />
-              Tampilkan Laporan
+              {loadingReport ? "Memuat..." : "Tampilkan Laporan"}
             </button>
           </div>
 
@@ -417,7 +533,7 @@ const LaporanPage = () => {
               <div className="space-y-12">
                 {(activeTab === "Semua" || activeTab === "Pesanan") && (
                   <LaporanTablePesanan
-                    data={pesananSorted}
+                    data={pesananData}
                     periode={periodeText}
                     //  enablePagination={true}
                     //   itemsPerPage={10}
@@ -425,7 +541,7 @@ const LaporanPage = () => {
                 )}
                 {(activeTab === "Semua" || activeTab === "Pendapatan") && (
                   <LaporanTablePendapatan
-                    data={pendapatanSorted}
+                    data={pendapatanData}
                     periode={periodeText}
                     //  enablePagination={true}
                     //   itemsPerPage={10}
@@ -433,7 +549,7 @@ const LaporanPage = () => {
                 )}
                 {(activeTab === "Semua" || activeTab === "Menu") && (
                   <LaporanTableMenu
-                    data={DATA_MENU_AWAL}
+                    data={menuData}
                     periode={periodeText}
                     //  enablePagination={true}
                   />

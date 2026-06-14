@@ -243,7 +243,7 @@ const CheckoutPageOnline = () => {
               </div>
               <button
                 onClick={() => setIsAddressModalOpen(true)}
-                className="text-primary border border-primary px-5 py-1.5 rounded-full text-[10px]"
+                className="text-primary border border-primary px-3 py-1 rounded-full text-[10px]"
               >
                 Ganti Alamat
               </button>
