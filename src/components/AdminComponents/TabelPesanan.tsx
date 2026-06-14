@@ -222,11 +222,11 @@ export default function TabelPesanan({
                   </tr>
                 ))}
                 <tr className="bg-gray-100 font-bold text-black border-t border-gray-200">
-                  <td className="py-3 text-center"></td>
-                  <td className="py-3 px-4">Total</td>
+                  <td className="py-3 text-center rounded-bl-xs"></td>
+                  <td className="py-3 px-4 ">Total</td>
                   <td className="py-3 px-4">{formatNumber(totalPesanan)}</td>
                   <td className="py-3 px-4">{formatNumber(totalSelesai)}</td>
-                  <td className="py-3 px-4">{formatNumber(totalCancel)}</td>
+                  <td className="py-3 px-4 rounded-br-xs">{formatNumber(totalCancel)}</td>
                 </tr>
               </tbody>
             </table>
@@ -312,7 +312,7 @@ export default function TabelPesanan({
         <div className="bg-white rounded-xs border border-gray-100 overflow-x-auto">
           <div className="min-w-125">
             <table className="w-full">
-              <thead className="bg-gray-100 text-black">
+              <thead className="bg-gray-200 text-black">
                 <tr>
                   <th className="py-2 px-2 text-center text-[10px]">NO</th>
                   <th className="py-2 px-2 text-left text-[10px]">Tanggal</th>

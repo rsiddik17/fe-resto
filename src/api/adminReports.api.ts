@@ -7,30 +7,53 @@ export interface ReportFilters {
   endDate?: string;
   month?: number;
   year?: number;
-  months?: number[];  // multiple bulan
+  months?: number[];
   page?: number;
   limit?: number;
 }
 
 export const adminReportsAPI = {
   getReports: async (filters?: ReportFilters) => {
-    const params: any = { ...filters };
+    const params: any = {};
     
-    // Handle months array menjadi multiple parameter
-     if (params.months && Array.isArray(params.months)) {
-      // Hapus months dari params, lalu tambahkan masing-masing sebagai parameter terpisah
-      const monthsArray = [...params.months];
-      delete params.months;
-      // Tambahkan setiap bulan sebagai parameter 'months' yang terpisah
-      monthsArray.forEach(month => {
-        if (!params.months) params.months = [];
-        params.months.push(month);
+    if (filters) {
+      Object.keys(filters).forEach(key => {
+        const value = filters[key as keyof ReportFilters];
+        
+        if (key === 'months' && Array.isArray(value) && value.length > 0) {
+          // 🔥 PERBAIKAN: Untuk multi bulan, kirim sebagai multiple parameter (months=3&months=4)
+          // Jangan pakai array, karena axios akan mengirim months[]=3&months[]=4
+          value.forEach(month => {
+            if (!params.months) params.months = [];
+            params.months.push(month);
+          });
+        } else if (value !== undefined && value !== null) {
+          params[key] = value;
+        }
       });
     }
     
+    console.log("📡 Sending params:", params);
+    
     const response = await axiosInstance.get("/admin/reports", {
       params,
+      paramsSerializer: (params) => {
+        const searchParams = new URLSearchParams();
+        Object.keys(params).forEach(key => {
+          if (key === 'months' && Array.isArray(params[key])) {
+            // ✅ KIRIM SEBAGAI months=3&months=4 (tanpa kurung siku)
+            params[key].forEach((value: number) => {
+              searchParams.append('months', value.toString());
+            });
+          } else if (params[key] !== undefined && params[key] !== null) {
+            searchParams.append(key, params[key].toString());
+          }
+        });
+        console.log("🔗 Final URL params:", searchParams.toString());
+        return searchParams.toString();
+      }
     });
+    
     return response.data;
   },
 };
