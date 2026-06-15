@@ -369,7 +369,7 @@ const CheckoutPageOnline = () => {
             <Button
               onClick={handleKonfirmasiPesanan}
               disabled={isSubmitting}
-              className="w-full md:w-2/3 py-3 rounded-full text-white text-lg font-bold shadow-md shadow-primary/20 transition-all active:scale-95"
+              className="w-full md:w-2/3 py-2 rounded-full text-white text-lg font-bold shadow-md shadow-primary/20 transition-all active:scale-95"
             >
               {isSubmitting ? "Memproses..." : "Konfirmasi Pesanan"}
             </Button>

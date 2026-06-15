@@ -48,7 +48,7 @@ const OrderTrackingPage = () => {
         if (status === "VALIDATED") return "proses";
         if (status === "COOKING") return "dimasak";
         if (status === "READY") return "diantar";
-        if (status === "SERVED") return "selesai";
+        if (status === "COMPLETED") return "selesai";
         if (status === "CANCELED") return "dibatalkan";
         return "pending";
       };

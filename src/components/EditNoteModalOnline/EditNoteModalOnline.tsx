@@ -40,7 +40,7 @@ const EditNoteModalOnline = ({ item, onClose, onSave }: EditNoteModalProps) => {
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Tidak ada"
-              className="w-full pl-11 pr-4 py-2 bg-[#F3F4F6] rounded-xs outline-none border-2 border-transparent focus:border-primary transition-all text-black text-sm"
+              className="w-full pl-11 pr-4 py-2 bg-primary/10 rounded-xs outline-none border-2 border-transparent focus:border-primary transition-all text-black text-sm"
               autoFocus
             />
           </div>

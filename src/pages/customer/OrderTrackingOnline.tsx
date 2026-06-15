@@ -13,7 +13,13 @@ interface Order {
   subTotal: number;
   discountAmount: number;
   adminFee: number;
- status: "pending" | "proses" | "dimasak" | "diantar" | "selesai" | "dibatalkan";
+  status:
+    | "pending"
+    | "proses"
+    | "dimasak"
+    | "diantar"
+    | "selesai"
+    | "dibatalkan";
   date: string;
 }
 
@@ -34,29 +40,33 @@ const OrderTrackingOnline = () => {
 
   // Ambil order dari state dengan berbagai kemungkinan struktur
   const orderFromState = location.state?.order || location.state;
-  const orderId = orderFromState?.orderId || orderFromState?.id || id;
+  const orderId = location.state?.orderId || id;
+  console.log("🔍 location.state:", location.state);
+  console.log("🔍 orderId dari state:", location.state?.orderId);
+  console.log("🔍 orderId dari params:", id);
+  console.log("🔍 Final orderId:", orderId);
 
   const fetchOrderDetail = async () => {
     // Jika sudah punya data lengkap dari state, pakai langsung
-    if (orderFromState && orderFromState.orderId) {
-      const mappedOrder: Order = {
-        orderId: orderFromState.orderId,
-        // 🔥 PERBAIKAN: pakai orderFromState, bukan orderData
-        address: getAddressString(orderFromState.address),
-        items: orderFromState.items || [],
-        finalPayment:
-          orderFromState.finalPayment || orderFromState.grand_total_amount || 0,
-        subTotal: orderFromState.subTotal || orderFromState.total_amount || 0,
-        discountAmount:
-          orderFromState.discountAmount || orderFromState.discount_amount || 0,
-        adminFee: orderFromState.adminFee || 0,
-        status: (orderFromState.status || "").toLowerCase(),
-        date: orderFromState.date || new Date().toLocaleString("id-ID"),
-      };
-      setCurrentOrder(mappedOrder);
-      setLoading(false);
-      return;
-    }
+    // if (orderFromState && orderFromState.orderId) {
+    //   const mappedOrder: Order = {
+    //     orderId: orderFromState.orderId,
+    //     // 🔥 PERBAIKAN: pakai orderFromState, bukan orderData
+    //     address: getAddressString(orderFromState.address),
+    //     items: orderFromState.items || [],
+    //     finalPayment:
+    //       orderFromState.finalPayment || orderFromState.grand_total_amount || 0,
+    //     subTotal: orderFromState.subTotal || orderFromState.total_amount || 0,
+    //     discountAmount:
+    //       orderFromState.discountAmount || orderFromState.discount_amount || 0,
+    //     adminFee: orderFromState.adminFee || 0,
+    //     status: (orderFromState.status || "").toLowerCase(),
+    //     date: orderFromState.date || new Date().toLocaleString("id-ID"),
+    //   };
+    //   setCurrentOrder(mappedOrder);
+    //   setLoading(false);
+    //   return;
+    // }
 
     if (!orderId) {
       setError("ID Pesanan tidak ditemukan");
@@ -69,6 +79,8 @@ const OrderTrackingOnline = () => {
     try {
       const response = await orderAPI.getMyOrderById(orderId);
       const orderData = response.data || response.order || response;
+      console.log("📦 ORDER DATA LENGKAP:", orderData);
+      console.log("📦 ID dari response:", orderData.id, orderData.orderId);
 
       const mapBackendStatus = (backendStatus: string): Order["status"] => {
         const status = backendStatus?.toUpperCase() || "";
@@ -76,13 +88,13 @@ const OrderTrackingOnline = () => {
         if (status === "VALIDATED") return "proses";
         if (status === "COOKING") return "dimasak";
         if (status === "READY") return "diantar";
-        if (status === "SERVED") return "selesai";
+        if (status === "COMPLETED") return "selesai";
         if (status === "CANCELED") return "dibatalkan"; // atau "pending"
         return "pending";
       };
 
       const mappedOrder: Order = {
-        orderId: orderData.id || orderData.orderId,
+        orderId: orderData.order_id || orderData.id || orderData.orderId || orderId,
         // 🔥 PERBAIKAN: gunakan helper function
         address: getAddressString(orderData.address),
         items: (orderData.order_items || []).map((item: any) => ({
@@ -131,21 +143,18 @@ const OrderTrackingOnline = () => {
 
   const isDimasakActive =
     // status === "proses" ||
-    status === "dimasak" ||
-    status === "diantar" ||
-    status === "selesai";
-  const isDiantarActive =
-    status === "diantar" || status === "selesai";
+    status === "dimasak" || status === "diantar" || status === "selesai";
+  const isDiantarActive = status === "diantar" || status === "selesai";
 
   let progressWidth = "0%";
   if (status === "pending") progressWidth = "0%"; // atau "10%" kalau mau sedikit
   if (status === "proses") progressWidth = "25%";
   if (status === "dimasak") progressWidth = "50%";
   if (status === "diantar") progressWidth = "100%";
-if (status === "selesai") progressWidth = "100%";
+  if (status === "selesai") progressWidth = "100%";
 
   let bannerText = "Pesanan Anda sedang diproses sistem";
- if (status === "pending") {
+  if (status === "pending") {
     bannerText = "Menunggu konfirmasi pembayaran";
   } else if (status === "proses") {
     bannerText = "Pesanan dikonfirmasi"; // Teks lebih logis untuk VALIDATED
@@ -303,7 +312,7 @@ if (status === "selesai") progressWidth = "100%";
         <div className="flex justify-center mb-10">
           <div className="bg-[#F3E8F3] px-8 py-3 rounded-full flex items-center gap-2 border border-purple-100 shadow-sm">
             <div className="w-2.5 h-2.5 bg-primary rounded-full animate-pulse" />
-            <p className="text-primary text-xs sm:text-sm font-black tracking-wide">
+            <p className="text-primary text-xs sm:text-sm font-semibold tracking-wide">
               Status saat ini: {bannerText}
             </p>
           </div>
