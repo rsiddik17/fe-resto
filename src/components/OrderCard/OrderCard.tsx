@@ -53,7 +53,7 @@ const OrderCard = ({ order, activeTab }: any) => {
               <button
                 onClick={() => {
                   if (activeTab === "Aktif") {
-                    navigate("/customer/track-order", { state: { order } });
+                    navigate("/customer/track-order", { state: {  orderId: order.orderId  } });
                   } else {
                     navigate("/customer/menu");
                   }

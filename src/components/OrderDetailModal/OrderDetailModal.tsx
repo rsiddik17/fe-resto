@@ -21,7 +21,7 @@ const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
   useEffect(() => {
     const fetchDetailOrder = async () => {
       if (!order?.orderId) return;
-      
+
       try {
         setLoading(true);
         // ✅ PAKAI API getMyOrderById untuk detail lengkap
@@ -36,7 +36,7 @@ const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
         setLoading(false);
       }
     };
-    
+
     fetchDetailOrder();
   }, [order?.orderId]);
 
@@ -52,33 +52,45 @@ const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
   }
 
   const orderData = detailOrder || order;
-  
+
   // ✅ Ambil admin fee dari payments.unique_code
-  const adminFeeValue = 
-    Number(orderData.payments?.unique_code) ||  // ini yang penting!
+  const adminFeeValue =
+    Number(orderData.payments?.unique_code) || // ini yang penting!
     Number(orderData.unique_code) ||
     Number(orderData.admin_fee) ||
     0;
-  
-  const finalPaymentValue = 
+
+  const finalPaymentValue =
     Number(orderData.payments?.grand_total_amount) ||
     Number(orderData.grand_total_amount) ||
     order.finalPayment ||
     0;
 
-  const subTotal = Number(orderData.payments?.total_amount) || Number(orderData.total_amount) || order.subTotal || 0;
-  const discountAmount = Number(orderData.payments?.discount_amount) || Number(orderData.discount_amount) || order.discountAmount || 0;
-  const taxAmount = Number(orderData.payments?.tax_amount) || Number(orderData.tax_amount) || order.taxAmount || 0;
+  const subTotal =
+    Number(orderData.payments?.total_amount) ||
+    Number(orderData.total_amount) ||
+    order.subTotal ||
+    0;
+  const discountAmount =
+    Number(orderData.payments?.discount_amount) ||
+    Number(orderData.discount_amount) ||
+    order.discountAmount ||
+    0;
+  const taxAmount =
+    Number(orderData.payments?.tax_amount) ||
+    Number(orderData.tax_amount) ||
+    order.taxAmount ||
+    0;
   const status = orderData.status || order.status || "PENDING";
   const s = status.toString().trim().toLowerCase();
-const isSelesai = s === "selesai";
+  const isSelesai = s === "selesai";
 
   console.log("OrderDetailModal - Admin Fee:", adminFeeValue);
   console.log("OrderDetailModal - Final Payment:", finalPaymentValue);
 
   return (
     <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/10 px-4 backdrop-blur-[1px]">
-      <div className="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl relative flex flex-col max-h-[85vh] ">
+      <div className="bg-white w-full max-w-sm rounded-xs overflow-hidden shadow-2xl relative flex flex-col max-h-[85vh] ">
         <div className="p-4 border-b border-gray-50 flex justify-between items-center bg-white shrink-0">
           <h3 className="text-gray-900 text-sm font-bold">Detail Pesanan</h3>
           <button
@@ -97,7 +109,10 @@ const isSelesai = s === "selesai";
                 #{orderData.order_id || order.orderId || "-"}
               </h3>
               <p className="text-[11px] text-gray-400 mt-0.5">
-                {orderData.date || order.date || new Date(orderData.created_at).toLocaleString("id-ID") || "-"}
+                {orderData.date ||
+                  order.date ||
+                  new Date(orderData.created_at).toLocaleString("id-ID") ||
+                  "-"}
               </p>
             </div>
             <div
@@ -111,34 +126,53 @@ const isSelesai = s === "selesai";
           <div className="bg-[#F3E8F3]/30 border border-primary/5 rounded-[14px] p-3">
             <div className="flex items-center gap-1.5 mb-1">
               <MapPin size={14} className="text-primary fill-primary/10" />
-              <h4 className="font-bold text-gray-950 text-[12px]">Alamat Pengiriman</h4>
+              <h4 className="font-bold text-gray-950 text-[12px]">
+                Alamat Pengiriman
+              </h4>
             </div>
             <p className="text-[11px] text-gray-600 leading-normal ml-5">
-              {orderData.address?.address_name || order.address || "Alamat tidak tersedia"}
+              {orderData.address?.address_name ||
+                order.address ||
+                "Alamat tidak tersedia"}
             </p>
           </div>
 
           {/* Items */}
           <div className="space-y-1.5">
-            <h4 className="text-gray-400 font-bold text-[9px] uppercase tracking-wider">Item Pesanan</h4>
+            <h4 className="text-gray-400 font-bold text-[9px] uppercase tracking-wider">
+              Item Pesanan
+            </h4>
             <div className="bg-[#F3E8F3]/30 border border-primary/5 rounded-[14px] p-3 space-y-2">
-              {(orderData.order_items || order.items || []).map((item: any, idx: number) => {
-                const price = item.price_at_transaction || item.price || 0;
-                const qty = item.quantity || item.qty || 0;
-                const name = item.menu_name || item.menu?.name || item.name || "Menu";
-                const notes = item.notes || "Tidak ada";
-                return (
-                  <div key={idx} className="flex justify-between items-start border-b border-gray-100 last:border-0 pb-2 last:pb-0">
-                    <div className="min-w-0">
+              {(orderData.order_items || order.items || []).map(
+                (item: any, idx: number) => {
+                  const price = item.price_at_transaction || item.price || 0;
+                  const qty = item.quantity || item.qty || 0;
+                  const name =
+                    item.menu_name || item.menu?.name || item.name || "Menu";
+                  const notes = item.notes || "Tidak ada";
+                  return (
+                    <div
+                      key={idx}
+                      className="flex justify-between items-start border-b border-gray-100 last:border-0 pb-2 last:pb-0"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-gray-800 font-bold text-[12px]">
+                          {name}{" "}
+                          <span className="text-primary font-black ml-1">
+                            x{qty}
+                          </span>
+                        </p>
+                        <p className="text-[10px] text-gray-400 mt-0.5">
+                          Catatan: {notes}
+                        </p>
+                      </div>
                       <p className="text-gray-800 font-bold text-[12px]">
-                        {name} <span className="text-primary font-black ml-1">x{qty}</span>
+                        Rp{formatPrice(price * qty)}
                       </p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">Catatan: {notes}</p>
                     </div>
-                    <p className="text-gray-800 font-bold text-[12px]">Rp{formatPrice(price * qty)}</p>
-                  </div>
-                );
-              })}
+                  );
+                },
+              )}
             </div>
           </div>
 
@@ -152,7 +186,9 @@ const isSelesai = s === "selesai";
             {discountAmount > 0 && (
               <div className="flex justify-between text-[11px] text-gray-600 font-medium">
                 <span>Diskon</span>
-                <span className="text-red-500">-Rp{formatPrice(discountAmount)}</span>
+                <span className="text-red-500">
+                  -Rp{formatPrice(discountAmount)}
+                </span>
               </div>
             )}
 
@@ -169,7 +205,9 @@ const isSelesai = s === "selesai";
 
             <div className="flex justify-between text-[14px] font-black text-gray-900 pt-2 border-t border-gray-100">
               <span>Total Pembayaran</span>
-              <span className="text-primary">Rp{formatPrice(finalPaymentValue)}</span>
+              <span className="text-primary">
+                Rp{formatPrice(finalPaymentValue)}
+              </span>
             </div>
           </div>
         </div>
@@ -178,11 +216,15 @@ const isSelesai = s === "selesai";
           <button
             onClick={() => {
               if (!isSelesai) {
-                navigate("/customer/track-order", { state: { order: orderData } });
+                const orderIdToSend =
+                  orderData.order_id || orderData.orderId || order.orderId;
+                navigate("/customer/track-order", {
+                  state: { orderId: orderIdToSend },
+                });
                 onClose();
               }
             }}
-            className="w-full py-3 bg-primary text-white font-bold rounded-xl text-[14px] shadow-md shadow-purple-100 active:scale-[0.98] transition-all"
+            className="w-full py-2 bg-primary text-white font-bold rounded-xs text-[14px] shadow-md shadow-purple-100 active:scale-[0.98] transition-all"
           >
             {isSelesai ? "Beli Lagi" : "Pantau Status"}
           </button>
