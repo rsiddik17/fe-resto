@@ -55,9 +55,6 @@ const LandingPage = () => {
       const itemInCart = currentCart.find((c) => String(c.id) === String(item.id));
       const remainingStock = (item.stock || 0) - (itemInCart?.qty || 0);
 
-     
-     
-
       return { 
         ...item, 
         image: item.image,
