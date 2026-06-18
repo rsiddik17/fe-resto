@@ -213,21 +213,35 @@ const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
         </div>
 
         <div className="p-4 bg-white border-t border-gray-50 shrink-0">
-          <button
-            onClick={() => {
-              if (!isSelesai) {
+          {status === "CANCELED" || status === "dibatalkan" ? (
+            <div className="w-full py-2 bg-gray-200 text-gray-500 font-bold rounded-xs text-[14px] text-center">
+              Pesanan Dibatalkan
+            </div>
+          ) : isSelesai ? (
+            <button
+              onClick={() => {
+                // Aksi beli lagi
+                onClose();
+              }}
+              className="w-full py-2 bg-primary text-white font-bold rounded-xs text-[14px] shadow-md shadow-purple-100 active:scale-[0.98] transition-all"
+            >
+              Beli Lagi
+            </button>
+          ) : (
+            <button
+              onClick={() => {
                 const orderIdToSend =
                   orderData.order_id || orderData.orderId || order.orderId;
                 navigate("/customer/track-order", {
                   state: { orderId: orderIdToSend },
                 });
                 onClose();
-              }
-            }}
-            className="w-full py-2 bg-primary text-white font-bold rounded-xs text-[14px] shadow-md shadow-purple-100 active:scale-[0.98] transition-all"
-          >
-            {isSelesai ? "Beli Lagi" : "Pantau Status"}
-          </button>
+              }}
+              className="w-full py-2 bg-primary text-white font-bold rounded-xs text-[14px] shadow-md shadow-purple-100 active:scale-[0.98] transition-all"
+            >
+              Pantau Status
+            </button>
+          )}
         </div>
       </div>
     </div>
