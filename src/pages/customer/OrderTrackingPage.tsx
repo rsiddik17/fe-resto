@@ -88,7 +88,7 @@ const OrderTrackingPage = () => {
       console.log("✅ Mapped orders with addresses:", mappedOrders);
       setOrders(mappedOrders);
     } catch (err: any) {
-      console.error("❌ Gagal mengambil data:", err);
+      console.error(" Gagal mengambil data:", err);
       setError(err.message || "Gagal memuat data");
     } finally {
       setLoading(false);

@@ -94,7 +94,8 @@ const OrderTrackingOnline = () => {
       };
 
       const mappedOrder: Order = {
-        orderId: orderData.order_id || orderData.id || orderData.orderId || orderId,
+        orderId:
+          orderData.order_id || orderData.id || orderData.orderId || orderId,
         // 🔥 PERBAIKAN: gunakan helper function
         address: getAddressString(orderData.address),
         items: (orderData.order_items || []).map((item: any) => ({
@@ -243,11 +244,21 @@ const OrderTrackingOnline = () => {
           <div className="relative z-10 grid grid-cols-3 gap-2 sm:gap-4">
             {/* Step 1: Pesanan Diterima */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-primary flex items-center justify-center text-white shadow-lg border-4 sm:border-[6px] border-white">
+              <div
+                className={cn(
+                  "w-14 h-14 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-white shadow-lg border-4 sm:border-[6px] border-white transition-all duration-500",
+                  status !== "pending" ? "bg-primary" : "bg-gray-200",
+                )}
+              >
                 <Check size={24} className="sm:w-9 sm:h-9" strokeWidth={4} />
               </div>
               <div className="mt-2 sm:mt-4">
-                <h3 className="font-black text-gray-900 text-[11px] sm:text-[13px] leading-tight">
+                <h3
+                  className={cn(
+                    "font-black text-[11px] sm:text-[13px] transition-colors duration-500 leading-tight",
+                    status !== "pending" ? "text-gray-900" : "text-gray-300",
+                  )}
+                >
                   Pesanan Diterima
                 </h3>
                 <p className="text-[9px] sm:text-[12px] text-gray-400 mt-0.5 sm:mt-1 leading-tight">
