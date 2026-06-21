@@ -32,8 +32,11 @@ axiosInstance.interceptors.response.use(
 
       // LOGIKA BARU: Cek apakah user sedang berada di halaman QR (Guest)
       const isQrRoute = currentPath.includes("/qr/");
+
+      //  Deteksi apakah URL-nya bener-bener endpoint update-password milik modul Online Customer
+      const isCustomerChangePassword = error.config.url === "/profile/update-password";
       
-      if (!isLoginUrl && !isQrRoute) {
+      if (!isLoginUrl && !isQrRoute && !isCustomerChangePassword) {
         console.warn("Sesi habis atau tidak valid. Melakukan auto-logout...");
         
         // Bersihkan state Zustand HINGGA BERSIH sebelum redirect!

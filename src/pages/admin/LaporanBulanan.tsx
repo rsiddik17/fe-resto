@@ -260,7 +260,7 @@ const LaporanBulananPage = () => {
     <div className="flex h-screen w-screen overflow-hidden bg-[#F3F4F6]">
       <AdminSidebar onLogout={() => console.log("Admin Logout")} />
 
-      <main className="flex-1 flex flex-col h-full min-w-0 overflow-y-auto p-4 md:p-6">
+      <main className=" flex-1 flex flex-col h-full min-w-0 overflow-y-auto p-4 md:p-6 pt-14 md:pt-6">
         <AdminHeader
           title="Laporan"
           subtitle="Kelola dan lihat laporan harian, mingguan, atau bulanan"

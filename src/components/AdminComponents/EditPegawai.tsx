@@ -6,6 +6,16 @@ import AdminHeader from "../../components/AdminComponents/AdminHeader";
 import ConfirAlamat from "../ConfirmationModal/ConfirmationModal";
 import SelectDropdown from "../AdminComponents/SelectDropdown";
 import { staffAPI } from "../../api/staff.api";
+import { z } from "zod";
+
+// ✅ Zod Schema (tanpa password)
+const editStaffSchema = z.object({
+  fullname: z.string().min(1, "Nama lengkap wajib diisi"),
+  email: z.string().email("Email tidak valid"),
+  phone_number: z.string().min(10, "Nomor telepon minimal 10 digit"),
+  role: z.string().min(1, "Role akses wajib dipilih"),
+  gender: z.enum(["MALE", "FEMALE"]),
+});
 
 const ROLE_MAPPING: { [key: string]: string } = {
   Kasir: "CASHIER",
@@ -22,23 +32,46 @@ const EditPegawaiPage = () => {
   const location = useLocation();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  // Form State
   const [nama, setNama] = useState("");
   const [noTelepon, setNoTelepon] = useState("");
   const [jenisKelamin, setJenisKelamin] = useState("Perempuan");
   const [role, setRole] = useState("Dapur");
   const [email, setEmail] = useState("");
 
+  const [fieldErrors, setFieldErrors] = useState<{
+    fullname?: string;
+    email?: string;
+    phone_number?: string;
+    role?: string;
+    gender?: string;
+  }>({});
+  const [generalError, setGeneralError] = useState<string | null>(null);
+
+  // ✅ State untuk semua staff (buat validasi email duplikat)
+  const [allStaff, setAllStaff] = useState<any[]>([]);
+
+  // ✅ Ambil semua staff saat halaman dimuat
+  useEffect(() => {
+    const fetchAllStaff = async () => {
+      try {
+        const response = await staffAPI.getAllStaff();
+        setAllStaff(response.data || []);
+      } catch (error) {
+        console.error("Gagal ambil data staff:", error);
+      }
+    };
+    fetchAllStaff();
+  }, []);
+
   useEffect(() => {
     const pegawaiData = location.state?.pegawaiData;
-    
+
     if (pegawaiData) {
       setNama(pegawaiData.fullname || pegawaiData.nama || "");
       setEmail(pegawaiData.email || "");
       setNoTelepon(pegawaiData.phone_number || pegawaiData.noTelepon || "");
       setRole(pegawaiData.role || "Dapur");
-      
-      // Konversi gender dari API ke tampilan
+
       if (pegawaiData.gender === "MALE") {
         setJenisKelamin("Laki-Laki");
       } else if (pegawaiData.gender === "FEMALE") {
@@ -67,23 +100,90 @@ const EditPegawaiPage = () => {
   };
 
   const handleFinalSave = async () => {
+    setIsConfirmOpen(false);
+    setFieldErrors({});
+    setGeneralError(null);
+
+    // ✅ VALIDASI EMAIL DUPLIKAT MANUAL
+    const isEmailTaken = allStaff.some(
+      (staff) => staff.email === email && staff.id !== id
+    );
+
+    if (isEmailTaken) {
+      setFieldErrors({ email: "Email sudah digunakan" });
+      return;
+    }
+
     try {
-      const payload = {
+      const validatedData = editStaffSchema.parse({
         fullname: nama,
         email: email,
         phone_number: noTelepon,
-        role: getMappedRole(role),
+        role: role,
         gender: jenisKelamin === "Laki-Laki" ? "MALE" : "FEMALE",
+      });
+
+      const payload = {
+        fullname: validatedData.fullname,
+        email: validatedData.email,
+        phone_number: validatedData.phone_number,
+        role: getMappedRole(validatedData.role),
+        gender: validatedData.gender,
       };
+
+      console.log("📤 Payload yang dikirim:", payload);
 
       await staffAPI.updateStaff(id!, payload);
       navigate("/admin/employee-management");
     } catch (error: any) {
-      console.error("Error update:", error.response?.data);
-      alert(
-        "Gagal update: " +
-          (error.response?.data?.message || "Terjadi kesalahan"),
-      );
+      console.log("FULL ERROR:", error);
+      console.log("RESPONSE DATA:", error.response?.data);
+      console.log("STATUS:", error.response?.status);
+
+      if (error instanceof z.ZodError) {
+        const errors: any = {};
+        error.issues.forEach((err) => {
+          const path = err.path[0];
+          errors[path] = err.message;
+        });
+        setFieldErrors(errors);
+        return;
+      }
+
+      const backendError = error?.response?.data;
+
+      if (backendError) {
+        if (backendError.errors) {
+          const fieldErrors: any = {};
+          Object.keys(backendError.errors).forEach((key) => {
+            const fieldMap: { [key: string]: string } = {
+              email: "email",
+              phone: "phone_number",
+              phone_number: "phone_number",
+              fullname: "fullname",
+              role: "role",
+              gender: "gender",
+            };
+            const mappedKey = fieldMap[key] || key;
+            fieldErrors[mappedKey] = Array.isArray(backendError.errors[key])
+              ? backendError.errors[key][0]
+              : backendError.errors[key];
+          });
+          setFieldErrors(fieldErrors);
+          return;
+        }
+
+        const msg = backendError.message?.toLowerCase() || "";
+        if (msg.includes("email") || msg.includes("already") || msg.includes("terdaftar")) {
+          setFieldErrors({ email: backendError.message });
+        } else if (msg.includes("phone") || msg.includes("telepon") || msg.includes("nomor")) {
+          setFieldErrors({ phone_number: backendError.message });
+        } else {
+          setGeneralError(backendError.message);
+        }
+      } else {
+        setGeneralError("Gagal memperbarui pegawai. Silakan coba lagi.");
+      }
     }
   };
 
@@ -91,7 +191,7 @@ const EditPegawaiPage = () => {
     <div className="flex h-screen w-screen overflow-hidden bg-[#F3F4F6]">
       <AdminSidebar onLogout={() => console.log("Admin Logout")} />
 
-      <main className="flex-1 flex flex-col h-full min-w-0 overflow-y-auto p-5 md:p-6">
+      <main className=" flex-1 flex flex-col h-full min-w-0 overflow-y-auto p-5 md:p-6 pt-14 md:pt-6">
         <AdminHeader
           title="Manajemen Pegawai"
           subtitle="Pantau data sistem dan aktivitas pegawai"
@@ -114,6 +214,12 @@ const EditPegawaiPage = () => {
               }}
               className="space-y-6 max-w-4xl"
             >
+              {generalError && (
+                <div className="bg-red-50 border border-red-300 text-red-600 px-4 py-3 rounded-xs text-sm font-medium">
+                  {generalError}
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
                   <label className="text-[11.5px] font-extrabold text-black uppercase tracking-wider">
@@ -123,9 +229,20 @@ const EditPegawaiPage = () => {
                     type="text"
                     required
                     value={nama}
-                    onChange={(e) => setNama(e.target.value)}
-                    className="w-full bg-white/60 border border-gray-200 rounded-xs px-4 py-3 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
+                    onChange={(e) => {
+                      setNama(e.target.value);
+                      if (fieldErrors.fullname)
+                        setFieldErrors({ ...fieldErrors, fullname: undefined });
+                    }}
+                    className={`w-full bg-white/60 border ${
+                      fieldErrors.fullname ? "border-red-500" : "border-gray-200"
+                    } rounded-xs px-4 py-3 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all`}
                   />
+                  {fieldErrors.fullname && (
+                    <p className="text-red-500 text-[10px] font-bold mt-1">
+                      {fieldErrors.fullname}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[11.5px] font-extrabold text-black uppercase tracking-wider">
@@ -135,9 +252,20 @@ const EditPegawaiPage = () => {
                     type="text"
                     required
                     value={noTelepon}
-                    onChange={(e) => setNoTelepon(e.target.value)}
-                    className="w-full bg-white/60 border border-gray-200 rounded-xs px-4 py-3 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
+                    onChange={(e) => {
+                      setNoTelepon(e.target.value);
+                      if (fieldErrors.phone_number)
+                        setFieldErrors({ ...fieldErrors, phone_number: undefined });
+                    }}
+                    className={`w-full bg-white/60 border ${
+                      fieldErrors.phone_number ? "border-red-500" : "border-gray-200"
+                    } rounded-xs px-4 py-3 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all`}
                   />
+                  {fieldErrors.phone_number && (
+                    <p className="text-red-500 text-[10px] font-bold mt-1">
+                      {fieldErrors.phone_number}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -152,7 +280,11 @@ const EditPegawaiPage = () => {
                         type="radio"
                         name="jk"
                         checked={jenisKelamin === "Laki-Laki"}
-                        onChange={() => setJenisKelamin("Laki-Laki")}
+                        onChange={() => {
+                          setJenisKelamin("Laki-Laki");
+                          if (fieldErrors.gender)
+                            setFieldErrors({ ...fieldErrors, gender: undefined });
+                        }}
                         className="w-4 h-4 accent-primary"
                       />
                       Laki-Laki
@@ -162,29 +294,41 @@ const EditPegawaiPage = () => {
                         type="radio"
                         name="jk"
                         checked={jenisKelamin === "Perempuan"}
-                        onChange={() => setJenisKelamin("Perempuan")}
+                        onChange={() => {
+                          setJenisKelamin("Perempuan");
+                          if (fieldErrors.gender)
+                            setFieldErrors({ ...fieldErrors, gender: undefined });
+                        }}
                         className="w-4 h-4 accent-primary"
                       />
                       Perempuan
                     </label>
                   </div>
+                  {fieldErrors.gender && (
+                    <p className="text-red-500 text-[10px] font-bold">
+                      {fieldErrors.gender}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
                   <SelectDropdown
                     label="Role Akses"
                     value={role}
-                    options={[
-                      "Kiosk",
-                      "Kasir",
-                      "Pelayan",
-                      "Dapur",
-                      "Admin Role",
-                    ]}
-                    onChange={setRole}
+                    options={["Kiosk", "Kasir", "Pelayan", "Dapur", "Admin Role"]}
+                    onChange={(val) => {
+                      setRole(val);
+                      if (fieldErrors.role)
+                        setFieldErrors({ ...fieldErrors, role: undefined });
+                    }}
                     placeholder="Pilih Role Akses"
                     required
                   />
+                  {fieldErrors.role && (
+                    <p className="text-red-500 text-[10px] font-bold">
+                      {fieldErrors.role}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -196,12 +340,22 @@ const EditPegawaiPage = () => {
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-white/60 border border-gray-200 rounded-xs px-4 py-3 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (fieldErrors.email)
+                      setFieldErrors({ ...fieldErrors, email: undefined });
+                  }}
+                  className={`w-full bg-white/60 border ${
+                    fieldErrors.email ? "border-red-500" : "border-gray-200"
+                  } rounded-xs px-4 py-3 text-[13.5px] font-semibold text-gray-800 outline-hidden focus:border-primary focus:bg-white transition-all`}
                 />
+                {fieldErrors.email && (
+                  <p className="text-red-500 text-[10px] font-bold mt-1">
+                    {fieldErrors.email}
+                  </p>
+                )}
               </div>
 
-              {/* BUTTON */}
               <div className="pt-4 flex flex-col sm:flex-row sm:justify-end gap-3 border-t border-gray-100">
                 <button
                   type="button"

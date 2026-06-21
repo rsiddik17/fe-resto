@@ -143,7 +143,7 @@ const DaftarPelangganPage = () => {
     <div className="flex h-screen w-screen overflow-hidden bg-[#F3F4F6]">
       <AdminSidebar onLogout={() => console.log("Admin Logout")} />
 
-      <main className="flex-1 flex flex-col h-full min-w-0 overflow-y-auto p-4 md:p-6">
+      <main className="flex-1 flex flex-col h-full min-w-0 overflow-y-auto p-4 md:p-6 pt-14 md:pt-6">
         <div className="w-full max-w-7xl mx-auto">
           <AdminHeader
             title="Daftar Pelanggan"
@@ -151,8 +151,8 @@ const DaftarPelangganPage = () => {
           />
 
           {/* ========== SORTING MOBILE ========== */}
-          <div className="md:hidden mt-4">
-            <div className="bg-white p-3 rounded-xs shadow-sm border border-gray-100">
+          <div className="md:hidden ">
+            <div className="bg-white p-4 rounded-xs shadow-sm border border-gray-100">
               <span className="text-xs font-bold text-gray-500 block mb-2">
                 Urutkan berdasarkan:
               </span>
@@ -188,96 +188,97 @@ const DaftarPelangganPage = () => {
           {/* ========== DESKTOP TABLE ========== */}
           <div className="hidden md:block bg-white rounded-xs shadow-sm border border-gray-150 mt-4">
             <div className="overflow-x-auto">
-              <table className="w-full table-auto text-left text-[10px]">
-                <thead>
-                  <tr className="bg-primary font-bold text-white uppercase text-[9px]">
-                    <th className="py-2 text-center w-10 rounded-tl-xs">NO</th>
+              <table className="w-full table-auto text-left text-xs">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-primary font-semibold text-white uppercase text-[10px]">
+                    <th className="py-2 text-center w-[5%] rounded-tl-xs">NO</th>{" "}
+                    
                     <th
-                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap"
+                      className="py-2 px-2 cursor-pointer select-none group whitespace-nowrap w-[11%]"
                       onClick={() => handleSort("nama")}
                     >
-                      <div className="flex items-center gap-0.5">
+                      <div className="flex items-center gap-1">
                         Nama {renderSortIcon("nama")}
                       </div>
                     </th>
                     <th
-                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap"
+                      className="py-2 px-2 cursor-pointer select-none group whitespace-nowrap w-[17%]"
                       onClick={() => handleSort("email")}
                     >
-                      <div className="flex items-center gap-0.5">
+                      <div className="flex items-center gap-1">
                         Email {renderSortIcon("email")}
                       </div>
                     </th>
                     <th
-                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap"
+                      className="py-2 px-2 cursor-pointer select-none group whitespace-nowrap w-[12%]"
                       onClick={() => handleSort("noTelepon")}
                     >
-                      <div className="flex items-center gap-0.5">
+                      <div className="flex items-center gap-1">
                         No Telp {renderSortIcon("noTelepon")}
                       </div>
                     </th>
                     <th
-                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap"
+                      className="py-2 px-2 cursor-pointer select-none group whitespace-nowrap w-[10%]"
                       onClick={() => handleSort("tanggalLahir")}
                     >
-                      <div className="flex items-center gap-0.5">
+                      <div className="flex items-center gap-1">
                         Tgl Lahir {renderSortIcon("tanggalLahir")}
                       </div>
                     </th>
                     <th
-                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap"
+                      className="py-2 px-2 cursor-pointer select-none group whitespace-nowrap w-[9%]"
                       onClick={() => handleSort("jenisKelamin")}
                     >
-                      <div className="flex items-center gap-0.5">
+                      <div className="flex items-center gap-1">
                         JK {renderSortIcon("jenisKelamin")}
                       </div>
                     </th>
                     <th
-                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap"
+                      className="py-2 px-2 cursor-pointer select-none group whitespace-nowrap w-[10%]"
                       onClick={() => handleSort("status")}
                     >
-                      <div className="flex items-center gap-0.5">
+                      <div className="flex items-center gap-1">
                         Status {renderSortIcon("status")}
                       </div>
                     </th>
                     <th
-                      className="py-2 px-1.5 cursor-pointer select-none group whitespace-nowrap rounded-tr-xs"
+                      className="py-2 px-2 cursor-pointer select-none group whitespace-nowrap w-[29%] rounded-tr-xs"
                       onClick={() => handleSort("alamat")}
                     >
-                      <div className="flex items-center gap-0.5">
+                      <div className="flex items-center gap-1">
                         Alamat {renderSortIcon("alamat")}
                       </div>
                     </th>
                   </tr>
                 </thead>
-                <tbody className="text-gray-800 bg-white font-medium text-[10px]">
+                <tbody className="text-gray-800 bg-white font-medium text-xs">
                   {currentItems.length > 0 ? (
                     currentItems.map((pelanggan, index) => (
                       <tr
                         key={pelanggan.id}
                         className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                       >
-                        <td className="py-2 text-center text-gray-400">
+                        <td className="py-1.5 text-center text-gray-400">
                           {startCount + index}
                         </td>
-                        <td className="py-2 px-1.5 text-gray-800 whitespace-nowrap">
+                        <td className="py-1.5 px-2 text-gray-800 whitespace-nowrap">
                           {pelanggan.nama}
                         </td>
-                        <td className="py-2 px-1.5 text-gray-500 break-all">
+                        <td className="py-1.5 px-2 text-gray-500 break-all text-[10px]">
                           {pelanggan.email}
                         </td>
-                        <td className="py-2 px-1.5 text-gray-500 whitespace-nowrap">
+                        <td className="py-1.5 px-2 text-gray-500 whitespace-nowrap">
                           {pelanggan.noTelepon}
                         </td>
-                        <td className="py-2 px-1.5 text-gray-500 whitespace-nowrap">
+                        <td className="py-1.5 px-2 text-gray-500 whitespace-nowrap">
                           {pelanggan.tanggalLahir}
                         </td>
-                        <td className="py-2 px-1.5 text-gray-500 whitespace-nowrap">
+                        <td className="py-1.5 px-2 text-gray-500 whitespace-nowrap">
                           {pelanggan.jenisKelamin}
                         </td>
-                        <td className="py-2 px-1.5">
+                        <td className="py-1.5 px-2">
                           <span
-                            className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-medium ${
+                            className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${
                               pelanggan.status === "Aktif"
                                 ? "text-gray"
                                 : "text-gray"
@@ -288,7 +289,7 @@ const DaftarPelangganPage = () => {
                               : pelanggan.status}
                           </span>
                         </td>
-                        <td className="py-2 px-1.5 text-gray-500 break-all">
+                        <td className="py-1.5 px-2 text-gray-500 text-[10px] wrap-break-words whitespace-normal">
                           {pelanggan.alamat}
                         </td>
                       </tr>
@@ -325,7 +326,7 @@ const DaftarPelangganPage = () => {
                     </button>
                     {isDropdownOpen && (
                       <div className="absolute left-0 top-full mt-1 w-24 bg-white border border-gray-200 rounded shadow-lg z-9999">
-                        {[10, 15, 20].map((n) => (
+                        {[10, 20].map((n) => (
                           <button
                             key={n}
                             onClick={() => handleItemsPerPageChange(n)}
@@ -383,9 +384,9 @@ const DaftarPelangganPage = () => {
             </div>
           </div>
 
-          {/* ========== MOBILE CARD VIEW ========== */}
-          <div className="md:hidden space-y-3 mt-4 pb-32">
-            <div className="min-w-187.5">
+          {/* ========== MOBILE TABLE (SCROLL HORIZONTAL) ========== */}
+          <div className="md:hidden overflow-x-auto -mx-4 px-4 mt-4">
+            <div className="min-w-175">
               <table className="w-full bg-white rounded-xs border border-gray-100">
                 <thead className="bg-primary text-white">
                   <tr>
@@ -430,7 +431,11 @@ const DaftarPelangganPage = () => {
                       </td>
                       <td className="py-2 px-2 text-center">
                         <span
-                          className={`inline-block px-2 py-0.5 rounded text-[9px] font-medium ${pelanggan.status === "Aktif" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                          className={`inline-block px-2 py-0.5 rounded text-[9px] font-medium ${
+                            pelanggan.status === "Aktif"
+                              ? "text-gray"
+                              : "text-gray"
+                          }`}
                         >
                           {pelanggan.status === "Tidak Aktif"
                             ? "Nonaktif"
@@ -445,56 +450,59 @@ const DaftarPelangganPage = () => {
                 </tbody>
               </table>
             </div>
-
-            {sortedPelanggan.length === 0 && (
-              <div className="text-center py-8 text-gray-400">
-                Tidak ada data pelanggan.
-              </div>
-            )}
-
-            {/* PAGINATION MOBILE */}
-            {totalPages > 1 && (
-              <div className="md:hidden flex flex-col gap-2 py-4">
-                <div className="text-center text-[10px] text-gray-500">
-                  Menampilkan {startCount}-{endCount} dari{" "}
-                  {sortedPelanggan.length} data
-                </div>
-                <div className="flex items-center justify-center gap-1">
-                  <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage((p) => p - 1)}
-                    className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30 text-xs"
-                  >
-                    &lt;
-                  </button>
-                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                    let pageNum;
-                    if (totalPages <= 5) pageNum = i + 1;
-                    else if (currentPage <= 3) pageNum = i + 1;
-                    else if (currentPage >= totalPages - 2)
-                      pageNum = totalPages - 4 + i;
-                    else pageNum = currentPage - 2 + i;
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => setCurrentPage(pageNum)}
-                        className={`w-7 h-7 rounded border text-xs ${currentPage === pageNum ? "bg-primary text-white border-primary" : "border-gray-200"}`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
-                  <button
-                    disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage((p) => p + 1)}
-                    className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30 text-xs"
-                  >
-                    &gt;
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
+
+          {sortedPelanggan.length === 0 && (
+            <div className="text-center py-8 text-gray-400">
+              Tidak ada data pelanggan.
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="md:hidden flex flex-col gap-2 py-4">
+              <div className="text-center text-[10px] text-gray-500">
+                Menampilkan {startCount}-{endCount} dari{" "}
+                {sortedPelanggan.length} data
+              </div>
+              <div className="flex items-center justify-center gap-1">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30 text-xs"
+                >
+                  &lt;
+                </button>
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) pageNum = i + 1;
+                  else if (currentPage <= 3) pageNum = i + 1;
+                  else if (currentPage >= totalPages - 2)
+                    pageNum = totalPages - 4 + i;
+                  else pageNum = currentPage - 2 + i;
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-7 h-7 rounded border text-xs ${
+                        currentPage === pageNum
+                          ? "bg-primary text-white border-primary"
+                          : "border-gray-200"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-30 text-xs"
+                >
+                  &gt;
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

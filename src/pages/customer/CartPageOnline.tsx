@@ -114,7 +114,7 @@ const CartPageOnline = () => {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start gap-2 flex-wrap md:flex-nowrap">
-                          <h3 className="font-bold text-sm md:text-base break-words flex-1">
+                          <h3 className="font-bold text-sm md:text-base wrap-break-words flex-1">
                             {item.name}
                           </h3>
                           <p className="font-bold text-primary text-sm md:text-base whitespace-nowrap">
@@ -122,9 +122,10 @@ const CartPageOnline = () => {
                           </p>
                         </div>
 
+                        {/* Catatan - style seperti kiosk */}
                         <button
                           onClick={() => setEditingItem(item)}
-                          className="mt-2 text-xs text-gray-400 bg-primary/10 py-1.5 md:py-2 px-3 rounded-xs inline-flex items-center gap-2 w-52 md:w-88"
+                          className="mt-2 text-xs text-gray-400 bg-white py-1.5 md:py-2 px-3 rounded-xs inline-flex items-center border-2 border-primary/75 gap-2 min-w-35 max-w-50 md:min-w-auto md:max-w-none md:w-88"
                         >
                           <NotesIcon size={12} className="shrink-0" />
                           <span className="truncate text-xs">
