@@ -89,7 +89,12 @@ const OrderTrackingPage = () => {
       setOrders(mappedOrders);
     } catch (err: any) {
       console.error(" Gagal mengambil data:", err);
-      setError(err.message || "Gagal memuat data");
+      if (err?.response?.status === 404) {
+        setOrders([]);
+        setError(null);
+      } else {
+        setError(err.message || "Gagal memuat data");
+      }
     } finally {
       setLoading(false);
     }

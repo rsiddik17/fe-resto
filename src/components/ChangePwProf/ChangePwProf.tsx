@@ -14,7 +14,6 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
   const [password, setPassword] = useState({ old: "", new: "", confirm: "" });
   const [errors, setErrors] = useState({ old: "", new: "", confirm: "" });
 
-  // 👈 STATE UNTUK TOAST
   const [localToast, setLocalToast] = useState({
     show: false,
     message: "",
@@ -79,23 +78,30 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
 
       console.log("Mengirim ke backend:", payload);
       const response = await customerAPI.updatePassword(payload);
-      console.log("Response:", response);
+      console.log("Response Sukses:", response);
 
       setIsModalOpen(false);
 
-      // 👈 TAMPILKAN TOAST SUKSES
+      // Tampilkan Toast Sukses
       showLocalToast("Perubahan berhasil disimpan", "success");
 
+      // Reset Form
       setPassword({ old: "", new: "", confirm: "" });
       setTimeout(() => {
-        onCancel(); // Kembali ke tab profil setelah toast hilang
+        onCancel(); // Kembali ke tab profil
       }, 1500);
+
     } catch (error: any) {
       console.error("Gagal update password:", error);
-      const errorMessage =
-        error.response?.data?.message || "Gagal memperbarui kata sandi";
+      setIsModalOpen(false); // Pastikan modal konfirmasi tertutup jika error
 
-      // 👈 TAMPILKAN TOAST ERROR
+      // Mengambil error message dari backend dengan berbagai fallback alternatif struktur data
+      const errorMessage =
+        error.response?.data?.message || 
+        error.response?.data?.error || 
+        "Gagal memperbarui kata sandi";
+
+      // Tampilkan Toast Error dari Backend (misal: "Password lama tidak sesuai")
       showLocalToast(errorMessage, "error");
     } finally {
       setIsSubmitting(false);
@@ -124,7 +130,11 @@ const ChangePwProf = ({ onCancel }: { onCancel: () => void }) => {
     <div className="w-full font-poppins text-left">
       {localToast.show && (
         <div
-          className={`fixed top-20 left-1/2 -translate-x-1/2 md:left-auto md:right-6 z-9999 ${localToast.type === "success" ? "bg-green-500" : "bg-red-500"} text-white font-bold text-sm px-5 py-3 rounded-sm shadow-lg border ${localToast.type === "success" ? "border-green-300" : "border-red-300"} flex items-center gap-2 animate-in fade-in slide-in-from-top-8 duration-200`}
+          className={`fixed top-20 left-1/2 -translate-x-1/2 md:left-auto md:right-6 z-9999 ${
+            localToast.type === "success" ? "bg-green-500" : "bg-red-500"
+          } text-white font-bold text-sm px-5 py-3 rounded-sm shadow-lg border ${
+            localToast.type === "success" ? "border-green-300" : "border-red-300"
+          } flex items-center gap-2 animate-in fade-in slide-in-from-top-8 duration-200`}
         >
           <span className="w-2 h-2 rounded-full bg-white animate-ping" />
           {localToast.message}

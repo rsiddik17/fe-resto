@@ -1,7 +1,5 @@
 import { useState } from "react";
-// import Button from "../ui/Button";
 import { X, FileText } from "lucide-react";
-
 
 interface EditNoteModalProps {
   item: any;
@@ -13,15 +11,23 @@ const EditNoteModalOnline = ({ item, onClose, onSave }: EditNoteModalProps) => {
   const [note, setNote] = useState(item.notes || "");
 
   return (
-    // Overlay menggunakan bg-black/40 dan blur tipis agar fokus ke modal
-    <div className="fixed inset-0 z-150 flex items-center justify-center bg-black/10 backdrop-blur-[2px] p-4">
-      {/* Lebar modal dinaikkan ke 420px agar lebih proporsional seperti desain */}
-      <div className="bg-white w-full max-w-105 rounded-xs shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        
+    <div 
+      className="fixed inset-0 z-150 flex items-center justify-center bg-black/10 backdrop-blur-[2px] p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white w-full max-w-[90%] md:max-w-105 rounded-xs shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex justify-between items-center px-6 pt-6 pb-4">
-          <h2 className="text-[22px] font-bold text-black tracking-tight">Edit Catatan</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-black transition-colors">
+          <h2 className="text-[22px] font-bold text-black tracking-tight">
+            Edit Catatan
+          </h2>
+          <button 
+            onClick={onClose} 
+            className="text-gray-400 hover:text-black transition-colors"
+          >
             <div className="bg-gray-100 rounded-full p-1.5">
               <X size={12} strokeWidth={4} />
             </div>
@@ -29,34 +35,32 @@ const EditNoteModalOnline = ({ item, onClose, onSave }: EditNoteModalProps) => {
         </div>
         
         <div className="px-6 pb-8">
-          {/* Container Input */}
+          {/* Input - seperti kiosk: border 2px primary, bg putih */}
           <div className="relative mb-8">
-            {/* Icon dengan jarak (left-4) */}
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 ">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-black/50">
               <FileText size={16} />
             </div>
             <input
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Tidak ada"
-              className="w-full pl-11 pr-4 py-2 bg-primary/10 rounded-xs outline-none border-2 border-transparent focus:border-primary transition-all text-black text-sm"
+              placeholder="Tidak ada catatan"
+              className="w-full pl-11 pr-4 py-2.5 bg-white hover:bg-black/5 text-black border-2 border-primary/75 focus:bg-white focus:border-primary focus:border-[1.5px] font-medium rounded-sm placeholder:text-gray text-sm"
               autoFocus
             />
           </div>
 
-          {/* Tombol dengan style yang lebih "clean" */}
-          <div className="flex justify-end gap-3 ">
+          {/* Tombol - seperti kiosk */}
+          <div className="flex gap-3 justify-end">
             <button 
-              // variant="secondary" 
               onClick={onClose} 
-              className="px-7 py-2 bg-[#FFFFFF] hover:bg-black/5 text-black font-normal border-[1.5px] border-gray/50 rounded-xs text-sm h-auto shadow-none! outline-none! focus:shadow-none! focus:outline-none! active:shadow-none!"
+              className="w-24 py-1.5 text-sm font-semibold border border-primary rounded-xs hover:bg-black/5 transition-colors"
             >
               Batal
             </button>
             <button 
               onClick={() => onSave(note)} 
-              className="px-7 py-2 bg-primary  text-white   rounded-xs text-sm h-auto font-normal"
+              className="w-24 py-1.5 text-sm font-semibold bg-primary text-white rounded-xs hover:bg-primary/90 transition-colors"
             >
               Simpan
             </button>

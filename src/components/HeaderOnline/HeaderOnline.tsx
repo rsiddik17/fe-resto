@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { User, Menu, X } from "lucide-react";
 import { useCartStore } from "../../store/useCartStore";
-// import { useOrderStore } from "../../store/useOrderStore"; 
+// import { useOrderStore } from "../../store/useOrderStore";
 import Keranjang from "../Icon/Keranjang";
 import NotificationModal from "../NotificationModal/NotificationModal";
 import NotificationIcon from "../Icon/NotificationIcon";
+import { notificationAPI } from "../../api/notification.api";
 
 const HeaderOnline = ({ mode = "online" }: any) => {
   const navigate = useNavigate();
@@ -13,6 +14,29 @@ const HeaderOnline = ({ mode = "online" }: any) => {
   const isOnline = mode === "online";
   const [isNotifOpen, setIsNotifOpen] = useState(false); // State notifikasi sudah ada di sini
   const totalItems = useCartStore((state) => state.getTotalItems());
+  const [hasUnread, setHasUnread] = useState(false);
+
+  const checkUnread = async () => {
+    try {
+      const response = await notificationAPI.getNotifications();
+      if (response.success) {
+        const unread = response.data.some((n: any) => !n.is_read);
+        setHasUnread(unread);
+      }
+    } catch (error) {
+      console.error("Gagal cek notifikasi:", error);
+    }
+  };
+
+ useEffect(() => {
+    checkUnread();
+}, []);
+
+useEffect(() => {
+    if (!isNotifOpen) {
+        checkUnread();
+    }
+}, [isNotifOpen]);
 
   // Ambil status pesanan terbaru dari store untuk dikirim ke modal notifikasi
   // const { orders } = useOrderStore() as any;
@@ -91,8 +115,9 @@ const HeaderOnline = ({ mode = "online" }: any) => {
               <span className="w-4.5 h-4.5 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full">
                 <NotificationIcon />
               </span>
-              {/* Dot merah tanda ada notif baru masuk */}
-              <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+              {hasUnread && (
+                <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+              )}
             </button>
 
             <button

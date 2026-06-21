@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import DatePicker from "react-datepicker";
+import CustomDatePickerHeader from "../../components/CustomeDatePickerHeader/CustomeDatePickerHeader";
 import "react-datepicker/dist/react-datepicker.css";
 import "./datepicker-custom.css";
 import Header from "../../components/HeaderOnline/HeaderOnline";
@@ -160,51 +161,53 @@ const ProfilePage = () => {
   // Simpan perubahan profil
   const handleSaveProfile = async () => {
     try {
-      const payload = {
-        fullname: fullname,
-        phone_number: phoneNumber,
-        gender:
-          gender === "Laki-laki"
-            ? "MALE"
-            : gender === "Perempuan"
-              ? "FEMALE"
-              : null,
-        date_of_birth: dateOfBirth
-          ? dateOfBirth.toISOString().split("T")[0]
-          : null,
-      };
+      // ✅ Cuma kirim field yang berubah atau diisi
+      const payload: any = {};
 
-      console.log("Payload yang dikirim:", payload);
+      if (fullname && fullname !== profile.fullname) {
+        payload.fullname = fullname;
+      }
+      if (phoneNumber && phoneNumber !== profile.phone_number) {
+        payload.phone_number = phoneNumber;
+      }
+      if (gender) {
+        payload.gender = gender === "Laki-laki" ? "MALE" : "FEMALE";
+      }
+      if (dateOfBirth) {
+        payload.date_of_birth = dateOfBirth.toISOString().split("T")[0];
+      }
+      // ❌ Kalau dateOfBirth null, JANGAN DIKIRIM!
+
+      console.log("📤 Payload yang dikirim:", payload);
+
+      // ✅ Kalau payload kosong, kasih tau user
+      if (Object.keys(payload).length === 0) {
+        showLocalToast("Tidak ada perubahan yang disimpan", "error");
+        return;
+      }
 
       const response = await customerAPI.updateProfile(payload);
-      console.log("Response:", response);
+      console.log("✅ Response dari backend:", response);
 
+      // Update state profile
       setProfile({
         ...profile,
-        fullname,
-        phone_number: phoneNumber,
-        gender:
-          gender === "Laki-laki"
-            ? "MALE"
-            : gender === "Perempuan"
-              ? "FEMALE"
-              : null,
-        date_of_birth: dateOfBirth
-          ? dateOfBirth.toISOString().split("T")[0]
-          : null,
+        fullname: payload.fullname ?? profile.fullname,
+        phone_number: payload.phone_number ?? profile.phone_number,
+        gender: payload.gender ?? profile.gender,
+        date_of_birth: payload.date_of_birth ?? profile.date_of_birth,
       });
 
       setIsEditingProfile(false);
       showLocalToast("Perubahan berhasil disimpan", "success");
     } catch (error: any) {
-      console.error("Gagal update profil:", error);
+      console.error("❌ Gagal update profil:", error);
+      console.log("🔴 Response error:", error.response?.data);
+      console.log("🔴 Status:", error.response?.status);
+
       const errorMessage =
         error.response?.data?.message || "Gagal memperbarui profil";
       showLocalToast(errorMessage, "error");
-      alert(
-        "Gagal memperbarui profil: " +
-          JSON.stringify(error.response?.data?.message),
-      );
     }
   };
 
@@ -243,7 +246,7 @@ const ProfilePage = () => {
   };
 
   // Simpan alamat (CREATE atau UPDATE)
- const handleSaveAddress = async () => {
+  const handleSaveAddress = async () => {
     console.log("handleSaveAddress dipanggil");
     console.log("editingAddress:", editingAddress);
     console.log("addressForm:", addressForm);
@@ -271,12 +274,15 @@ const ProfilePage = () => {
           .replace(/\s+/g, " ") // Bersihkan spasi ganda
           .trim();
 
-        console.log("🔎 Tembakan 1 (Clean Query untuk Komoot - Multi Limit):", cleanQuery);
+        console.log(
+          "🔎 Tembakan 1 (Clean Query untuk Komoot - Multi Limit):",
+          cleanQuery,
+        );
 
         const geocodeResponse = await fetch(
           `https://photon.komoot.io/api/?q=${encodeURIComponent(cleanQuery)}&limit=3`,
         );
-        const geocodeData = await geocodeResponse.json() as any;
+        const geocodeData = (await geocodeResponse.json()) as any;
 
         if (
           geocodeData &&
@@ -285,16 +291,19 @@ const ProfilePage = () => {
         ) {
           // 🌟 PERBAIKAN DI SINI: Menyisir 3 hasil kandidat dari Komoot
           // Mengutamakan kandidat lokasi yang punya properti nama jalan (street) atau tipe perumahan (residential)
-          const bestMatch = geocodeData.features.find(
-            (f: any) => f.properties?.street || f.properties?.osm_value === "residential"
-          ) || geocodeData.features[0]; // Jika tidak ada kriteria yang cocok, fallback ke index ke-0 (default)
+          const bestMatch =
+            geocodeData.features.find(
+              (f: any) =>
+                f.properties?.street ||
+                f.properties?.osm_value === "residential",
+            ) || geocodeData.features[0]; // Jika tidak ada kriteria yang cocok, fallback ke index ke-0 (default)
 
           finalLng = bestMatch.geometry.coordinates[0];
           finalLat = bestMatch.geometry.coordinates[1];
           console.log("📍 Koordinat Terbaik Komoot Berhasil:", {
             finalLat,
             finalLng,
-            properties: bestMatch.properties
+            properties: bestMatch.properties,
           });
         }
         // 🔄 FALLBACK LAPIZ 2: Jika pencarian detail gagal, ambil 3 kata terakhir (Kecamatan, Kota, Provinsi)
@@ -310,7 +319,7 @@ const ProfilePage = () => {
             const fallbackResponse = await fetch(
               `https://photon.komoot.io/api/?q=${encodeURIComponent(fallbackQuery)}&limit=1`,
             );
-            const fallbackData = await fallbackResponse.json() as any;
+            const fallbackData = (await fallbackResponse.json()) as any;
 
             if (
               fallbackData &&
@@ -336,7 +345,7 @@ const ProfilePage = () => {
               const cityResponse = await fetch(
                 `https://photon.komoot.io/api/?q=${encodeURIComponent(lastWord)}&limit=1`,
               );
-              const cityData = await cityResponse.json() as any;
+              const cityData = (await cityResponse.json()) as any;
               if (
                 cityData &&
                 cityData.features &&
@@ -592,6 +601,20 @@ const ProfilePage = () => {
                         placeholderText="DD/MM/YYYY"
                         onKeyDown={(e) => e.preventDefault()}
                         className="w-full p-4 bg-white border-[1.5px] border-primary rounded-xs font-medium pl-14 outline-none text-black disabled:text-black disabled:bg-gray-50 caret-transparent cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        maxDate={new Date()}
+                        popperPlacement="top-start"
+                        shouldCloseOnSelect={false}
+                        renderCustomHeader={({
+                          date,
+                          changeYear,
+                          changeMonth,
+                        }) => (
+                          <CustomDatePickerHeader
+                            date={date}
+                            changeYear={changeYear}
+                            changeMonth={changeMonth}
+                          />
+                        )}
                       />
                       <Calendar
                         className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
