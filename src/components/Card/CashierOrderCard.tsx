@@ -51,10 +51,16 @@ const CashierOrderCard = ({
   const remainingItemsCount = items.length - 2;
 
   const typeBadge = rightBadges.find(
-    (badge) => badge.text.toLowerCase() === "dine in",
+    (badge) => 
+    badge.text.toLowerCase() === "dine in" || 
+    badge.text.toLowerCase() === "delivery" ||
+    badge.text.toLowerCase() === "takeaway"
   );
   const statusBadge = rightBadges.find(
-    (badge) => badge.text.toLowerCase() !== "dine in",
+    (badge) => 
+    badge.text.toLowerCase() !== "dine in" && 
+    badge.text.toLowerCase() !== "delivery" &&
+    badge.text.toLowerCase() !== "takeaway"
   );
 
   return (
