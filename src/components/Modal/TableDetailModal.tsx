@@ -227,7 +227,7 @@ const TableDetailModal = ({
                 type="text"
                 disabled={isReadOnly}
                 {...register("table_number")}
-                placeholder="Masukkan nomor meja"
+                placeholder="Masukkan nomor meja contoh M01_i atau M01_o"
                 className={`w-full text-[14.5px] px-3 py-2.75 rounded-sm border outline-none transition-colors ${
                   isReadOnly
                     ? "bg-[#EFEEEE]/70 border-transparent cursor-not-allowed text-black/80"
@@ -251,7 +251,7 @@ const TableDetailModal = ({
                 type="number"
                 disabled={isReadOnly}
                 {...register("capacity")}
-                placeholder="Masukkan kapasitas meja"
+                placeholder="Masukkan kapasitas meja dalam jumlah orang"
                 className={`w-full text-[14.5px] px-3 py-2.75 rounded-sm border outline-none transition-colors ${
                   isReadOnly
                     ? "bg-[#EFEEEE]/70 border-transparent cursor-not-allowed text-black/80"

@@ -74,7 +74,10 @@ const MobileCartPage = () => {
                 <CartItemCard
                   key={item.cartId}
                   item={item}
-                  onIncrease={(id) => updateQty(id, 1)}
+                  onIncrease={(id) => {
+                    if (item.qty >= (item.stock || 0)) return;
+                    updateQty(id, 1);
+                  }}
                   onDecrease={(id) => updateQty(id, -1)}
                   onEditNote={(cartId, notes) => setEditingNote({ cartId, notes })}
                   onDeletePrompt={(cartId) => setItemToDelete(cartId)}

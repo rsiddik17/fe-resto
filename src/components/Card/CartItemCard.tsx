@@ -76,6 +76,7 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDeletePrompt
               onClick={() => onIncrease(item.cartId)}
               variant="outline"
               size="icon"
+              disabled={item.qty >= (item.stock || 0)}
               className="w-5 h-5 md:w-9 md:h-9 lg:w-8 lg:h-8 border-2"
             >
               <Plus size={16} strokeWidth={2.5} />
