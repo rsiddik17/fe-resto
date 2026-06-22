@@ -38,36 +38,11 @@ const OrderTrackingOnline = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Ambil order dari state dengan berbagai kemungkinan struktur
+ 
   const orderFromState = location.state?.order || location.state;
   const orderId = location.state?.orderId || id;
-  console.log("🔍 location.state:", location.state);
-  console.log("🔍 orderId dari state:", location.state?.orderId);
-  console.log("🔍 orderId dari params:", id);
-  console.log("🔍 Final orderId:", orderId);
 
   const fetchOrderDetail = async () => {
-    // Jika sudah punya data lengkap dari state, pakai langsung
-    // if (orderFromState && orderFromState.orderId) {
-    //   const mappedOrder: Order = {
-    //     orderId: orderFromState.orderId,
-    //     // 🔥 PERBAIKAN: pakai orderFromState, bukan orderData
-    //     address: getAddressString(orderFromState.address),
-    //     items: orderFromState.items || [],
-    //     finalPayment:
-    //       orderFromState.finalPayment || orderFromState.grand_total_amount || 0,
-    //     subTotal: orderFromState.subTotal || orderFromState.total_amount || 0,
-    //     discountAmount:
-    //       orderFromState.discountAmount || orderFromState.discount_amount || 0,
-    //     adminFee: orderFromState.adminFee || 0,
-    //     status: (orderFromState.status || "").toLowerCase(),
-    //     date: orderFromState.date || new Date().toLocaleString("id-ID"),
-    //   };
-    //   setCurrentOrder(mappedOrder);
-    //   setLoading(false);
-    //   return;
-    // }
-
     if (!orderId) {
       setError("ID Pesanan tidak ditemukan");
       setLoading(false);
@@ -79,8 +54,8 @@ const OrderTrackingOnline = () => {
     try {
       const response = await orderAPI.getMyOrderById(orderId);
       const orderData = response.data || response.order || response;
-      console.log("📦 ORDER DATA LENGKAP:", orderData);
-      console.log("📦 ID dari response:", orderData.id, orderData.orderId);
+      console.log("ORDER DATA LENGKAP:", orderData);
+      console.log("ID dari response:", orderData.id, orderData.orderId);
 
       const mapBackendStatus = (backendStatus: string): Order["status"] => {
         const status = backendStatus?.toUpperCase() || "";
@@ -89,14 +64,13 @@ const OrderTrackingOnline = () => {
         if (status === "COOKING") return "dimasak";
         if (status === "READY") return "diantar";
         if (status === "COMPLETED") return "selesai";
-        if (status === "CANCELED") return "dibatalkan"; // atau "pending"
+        if (status === "CANCELED") return "dibatalkan"; 
         return "pending";
       };
 
       const mappedOrder: Order = {
         orderId:
           orderData.order_id || orderData.id || orderData.orderId || orderId,
-        // 🔥 PERBAIKAN: gunakan helper function
         address: getAddressString(orderData.address),
         items: (orderData.order_items || []).map((item: any) => ({
           name: item.menu?.name || item.name,
@@ -148,7 +122,7 @@ const OrderTrackingOnline = () => {
   const isDiantarActive = status === "diantar" || status === "selesai";
 
   let progressWidth = "0%";
-  if (status === "pending") progressWidth = "0%"; // atau "10%" kalau mau sedikit
+  if (status === "pending") progressWidth = "0%"; 
   if (status === "proses") progressWidth = "25%";
   if (status === "dimasak") progressWidth = "50%";
   if (status === "diantar") progressWidth = "100%";
@@ -158,7 +132,7 @@ const OrderTrackingOnline = () => {
   if (status === "pending") {
     bannerText = "Menunggu konfirmasi pembayaran";
   } else if (status === "proses") {
-    bannerText = "Pesanan dikonfirmasi"; // Teks lebih logis untuk VALIDATED
+    bannerText = "Pesanan dikonfirmasi"; 
   } else if (status === "dimasak") {
     bannerText = "Pesanan Anda sedang dimasak oleh koki";
   } else if (status === "diantar") {

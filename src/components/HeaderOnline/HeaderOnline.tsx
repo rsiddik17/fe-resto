@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { User, Menu, X } from "lucide-react";
 import { useCartStore } from "../../store/useCartStore";
-// import { useOrderStore } from "../../store/useOrderStore";
 import Keranjang from "../Icon/Keranjang";
 import NotificationModal from "../NotificationModal/NotificationModal";
 import NotificationIcon from "../Icon/NotificationIcon";
@@ -12,7 +11,7 @@ const HeaderOnline = ({ mode = "online" }: any) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isOnline = mode === "online";
-  const [isNotifOpen, setIsNotifOpen] = useState(false); // State notifikasi sudah ada di sini
+  const [isNotifOpen, setIsNotifOpen] = useState(false); 
   const totalItems = useCartStore((state) => state.getTotalItems());
   const [hasUnread, setHasUnread] = useState(false);
 

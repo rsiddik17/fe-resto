@@ -161,7 +161,6 @@ const ProfilePage = () => {
   // Simpan perubahan profil
   const handleSaveProfile = async () => {
     try {
-      // ✅ Cuma kirim field yang berubah atau diisi
       const payload: any = {};
 
       if (fullname && fullname !== profile.fullname) {
@@ -176,18 +175,14 @@ const ProfilePage = () => {
       if (dateOfBirth) {
         payload.date_of_birth = dateOfBirth.toISOString().split("T")[0];
       }
-      // ❌ Kalau dateOfBirth null, JANGAN DIKIRIM!
 
-      console.log("📤 Payload yang dikirim:", payload);
-
-      // ✅ Kalau payload kosong, kasih tau user
       if (Object.keys(payload).length === 0) {
         showLocalToast("Tidak ada perubahan yang disimpan", "error");
         return;
       }
 
       const response = await customerAPI.updateProfile(payload);
-      console.log("✅ Response dari backend:", response);
+      console.log("Response dari backend:", response);
 
       // Update state profile
       setProfile({
@@ -201,9 +196,6 @@ const ProfilePage = () => {
       setIsEditingProfile(false);
       showLocalToast("Perubahan berhasil disimpan", "success");
     } catch (error: any) {
-      console.error("❌ Gagal update profil:", error);
-      console.log("🔴 Response error:", error.response?.data);
-      console.log("🔴 Status:", error.response?.status);
 
       const errorMessage =
         error.response?.data?.message || "Gagal memperbarui profil";
@@ -261,21 +253,19 @@ const ProfilePage = () => {
       return;
     }
 
-    // Hanya geocode otomatis jika ini tambah baru DAN koordinat masih default awal (user ketik manual tanpa klik map/dropdown)
     if (!editingAddress && finalLat === -6.510626 && finalLng === 106.809559) {
       try {
-        // 📝 1. PROSES PEMBERSIHAN (Regex Cleansing)
         const cleanQuery = finalAddress
           .toLowerCase()
-          .replace(/\bno\.\s*\d+|\bno\s*\d+/g, "") // Hapus "no 13" atau "no.13"
-          .replace(/\brt\s*\d+|\brw\s*\d+/g, "") // Hapus "RT 01" / "RW 02"
-          .replace(/\bjl\b|\bjalan\b/g, "") // Hapus kata "jl" atau "jalan"
-          .replace(/,/g, " ") // Ubah koma jadi spasi agar parsing Elasticsearch lebih mulus
-          .replace(/\s+/g, " ") // Bersihkan spasi ganda
+          .replace(/\bno\.\s*\d+|\bno\s*\d+/g, "") 
+          .replace(/\brt\s*\d+|\brw\s*\d+/g, "") 
+          .replace(/\bjl\b|\bjalan\b/g, "") 
+          .replace(/,/g, " ") 
+          .replace(/\s+/g, " ") 
           .trim();
 
         console.log(
-          "🔎 Tembakan 1 (Clean Query untuk Komoot - Multi Limit):",
+          "Tembakan 1 (Clean Query untuk Komoot - Multi Limit):",
           cleanQuery,
         );
 
@@ -289,30 +279,28 @@ const ProfilePage = () => {
           geocodeData.features &&
           geocodeData.features.length > 0
         ) {
-          // 🌟 PERBAIKAN DI SINI: Menyisir 3 hasil kandidat dari Komoot
           // Mengutamakan kandidat lokasi yang punya properti nama jalan (street) atau tipe perumahan (residential)
           const bestMatch =
             geocodeData.features.find(
               (f: any) =>
                 f.properties?.street ||
                 f.properties?.osm_value === "residential",
-            ) || geocodeData.features[0]; // Jika tidak ada kriteria yang cocok, fallback ke index ke-0 (default)
+            ) || geocodeData.features[0]; 
 
           finalLng = bestMatch.geometry.coordinates[0];
           finalLat = bestMatch.geometry.coordinates[1];
-          console.log("📍 Koordinat Terbaik Komoot Berhasil:", {
+          console.log("Koordinat Terbaik Komoot Berhasil:", {
             finalLat,
             finalLng,
             properties: bestMatch.properties,
           });
         }
-        // 🔄 FALLBACK LAPIZ 2: Jika pencarian detail gagal, ambil 3 kata terakhir (Kecamatan, Kota, Provinsi)
         else {
           const words = cleanQuery.split(" ");
           if (words.length > 2) {
             const fallbackQuery = words.slice(-3).join(" ");
             console.log(
-              "⚠️ Tembakan 1 buntu. Coba Tembakan 2 (Wilayah):",
+              "Tembakan 1 buntu. Coba Tembakan 2 (Wilayah):",
               fallbackQuery,
             );
 
@@ -329,16 +317,16 @@ const ProfilePage = () => {
               const feature = fallbackData.features[0];
               finalLng = feature.geometry.coordinates[0];
               finalLat = feature.geometry.coordinates[1];
-              console.log("📍 Koordinat Tembakan 2 Berhasil:", {
+              console.log("Koordinat Tembakan 2 Berhasil:", {
                 finalLat,
                 finalLng,
               });
             }
-            // 🔄 FALLBACK LAPIS 3 (PERTAHANAN TERAKHIR): Jika wilayah pun gagal, cari kata paling belakang (Nama Kota/Kabupaten)
+            // FALLBACK LAPIS 3 (PERTAHANAN TERAKHIR): Jika wilayah pun gagal, cari kata paling belakang (Nama Kota/Kabupaten)
             else {
               const lastWord = words[words.length - 1];
               console.log(
-                "⚠️ Tembakan 2 buntu. Coba Tembakan 3 (Kota Saja):",
+                "Tembakan 2 buntu. Coba Tembakan 3 (Kota Saja):",
                 lastWord,
               );
 
@@ -354,7 +342,7 @@ const ProfilePage = () => {
                 const feature = cityData.features[0];
                 finalLng = feature.geometry.coordinates[0];
                 finalLat = feature.geometry.coordinates[1];
-                console.log("📍 Koordinat Tembakan 3 Berhasil:", {
+                console.log("Koordinat Tembakan 3 Berhasil:", {
                   finalLat,
                   finalLng,
                 });
@@ -377,7 +365,7 @@ const ProfilePage = () => {
         is_core_address: addressForm.is_core_address,
       };
 
-      console.log("📦 Payload yang akan dikirim ke API:", payload);
+      console.log("Payload yang akan dikirim ke API:", payload);
 
       if (editingAddress) {
         await addressAPI.updateAddress(editingAddress.id, payload);
@@ -415,7 +403,6 @@ const ProfilePage = () => {
       .slice(0, 2);
   };
 
-  // ✅ Perbaikan format URL Google Maps agar mengarah dengan benar
   const handleOpenGoogleMaps = (address: string) => {
     window.open(
       `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`,

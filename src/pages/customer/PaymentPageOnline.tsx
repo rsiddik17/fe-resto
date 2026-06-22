@@ -8,15 +8,12 @@ import OrderSummaryOnline from "../../components/OrderSummaryOnline/OrderSummary
 import ExpiredModalFinal from "../../components/ExpiredModalFinal/ExpiredModalFinal";
 import Header from "../../components/HeaderOnline/HeaderOnline";
 import { useOrderStore } from "../../store/useOrderStore";
-// import { useMenuStore } from "../../store/useMenuStore";
-// import { orderAPI } from "../../api/order.api";
 import { useOrderPayment } from "../../hooks/useOrderPayment";
-// Panggil API validatePayment sebelum ke success
+
 
 const PaymentPageOnline = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  // const { reduceStock } = useMenuStore();
   const { items, clearCart } = useCartStore();
   const [isExpired, setIsExpired] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
@@ -25,10 +22,8 @@ const PaymentPageOnline = () => {
 
   const {
     orderId = "",
-    // finalPayment = 0,
     subTotal = 0,
     discountAmount = 0,
-    // adminFee = 0,
     address = "",
     customerName = "Pelanggan",
   } = location.state || {};
@@ -51,7 +46,6 @@ const PaymentPageOnline = () => {
 
     setIsValidating(true);
     try {
-      // const validateResponse = await orderAPI.validatePayment(orderId, "QRIS");
       addOrder({
         orderId,
         address,
@@ -76,8 +70,6 @@ const PaymentPageOnline = () => {
         discountAmount: Number(discountAmount),
         adminFee: Number(adminFee),
       });
-
-      // 4. Bersihkan keranjang dan pindah halaman
       removeCheckedItems();
       navigate("/customer/payment-success", {
         state: {
