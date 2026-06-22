@@ -58,6 +58,7 @@ const WaiterCartItemCard = ({ item, onIncrease, onDecrease, onEditNote, onDelete
               onClick={() => onIncrease(item.cartId)}
               variant="outline"
               size="icon"
+              disabled={item.qty >= (item.stock || 0)}
               className="w-5.5 h-5.5 border-2 rounded-xs"
             >
               <Plus size={14} strokeWidth={2.5} />

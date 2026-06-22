@@ -94,13 +94,16 @@ const KitchenOrderListPage = () => {
               name: i.menu_name,
               note: i.notes === "Tidak ada" ? "" : i.notes,
             })) || [];
+          
+          // Amankan pembacaan tanggal dari properti lowercase maupun uppercase pascal
+          const orderDate = o.timestamp || o.timeStamp;
 
           return {
             id: `#${o.order_id}`,
             rawId: o.order_id, // ID Mentah untuk dikirim ke API aksi
             type: o.order_type === "DELIVERY" ? "Delivery" : "Dine in",
             table: formatTableNumber(o.table_number),
-            time: formatTime(o.timeStamp),
+            time: formatTime(orderDate),
             status: mappedStatus,
             items: mappedItems,
           };
@@ -127,10 +130,12 @@ const KitchenOrderListPage = () => {
     return () => clearInterval(intervalId);
   }, [activeTab]);
 
-  // LOGIKA SORTING WAKTU TERAWAL (ASCENDING) DULUAN (Sekarang memfilter dari ordersList state)
+  // --- PERBAIKAN LOGIKA SORTING (LOCKED & STABLE) ---
+  // Urutkan secara numerik berdasarkan rawId (ID Pesanan).
+  // Pesanan paling lama (ID paling kecil) dijamin akan selalu terkunci di sebelah kiri!
   const filteredOrders = ordersList
     .filter((o) => o.status === activeTab)
-    .sort((a, b) => a.time.localeCompare(b.time));
+    .sort((a, b) => Number(a.rawId) - Number(b.rawId));
 
   // HANDLER KLIK TOMBOL
   const handleOpenDetail = (order: OrderDetail) => {

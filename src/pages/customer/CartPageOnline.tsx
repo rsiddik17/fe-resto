@@ -82,7 +82,8 @@ const CartPageOnline = () => {
 
   return (
     <div className="min-h-screen bg-[#F3F4F6] flex flex-col pb-28">
-      <div className="relative z-[9999]">
+      
+      <div className="relative z-9999">
         <Toast show={toast.show} message={toast.message} type={toast.type} />
       </div>
 

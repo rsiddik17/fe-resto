@@ -245,7 +245,10 @@ const WaiterSelectMenuPage = () => {
                     <WaiterCartItemCard
                       key={item.cartId}
                       item={item}
-                      onIncrease={(id) => updateQty(id, 1)}
+                      onIncrease={(id) => {
+                         if (item.qty >= (item.stock || 0)) return;
+                         updateQty(id, 1);
+                      }}
                       onDecrease={(id) => updateQty(id, -1)}
                       onDeletePrompt={(id) => setItemToDelete(id)}
                       onEditNote={(cartId) => {

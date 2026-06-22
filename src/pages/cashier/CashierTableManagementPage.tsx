@@ -13,6 +13,8 @@ import Toast from "../../components/Toast/Toast";
 import { useProfile } from "../../hooks/useProfile";
 
 import { tableAPI, type TableData } from "../../api/table.api";
+// --- PERBAIKAN: Import orderAPI untuk mengecek status pesanan meja ---
+import { orderAPI } from "../../api/order.api";
 
 type TableType = "semua" | "tersedia" | "terisi" | "kotor";
 
@@ -23,6 +25,9 @@ const CashierTableManagementPage = () => {
 
   // State untuk data meja dari API
   const [tables, setTables] = useState<TableData[]>([]);
+  // --- PERBAIKAN: State untuk menampung seluruh pesanan ---
+  const [activeOrders, setActiveOrders] = useState<any[]>([]);
+
   const [isFetching, setIsFetching] = useState(true);
 
   // State Modal Ubah Status
@@ -81,10 +86,39 @@ const CashierTableManagementPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTables();
+  // --- PERBAIKAN: Fungsi untuk mengambil data pesanan yang aktif ---
+  const fetchActiveOrders = async () => {
+    try {
+      // Kita tarik semua pesanan yang belum selesai
+      const statuses = ["PENDING", "VALIDATED", "COOKING", "READY"];
+      const responses = await Promise.all(
+        statuses.map((status) => orderAPI.getOrdersByStatus(status).catch(() => ({ success: false, data: [] })))
+      );
 
-    const intervalId = setInterval(fetchTables, 8000);
+      let combinedData: any[] = [];
+      responses.forEach((res) => {
+        if (res.success && res.data) combinedData = [...combinedData, ...res.data];
+      });
+
+      setActiveOrders(combinedData);
+    } catch (error) {
+      console.error("Gagal mengambil daftar pesanan aktif:", error);
+    }
+  };
+
+  const loadAllData = async () => {
+    setIsFetching(true);
+    await Promise.all([fetchTables(), fetchActiveOrders()]);
+    setIsFetching(false);
+  };
+
+  useEffect(() => {
+    loadAllData();
+    // Real-time update tabel dan pesanan setiap 8 detik
+    const intervalId = setInterval(() => {
+      fetchTables();
+      fetchActiveOrders();
+    }, 8000);
     
     return () => clearInterval(intervalId);
   }, []);
@@ -109,6 +143,15 @@ const CashierTableManagementPage = () => {
     newStatusText: "tersedia" | "terisi" | "kotor",
   ) => {
     if (!selectedTable) return;
+
+    const isTableHasActiveOrder = activeOrders.some((order) => order.table_number === selectedTable.table_number);
+
+    // Jika meja sedang punya order dan mau diganti jadi Tersedia/Kotor, TOLAK!
+    if (isTableHasActiveOrder && (newStatusText === "tersedia" || newStatusText === "kotor")) {
+      setSelectedTable(null); // Tutup modal
+      triggerToast(`Meja ${selectedTable.table_number} tidak dapat diubah karena pesanan belum selesai.`, "error");
+      return; // Hentikan eksekusi kode di bawahnya (Jangan update API)
+    }
 
     let backendStatus: "AVAILABLE" | "OCCUPIED" | "DIRTY" = "AVAILABLE";
     if (newStatusText === "terisi") backendStatus = "OCCUPIED";

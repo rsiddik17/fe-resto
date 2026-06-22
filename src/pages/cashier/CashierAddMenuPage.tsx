@@ -18,6 +18,9 @@ import Toast from "../../components/Toast/Toast";
 import { menuAPI } from "../../api/menu.api"; // Sesuaikan path import ini jika berbeda
 import { useProfile } from "../../hooks/useProfile";
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB dalam Bytes
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+
 // 1. BUAT SCHEMA VALIDASI ZOD
 const menuSchema = z.object({
   name: z.string().min(1, "Nama menu wajib diisi!"),
@@ -25,7 +28,14 @@ const menuSchema = z.object({
   category: z.string().min(1, "Kategori wajib dipilih!"),
   price: z.string().min(1, "Harga wajib diisi!"),
   stock: z.string().min(1, "Stok wajib diisi!"),
-  image: z.instanceof(File, { message: "Foto menu wajib diunggah!" }),
+  image: z
+    .instanceof(File, { message: "Foto menu wajib diunggah!" })
+    .refine((file) => file.size <= MAX_FILE_SIZE, {
+      message: "Ukuran gambar tidak boleh lebih dari 5MB!",
+    })
+    .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
+      message: "Format gambar harus JPG atau PNG!",
+    }),
 });
 
 type MenuFormValues = z.infer<typeof menuSchema>;

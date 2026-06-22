@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,6 +25,14 @@ const discountSchema = z.object({
 });
 
 export type DiscountFormData = z.infer<typeof discountSchema>;
+
+// --- HELPER FORMAT RUPIAH SAAT MENGETIK ---
+const formatCurrencyInput = (val: string) => {
+  if (!val) return "";
+  const numericVal = val.replace(/\D/g, ""); // Buang semua huruf/titik
+  if (numericVal === "") return "";
+  return new Intl.NumberFormat("id-ID").format(Number(numericVal));
+};
 
 // --- HELPER: "DD MMM" to "YYYY-MM-DD" ---
 const parseIndonesianDateStringToISODate = (dateString: string) => {
@@ -78,6 +86,10 @@ const DiscountDetailModal = ({
   const startDateVal = watch("startDate");
   const endDateVal = watch("endDate");
 
+  // State khusus untuk input format Rupiah
+  const [minPurchaseUI, setMinPurchaseUI] = useState("");
+  const [discountAmountUI, setDiscountAmountUI] = useState("");
+
   // --- PERBAIKAN: useRef untuk memicu kalender ---
   const startDateRef = useRef<HTMLInputElement | null>(null);
   const endDateRef = useRef<HTMLInputElement | null>(null);
@@ -99,8 +111,24 @@ const DiscountDetailModal = ({
     if (isOpen) {
       setValue("name", discount?.name || "");
       setValue("code", discount?.code || "");
-      setValue("minPurchase", discount?.minPurchase ? String(discount.minPurchase) : "");
-      setValue("discountAmount", discount?.discount ? String(discount.discount) : "");
+      // Populate untuk data UI (berformat titik)
+      if (discount?.minPurchase) {
+        const formattedMin = formatCurrencyInput(String(discount.minPurchase));
+        setMinPurchaseUI(formattedMin);
+        setValue("minPurchase", formattedMin);
+      } else {
+        setMinPurchaseUI("");
+        setValue("minPurchase", "");
+      }
+
+      if (discount?.discount) {
+        const formattedDisc = formatCurrencyInput(String(discount.discount));
+        setDiscountAmountUI(formattedDisc);
+        setValue("discountAmount", formattedDisc);
+      } else {
+        setDiscountAmountUI("");
+        setValue("discountAmount", "");
+      }
       
       // --- PERBAIKAN: Isi Tanggal berdasarkan hasil Extract data dummy ---
       if (mode !== "add" && discount?.date) {
@@ -113,13 +141,37 @@ const DiscountDetailModal = ({
       }
     } else {
       reset();
+      setMinPurchaseUI("");
+      setDiscountAmountUI("");
     }
   }, [isOpen, discount, setValue, reset, mode]);
 
   if (!isOpen) return null;
 
+  // --- HANDLER FORMAT INPUT RUPIAH ---
+  const handleMinPurchaseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCurrencyInput(e.target.value);
+    setMinPurchaseUI(formatted);
+    setValue("minPurchase", formatted); // Update nilai aslinya di RHF
+  };
+
+  const handleDiscountAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCurrencyInput(e.target.value);
+    setDiscountAmountUI(formatted);
+    setValue("discountAmount", formatted); // Update nilai aslinya di RHF
+  };
+
   const onSubmit = (data: DiscountFormData) => {
-    if (onSave) onSave(data);
+    if (onSave) {
+      // --- PERBAIKAN: "Bersihkan" titik sebelum dikirim ke luar (ke BE) ---
+      const cleanData: DiscountFormData = {
+        ...data,
+        minPurchase: data.minPurchase.replace(/\D/g, ""), // Hilangkan titik ("50.000" -> "50000")
+        discountAmount: data.discountAmount.replace(/\D/g, ""),
+      };
+      
+      onSave(cleanData);
+    }
   };
 
   return (
@@ -128,7 +180,7 @@ const DiscountDetailModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white w-full max-w-2xl md:h-130 md:ml-auto md:mr-50 md:mt-12 rounded-sm shadow-sm overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col"
+        className="bg-white w-full max-w-2xl md:mt-12 rounded-sm shadow-sm overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Modal (Background Ungu sesuai gambar) */}
@@ -179,33 +231,37 @@ const DiscountDetailModal = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-20">
             <div>
               <label htmlFor="minPurchase" className="block text-[13px] uppercase text-black mb-1.5">
-                MINIMAL PEMBELIAN
+                MINIMAL PEMBELIAN (RP.)
               </label>
               <input
                 id="minPurchase"
-                type="number"
+                type="text"
                 disabled={isReadOnly}
-                {...register("minPurchase")}
+                value={minPurchaseUI}
+                onChange={handleMinPurchaseChange}
                 className={`w-full text-[14.5px] px-3.5 py-2.5 rounded-xs outline-none transition-colors border ${
                   isReadOnly ? "bg-[#DEDED9]/50 border-transparent cursor-not-allowed" : errors.minPurchase ? "bg-white border-red-500 focus:ring-1 focus:ring-red-500" : "bg-[#FFFFFF] border-[1.5px] border-primary focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary"
                 }`}
               />
+              <input type="hidden" {...register("minPurchase")} />
               {errors.minPurchase && <p className="text-red-500 text-[11px] mt-1">{errors.minPurchase.message}</p>}
             </div>
 
             <div>
               <label htmlFor="discountAmount" className="block text-[13px] uppercase text-black mb-1.5">
-                TOTAL DISKON
+                TOTAL DISKON (RP.)
               </label>
               <input
                 id="discountAmount"
-                type="number"
+                type="text"
                 disabled={isReadOnly}
-                {...register("discountAmount")}
+                value={discountAmountUI}
+                onChange={handleDiscountAmountChange}
                 className={`w-full text-[14.5px] px-3.5 py-2.5 rounded-xs outline-none transition-colors border ${
                   isReadOnly ? "bg-[#DEDED9]/50 border-transparent cursor-not-allowed" : errors.discountAmount ? "bg-white border-red-500 focus:ring-1 focus:ring-red-500" : "bg-[#FFFFFF] border-[1.5px] border-primary focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary"
                 }`}
               />
+              <input type="hidden" {...register("discountAmount")} />
               {errors.discountAmount && <p className="text-red-500 text-[11px] mt-1">{errors.discountAmount.message}</p>}
             </div>
           </div>

@@ -8,6 +8,8 @@ import TableFilterTabs from "../../components/Table/TableFilterTabs";
 import { useProfile } from "../../hooks/useProfile";
 
 import { tableAPI, type TableData } from "../../api/table.api";
+// --- PERBAIKAN 1: Import orderAPI untuk mengecek status pesanan meja ---
+import { orderAPI } from "../../api/order.api";
 import TableCard from "../../components/Card/TableCard";
 import Toast from "../../components/Toast/Toast";
 
@@ -21,6 +23,8 @@ const WaiterTableManagementPage = () => {
 
   // State untuk data meja dan modal
   const [tables, setTables] = useState<TableData[]>([]);
+  // --- PERBAIKAN 2: State untuk menampung pesanan yang sedang aktif ---
+  const [activeOrders, setActiveOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTable, setSelectedTable] = useState<TableData | null>(null);
 
@@ -59,8 +63,41 @@ const WaiterTableManagementPage = () => {
     }
   };
 
+  // --- PERBAIKAN 3: Fungsi untuk menarik daftar pesanan yang belum selesai ---
+  const fetchActiveOrders = async () => {
+    try {
+      const statuses = ["PENDING", "VALIDATED", "COOKING", "READY"];
+      const responses = await Promise.all(
+        statuses.map((status) => orderAPI.getOrdersByStatus(status).catch(() => ({ success: false, data: [] })))
+      );
+
+      let combinedData: any[] = [];
+      responses.forEach((res) => {
+        if (res.success && res.data) combinedData = [...combinedData, ...res.data];
+      });
+
+      setActiveOrders(combinedData);
+    } catch (error) {
+      console.error("Gagal mengambil daftar pesanan aktif:", error);
+    }
+  };
+
+  // --- PERBAIKAN 4: Menarik semua data dan setup Auto-Refresh (Polling) ---
+  const loadAllData = async () => {
+    setIsLoading(true);
+    await Promise.all([fetchTables(), fetchActiveOrders()]);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    fetchTables();
+    loadAllData();
+    // Auto refresh setiap 8 detik agar data selalu valid
+    const intervalId = setInterval(() => {
+      fetchTables();
+      fetchActiveOrders();
+    }, 8000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   // Logika Filter dan Search
@@ -85,6 +122,16 @@ const WaiterTableManagementPage = () => {
     newStatusText: "tersedia" | "terisi" | "kotor",
   ) => {
     if (!selectedTable) return;
+
+    // Cek apakah ada order aktif di meja yang sedang di-klik
+    const isTableHasActiveOrder = activeOrders.some((order) => order.table_number === selectedTable.table_number);
+
+    // Tolak perubahan ke "tersedia" atau "kotor" jika pesanan belum selesai
+    if (isTableHasActiveOrder && (newStatusText === "tersedia" || newStatusText === "kotor")) {
+      setSelectedTable(null); // Tutup modal langsung
+      triggerToast(`Meja ${selectedTable.table_number} tidak dapat diubah karena pesanan belum selesai.`, "error");
+      return; // Berhenti di sini, jangan hit API update meja
+    }
 
     // Map teks bahasa Indonesia dari Modal kembali ke ENUM Backend
     let backendStatus: "AVAILABLE" | "OCCUPIED" | "DIRTY" = "AVAILABLE";
