@@ -9,13 +9,12 @@ interface HeroSectionOnlineProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   searchPlaceholder?: string;
-  onClearSearch?: () => void; // Tambahkan ini
+  onClearSearch?: () => void; 
 }
 
 const HeroSectionOnline = ({
   title,
   subtitle,
-  // imageBg,
   searchQuery,
   showSearch = false,
   onSearchChange,
@@ -59,7 +58,7 @@ const HeroSectionOnline = ({
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-primary transition-colors"
               >
                 <span className="text-xl">×</span>{" "}
-                {/* Atau pakai ikon X dari lucide */}
+               
               </button>
             )}
           </div>

@@ -24,7 +24,6 @@ const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
 
       try {
         setLoading(true);
-        // ✅ PAKAI API getMyOrderById untuk detail lengkap
         const response = await orderAPI.getMyOrderById(order.orderId);
         const data = response.data || response;
         console.log("Detail order dari API:", data);
@@ -53,9 +52,8 @@ const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
 
   const orderData = detailOrder || order;
 
-  // ✅ Ambil admin fee dari payments.unique_code
   const adminFeeValue =
-    Number(orderData.payments?.unique_code) || // ini yang penting!
+    Number(orderData.payments?.unique_code) ||
     Number(orderData.unique_code) ||
     Number(orderData.admin_fee) ||
     0;
@@ -197,7 +195,6 @@ const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
               <span>Rp{formatPrice(taxAmount)}</span>
             </div>
 
-            {/* ✅ Biaya Admin - selalu tampil */}
             <div className="flex justify-between text-[11px] text-gray-600 font-medium">
               <span>Biaya Admin</span>
               <span>Rp{formatPrice(adminFeeValue)}</span>
@@ -212,35 +209,79 @@ const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
           </div>
         </div>
 
-        <div className="p-4 bg-white border-t border-gray-50 shrink-0">
+        <div className="p-4 bg-white border-t border-gray-50 shrink-0 space-y-2">
           {status === "CANCELED" || status === "dibatalkan" ? (
             <div className="w-full py-2 bg-gray-200 text-gray-500 font-bold rounded-xs text-[14px] text-center">
               Pesanan Dibatalkan
             </div>
-          ) : isSelesai ? (
-            <button
-              onClick={() => {
-                // Aksi beli lagi
-                onClose();
-              }}
-              className="w-full py-2 bg-primary text-white font-bold rounded-xs text-[14px] shadow-md shadow-purple-100 active:scale-[0.98] transition-all"
-            >
-              Beli Lagi
-            </button>
           ) : (
-            <button
-              onClick={() => {
-                const orderIdToSend =
-                  orderData.order_id || orderData.orderId || order.orderId;
-                navigate("/customer/track-order", {
-                  state: { orderId: orderIdToSend },
-                });
-                onClose();
-              }}
-              className="w-full py-2 bg-primary text-white font-bold rounded-xs text-[14px] shadow-md shadow-purple-100 active:scale-[0.98] transition-all"
-            >
-              Pantau Status
-            </button>
+            <>
+              {/* Pantau Status / Beli Lagi */}
+              {isSelesai ? (
+                <button
+                  onClick={() => {
+                    onClose();
+                  }}
+                  className="w-full py-2 bg-primary text-white font-bold rounded-xs text-[14px] shadow-md shadow-purple-100 active:scale-[0.98] transition-all"
+                >
+                  Beli Lagi
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    const orderIdToSend =
+                      orderData.order_id || orderData.orderId || order.orderId;
+                    navigate("/customer/track-order", {
+                      state: { orderId: orderIdToSend },
+                    });
+                    onClose();
+                  }}
+                  className="w-full py-2 bg-primary text-white font-bold rounded-xs text-[14px] shadow-md shadow-purple-100 active:scale-[0.98] transition-all"
+                >
+                  Pantau Status
+                </button>
+              )}
+
+             
+              <button
+                onClick={() => {
+                  // Tutup modal
+                  onClose();
+
+                  // Navigasi ke halaman payment-success dengan data order
+                  navigate("/customer/payment-success", {
+                    state: {
+                      orderId:
+                        orderData.order_id ||
+                        orderData.orderId ||
+                        order.orderId,
+                      finalPayment: finalPaymentValue,
+                      subTotal: subTotal,
+                      discountAmount: discountAmount,
+                      adminFee: adminFeeValue,
+                      customerName: orderData.customer_name || "Pelanggan",
+                      purchasedItems: (
+                        orderData.order_items ||
+                        order.items ||
+                        []
+                      ).map((item: any) => ({
+                        name:
+                          item.menu_name ||
+                          item.menu?.name ||
+                          item.name ||
+                          "Menu",
+                        qty: item.quantity || item.qty || 1,
+                        price: item.price_at_transaction || item.price || 0,
+                        notes: item.notes || "",
+                      })),
+                    },
+                  });
+                }}
+                className="w-full py-2 bg-white text-primary font-bold rounded-xs text-[14px] border border-primary shadow-sm active:scale-[0.98] transition-all"
+              >
+                Lihat Pembayaran
+              </button>
+            </>
           )}
         </div>
       </div>

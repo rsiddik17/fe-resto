@@ -58,7 +58,7 @@ const PaymentSuccessOnline = () => {
             currentStatus !== "CANCELED" &&
             currentStatus !== "VALIDATED"
           ) {
-            // ✅ JANGAN LUPA VALIDATED JUGA
+            
             setIsConfirmed(true);
           }
         } catch (error) {
@@ -155,12 +155,6 @@ const PaymentSuccessOnline = () => {
           <div className="flex justify-between items-center mb-1">
             <span className="text-gray-500 text-sm">ID Pesanan</span>
             <span className="text-primary font-bold text-sm">#{orderId}</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-500 text-sm">Total Pembayaran</span>
-            <span className="text-primary font-bold text-sm">
-              Rp{Number(finalPayment).toLocaleString("id-ID")}
-            </span>
           </div>
         </div>
 

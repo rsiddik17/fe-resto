@@ -56,8 +56,6 @@ const OrderReceipt = ({
     return `${date} • ${time.replace(".", ":")}`;
   };
 
-  // const trackingUrl = `${window.location.origin}/its-resto/customer/track-order/${orderId}`;
-
   const downloadPDF = () => {
     try {
       const itemRowsHeight = items.length * 10;
@@ -245,10 +243,7 @@ const OrderReceipt = ({
                 Total Pembayaran
               </h2>
 
-              {/* <div className="w-full flex justify-center mb-4">
-                <Barcode value={orderId} className="h-12 w-full opacity-90" />
-              </div> */}
-
+            
               <div className="space-y-2 mb-4 text-[12px]">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 font-medium">ID Pesanan</span>

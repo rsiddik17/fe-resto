@@ -11,14 +11,11 @@ import Header from "../../components/HeaderOnline/HeaderOnline";
 import HeroSection from "../../components/HeroSectionOnline/HeroSectionOnline";
 import { useMenus } from "../../hooks/useMenus";
 
-
 const MenuPageOnline = () => {
   const navigate = useNavigate();
 
-  // 1. Panggil hook useMenus paling atas
+  // Panggil hook useMenus
   const { data: menu = [], isLoading, isError } = useMenus();
-  
-  
 
   const [activeCategory, setActiveCategory] = useState<
     "semua" | "makanan" | "minuman"
@@ -30,12 +27,14 @@ const MenuPageOnline = () => {
   const addToCart = useCartStore((state) => state.addToCart);
   const cart = useCartStore((state) => state.items || []);
 
- const filteredMenu = useMemo(() => {
+  const filteredMenu = useMemo(() => {
     const currentCart = Array.isArray(cart) ? cart : [];
 
     return menu
       .map((item) => {
-        const itemInCart = currentCart.find((c) => String(c.id) === String(item.id));
+        const itemInCart = currentCart.find(
+          (c) => String(c.id) === String(item.id),
+        );
         const qtyInCart = itemInCart ? itemInCart.qty : 0;
         const remainingStock = (item.stock || 0) - qtyInCart;
 
@@ -45,14 +44,14 @@ const MenuPageOnline = () => {
         };
       })
       .filter((item) => {
-        // ✅ Sekarang item.category sudah "makanan" atau "minuman"
-        const matchesCategory = activeCategory === "semua" || item.category === activeCategory;
-        const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCategory =
+          activeCategory === "semua" || item.category === activeCategory;
+        const matchesSearch = item.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
       });
   }, [activeCategory, searchQuery, cart, menu]);
-
- 
 
   const handleConfirmAddToCart = (
     item: MenuItem,
@@ -66,8 +65,11 @@ const MenuPageOnline = () => {
     setSelectedItem(null);
   };
 
-  // 2. PINDAHKAN PENGECEKAN LOADING DI SINI (Di bawah hook, sebelum return utama)
-   if (isLoading) {
+  const handleClearSearch = () => {
+    setSearchQuery("");
+  };
+
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-primary"></div>
@@ -76,15 +78,15 @@ const MenuPageOnline = () => {
     );
   }
 
-  // 3. PINDAHKAN PENGECEKAN ERROR DI SINI
-   if (isError) {
+  if (isError) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4 text-center">
-        <p className="text-red-500 font-bold">Gagal memuat data menu dari server.</p>
+        <p className="text-red-500 font-bold">
+          Gagal memuat data menu dari server.
+        </p>
       </div>
     );
   }
-
 
   return (
     <div className="min-h-screen bg-secondary">
@@ -98,6 +100,7 @@ const MenuPageOnline = () => {
           showSearch={true}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          onClearSearch={handleClearSearch}
         />
 
         <CategoryTabs

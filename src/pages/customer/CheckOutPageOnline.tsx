@@ -25,8 +25,8 @@ interface Address {
 }
 
 const CheckoutPageOnline = () => {
-  const { user, setUser } = useAuthStore(); // ✅ ambil data user
-  const [customerName, setCustomerName] = useState("Pelanggan"); // ✅ nama asli
+  const { user, setUser } = useAuthStore();
+  const [customerName, setCustomerName] = useState("Pelanggan");
   const navigate = useNavigate();
   const { items } = useCartStore();
 
@@ -55,7 +55,6 @@ const CheckoutPageOnline = () => {
         }));
         setAddresses(mappedAddresses);
 
-        // Set alamat utama (is_core_address: true) sebagai default
         const mainAddress = data.find(
           (addr: any) => addr.is_core_address === true,
         );
@@ -72,6 +71,20 @@ const CheckoutPageOnline = () => {
     };
     fetchAddresses();
   }, []);
+
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: "success" | "error";
+  }>({ show: false, message: "", type: "success" });
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(
+      () => setToast({ show: false, message: "", type: "success" }),
+      4000,
+    );
+  };
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -178,9 +191,6 @@ const CheckoutPageOnline = () => {
       console.log(" backendGrandTotal:", backendGrandTotal);
       console.log(" response.data:", response.data);
 
-      // const { user } = useAuthStore();
-      // const customerName = user?.fullname || "Pelanggan";
-
       navigate("/customer/payment", {
         state: {
           orderId: backendOrderId,
@@ -195,8 +205,9 @@ const CheckoutPageOnline = () => {
       });
     } catch (error: any) {
       console.error("Gagal membuat pesanan:", error);
-      alert(error.response?.data?.message || "Gagal memproses pesanan");
-    } finally {
+      const errorMessage =
+        error.response?.data?.message || "Gagal memproses pesanan";
+      showToast(errorMessage, "error");
       setIsSubmitting(false);
     }
   };
@@ -216,6 +227,16 @@ const CheckoutPageOnline = () => {
   return (
     <div className="min-h-screen bg-[#F3F4F6] pb-20">
       <Header mode="online" />
+
+      {toast.show && (
+        <div
+          className={`fixed top-20 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-lg text-white font-bold shadow-lg ${
+            toast.type === "success" ? "bg-green-500" : "bg-red-500"
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
 
       {/* Header Page */}
       <div className="bg-white border-b border-gray-100 shadow-sm mb-3 w-full">
@@ -239,7 +260,9 @@ const CheckoutPageOnline = () => {
                 <div className="bg-primary p-2 rounded-full text-white flex items-center justify-center shrink-0">
                   <Bike size={18} fill="white" />
                 </div>
-                <h2 className="font-bold text-black text-sm md:text-lg tracking-tight whitespace-nowrap">Pengantaran</h2>
+                <h2 className="font-bold text-black text-sm md:text-lg tracking-tight whitespace-nowrap">
+                  Pengantaran
+                </h2>
               </div>
               <button
                 onClick={() => setIsAddressModalOpen(true)}

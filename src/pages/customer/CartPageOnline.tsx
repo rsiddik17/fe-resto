@@ -7,6 +7,7 @@ import EditNoteModal from "../../components/EditNoteModalOnline/EditNoteModalOnl
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal/DeleteConfirmationModal";
 import EmptyCartView from "../../components/EmptyTrack/EmptyTrack";
 import NotesIcon from "../../components/Icon/Notes";
+import Toast from "../../components/Toast/Toast";
 
 interface CartItem {
   cartId: string;
@@ -17,6 +18,7 @@ interface CartItem {
   image: string;
   notes?: string;
   checked?: boolean;
+  stock?: number;
 }
 
 const CartPageOnline = () => {
@@ -32,6 +34,20 @@ const CartPageOnline = () => {
 
   const [editingItem, setEditingItem] = useState<CartItem | null>(null);
   const [itemToDelete, setItemToDelete] = useState<CartItem | null>(null);
+
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: "success" | "error";
+  }>({ show: false, message: "", type: "error" });
+
+  const showToast = (message: string, type: "success" | "error" = "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(
+      () => setToast({ show: false, message: "", type: "error" }),
+      4000,
+    );
+  };
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     toggleAllChecked(e.target.checked);
@@ -50,11 +66,27 @@ const CartPageOnline = () => {
   };
 
   const handleIncrement = (item: CartItem) => {
+    const currentStock = item.stock || 0;
+    const currentQty = item.qty || 0;
+
+    if (currentQty >= currentStock) {
+      showToast(
+        `Stok ${item.name} tidak mencukupi (tersisa ${currentStock})`,
+        "error",
+      );
+      return;
+    }
+
     updateQty(item.cartId, 1);
   };
 
   return (
     <div className="min-h-screen bg-[#F3F4F6] flex flex-col pb-28">
+      
+      <div className="relative z-9999">
+        <Toast show={toast.show} message={toast.message} type={toast.type} />
+      </div>
+
       <Header mode="online" />
 
       <div className="bg-white border-b border-gray-100 shadow-sm mb-3 w-full">
