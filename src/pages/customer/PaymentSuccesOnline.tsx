@@ -177,7 +177,7 @@ const PaymentSuccessOnline = () => {
             </div>
             <h3 className="font-bold text-[#388E3C]">Pesanan Dikonfirmasi</h3>
             <p className="text-xs text-[#4CAF50]">
-              Silakan tunggu di meja anda. Pesanan akan segera diantarkan.
+              Pesanan Anda telah berhasil diterima dan sedang diproses.
             </p>
           </div>
         )}
